@@ -133,7 +133,7 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
             + JCR_ITEM + " P" + " where R.NODE_ID=? and P.ID=R.PROPERTY_ID and P.I_CLASS=2";
 
       FIND_VALUES_BY_PROPERTYID =
-         "select PROPERTY_ID, ORDER_NUM, DATA, STORAGE_DESC from " + JCR_VALUE
+         "select PROPERTY_ID, ORDER_NUM, DATA, STORAGE_DESC, LENGTH from " + JCR_VALUE
             + " where PROPERTY_ID=? order by ORDER_NUM";
 
       FIND_VALUES_VSTORAGE_DESC_BY_PROPERTYID =
@@ -183,7 +183,8 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
             + "(ID, PARENT_ID, NAME, VERSION, I_CLASS, I_INDEX, P_TYPE, P_MULTIVALUED) VALUES(?,?,?,?,"
             + I_CLASS_PROPERTY + ",?,?,?)";
 
-      INSERT_VALUE = "insert into " + JCR_VALUE + "(DATA, ORDER_NUM, PROPERTY_ID, STORAGE_DESC) VALUES(?,?,?,?)";
+      INSERT_VALUE =
+         "insert into " + JCR_VALUE + "(DATA, ORDER_NUM, PROPERTY_ID, STORAGE_DESC, LENGTH) VALUES(?,?,?,?,?)";
       INSERT_REF = "insert into " + JCR_REF + "(NODE_ID, PROPERTY_ID, ORDER_NUM) VALUES(?,?,?)";
 
       RENAME_NODE =
@@ -208,7 +209,8 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
          "select I.P_TYPE, V.STORAGE_DESC from " + JCR_ITEM + " I, " + JCR_VALUE
             + " V where I.ID = ? and V.PROPERTY_ID = I.ID";
       DELETE_VALUE_BY_ORDER_NUM = "delete from " + JCR_VALUE + " where PROPERTY_ID=? and ORDER_NUM >= ?";
-      UPDATE_VALUE = "update " + JCR_VALUE + " set DATA=?, STORAGE_DESC=? where PROPERTY_ID=? and ORDER_NUM=?";
+      UPDATE_VALUE =
+         "update " + JCR_VALUE + " set DATA=?, STORAGE_DESC=?, LENGTH=? where PROPERTY_ID=? and ORDER_NUM=?";
 
       FIND_NODES_BY_PARENTID_LAZILY_CQ =
          "select I.*, P.NAME AS PROP_NAME, V.ORDER_NUM, V.DATA from " + JCR_ITEM + " I, " + JCR_ITEM + " P, "
@@ -707,6 +709,7 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
 
       insertValue.setInt(2, orderNumber);
       insertValue.setString(3, cid);
+      insertValue.setLong(5, streamLength);
       return insertValue.executeUpdate();
    }
 
@@ -885,7 +888,6 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
    protected int updateValueData(String cid, int orderNumber, InputStream stream, int streamLength, String storageDesc)
       throws SQLException
    {
-
       if (updateValue == null)
       {
          updateValue = dbConnection.prepareStatement(UPDATE_VALUE);
@@ -907,8 +909,9 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
          updateValue.setNull(2, Types.VARCHAR);
       }
 
-      updateValue.setString(3, cid);
-      updateValue.setInt(4, orderNumber);
+      updateValue.setLong(3, streamLength);
+      updateValue.setString(4, cid);
+      updateValue.setInt(5, orderNumber);
       return updateValue.executeUpdate();
    }
 

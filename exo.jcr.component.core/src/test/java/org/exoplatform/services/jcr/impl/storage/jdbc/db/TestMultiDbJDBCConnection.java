@@ -57,10 +57,10 @@ public class TestMultiDbJDBCConnection extends JDBCConnectionTestBase
          st.executeUpdate("insert into JCR_MITEM values" + "('A','A','test1',20090525,2,1233,5,10,1)");
          st.executeUpdate("insert into JCR_MITEM values" + "('B','A','test2',20090625,1,1233,5,10,1)");
          st.executeUpdate("insert into JCR_MITEM values" + "('C','B','test3',20090825,1,1233,5,10,1)");
-         st.executeUpdate("insert into JCR_MVALUE(DATA,ORDER_NUM,PROPERTY_ID,STORAGE_DESC) values"
-            + "('0xfa',16,'A','testConn')");
-         st.executeUpdate("insert into JCR_MVALUE(DATA,ORDER_NUM,PROPERTY_ID,STORAGE_DESC) values"
-            + "('0xce',16,'B','testConn2')");
+         st.executeUpdate("insert into JCR_MVALUE(DATA,ORDER_NUM,PROPERTY_ID,STORAGE_DESC,LENGTH) values"
+            + "('0xfa',16,'A','testConn',0)");
+         st.executeUpdate("insert into JCR_MVALUE(DATA,ORDER_NUM,PROPERTY_ID,STORAGE_DESC,LENGTH) values"
+            + "('0xce',16,'B','testConn2',0)");
          st.executeUpdate("insert into JCR_MREF values" + "('D','A',2)");
          st.executeUpdate("insert into JCR_MREF values" + "('E','B',2)");
          JDBCDataContainerConfig jdbcDataContainerConfig = new JDBCDataContainerConfig();

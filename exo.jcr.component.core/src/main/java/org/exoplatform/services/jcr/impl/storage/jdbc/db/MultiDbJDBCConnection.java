@@ -107,7 +107,7 @@ public class MultiDbJDBCConnection extends JDBCStorageConnection
             + JCR_ITEM + " P" + " where R.NODE_ID=? and P.ID=R.PROPERTY_ID and P.I_CLASS=2";
 
       FIND_VALUES_BY_PROPERTYID =
-         "select PROPERTY_ID, ORDER_NUM, DATA, STORAGE_DESC from " + JCR_VALUE
+         "select PROPERTY_ID, ORDER_NUM, DATA, STORAGE_DESC, LENGTH from " + JCR_VALUE
             + " where PROPERTY_ID=? order by ORDER_NUM";
 
       FIND_VALUES_VSTORAGE_DESC_BY_PROPERTYID =
@@ -134,7 +134,8 @@ public class MultiDbJDBCConnection extends JDBCStorageConnection
             + "(ID, PARENT_ID, NAME, VERSION, I_CLASS, I_INDEX, P_TYPE, P_MULTIVALUED) VALUES(?,?,?,?,"
             + I_CLASS_PROPERTY + ",?,?,?)";
 
-      INSERT_VALUE = "insert into " + JCR_VALUE + "(DATA, ORDER_NUM, PROPERTY_ID, STORAGE_DESC) VALUES(?,?,?,?)";
+      INSERT_VALUE =
+         "insert into " + JCR_VALUE + "(DATA, ORDER_NUM, PROPERTY_ID, STORAGE_DESC, LENGTH) VALUES(?,?,?,?,?)";
       INSERT_REF = "insert into " + JCR_REF + "(NODE_ID, PROPERTY_ID, ORDER_NUM) VALUES(?,?,?)";
 
       RENAME_NODE =
@@ -500,7 +501,6 @@ public class MultiDbJDBCConnection extends JDBCStorageConnection
    protected int addValueData(String cid, int orderNumber, InputStream stream, int streamLength, String storageDesc)
       throws SQLException
    {
-
       if (insertValue == null)
       {
          insertValue = dbConnection.prepareStatement(INSERT_VALUE);
@@ -524,6 +524,7 @@ public class MultiDbJDBCConnection extends JDBCStorageConnection
 
       insertValue.setInt(2, orderNumber);
       insertValue.setString(3, cid);
+      insertValue.setLong(5, streamLength);
       return insertValue.executeUpdate();
    }
 

@@ -115,7 +115,7 @@ public class SingleDbJDBCConnection extends JDBCStorageConnection
             + " where R.NODE_ID=? and P.CONTAINER_NAME=? and P.ID=R.PROPERTY_ID and P.I_CLASS=2";
 
       FIND_VALUES_BY_PROPERTYID =
-         "select PROPERTY_ID, ORDER_NUM, DATA, STORAGE_DESC from JCR_SVALUE where PROPERTY_ID=? order by ORDER_NUM";
+         "select PROPERTY_ID, ORDER_NUM, DATA, STORAGE_DESC, LENGTH from JCR_SVALUE where PROPERTY_ID=? order by ORDER_NUM";
 
       FIND_VALUES_VSTORAGE_DESC_BY_PROPERTYID = "select distinct STORAGE_DESC from JCR_SVALUE where PROPERTY_ID=?";
 
@@ -141,7 +141,7 @@ public class SingleDbJDBCConnection extends JDBCStorageConnection
          "insert into JCR_SITEM(ID, PARENT_ID, NAME, CONTAINER_NAME, VERSION, I_CLASS, I_INDEX, P_TYPE, P_MULTIVALUED) "
             + "VALUES(?,?,?,?,?," + I_CLASS_PROPERTY + ",?,?,?)";
 
-      INSERT_VALUE = "insert into JCR_SVALUE(DATA, ORDER_NUM, PROPERTY_ID, STORAGE_DESC) VALUES(?,?,?,?)";
+      INSERT_VALUE = "insert into JCR_SVALUE(DATA, ORDER_NUM, PROPERTY_ID, STORAGE_DESC, LENGTH) VALUES(?,?,?,?,?)";
       INSERT_REF = "insert into JCR_SREF(NODE_ID, PROPERTY_ID, ORDER_NUM) VALUES(?,?,?)";
 
       RENAME_NODE = "update JCR_SITEM set PARENT_ID=?, NAME=?, VERSION=?, I_INDEX=?, N_ORDER_NUM=? where ID=?";
@@ -535,6 +535,7 @@ public class SingleDbJDBCConnection extends JDBCStorageConnection
 
       insertValue.setInt(2, orderNumber);
       insertValue.setString(3, cid);
+      insertValue.setLong(5, streamLength);
       return insertValue.executeUpdate();
    }
 
