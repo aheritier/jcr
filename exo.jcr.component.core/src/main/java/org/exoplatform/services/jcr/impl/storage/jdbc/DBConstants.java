@@ -229,9 +229,19 @@ public class DBConstants extends DialectConstants
    protected String FIND_NODES_AND_PROPERTIES;
 
    /**
-    * FIND_NODES_COUNT
+    * FIND_NODES_COUNT.
     */
    protected String FIND_NODES_COUNT;
+
+   /**
+    * FIND_WORKSPACE_DATA_SIZE.
+    */
+   protected String FIND_WORKSPACE_DATA_SIZE;
+
+   /**
+    * FIND_NODE_DATA_SIZE.
+    */
+   protected String FIND_NODE_DATA_SIZE;
 
    // ======================== ITEMS table ======================== 
    /**

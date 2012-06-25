@@ -190,6 +190,10 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
 
    protected PreparedStatement findNodesCount;
 
+   protected PreparedStatement findWorkspaceDataSize;
+
+   protected PreparedStatement findNodeDataSize;
+
    /**
     * Read-only flag, if true the connection is marked as READ-ONLY.
     */
@@ -637,6 +641,16 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
          if (findNodesCount != null)
          {
             findNodesCount.close();
+         }
+
+         if (findWorkspaceDataSize != null)
+         {
+            findWorkspaceDataSize.close();
+         }
+
+         if (findNodeDataSize != null)
+         {
+            findNodeDataSize.close();
          }
       }
       catch (SQLException e)
@@ -1484,6 +1498,56 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
       }
 
       throw new RepositoryException("Can not calculate nodes count");
+   }
+
+   /**
+    * Calculates workspace data size.
+    * 
+    * @throws RepositoryException
+    *           if a database access error occurs
+    */
+   public long getWorkspaceDataSize() throws RepositoryException
+   {
+      ResultSet workspaceDataSize;
+      try
+      {
+         workspaceDataSize = findWorkspaceDataSize();
+         if (workspaceDataSize.next())
+         {
+            return workspaceDataSize.getLong(1);
+         }
+      }
+      catch (SQLException e)
+      {
+         throw new RepositoryException(e);
+      }
+
+      throw new RepositoryException("Can not calculate workspace data size " + containerConfig.containerName);
+   }
+
+   /**
+    * Calculates node data size.
+    * 
+    * @throws RepositoryException
+    *           if a database access error occurs
+    */
+   public long getNodeDataSize(String nodeIdentifier) throws RepositoryException
+   {
+      ResultSet workspaceDataSize;
+      try
+      {
+         workspaceDataSize = findNodeDataSize(nodeIdentifier);
+         if (workspaceDataSize.next())
+         {
+            return workspaceDataSize.getLong(1);
+         }
+      }
+      catch (SQLException e)
+      {
+         throw new RepositoryException(e);
+      }
+
+      throw new RepositoryException("Can not calculate workspace data size " + containerConfig.containerName);
    }
 
    // ------------------ Private methods ---------------
@@ -2820,4 +2884,7 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
 
    protected abstract ResultSet findMaxPropertyVersion(String parentId, String name, int index) throws SQLException;
 
+   protected abstract ResultSet findWorkspaceDataSize() throws SQLException;
+
+   protected abstract ResultSet findNodeDataSize(String nodeIdentifier) throws SQLException;
 }

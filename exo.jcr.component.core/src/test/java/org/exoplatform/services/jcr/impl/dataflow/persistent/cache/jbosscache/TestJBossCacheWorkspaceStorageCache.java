@@ -411,6 +411,18 @@ public class TestJBossCacheWorkspaceStorageCache extends WorkspaceStorageCacheBa
          return getItemData(parentData, name, itemType) != null;
       }
 
+      @Override
+      public long getWorkspaceDataSize() throws RepositoryException
+      {
+         return 0;
+      }
+
+      @Override
+      public long getNodeDataSize(String parentId) throws RepositoryException
+      {
+         return 0;
+      }
+
    };
    
    private static class MyWorkspaceDataContainer extends WorkspaceDataContainerBase

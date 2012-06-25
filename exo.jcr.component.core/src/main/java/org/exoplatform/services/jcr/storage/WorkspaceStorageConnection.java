@@ -423,7 +423,7 @@ public interface WorkspaceStorageConnection
     * 
     * @return a list of all the ACL holders for this workspace
     * @throws RepositoryException
-    *           if some exception occured
+    *           if some exception occurred
     * @throws IllegalStateException
     *           if connection is closed
     * @throws UnsupportedOperationException
@@ -440,4 +440,20 @@ public interface WorkspaceStorageConnection
     *           if a database access error occurs
     */
    public long getNodesCount() throws RepositoryException;
+   
+   /**
+    * Calculate workspace data size.
+    * 
+    * @throws RepositoryException
+    */
+   public long getWorkspaceDataSize() throws RepositoryException;
+
+   /**
+    * Calculate node data size.
+    * 
+    * @param nodeIdentifier
+    *          node identifier which size need to calculate
+    * @throws RepositoryException
+    */
+   public long getNodeDataSize(String nodeIdentifier) throws RepositoryException;
 }

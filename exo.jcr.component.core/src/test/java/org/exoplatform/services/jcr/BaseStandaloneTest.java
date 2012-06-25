@@ -747,6 +747,16 @@ public abstract class BaseStandaloneTest extends TestCase
          throw new UnsupportedOperationException("TestWorkspaceStorageConnection: operation is unsupported.");
       }
 
-   }
+      @Override
+      public long getWorkspaceDataSize() throws RepositoryException
+      {
+         throw new UnsupportedOperationException("TestWorkspaceStorageConnection: operation is unsupported.");
+      }
 
+      @Override
+      public long getNodeDataSize(String parentId) throws RepositoryException
+      {
+         throw new UnsupportedOperationException("TestWorkspaceStorageConnection: operation is unsupported.");
+      }
+   }
 }

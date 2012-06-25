@@ -224,6 +224,14 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
             + " or I.NAME='[http://www.exoplatform.com/jcr/exo/1.0]permissions')";
 
       FIND_NODES_COUNT = "select count(*) from JCR_SITEM I where I.I_CLASS=1 and I.CONTAINER_NAME=?";
+
+      FIND_WORKSPACE_DATA_SIZE =
+         "select sum(V.LENGTH) from JCR_SITEM I, JCR_SVALUE V where I.I_CLASS=2 and I.CONTAINER_NAME=?"
+            + " and I.ID=V.PROPERTY_ID";
+
+      FIND_NODE_DATA_SIZE =
+         "select sum(LENGTH) from JCR_SITEM I, JCR_SVALUE V where I.PARENT_ID=? and I.I_CLASS=2"
+            + " and I.CONTAINER_NAME=? and I.ID=V.PROPERTY_ID";
    }
 
    /**
@@ -1136,5 +1144,44 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
       findMaxPropertyVersions.setInt(4, index);
 
       return findMaxPropertyVersions.executeQuery();
+   }
+
+   /** 
+    * {@inheritDoc} 
+    */
+   protected ResultSet findWorkspaceDataSize() throws SQLException
+   {
+      if (findWorkspaceDataSize == null)
+      {
+         findWorkspaceDataSize = dbConnection.prepareStatement(FIND_WORKSPACE_DATA_SIZE);
+      }
+      else
+      {
+         findWorkspaceDataSize.clearParameters();
+      }
+
+      findWorkspaceDataSize.setString(1, containerConfig.containerName);
+
+      return findWorkspaceDataSize.executeQuery();
+   }
+
+   /** 
+    * {@inheritDoc} 
+    */
+   protected ResultSet findNodeDataSize(String parentId) throws SQLException
+   {
+      if (findNodeDataSize == null)
+      {
+         findNodeDataSize = dbConnection.prepareStatement(FIND_NODE_DATA_SIZE);
+      }
+      else
+      {
+         findNodeDataSize.clearParameters();
+      }
+
+      findNodeDataSize.setString(1, getInternalId(parentId));
+      findNodeDataSize.setString(2, containerConfig.containerName);
+
+      return findNodeDataSize.executeQuery();
    }
 }

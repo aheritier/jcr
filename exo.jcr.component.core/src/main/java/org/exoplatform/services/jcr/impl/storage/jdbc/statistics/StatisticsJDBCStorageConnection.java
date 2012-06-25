@@ -198,6 +198,18 @@ public class StatisticsJDBCStorageConnection implements WorkspaceStorageConnecti
    private static final String HAS_ITEM_DATA_DESCR = "hasItemData";
 
    /**
+    * The description of the statistics corresponding to the method
+    * {@link WorkspaceStorageConnection#getWorkspaceDataSize()}.
+    */
+   private static final String GET_WORKSPACE_DATA_SIZE = "getWorkspaceDataSize";
+
+   /**
+    * The description of the statistics corresponding to the method
+    * {@link WorkspaceStorageConnection#getNodeDataSize(String)}.
+    */
+   private static final String GET_NODE_DATA_SIZE = "getNodeDataSize";
+
+   /**
     * The global statistics for all the database accesses
     */
    private final static Statistics GLOBAL_STATISTICS = new Statistics(null, "global");
@@ -251,6 +263,8 @@ public class StatisticsJDBCStorageConnection implements WorkspaceStorageConnecti
       // Others
       ALL_STATISTICS.put(IS_OPENED_DESCR, new Statistics(null, IS_OPENED_DESCR));
       ALL_STATISTICS.put(CLOSE_DESCR, new Statistics(null, CLOSE_DESCR));
+      ALL_STATISTICS.put(GET_WORKSPACE_DATA_SIZE, new Statistics(null, GET_WORKSPACE_DATA_SIZE));
+      ALL_STATISTICS.put(GET_NODE_DATA_SIZE, new Statistics(null, GET_NODE_DATA_SIZE));
    }
 
    static
@@ -732,6 +746,40 @@ public class StatisticsJDBCStorageConnection implements WorkspaceStorageConnecti
       {
          s.begin();
          return wcs.hasItemData(parentData, name, itemType);
+      }
+      finally
+      {
+         s.end();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getWorkspaceDataSize() throws RepositoryException
+   {
+      Statistics s = ALL_STATISTICS.get(GET_WORKSPACE_DATA_SIZE);
+      try
+      {
+         s.begin();
+         return wcs.getWorkspaceDataSize();
+      }
+      finally
+      {
+         s.end();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getNodeDataSize(String parentId) throws RepositoryException
+   {
+      Statistics s = ALL_STATISTICS.get(GET_NODE_DATA_SIZE);
+      try
+      {
+         s.begin();
+         return wcs.getWorkspaceDataSize();
       }
       finally
       {

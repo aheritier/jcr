@@ -44,6 +44,7 @@ import org.exoplatform.services.jcr.impl.dataflow.AbstractValueData;
 import org.exoplatform.services.jcr.impl.dataflow.TransientValueData;
 import org.exoplatform.services.jcr.impl.dataflow.session.TransactionableResourceManager;
 import org.exoplatform.services.jcr.impl.dataflow.session.TransactionableResourceManagerListener;
+import org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManagerImpl;
 import org.exoplatform.services.jcr.impl.storage.SystemDataContainerHolder;
 import org.exoplatform.services.jcr.storage.WorkspaceDataContainer;
 import org.exoplatform.services.jcr.storage.WorkspaceStorageConnection;
@@ -1180,6 +1181,48 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
       try
       {
          return con.hasItemData(parentData, name, itemType);
+      }
+      finally
+      {
+         con.close();
+      }
+   }
+
+   /**
+    * Returns workspace data size. See for details 
+    * {@link WorkspaceQuotaManagerImpl#getWorkspaceDataSize()}.
+    * 
+    * @throws RepositoryException
+    *          if any exception is occurred
+    */
+   public long getWorkspaceDataSize() throws RepositoryException
+   {
+      final WorkspaceStorageConnection con = dataContainer.openConnection();
+      try
+      {
+         return con.getWorkspaceDataSize();
+      }
+      finally
+      {
+         con.close();
+      }
+   }
+
+   /**
+    * Returns node data size. See for details 
+    * {@link WorkspaceQuotaManagerImpl#getNodeDataSize(String)}.
+    * 
+    * @param nodeIdentifier
+    *          node identifier which size need to calculate
+    * @throws RepositoryException
+    *          if any exception is occurred
+    */
+   public long getNodeDataSize(String nodeIdentifier) throws RepositoryException
+   {
+      final WorkspaceStorageConnection con = dataContainer.openConnection();
+      try
+      {
+         return con.getNodeDataSize(nodeIdentifier);
       }
       finally
       {
