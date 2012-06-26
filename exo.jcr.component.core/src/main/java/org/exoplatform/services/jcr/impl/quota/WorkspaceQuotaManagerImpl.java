@@ -85,16 +85,22 @@ public class WorkspaceQuotaManagerImpl implements WorkspaceQuotaManager, Startab
    protected final LocationFactory lFactory;
 
    /**
+    * Quota manager of repository level.
+    */
+   protected final RepositoryQuotaManager rQuotaManager;
+
+   /**
     * WorkspaceQuotaManagerImpl constructor.
     */
-   public WorkspaceQuotaManagerImpl(RepositoryImpl repository, RepositoryEntry rEntry, WorkspaceEntry wsEntry,
-      WorkspacePersistentDataManager dataManager)
+   public WorkspaceQuotaManagerImpl(RepositoryImpl repository, RepositoryQuotaManager rQuotaManager,
+      RepositoryEntry rEntry, WorkspaceEntry wsEntry, WorkspacePersistentDataManager dataManager)
    {
       this.rName = rEntry.getName();
       this.wsName = wsEntry.getName();
       this.wsContainer = repository.getWorkspaceContainer(wsName);
       this.dataManager = dataManager;
       this.lFactory = repository.getLocationFactory();
+      this.rQuotaManager = rQuotaManager;
    }
    
    /**
@@ -246,6 +252,7 @@ public class WorkspaceQuotaManagerImpl implements WorkspaceQuotaManager, Startab
     */
    public void start()
    {
+      rQuotaManager.registerWorkspaceQuotaManager(wsName, this);
    }
 
    /**
@@ -253,5 +260,6 @@ public class WorkspaceQuotaManagerImpl implements WorkspaceQuotaManager, Startab
     */
    public void stop()
    {
+      rQuotaManager.unregisterWorkspaceQuotaManager(wsName);
    }
 }

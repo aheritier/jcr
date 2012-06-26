@@ -18,7 +18,6 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
-
 /**
  * Per workspace QuotaManager operation.
  * 
@@ -40,16 +39,16 @@ public interface WorkspaceQuotaManager
    long getNodeDataSize(String nodePath) throws QuotaManagerException;
 
    /**
-    * Returns a size of the Workspace. Size of the workspace is the the size of all nodes, 
-    * stored in it.
+    * Returns a size of the Workspace. Size of the workspace is the the size of all nodes 
+    * are placed in it.
     * 
     * @throws QuotaManagerExceptionIf an error occurs.
     */
    long getWorkspaceDataSize() throws QuotaManagerException;
 
    /**
-    * Returns a size of the index. Size of the workspace's index is a size of the 
-    * index directory at file system.
+    * Returns a index size. Size of the workspace's index is a size of the 
+    * index directory at file system belonging to workspace.
     * 
     * @throws QuotaManagerException If an error occurs.
     */
