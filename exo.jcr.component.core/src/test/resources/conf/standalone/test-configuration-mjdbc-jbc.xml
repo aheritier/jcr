@@ -185,6 +185,11 @@
       </properties-param>
     </init-params>
   </component>
+
+  <component>
+    <key>org.exoplatform.services.jcr.impl.quota.QuotaManager</key>
+    <type>org.exoplatform.services.jcr.impl.quota.jbosscache.JBCQuotaManagerImpl</type>
+  </component>
   
   <component>
     <type>org.exoplatform.services.organization.impl.mock.DummyOrganizationService</type>
