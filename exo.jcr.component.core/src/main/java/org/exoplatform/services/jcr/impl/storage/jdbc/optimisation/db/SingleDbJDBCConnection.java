@@ -137,7 +137,7 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
             + " where R.NODE_ID=? and P.CONTAINER_NAME=? and P.ID=R.PROPERTY_ID and P.I_CLASS=2";
 
       FIND_VALUES_BY_PROPERTYID =
-         "select PROPERTY_ID, ORDER_NUM, DATA, STORAGE_DESC, LENGTH from JCR_SVALUE where PROPERTY_ID=? order by ORDER_NUM";
+         "select PROPERTY_ID, ORDER_NUM, DATA, STORAGE_DESC from JCR_SVALUE where PROPERTY_ID=? order by ORDER_NUM";
 
       FIND_VALUES_VSTORAGE_DESC_BY_PROPERTYID = "select distinct STORAGE_DESC from JCR_SVALUE where PROPERTY_ID=?";
 
@@ -184,7 +184,7 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
          "insert into JCR_SITEM(ID, PARENT_ID, NAME, CONTAINER_NAME, VERSION, I_CLASS, I_INDEX, P_TYPE, P_MULTIVALUED)"
             + " VALUES(?,?,?,?,?," + I_CLASS_PROPERTY + ",?,?,?)";
 
-      INSERT_VALUE = "insert into JCR_SVALUE(DATA, ORDER_NUM, PROPERTY_ID, STORAGE_DESC, LENGTH) VALUES(?,?,?,?,?)";
+      INSERT_VALUE = "insert into JCR_SVALUE(DATA, ORDER_NUM, PROPERTY_ID, STORAGE_DESC) VALUES(?,?,?,?)";
       INSERT_REF = "insert into JCR_SREF(NODE_ID, PROPERTY_ID, ORDER_NUM) VALUES(?,?,?)";
 
       RENAME_NODE = "update JCR_SITEM set PARENT_ID=?, NAME=?, VERSION=?, I_INDEX=?, N_ORDER_NUM=? where ID=?";
@@ -206,7 +206,7 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
       FIND_PROPERTY_BY_ID =
          "select I.P_TYPE, V.STORAGE_DESC from JCR_SITEM I, JCR_SVALUE V where I.ID = ? and V.PROPERTY_ID = I.ID";
       DELETE_VALUE_BY_ORDER_NUM = "delete from JCR_SVALUE where PROPERTY_ID=? and ORDER_NUM >= ?";
-      UPDATE_VALUE = "update JCR_SVALUE set DATA=?, STORAGE_DESC=?, LENGTH=? where PROPERTY_ID=? and ORDER_NUM=?";
+      UPDATE_VALUE = "update JCR_SVALUE set DATA=?, STORAGE_DESC=? where PROPERTY_ID=? and ORDER_NUM=?";
 
       FIND_NODES_BY_PARENTID_LAZILY_CQ =
          "select I.*, P.NAME AS PROP_NAME, V.ORDER_NUM, V.DATA from JCR_SITEM I, JCR_SITEM P, JCR_SVALUE V"
@@ -626,7 +626,6 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
 
       insertValue.setInt(2, orderNumber);
       insertValue.setString(3, cid);
-      insertValue.setLong(5, streamLength);
       return insertValue.executeUpdate();
    }
 
@@ -956,9 +955,8 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
          updateValue.setNull(2, Types.VARCHAR);
       }
 
-      updateValue.setLong(3, streamLength);
-      updateValue.setString(4, cid);
-      updateValue.setInt(5, orderNumber);
+      updateValue.setString(3, cid);
+      updateValue.setInt(4, orderNumber);
       return updateValue.executeUpdate();
    }
 

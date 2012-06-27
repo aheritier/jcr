@@ -315,9 +315,4 @@ public class DBConstants extends DialectConstants
     */
    public static final String COLUMN_VSTORAGE_DESC = "STORAGE_DESC";
 
-   /**
-    * COLUMN_VLENGTH.
-    */
-   public static final String COLUMN_VLENGTH = "LENGTH";
-
 }
