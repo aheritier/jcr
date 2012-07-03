@@ -51,6 +51,7 @@ public interface QuotaManager
     * @param nodePath
     *          the absolute path to node
     * @throws QuotaManagerException If an error occurs.
+    * @throws UnknownQuotaLimitException If quota limit was not set
     */
    long getNodeQuota(String repositoryName, String workspaceName, String nodePath) throws QuotaManagerException;
 
@@ -81,8 +82,9 @@ public interface QuotaManager
     *          the repository name            
     * @param workspaceName
     *          the workspace name in repository 
-    * @param template
-    *          the template indicates group of nodes to set quota
+    * @param pattern
+    *          the pattern indicates group of nodes to set quota, allowed <code>*</code> as any node name 
+    *          and <code>%</code> as any character in name
     * @param quotaSize
     *          the maximum allowed sum of content size stored in node
     * @param asyncUpdate
@@ -91,7 +93,7 @@ public interface QuotaManager
     *          validate          
     * @throws QuotaManagerException If an error occurs.
     */
-   void setGroupOfNodesQuota(String repositoryName, String workspaceName, String template, long quotaSize,
+   void setGroupOfNodesQuota(String repositoryName, String workspaceName, String pattern, long quotaSize,
       boolean asyncUpdate) throws QuotaManagerException;
 
    /**
@@ -113,6 +115,7 @@ public interface QuotaManager
     * @param workspaceName
     *          the workspace name in repository 
     * @throws QuotaManagerException If an error occurs.
+    * @throws UnknownQuotaLimitException If quota limit was not set 
     */
    long getWorkspaceQuota(String repositoryName, String workspaceName) throws QuotaManagerException;
 
@@ -158,6 +161,7 @@ public interface QuotaManager
     * @param repositoryName
     *          the repository name            
     * @throws QuotaManagerException If an error occurs.
+    * @throws UnknownQuotaLimitException If quota limit was not set 
     */
    long getRepositoryQuota(String repositoryName) throws QuotaManagerException;
 
@@ -195,6 +199,7 @@ public interface QuotaManager
     * Returns maximum allowed sum of content size stored in whole JCR.
     *
     * @throws QuotaManagerException If an error occurs.
+    * @throws UnknownQuotaLimitException If quota limit was not set 
     */
    long getGlobalQuota() throws QuotaManagerException;
 

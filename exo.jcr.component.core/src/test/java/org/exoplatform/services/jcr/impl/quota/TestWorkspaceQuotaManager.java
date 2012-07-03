@@ -92,18 +92,20 @@ public class TestWorkspaceQuotaManager extends JcrAPIBaseTest
    }
 
    /**
-    * Checks if node data size is positive value.
+    * Checks if node data size returns correct value.
     */
    public void testNodeDataSize() throws Exception
    {
-      session.getRootNode().addNode("test");
+      Node node = session.getRootNode().addNode("test");
       session.save();
 
       WorkspaceQuotaManager wQuotaManager =
          (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws").getComponent(WorkspaceQuotaManager.class);
 
       long measuredSize =  wQuotaManager.getNodeDataSize("/test");
-      assertTrue(measuredSize > 0);
+      long expectedSize = ((ByteArrayInputStream)node.getProperty("jcr:primaryType").getStream()).available();
+
+      assertEquals(expectedSize, measuredSize);
    }
 
    /**
@@ -111,9 +113,6 @@ public class TestWorkspaceQuotaManager extends JcrAPIBaseTest
     */
    public void testWorkspaceSizeEqualToAllNodesSize() throws Exception
    {
-      session.getRootNode().addNode("test");
-      session.save();
-
       WorkspaceQuotaManager wQuotaManager =
          (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws").getComponent(WorkspaceQuotaManager.class);
 

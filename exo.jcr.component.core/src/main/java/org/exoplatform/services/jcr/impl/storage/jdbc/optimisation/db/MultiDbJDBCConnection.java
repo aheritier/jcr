@@ -227,10 +227,10 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
 
       FIND_NODES_COUNT = "select count(*) from " + JCR_ITEM + " I where I.I_CLASS=1";
 
-      FIND_WORKSPACE_DATA_SIZE = "select sum(LENGTH) from " + JCR_VALUE;
+      FIND_WORKSPACE_DATA_SIZE = "select sum(length(data)) from " + JCR_VALUE;
 
       FIND_NODE_DATA_SIZE =
-         "select sum(LENGTH) from " + JCR_ITEM + " I, " + JCR_VALUE
+         "select sum(length(data)) from " + JCR_ITEM + " I, " + JCR_VALUE
             + " V  where I.PARENT_ID=? and I.I_CLASS=2 and I.ID=V.PROPERTY_ID";
    }
 

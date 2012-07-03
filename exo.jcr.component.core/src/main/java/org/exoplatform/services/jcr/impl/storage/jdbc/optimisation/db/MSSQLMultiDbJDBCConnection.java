@@ -67,6 +67,12 @@ public class MSSQLMultiDbJDBCConnection extends MultiDbJDBCConnection
             + JCR_ITEM + " I" + " WITH (INDEX (" + JCR_PK_ITEM
             + ")) where I.I_CLASS=1 AND I.ID > ? order by I.ID) J on P.PARENT_ID = J.ID"
             + " where P.I_CLASS=2 and V.PROPERTY_ID=P.ID order by J.ID";
+
+      FIND_WORKSPACE_DATA_SIZE = "select sum(len(data)) from " + JCR_VALUE;
+
+      FIND_NODE_DATA_SIZE =
+         "select sum(len(data)) from " + JCR_ITEM + " I, " + JCR_VALUE
+            + " V  where I.PARENT_ID=? and I.I_CLASS=2 and I.ID=V.PROPERTY_ID";
    }
 
    /**

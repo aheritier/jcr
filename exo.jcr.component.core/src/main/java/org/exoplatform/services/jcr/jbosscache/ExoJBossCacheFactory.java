@@ -22,6 +22,7 @@ import org.exoplatform.commons.utils.SecurityHelper;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.configuration.ConfigurationManager;
+import org.exoplatform.services.database.utils.JDBCUtils;
 import org.exoplatform.services.jcr.config.MappedParametrizedObjectEntry;
 import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
 import org.exoplatform.services.jcr.config.TemplateConfigurationHelper;
@@ -42,12 +43,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.PrivilegedAction;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.jcr.RepositoryException;
 import javax.management.ObjectName;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 
 /**
@@ -232,11 +238,10 @@ public class ExoJBossCacheFactory<K, V>
     * Add a region to the given cache
     * @param fqn the roof fqn of the region to add
     * @param cache the cache to which we want to add the region
-    * @param cfg the configuration from which the Eviction Algorithm Config must be extracted
     */
-   private static <K, V> void addEvictionRegion(Fqn<String> fqn, Cache<K, V> cache, Configuration cfg)
+   private static <K, V> void addEvictionRegion(Fqn<String> fqn, Cache<K, V> cache)
    {
-      EvictionConfig ec = cfg.getEvictionConfig();
+      EvictionConfig ec = cache.getConfiguration().getEvictionConfig();
       // Create the region and set the config
       Region region = cache.getRegion(fqn, true);
       if (ec != null && ec.getDefaultEvictionRegionConfig() != null)
@@ -274,6 +279,36 @@ public class ExoJBossCacheFactory<K, V>
             cache.getConfiguration().getClusterName() + rootFqn.toString().replace('/', '-'));
          return cache;
       }
+
+      cache = getShareableUniqueInstanceWithoutEviction(cacheType, cache);
+
+      addEvictionRegion(rootFqn, cache);
+      if (LOG.isDebugEnabled())
+      {
+         LOG.debug("The region " + rootFqn + " has been registered for a cache of type " + cacheType
+            + " and the container " + ExoContainerContext.getCurrentContainer().getContext().getName());
+      }
+      return cache;
+   }
+
+   /**
+    * Try to find if a Cache of the same type (i.e. their {@link Configuration} are equals)
+    * has already been registered for the same current container and the same {@link CacheType}.
+    * If no cache has been registered, we register the given cache otherwise we
+    * use the previously registered cache.
+    * 
+    * @param cacheType 
+    *          The type of the target cache
+    * @param cache 
+    *          the cache to register
+    * @return the given cache if has not been registered otherwise the cache of the same
+    *          type that has already been registered.
+    * @throws RepositoryConfigurationException
+    */
+   @SuppressWarnings("unchecked")
+   public static synchronized <K, V> Cache<K, V> getShareableUniqueInstanceWithoutEviction(CacheType cacheType,
+      Cache<K, V> cache) throws RepositoryConfigurationException
+   {
       ExoContainer container = ExoContainerContext.getCurrentContainer();
       Map<CacheType, Map<ConfigurationKey, CacheInstance>> allCacheTypes = CACHES.get(container);
       if (allCacheTypes == null)
@@ -314,15 +349,9 @@ public class ExoJBossCacheFactory<K, V>
 
          if (LOG.isDebugEnabled())
          {
-            LOG.debug("A new JBoss Cache instance has been registered for the region " + rootFqn + ", a cache of type "
+            LOG.debug("A new JBoss Cache instance has been registered for the region , a cache of type "
                + cacheType + " and the container " + container.getContext().getName());
          }
-      }
-      addEvictionRegion(rootFqn, cache, cfg);
-      if (LOG.isDebugEnabled())
-      {
-         LOG.debug("The region " + rootFqn + " has been registered for a cache of type " + cacheType
-            + " and the container " + container.getContext().getName());
       }
       return cache;
    }
@@ -409,7 +438,52 @@ public class ExoJBossCacheFactory<K, V>
     * All the known cache types
     */
    public enum CacheType {
-      JCR_CACHE, INDEX_CACHE, LOCK_CACHE
+      JCR_CACHE, INDEX_CACHE, LOCK_CACHE, QUOTA_CACHE
+   }
+
+   /**
+    * If JDBC cache loader is used, then fills-in column types. If column type configured from configuration,
+    * then nothing is overridden. Parameters are injected into the given parameterEntry.
+    */
+   public static void configureJDBCCacheLoader(MappedParametrizedObjectEntry parameterEntry, String dataSourceParamName,
+      String nodeColumnParamName, String fqnColumnParamName) throws RepositoryException
+   {
+      String dataSourceName = parameterEntry.getParameterValue(dataSourceParamName, null);
+
+      // if data source is defined, then inject correct data-types.
+      // Also it cans be not defined and nothing should be injected 
+      // (i.e. no cache loader is used (possibly pattern is changed, to used another cache loader))
+      DataSource dataSource;
+      try
+      {
+         dataSource = (DataSource)new InitialContext().lookup(dataSourceName);
+      }
+      catch (NamingException e)
+      {
+         throw new RepositoryException(e.getMessage(), e);
+      }
+
+      String blobType;
+      String charType;
+      try
+      {
+         blobType = JDBCUtils.getAppropriateBlobType(dataSource);
+         charType = JDBCUtils.getAppropriateCharType(dataSource);
+      }
+      catch (SQLException e)
+      {
+         throw new RepositoryException(e.getMessage(), e);
+      }
+
+      if (parameterEntry.getParameterValue(nodeColumnParamName, "auto").equalsIgnoreCase("auto"))
+      {
+         parameterEntry.putParameterValue(nodeColumnParamName, blobType);
+      }
+
+      if (parameterEntry.getParameterValue(fqnColumnParamName, "auto").equalsIgnoreCase("auto"))
+      {
+         parameterEntry.putParameterValue(fqnColumnParamName, charType);
+      }
    }
 
    /**

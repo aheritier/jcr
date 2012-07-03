@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version $Id: RepositoryQuotaManagerImpl.java 34360 2009-07-22 23:58:59Z tolusha $
  */
 @Managed
-@NameTemplate(@Property(key = "service", value = "QuotaManager"))
+@NameTemplate(@Property(key = "service", value = "RepositoryQuotaManager"))
 public class RepositoryQuotaManagerImpl implements RepositoryQuotaManager, Startable
 {
 

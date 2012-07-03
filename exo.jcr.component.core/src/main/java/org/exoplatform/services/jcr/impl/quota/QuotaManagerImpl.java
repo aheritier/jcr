@@ -18,7 +18,15 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
+import org.exoplatform.container.configuration.ConfigurationManager;
 import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.container.xml.ValueParam;
+import org.exoplatform.management.annotations.Managed;
+import org.exoplatform.management.annotations.ManagedDescription;
+import org.exoplatform.management.jmx.annotations.NameTemplate;
+import org.exoplatform.management.jmx.annotations.Property;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rpc.RPCService;
 import org.picocontainer.Startable;
 
@@ -29,8 +37,25 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: QuotaManagerImpl.java 34360 2009-07-22 23:58:59Z tolusha $
  */
+@Managed
+@NameTemplate(@Property(key = "service", value = "QuotaManager"))
 public abstract class QuotaManagerImpl implements ExtendedQuotaManager, Startable
 {
+
+   /**
+    * Logger.
+    */
+   protected final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.QuotaManagerImpl");
+
+   /**
+    * Cache configuration properties.
+    */
+   public static final String CACHE_CONFIGURATION_PROPERTIES_PARAM = "cache-configuration";
+
+   /**
+    * Exceeded quota behaviour value parameter.
+    */
+   public static final String EXCEEDED_QUOTA_BEHAVIOUR = "exceeded-quota-behaviour";
 
    /**
     * All {@link WorkspaceQuotaManager} belonging to repository.
@@ -44,19 +69,33 @@ public abstract class QuotaManagerImpl implements ExtendedQuotaManager, Startabl
    protected final RPCService rpcService;
 
    /**
+    * What should to do when node exceeds quota limit. There are two behavior:
+    * <ul>
+    *    <li>{@link ExceededQuotaBehavior#WARNING}: log a warning</li>
+    *    <li>{@link ExceededQuotaBehavior#ERROR}: throw an exception</li>
+    * </ul>
+    */
+   protected final ExceededQuotaBehavior exceededQuotaBehavior;
+
+   /**
     * QuotaManager constructor.
     */
-   public QuotaManagerImpl(InitParams initParams, RPCService rpcService)
+   public QuotaManagerImpl(InitParams initParams, RPCService rpcService, ConfigurationManager cfm)
    {
       this.rpcService = rpcService;
+
+      ValueParam param = initParams.getValueParam(EXCEEDED_QUOTA_BEHAVIOUR);
+      this.exceededQuotaBehavior =
+         param == null ? ExceededQuotaBehavior.WARNING : ExceededQuotaBehavior
+            .valueOf(param.getValue().toUpperCase());
    }
 
    /**
     * QuotaManager constructor.
     */
-   public QuotaManagerImpl(InitParams initParams)
+   public QuotaManagerImpl(InitParams initParams, ConfigurationManager cfm)
    {
-      this(initParams, null);
+      this(initParams, null, cfm);
    }
 
    /**
@@ -67,15 +106,6 @@ public abstract class QuotaManagerImpl implements ExtendedQuotaManager, Startabl
    {
       RepositoryQuotaManager rqm = getRepositoryQuotaManager(repositoryName);
       return rqm.getNodeDataSize(workspaceName, nodePath);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public long getNodeQuota(String repositoryName, String workspaceName, String nodePath) throws QuotaManagerException
-   {
-      // TODO Auto-generated method stub
-      return 0;
    }
 
    /**
@@ -110,15 +140,6 @@ public abstract class QuotaManagerImpl implements ExtendedQuotaManager, Startabl
    /**
     * {@inheritDoc}
     */
-   public long getWorkspaceQuota(String repositoryName, String workspaceName) throws QuotaManagerException
-   {
-      // TODO Auto-generated method stub
-      return 0;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    public void setWorkspaceQuota(String repositoryName, String workspaceName, long quotaSize)
       throws QuotaManagerException
    {
@@ -147,15 +168,6 @@ public abstract class QuotaManagerImpl implements ExtendedQuotaManager, Startabl
    /**
     * {@inheritDoc}
     */
-   public long getRepositoryQuota(String repositoryName) throws QuotaManagerException
-   {
-      // TODO Auto-generated method stub
-      return 0;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    public void setRepositoryQuota(String repositoryName, long quotaSize)
       throws QuotaManagerException
    {
@@ -175,19 +187,17 @@ public abstract class QuotaManagerImpl implements ExtendedQuotaManager, Startabl
    /**
     * {@inheritDoc}
     */
+   @Managed
+   @ManagedDescription("Returns global data size")
    public long getGlobalDataSize() throws QuotaManagerException
    {
-      // TODO Auto-generated method stub
-      return 0;
-   }
+      long size = 0;
+      for (RepositoryQuotaManager rqm : rQuotaManagers.values())
+      {
+         size += rqm.getRepositoryDataSize();
+      }
 
-   /**
-    * {@inheritDoc}
-    */
-   public long getGlobalQuota() throws QuotaManagerException
-   {
-      // TODO Auto-generated method stub
-      return 0;
+      return size;
    }
 
    /**
@@ -202,6 +212,8 @@ public abstract class QuotaManagerImpl implements ExtendedQuotaManager, Startabl
    /**
     * {@inheritDoc}
     */
+   @Managed
+   @ManagedDescription("Returns global index size")
    public long getGlobalIndexSize() throws QuotaManagerException
    {
       long size = 0;
@@ -241,6 +253,21 @@ public abstract class QuotaManagerImpl implements ExtendedQuotaManager, Startabl
    public void unregisterRepositoryQuotaManager(String repositoryName)
    {
       rQuotaManagers.remove(repositoryName);
+   }
+
+   /**
+    * Behavior when quota exceeded.
+    */
+   public enum ExceededQuotaBehavior {
+      WARNING, ERROR
+   }
+
+   /**
+    * Returns behaviour when quota limit is exceeded.
+    */
+   ExceededQuotaBehavior getExceededQuotaBehaviour()
+   {
+      return exceededQuotaBehavior;
    }
 
    private RepositoryQuotaManager getRepositoryQuotaManager(String repositoryName) throws QuotaManagerException

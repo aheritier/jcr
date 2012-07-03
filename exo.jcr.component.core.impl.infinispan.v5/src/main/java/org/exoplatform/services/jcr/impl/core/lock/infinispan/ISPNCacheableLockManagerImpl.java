@@ -17,12 +17,11 @@
  */
 package org.exoplatform.services.jcr.impl.core.lock.infinispan;
 
-import org.exoplatform.commons.utils.SecurityHelper;
 import org.exoplatform.container.configuration.ConfigurationManager;
 import org.exoplatform.management.annotations.Managed;
 import org.exoplatform.management.jmx.annotations.NameTemplate;
 import org.exoplatform.management.jmx.annotations.Property;
-import org.exoplatform.services.database.utils.DialectDetecter;
+import org.exoplatform.services.database.utils.JDBCUtils;
 import org.exoplatform.services.jcr.config.MappedParametrizedObjectEntry;
 import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
 import org.exoplatform.services.jcr.config.WorkspaceEntry;
@@ -31,7 +30,6 @@ import org.exoplatform.services.jcr.impl.core.lock.cacheable.AbstractCacheableLo
 import org.exoplatform.services.jcr.impl.core.lock.cacheable.CacheableSessionLockManager;
 import org.exoplatform.services.jcr.impl.core.lock.cacheable.LockData;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspacePersistentDataManager;
-import org.exoplatform.services.jcr.impl.storage.jdbc.DBConstants;
 import org.exoplatform.services.jcr.infinispan.ISPNCacheFactory;
 import org.exoplatform.services.jcr.infinispan.PrivilegedISPNCacheHelper;
 import org.exoplatform.services.log.ExoLogger;
@@ -42,9 +40,6 @@ import org.infinispan.Cache;
 import org.infinispan.lifecycle.ComponentStatus;
 
 import java.io.Serializable;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,6 +48,7 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 import javax.jcr.lock.LockException;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 
@@ -210,115 +206,28 @@ public class ISPNCacheableLockManagerImpl extends AbstractCacheableLockManager
       //(i.e. no cache loader is used (possibly pattern is changed, to used another cache loader))
       if (dataSourceName != null)
       {
-         String dialect;
-         // detect dialect of data-source
          try
          {
             this.dataSource = (DataSource)new InitialContext().lookup(dataSourceName);
-            if (dataSource == null)
-            {
-               throw new RepositoryException("DataSource (" + dataSourceName + ") can't be null");
-            }
-
-            Connection jdbcConn = null;
-            try
-            {
-               PrivilegedExceptionAction<Connection> action = new PrivilegedExceptionAction<Connection>()
-               {
-                  public Connection run() throws Exception
-                  {
-                     return dataSource.getConnection();
-                  }
-               };
-               try
-               {
-                  jdbcConn = SecurityHelper.doPrivilegedExceptionAction(action);
-               }
-               catch (PrivilegedActionException pae)
-               {
-                  Throwable cause = pae.getCause();
-                  if (cause instanceof SQLException)
-                  {
-                     throw (SQLException)cause;
-                  }
-                  else if (cause instanceof RuntimeException)
-                  {
-                     throw (RuntimeException)cause;
-                  }
-                  else
-                  {
-                     throw new RuntimeException(cause);
-                  }
-               }
-
-               dialect = DialectDetecter.detect(jdbcConn.getMetaData());
-            }
-            finally
-            {
-               if (jdbcConn != null && !jdbcConn.isClosed())
-               {
-                  try
-                  {
-                     jdbcConn.close();
-                  }
-                  catch (SQLException e)
-                  {
-                     throw new RepositoryException("Error of connection close", e);
-                  }
-               }
-            }
          }
-         catch (Exception e)
+         catch (NamingException e)
          {
-            throw new RepositoryException("Error configuring JDBC cache loader", e);
+            throw new RepositoryException(e.getMessage(), e);
          }
 
-         // default values, will be overridden with types suitable for concrete data base.
-         String blobType = "BLOB";
-         String charType = "VARCHAR(512)";
-         String timeStampType = "BIGINT";
-         // HSSQL
-         if (dialect.equalsIgnoreCase(DBConstants.DB_DIALECT_HSQLDB))
+         String blobType;
+         String charType;
+         String timeStampType;
+         try
          {
-            blobType = "VARBINARY(65535)";
+            blobType = JDBCUtils.getAppropriateBlobType(dataSource);
+            charType = JDBCUtils.getAppropriateCharType(dataSource);
+            timeStampType = JDBCUtils.getAppropriateTimestamp(dataSource);
          }
-         // MYSQL
-         else if (dialect.equalsIgnoreCase(DBConstants.DB_DIALECT_MYSQL)
-            || dialect.equalsIgnoreCase(DBConstants.DB_DIALECT_MYSQL_UTF8)
-            || dialect.equalsIgnoreCase(DBConstants.DB_DIALECT_MYSQL_MYISAM)
-            || dialect.equalsIgnoreCase(DBConstants.DB_DIALECT_MYSQL_MYISAM_UTF8))
+         catch (SQLException e)
          {
-            blobType = "LONGBLOB";
+            throw new RepositoryException(e.getMessage(), e);
          }
-         // ORACLE
-         else if (dialect.equalsIgnoreCase(DBConstants.DB_DIALECT_ORACLE)
-            || dialect.equalsIgnoreCase(DBConstants.DB_DIALECT_ORACLEOCI))
-         {
-            // Oracle suggests the use VARCHAR2 instead of VARCHAR while declaring data type.
-            charType = "VARCHAR2(512)";
-            timeStampType = "NUMBER(19, 0)";
-         }
-         // POSTGRE SQL
-         else if (dialect.equalsIgnoreCase(DBConstants.DB_DIALECT_PGSQL))
-         {
-            blobType = "bytea";
-         }
-         // Microsoft SQL
-         else if (dialect.equalsIgnoreCase(DBConstants.DB_DIALECT_MSSQL))
-         {
-            blobType = "VARBINARY(MAX)";
-         }
-         // SYBASE
-         else if (dialect.equalsIgnoreCase(DBConstants.DB_DIALECT_SYBASE))
-         {
-            blobType = "IMAGE";
-         }
-         // INGRES
-         else if (dialect.equalsIgnoreCase(DBConstants.DB_DIALECT_INGRES))
-         {
-            blobType = "long byte";
-         }
-         // else GENERIC, DB2 etc
 
          // set parameters if not defined
          // if parameter is missing in configuration, then 

@@ -226,11 +226,11 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
       FIND_NODES_COUNT = "select count(*) from JCR_SITEM I where I.I_CLASS=1 and I.CONTAINER_NAME=?";
 
       FIND_WORKSPACE_DATA_SIZE =
-         "select sum(V.LENGTH) from JCR_SITEM I, JCR_SVALUE V where I.I_CLASS=2 and I.CONTAINER_NAME=?"
+         "select sum(length(data)) from JCR_SITEM I, JCR_SVALUE V where I.I_CLASS=2 and I.CONTAINER_NAME=?"
             + " and I.ID=V.PROPERTY_ID";
 
       FIND_NODE_DATA_SIZE =
-         "select sum(LENGTH) from JCR_SITEM I, JCR_SVALUE V where I.PARENT_ID=? and I.I_CLASS=2"
+         "select sum(length(data)) from JCR_SITEM I, JCR_SVALUE V where I.PARENT_ID=? and I.I_CLASS=2"
             + " and I.CONTAINER_NAME=? and I.ID=V.PROPERTY_ID";
    }
 

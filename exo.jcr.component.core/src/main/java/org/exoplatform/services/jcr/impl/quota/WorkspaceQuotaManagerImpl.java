@@ -55,7 +55,7 @@ import javax.jcr.RepositoryException;
  * @version $Id: WorkspaceQuotaManagerImpl.java 34360 2009-07-22 23:58:59Z tolusha $
  */
 @Managed
-@NameTemplate(@Property(key = "service", value = "QuotaManager"))
+@NameTemplate(@Property(key = "service", value = "WorkspaceQuotaManager"))
 public class WorkspaceQuotaManagerImpl implements WorkspaceQuotaManager, Startable
 {
 

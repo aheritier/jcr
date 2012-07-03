@@ -98,6 +98,14 @@ public class HSQLDBSingleDbJDBCConnection extends SingleDbJDBCConnection
             + " I.P_MULTIVALUED, V.ORDER_NUM, V.DATA, V.STORAGE_DESC from JCR_SITEM I LEFT OUTER JOIN"
             + " JCR_SVALUE V ON (V.PROPERTY_ID=I.ID)"
             + " where I.PARENT_ID=? and I.I_CLASS=2 and I.CONTAINER_NAME=? order by I.NAME";
+
+      FIND_WORKSPACE_DATA_SIZE =
+         "select sum(bit_length(data)/8) from JCR_SITEM I, JCR_SVALUE V where I.I_CLASS=2 and I.CONTAINER_NAME=?"
+            + " and I.ID=V.PROPERTY_ID";
+
+      FIND_NODE_DATA_SIZE =
+         "select sum(bit_length(data)/8) from JCR_SITEM I, JCR_SVALUE V where I.PARENT_ID=? and I.I_CLASS=2"
+            + " and I.CONTAINER_NAME=? and I.ID=V.PROPERTY_ID";
    }
 
    /**

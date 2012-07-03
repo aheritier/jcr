@@ -87,6 +87,12 @@ public class HSQLDBMultiDbJDBCConnection extends MultiDbJDBCConnection
          "select I.ID, I.PARENT_ID, I.NAME, I.VERSION, I.I_CLASS, I.I_INDEX, I.N_ORDER_NUM, I.P_TYPE, I.P_MULTIVALUED,"
             + " V.ORDER_NUM, V.DATA, V.STORAGE_DESC from " + JCR_ITEM + " I LEFT OUTER JOIN " + JCR_VALUE
             + " V ON (V.PROPERTY_ID=I.ID)" + " where I.PARENT_ID=? and I.I_CLASS=2 order by I.NAME";
+
+      FIND_WORKSPACE_DATA_SIZE = "select sum(bit_length(data)/8) from " + JCR_VALUE;
+
+      FIND_NODE_DATA_SIZE =
+         "select sum(bit_length(data)/8) from " + JCR_ITEM + " I, " + JCR_VALUE
+            + " V  where I.PARENT_ID=? and I.I_CLASS=2 and I.ID=V.PROPERTY_ID";
    }
 
    /**
