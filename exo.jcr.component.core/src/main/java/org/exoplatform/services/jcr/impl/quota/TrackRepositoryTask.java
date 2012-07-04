@@ -18,27 +18,47 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+
+
 /**
- * Is occurred when there is no information about which quota limit
- * is set for specific entity.
- * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: UnsetQuotaLimitException.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: TrackWorkspaceTask.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class UnknownQuotaLimitException extends QuotaManagerException
+public class TrackRepositoryTask implements Runnable
 {
 
    /**
-    * Constructs a new exception with the specified detail message.  The
-    * cause is not initialized, and may subsequently be initialized by
-    * a call to {@link #initCause}.
-    *
-    * @param   message   the detail message. The detail message is saved for 
-    *          later retrieval by the {@link #getMessage()} method.
+    * Logger.
     */
-   public UnknownQuotaLimitException(String message)
+   private final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.TrackRepositoryTask");
+
+   private final RepositoryQuotaManager quotaManager;
+
+   private final long quotaLimit;
+
+   /**
+    * TrackRepositoryTask constructor. 
+    */
+   public TrackRepositoryTask(RepositoryQuotaManager quotaManager, long quotaLimit)
    {
-      super(message);
+      this.quotaManager = quotaManager;
+      this.quotaLimit = quotaLimit;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   public void run()
+   {
+      try
+      {
+         quotaManager.trackRepository(quotaLimit);
+      }
+      catch (QuotaManagerException e)
+      {
+         LOG.error(e.getMessage(), e);
+      }
+   }
 }

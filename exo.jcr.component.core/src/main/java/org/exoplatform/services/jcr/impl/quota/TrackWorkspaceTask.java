@@ -18,21 +18,47 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+
+
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: ExtendedQuotaManager.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: TrackWorkspaceTask.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public interface ExtendedQuotaManager extends QuotaManager
+public class TrackWorkspaceTask implements Runnable
 {
 
    /**
-    * Registers {@link RepositoryQuotaManager} by name. To delegate repository based operation
-    * to appropriate level. 
+    * Logger.
     */
-   void registerRepositoryQuotaManager(String repositoryName, RepositoryQuotaManager rQuotaManager);
+   private final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.TrackWorkspaceTask");
+
+   private final WorkspaceQuotaManager quotaManager;
+
+   private final long quotaLimit;
 
    /**
-    * Unregisters {@link RepositoryQuotaManager} by name. 
+    * TrackWorkspaceTask constructor. 
     */
-   void unregisterRepositoryQuotaManager(String repositoryName);
+   public TrackWorkspaceTask(WorkspaceQuotaManager quotaManager, long quotaLimit)
+   {
+      this.quotaManager = quotaManager;
+      this.quotaLimit = quotaLimit;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void run()
+   {
+      try
+      {
+         quotaManager.trackWorkspace(quotaLimit);
+      }
+      catch (QuotaManagerException e)
+      {
+         LOG.error(e.getMessage(), e);
+      }
+   }
 }

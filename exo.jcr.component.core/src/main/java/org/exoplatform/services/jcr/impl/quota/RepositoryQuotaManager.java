@@ -18,72 +18,285 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
+import org.exoplatform.management.annotations.Managed;
+import org.exoplatform.management.annotations.ManagedDescription;
+import org.exoplatform.management.jmx.annotations.NameTemplate;
+import org.exoplatform.management.jmx.annotations.Property;
+import org.exoplatform.services.jcr.config.RepositoryEntry;
+import org.picocontainer.Startable;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+
 /**
- * Per workspace QuotaManager operation.
- * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: RepositoryQuotaManager.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public interface RepositoryQuotaManager
+@Managed
+@NameTemplate(@Property(key = "service", value = "RepositoryQuotaManager"))
+public class RepositoryQuotaManager implements Startable
 {
 
    /**
-    * Returns a size of the Node. Size of the node is a length of content, stored in it.
-    * If node has child nodes - size is a sum of all child nodes sizes plus 
-    * size of the current node.
-    * 
-    * @param workspaceName
-    *          the workspace name in repository 
-    * @param nodePath
-    *          the absolute path to node
-    * 
-    * @throws QuotaManagerException If an error occurs.
+    * All {@link WorkspaceQuotaManager} belonging to repository.
     */
-   long getNodeDataSize(String workspaceName, String nodePath) throws QuotaManagerException;
+   private Map<String, WorkspaceQuotaManager> wsQuotaManagers = new ConcurrentHashMap<String, WorkspaceQuotaManager>();
 
    /**
-    * Returns a size of particular workspace in repository.
-    *  
-    * @param workspaceName
-    *          the workspace name in repository
-    * @throws QuotaManagerExceptionIf an error occurs.
+    * The repository name.
     */
-   long getWorkspaceDataSize(String workspaceName) throws QuotaManagerException;
+   protected final String rName;
 
    /**
-    * Returns a index size of particular workspace in repository. 
-    * 
-    * @param workspaceName
-    *          the workspace name in repository
-    * @throws QuotaManagerException If an error occurs.
+    * The quota manager.
     */
-   long getWorkspaceIndexSize(String workspaceName) throws QuotaManagerException;
+   protected final AbstractQuotaManager quotaManager;
 
    /**
-    * Returns a size of the repository. Size of the repository is the the size of all nodes 
-    * are placed in all workspaces.
-    * 
-    * @throws QuotaManagerExceptionIf an error occurs.
+    * Executor service.
     */
-   long getRepositoryDataSize() throws QuotaManagerException;
+   protected final Executor executor;
 
    /**
-    * Returns a index size. Size of the repository's index is a size of the 
-    * index directory at file system.
-    * 
-    * @throws QuotaManagerException If an error occurs.
+    * {@link QuotaPersister}
     */
-   long getRepositoryIndexSize() throws QuotaManagerException;
+   protected final QuotaPersister quotaPersister;
+
+   /**
+    * Indicates if repository data size exceeded quota limit.
+    */
+   protected boolean alerted;
+
+   /**
+    * RepositoryQuotaManagerImpl constructor.
+    */
+   public RepositoryQuotaManager(AbstractQuotaManager quotaManager, RepositoryEntry rEntry)
+   {
+      this.rName = rEntry.getName();
+      this.quotaManager = quotaManager;
+      this.executor = getExecutorSevice();
+      this.quotaPersister = getQuotaPersister();
+   }
+
+   /**
+    * @see QuotaManager#getNodeDataSize(String, String, String)
+    */
+   public long getNodeDataSize(String workspaceName, String nodePath) throws QuotaManagerException
+   {
+      WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+      return wqm.getNodeDataSize(nodePath);
+   }
+
+   /**
+    * @see QuotaManager#getNodeQuota(String, String, String)
+    */
+   public long getNodeQuota(String workspaceName, String nodePath) throws QuotaManagerException
+   {
+      WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+      return wqm.getNodeQuota(nodePath);
+   }
+
+   /**
+    * @see QuotaManager#getWorkspaceQuota(String, String)
+    */
+   public long getWorkspaceQuota(String workspaceName) throws QuotaManagerException
+   {
+      WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+      return wqm.getWorkspaceQuota(workspaceName);
+   }
+
+   /**
+    * @see QuotaManager#setWorkspaceQuota(String, String, long)
+    */
+   public void setWorkspaceQuota(String workspaceName, long quotaLimti) throws QuotaManagerException
+   {
+      WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+      wqm.setWorkspaceQuota(quotaLimti);
+   }
+
+   /**
+    * @see QuotaManager#getWorkspaceDataSize(String, String)
+    */
+   public long getWorkspaceDataSize(String workspaceName) throws QuotaManagerException
+   {
+      WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+      return wqm.getWorkspaceDataSize();
+   }
+
+   /**
+    * @see QuotaManager#getWorkspaceIndexSize(String, String)
+    */
+   public long getWorkspaceIndexSize(String workspaceName) throws QuotaManagerException
+   {
+      WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+      return wqm.getWorkspaceIndexSize();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Managed
+   @ManagedDescription("Sets repository quta limit")
+   public void setRepositoryQuota(long quotaLimit) throws QuotaManagerException
+   {
+      quotaPersister.setRepositoryQuota(rName, quotaLimit);
+      
+      TrackRepositoryTask task = new TrackRepositoryTask(this, quotaLimit);
+      executor.execute(task);
+   }
+
+   /**
+    * Tracks repository by calculating the size if a stored content,
+    *
+    * @param quotaLimit
+    *          the quota limit         
+    * @throws QuotaManagerException
+    *          if any exception is occurred
+    */
+   protected void trackRepository(long quotaLimit) throws QuotaManagerException
+   {
+      long dataSize;
+
+      try
+      {
+         dataSize = quotaPersister.getRepositoryDataSize(rName);
+      }
+      catch (UnknownQuotaUsedException e)
+      {
+         dataSize = getRepositoryDataSizeDirectly();
+         quotaPersister.setRepositoryDataSize(rName, dataSize);
+      }
+
+      if (dataSize > quotaLimit)
+      {
+         alertRepsitory();
+      }
+   }
+
+   /**
+    * Marks repository as alerted, when data size exceeded quota limit.
+    */
+   protected void alertRepsitory()
+   {
+      alerted = true;
+   }
+
+   /**
+    * @see QuotaManager#getRepositoryQuota(String)
+    */
+   @Managed
+   @ManagedDescription("Returns repository quta limit")
+   public long getRepositoryQuota() throws QuotaManagerException
+   {
+      return quotaPersister.getRepositoryQuota(rName);
+   }
+
+   /**
+    * @see QuotaManager#getRepositoryDataSize(String)
+    */
+   @Managed
+   @ManagedDescription("Returns repository data size")
+   public long getRepositoryDataSize() throws QuotaManagerException
+   {
+      try
+      {
+         return quotaPersister.getRepositoryDataSize(rName);
+      }
+      catch (UnknownQuotaUsedException e)
+      {
+         return getRepositoryDataSizeDirectly();
+      }
+   }
+
+   /**
+    * @see QuotaManager#getRepositoryIndexSize(String)
+    */
+   @Managed
+   @ManagedDescription("Returns repository index size")
+   public long getRepositoryIndexSize() throws QuotaManagerException
+   {
+      long size = 0;
+      for (WorkspaceQuotaManager wQuotaManager : wsQuotaManagers.values())
+      {
+         size += wQuotaManager.getWorkspaceIndexSize();
+      }
+
+      return size;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void start()
+   {
+      quotaManager.registerRepositoryQuotaManager(rName, this);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void stop()
+   {
+      wsQuotaManagers.clear();
+      quotaManager.unregisterRepositoryQuotaManager(rName);
+   }
 
    /**
     * Registers {@link WorkspaceQuotaManager} by name. To delegate workspace based operation
     * to appropriate level. 
     */
-   void registerWorkspaceQuotaManager(String workspaceName, WorkspaceQuotaManager wQuotaManager);
+   public void registerWorkspaceQuotaManager(String workspaceName, WorkspaceQuotaManager wQuotaManager)
+   {
+      wsQuotaManagers.put(workspaceName, wQuotaManager);
+   }
 
    /**
     * Unregisters {@link WorkspaceQuotaManager} by name. 
     */
-   void unregisterWorkspaceQuotaManager(String workspaceName);
+   public void unregisterWorkspaceQuotaManager(String workspaceName)
+   {
+      wsQuotaManagers.remove(workspaceName);
+   }
 
+   /**
+    * Returns {@link Executor} instance.
+    */
+   protected Executor getExecutorSevice()
+   {
+      return quotaManager.getExecutorSevice();
+   }
+
+   /**
+    * Returns {@link QuotaPersister} instance.
+    */
+   protected QuotaPersister getQuotaPersister()
+   {
+      return quotaManager.getQuotaPersister();
+   }
+
+   /**
+    * Returns repository data size by summing size of all workspaces.
+    */
+   private long getRepositoryDataSizeDirectly() throws QuotaManagerException
+   {
+      long size = 0;
+      for (WorkspaceQuotaManager wQuotaManager : wsQuotaManagers.values())
+      {
+         size += wQuotaManager.getWorkspaceDataSize();
+      }
+
+      return size;
+   }
+
+   private WorkspaceQuotaManager getWorkspaceQuotaManager(String workspaceName) throws QuotaManagerException
+   {
+      WorkspaceQuotaManager wqm = wsQuotaManagers.get(workspaceName);
+      if (wqm == null)
+      {
+         throw new QuotaManagerException("Workspace " + workspaceName + " is not registered in " + rName);
+      }
+
+      return wqm;
+   }
 }

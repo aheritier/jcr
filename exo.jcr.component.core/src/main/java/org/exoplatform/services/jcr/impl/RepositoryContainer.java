@@ -62,8 +62,8 @@ import org.exoplatform.services.jcr.impl.dataflow.persistent.CacheableWorkspaceD
 import org.exoplatform.services.jcr.impl.dataflow.persistent.LinkedWorkspaceStorageCacheImpl;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.LocalWorkspaceDataManagerStub;
 import org.exoplatform.services.jcr.impl.dataflow.session.TransactionableResourceManager;
-import org.exoplatform.services.jcr.impl.quota.RepositoryQuotaManagerImpl;
-import org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManagerImpl;
+import org.exoplatform.services.jcr.impl.quota.RepositoryQuotaManager;
+import org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager;
 import org.exoplatform.services.jcr.impl.storage.SystemDataContainerHolder;
 import org.exoplatform.services.jcr.impl.storage.value.StandaloneStoragePluginProvider;
 import org.exoplatform.services.jcr.impl.util.io.FileCleanerHolder;
@@ -319,7 +319,7 @@ public class RepositoryContainer extends ExoContainer
                   workspaceContainer.registerComponentImplementation(LinkedWorkspaceStorageCacheImpl.class);
                }
 
-               workspaceContainer.registerComponentImplementation(WorkspaceQuotaManagerImpl.class);
+               workspaceContainer.registerComponentImplementation(WorkspaceQuotaManager.class);
                workspaceContainer.registerComponentImplementation(WorkspaceResumer.class);
                workspaceContainer.registerComponentImplementation(CacheableWorkspaceDataManager.class);
                workspaceContainer.registerComponentImplementation(LocalWorkspaceDataManagerStub.class);
@@ -608,7 +608,7 @@ public class RepositoryContainer extends ExoContainer
          {
             public Void run() throws RepositoryConfigurationException, RepositoryException
             {
-               registerComponentImplementation(RepositoryQuotaManagerImpl.class);
+               registerComponentImplementation(RepositoryQuotaManager.class);
                registerComponentImplementation(RepositorySuspendController.class);
                registerComponentImplementation(RepositoryCheckController.class);
                registerComponentImplementation(IdGenerator.class);

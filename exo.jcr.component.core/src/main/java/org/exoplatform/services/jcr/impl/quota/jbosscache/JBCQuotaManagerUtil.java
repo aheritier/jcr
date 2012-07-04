@@ -22,7 +22,7 @@ import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.PropertiesParam;
 import org.exoplatform.container.xml.Property;
 import org.exoplatform.services.jcr.config.MappedParametrizedObjectEntry;
-import org.exoplatform.services.jcr.impl.quota.QuotaManagerImpl;
+import org.exoplatform.services.jcr.impl.quota.AbstractQuotaManager;
 import org.exoplatform.services.jcr.jbosscache.ExoJBossCacheFactory;
 
 import java.util.Iterator;
@@ -31,9 +31,9 @@ import javax.jcr.RepositoryException;
 
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: Utils.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: JBCQuotaManagerUtil.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class Utils
+public class JBCQuotaManagerUtil
 {
    // ------------------------------------------ jbosscache parameters names
 
@@ -114,13 +114,13 @@ public class Utils
       qmEntry.putParameterValue(JBOSSCACHE_JDBC_CL_FQN_COLUMN_TYPE, DEFAULT_JBOSSCACHE_JDBC_CL_FQN_COLUMN_TYPE);
       qmEntry.putParameterValue(JBOSSCACHE_JDBC_CL_FQN_COLUMN, DEFAULT_JBOSSCACHE_JDBC_CL_FQN_COLUMN);
       qmEntry.putParameterValue(JBOSSCACHE_JDBC_CL_PARENT_COLUMN, DEFAULT_JBOSSCACHE_JDBC_CL_PARENT_COLUMN);
-      qmEntry.putParameterValue(JBOSSCACHE_QUOTA_LIMIT_REGION, JBCQuotaManagerImpl.QUOTA_LIMIT.toString());
-      qmEntry.putParameterValue(JBOSSCACHE_QUOTA_USED_REGION, JBCQuotaManagerImpl.QUOTA_USED.toString());
+      qmEntry.putParameterValue(JBOSSCACHE_QUOTA_LIMIT_REGION, JBCQuotaPersister.QUOTA.toString());
+      qmEntry.putParameterValue(JBOSSCACHE_QUOTA_USED_REGION, JBCQuotaPersister.DATA_SIZE.toString());
    }
 
    private static void putConfiguredValues(InitParams initParams, MappedParametrizedObjectEntry qmEntry)
    {
-      PropertiesParam props = initParams.getPropertiesParam(QuotaManagerImpl.CACHE_CONFIGURATION_PROPERTIES_PARAM);
+      PropertiesParam props = initParams.getPropertiesParam(AbstractQuotaManager.CACHE_CONFIGURATION_PROPERTIES_PARAM);
       for (Iterator<Property> iter = props.getPropertyIterator(); iter.hasNext();)
       {
          Property prop = iter.next();

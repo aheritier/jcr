@@ -52,14 +52,14 @@ public class PathPatternUtils
    }
 
    /**
-    * Returns <code>true</code> if the specified path matches by pattern.
+    * Returns <code>true</code> if a specified path matches by pattern.
     * 
     * @param pattern
     *          pattern for node path
     * @param absPath
     *          node absolute path
     * @param isDeep
-    *          indicates if children nodes should be matched by pattern or not
+    *          indicates if children nodes can be matched by pattern or not
     * 
     * @return a <code>boolean</code>.
     */

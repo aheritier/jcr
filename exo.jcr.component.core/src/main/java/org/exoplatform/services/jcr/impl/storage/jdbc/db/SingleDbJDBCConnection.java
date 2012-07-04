@@ -148,7 +148,6 @@ public class SingleDbJDBCConnection extends JDBCStorageConnection
 
       UPDATE_NODE = "update JCR_SITEM set VERSION=?, I_INDEX=?, N_ORDER_NUM=? where ID=?";
       UPDATE_PROPERTY = "update JCR_SITEM set VERSION=?, P_TYPE=? where ID=?";
-      //UPDATE_VALUE = "update JCR_SVALUE set DATA=?, STORAGE_DESC=? where PROPERTY_ID=?, ORDER_NUM=?";
 
       DELETE_ITEM = "delete from JCR_SITEM where ID=?";
       DELETE_VALUE = "delete from JCR_SVALUE where PROPERTY_ID=?";

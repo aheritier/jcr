@@ -27,9 +27,8 @@ package org.exoplatform.services.jcr.impl.quota;
 public interface QuotaManager
 {
    /**
-    * Returns a size of the Node. Size of the node is a length of content, stored in it.
-    * If node has child nodes - size is a sum of all child nodes sizes plus 
-    * size of the current node.
+    * Returns a node data size. Size of the node is a size of content stored in it 
+    * and in all descendant nodes.
     *
     * @param repositoryName
     *          the repository name            
@@ -42,7 +41,7 @@ public interface QuotaManager
    long getNodeDataSize(String repositoryName, String workspaceName, String nodePath) throws QuotaManagerException;
 
    /**
-    * Returns a quota of the Node. Quota of the node is a maximum allowed size of this node.
+    * Returns a node quota limit, a maximum allowed node data size of this node.
     * 
     * @param repositoryName
     *          the repository name            
@@ -56,7 +55,7 @@ public interface QuotaManager
    long getNodeQuota(String repositoryName, String workspaceName, String nodePath) throws QuotaManagerException;
 
    /**
-    * Setting a quota of the Node.
+    * Sets node quota limit, a maximum allowed node data size of this node.
     *
     * @param repositoryName
     *          the repository name            
@@ -64,40 +63,40 @@ public interface QuotaManager
     *          the workspace name in repository 
     * @param nodePath
     *          the absolute path to node
-    * @param quotaSize
-    *          the maximum allowed sum of content size stored in node
+    * @param quotaLimit
+    *          the maximum allowed node data size of this node
     * @param asyncUpdate
     *          true means checking if node exceeds quota limit will be performed asynchronously, i.e. for some
-    *          period of time difference between new and old content size will be accumulated and only then send to
-    *          validate          
+    *          period of time difference between new and old content size will be accumulated and only then send for
+    *          validation
     * @throws QuotaManagerException If an error occurs.
     */
-   void setNodeQuota(String repositoryName, String workspaceName, String nodePath, long quotaSize, boolean asyncUpdate)
+   void setNodeQuota(String repositoryName, String workspaceName, String nodePath, long quotaLimit, boolean asyncUpdate)
       throws QuotaManagerException;
 
    /**
-    * Setting a quota for group of nodes.
+    * Sets node quota limit for bunch of nodes at same time.
     *
     * @param repositoryName
     *          the repository name            
     * @param workspaceName
     *          the workspace name in repository 
     * @param pattern
-    *          the pattern indicates group of nodes to set quota, allowed <code>*</code> as any node name 
+    *          the pattern indicates bunch of nodes, allowed <code>*</code> as any node name in a path 
     *          and <code>%</code> as any character in name
-    * @param quotaSize
-    *          the maximum allowed sum of content size stored in node
+    * @param quotaLimit
+    *          the maximum allowed node data size of a node
     * @param asyncUpdate
     *          true means checking if node exceeds quota limit will be performed asynchronously, i.e. for some
-    *          period of time difference between new and old content size will be accumulated and only then send to
-    *          validate          
+    *          period of time difference between new and old content size will be accumulated and only then send for
+    *          validation
     * @throws QuotaManagerException If an error occurs.
     */
-   void setGroupOfNodesQuota(String repositoryName, String workspaceName, String pattern, long quotaSize,
+   void setGroupOfNodesQuota(String repositoryName, String workspaceName, String pattern, long quotaLimit,
       boolean asyncUpdate) throws QuotaManagerException;
 
    /**
-    * Returns current sum of content size stored in workspace.
+    * Returns workspace data size. Size of workspace is a size of content stored in a root node.
     * 
     * @param repositoryName
     *          the repository name            
@@ -108,7 +107,7 @@ public interface QuotaManager
    long getWorkspaceDataSize(String repositoryName, String workspaceName) throws QuotaManagerException;
 
    /**
-    * Returns maximum allowed sum of content size that can be stored in workspace.
+    * Returns workspace quota limit, a maximum allowed workspace data size.
     *
     * @param repositoryName
     *          the repository name            
@@ -120,18 +119,18 @@ public interface QuotaManager
    long getWorkspaceQuota(String repositoryName, String workspaceName) throws QuotaManagerException;
 
    /**
-    * Setting maximum allowed sum of content size stored in workspace.
+    * Sets workspace quota limit, a maximum allowed workspace data size.
     *
     * @param repositoryName
     *          the repository name            
     * @param workspaceName
     *          the workspace name in repository 
-    * @param quotaSize
-    *          the sum of maximum allowed content size
+    * @param quotaLimit
+    *          the maximum allowed workspace data size.
     *                   
     * @throws QuotaManagerException If an error occurs.
     */
-   void setWorkspaceQuota(String repositoryName, String workspaceName, long quotaSize) throws QuotaManagerException;
+   void setWorkspaceQuota(String repositoryName, String workspaceName, long quotaLimit) throws QuotaManagerException;
 
    /**
     * Returns a index size of particular workspace in repository. Size of the workspace's index is a size of the 
@@ -147,7 +146,7 @@ public interface QuotaManager
    long getWorkspaceIndexSize(String repositoryName, String workspaceName) throws QuotaManagerException;
 
    /**
-    * Returns current sum of content size stored in repository.
+    * Returns repository data size. Size of repository is a sum of all its workspaces data size.
     * 
     * @param repositoryName
     *          the repository name            
@@ -156,7 +155,7 @@ public interface QuotaManager
    long getRepositoryDataSize(String repositoryName) throws QuotaManagerException;
 
    /**
-    * Returns maximum allowed sum of content size stored in repository.
+    * Returns a repository quota limit, a maximum allowed repository data size.
     *
     * @param repositoryName
     *          the repository name            
@@ -166,16 +165,16 @@ public interface QuotaManager
    long getRepositoryQuota(String repositoryName) throws QuotaManagerException;
 
    /**
-    * Setting maximum allowed sum of content size that can be stored in repository.
+    * Sets a repository quota limit, a maximum allowed repository data size.
     *
     * @param repositoryName
     *          the repository name            
-    * @param quotaSize
-    *          the sum of maximum allowed content size
+    * @param quotaLimit
+    *          the maximum allowed repository data size.
     *                   
     * @throws QuotaManagerException If an error occurs.
     */
-   void setRepositoryQuota(String repositoryName, long quotaSize) throws QuotaManagerException;
+   void setRepositoryQuota(String repositoryName, long quotaLimit) throws QuotaManagerException;
 
    /**
     * Returns a index size of particular repository. Size of the repository's index is a size of the 
@@ -189,14 +188,14 @@ public interface QuotaManager
    long getRepositoryIndexSize(String repositoryName) throws QuotaManagerException;
 
    /**
-    * Returns current sum of content size whole JCR.
+    * Returns global data size. Global size is sum of all repositories data size.
     * 
     * @throws QuotaManagerException If an error occurs.
     */
    long getGlobalDataSize() throws QuotaManagerException;
 
    /**
-    * Returns maximum allowed sum of content size stored in whole JCR.
+    * Returns global quota limit, a maximum allowed global data size.
     *
     * @throws QuotaManagerException If an error occurs.
     * @throws UnknownQuotaLimitException If quota limit was not set 
@@ -204,17 +203,17 @@ public interface QuotaManager
    long getGlobalQuota() throws QuotaManagerException;
 
    /**
-    * Setting maximum allowed sum of content size that can be stored in whole JCR.
+    * Sets global quota limit, a maximum allowed global data size.
     *
-    * @param quotaSize
+    * @param quotaLimit
     *          the sum of maximum allowed content size
     *                   
     * @throws QuotaManagerException If an error occurs.
     */
-   void setGlobalQuota(long quotaSize) throws QuotaManagerException;
+   void setGlobalQuota(long quotaLimit) throws QuotaManagerException;
 
    /**
-    * Returns a index size of whole JCR repository. 
+    * Returns a global index size. 
     *  
     * @throws QuotaManagerException If an error occurs.
     */
