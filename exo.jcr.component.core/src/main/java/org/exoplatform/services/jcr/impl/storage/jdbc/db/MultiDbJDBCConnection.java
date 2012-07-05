@@ -716,4 +716,20 @@ public class MultiDbJDBCConnection extends JDBCStorageConnection
    {
       throw new UnsupportedOperationException("Method is not supported");
    }
+
+   /** 
+    * {@inheritDoc} 
+    */
+   protected ResultSet findWorkspacePropertiesOnValueStorage() throws SQLException
+   {
+      throw new UnsupportedOperationException("Method is not supported");
+   }
+
+   /** 
+    * {@inheritDoc} 
+    */
+   protected ResultSet findNodePropertiesOnValueStorage(String parentId) throws SQLException
+   {
+      throw new UnsupportedOperationException("Method is not supported");
+   }
 }

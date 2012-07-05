@@ -229,9 +229,19 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
          "select sum(length(data)) from JCR_SITEM I, JCR_SVALUE V where I.I_CLASS=2 and I.CONTAINER_NAME=?"
             + " and I.ID=V.PROPERTY_ID";
 
+      FIND_WORKSPACE_PROPERTIES_ON_VALUE_STORAGE =
+         "select V.PROPERTY_ID, V.STORAGE_DESC, V.ORDER_NUM from JCR_SITEM I, JCR_SVALUE V"
+            + " where I.I_CLASS=2 and I.CONTAINER_NAME=? and I.ID=V.PROPERTY_ID and V.STORAGE_DESC is not null";
+
       FIND_NODE_DATA_SIZE =
          "select sum(length(data)) from JCR_SITEM I, JCR_SVALUE V where I.PARENT_ID=? and I.I_CLASS=2"
             + " and I.CONTAINER_NAME=? and I.ID=V.PROPERTY_ID";
+
+      FIND_NODE_PROPERTIES_ON_VALUE_STORAGE =
+         "select V.PROPERTY_ID, V.STORAGE_DESC, V.ORDER_NUM from JCR_SITEM I, JCR_SVALUE V"
+            + " where I.PARENT_ID=? and I.I_CLASS=2 and I.CONTAINER_NAME=? and I.ID=V.PROPERTY_ID"
+            + " and V.STORAGE_DESC is not null";
+
    }
 
    /**
@@ -1153,10 +1163,6 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
       {
          findWorkspaceDataSize = dbConnection.prepareStatement(FIND_WORKSPACE_DATA_SIZE);
       }
-      else
-      {
-         findWorkspaceDataSize.clearParameters();
-      }
 
       findWorkspaceDataSize.setString(1, containerConfig.containerName);
 
@@ -1172,14 +1178,42 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
       {
          findNodeDataSize = dbConnection.prepareStatement(FIND_NODE_DATA_SIZE);
       }
-      else
-      {
-         findNodeDataSize.clearParameters();
-      }
 
-      findNodeDataSize.setString(1, getInternalId(parentId));
+      findNodeDataSize.setString(1, parentId);
       findNodeDataSize.setString(2, containerConfig.containerName);
 
       return findNodeDataSize.executeQuery();
+   }
+
+   /** 
+    * {@inheritDoc} 
+    */
+   protected ResultSet findWorkspacePropertiesOnValueStorage() throws SQLException
+   {
+      if (findWorkspacePropertiesOnValueStorage == null)
+      {
+         findWorkspacePropertiesOnValueStorage =
+            dbConnection.prepareStatement(FIND_WORKSPACE_PROPERTIES_ON_VALUE_STORAGE);
+      }
+
+      findWorkspacePropertiesOnValueStorage.setString(1, containerConfig.containerName);
+
+      return findWorkspacePropertiesOnValueStorage.executeQuery();
+   }
+
+   /** 
+    * {@inheritDoc} 
+    */
+   protected ResultSet findNodePropertiesOnValueStorage(String parentId) throws SQLException
+   {
+      if (findNodePropertiesOnValueStorage == null)
+      {
+         findNodePropertiesOnValueStorage = dbConnection.prepareStatement(FIND_NODE_PROPERTIES_ON_VALUE_STORAGE);
+      }
+
+      findNodePropertiesOnValueStorage.setString(1, parentId);
+      findNodePropertiesOnValueStorage.setString(2, containerConfig.containerName);
+
+      return findNodePropertiesOnValueStorage.executeQuery();
    }
 }

@@ -456,4 +456,5 @@ public interface WorkspaceStorageConnection
     * @throws RepositoryException
     */
    public long getNodeDataSize(String nodeIdentifier) throws RepositoryException;
+
 }

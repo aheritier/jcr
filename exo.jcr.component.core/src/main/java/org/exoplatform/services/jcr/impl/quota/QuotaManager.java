@@ -75,13 +75,26 @@ public interface QuotaManager
       throws QuotaManagerException;
 
    /**
+    * Removes node quota limit, a maximum allowed node data size of this node.
+    *
+    * @param repositoryName
+    *          the repository name            
+    * @param workspaceName
+    *          the workspace name in repository 
+    * @param nodePath
+    *          the absolute path to node
+    * @throws QuotaManagerException If an error occurs.
+    */
+   void removeNodeQuota(String repositoryName, String workspaceName, String nodePath) throws QuotaManagerException;
+
+   /**
     * Sets node quota limit for bunch of nodes at same time.
     *
     * @param repositoryName
     *          the repository name            
     * @param workspaceName
     *          the workspace name in repository 
-    * @param pattern
+    * @param patternPath
     *          the pattern indicates bunch of nodes, allowed <code>*</code> as any node name in a path 
     *          and <code>%</code> as any character in name
     * @param quotaLimit
@@ -92,8 +105,23 @@ public interface QuotaManager
     *          validation
     * @throws QuotaManagerException If an error occurs.
     */
-   void setGroupOfNodesQuota(String repositoryName, String workspaceName, String pattern, long quotaLimit,
+   void setGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath, long quotaLimit,
       boolean asyncUpdate) throws QuotaManagerException;
+
+   /**
+    * Removes node quota limit for bunch of nodes at same time.
+    *
+    * @param repositoryName
+    *          the repository name            
+    * @param workspaceName
+    *          the workspace name in repository 
+    * @param patternPath
+    *          the pattern indicates bunch of nodes, allowed <code>*</code> as any node name in a path 
+    *          and <code>%</code> as any character in name
+    * @throws QuotaManagerException If an error occurs.
+    */
+   void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath)
+      throws QuotaManagerException;
 
    /**
     * Returns workspace data size. Size of workspace is a size of content stored in a root node.
@@ -131,6 +159,17 @@ public interface QuotaManager
     * @throws QuotaManagerException If an error occurs.
     */
    void setWorkspaceQuota(String repositoryName, String workspaceName, long quotaLimit) throws QuotaManagerException;
+
+   /**
+    * Removes workspace quota limit, a maximum allowed workspace data size.
+    *
+    * @param repositoryName
+    *          the repository name            
+    * @param workspaceName
+    *          the workspace name in repository 
+    * @throws QuotaManagerException If an error occurs.
+    */
+   void removeWorkspaceQuota(String repositoryName, String workspaceName) throws QuotaManagerException;
 
    /**
     * Returns a index size of particular workspace in repository. Size of the workspace's index is a size of the 
@@ -177,6 +216,15 @@ public interface QuotaManager
    void setRepositoryQuota(String repositoryName, long quotaLimit) throws QuotaManagerException;
 
    /**
+    * Removes a repository quota limit, a maximum allowed repository data size.
+    *
+    * @param repositoryName
+    *          the repository name            
+    * @throws QuotaManagerException If an error occurs.
+    */
+   void removeRepositoryQuota(String repositoryName) throws QuotaManagerException;
+
+   /**
     * Returns a index size of particular repository. Size of the repository's index is a size of the 
     * index directory at file system belonging to repository.
     *  
@@ -211,6 +259,13 @@ public interface QuotaManager
     * @throws QuotaManagerException If an error occurs.
     */
    void setGlobalQuota(long quotaLimit) throws QuotaManagerException;
+
+   /**
+    * Removes global quota limit, a maximum allowed global data size.
+    *
+    * @throws QuotaManagerException If an error occurs.
+    */
+   void removeGlobalQuota() throws QuotaManagerException;
 
    /**
     * Returns a global index size. 

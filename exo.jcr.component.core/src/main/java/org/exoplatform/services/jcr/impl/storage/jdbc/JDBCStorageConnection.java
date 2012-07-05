@@ -19,6 +19,7 @@
 package org.exoplatform.services.jcr.impl.storage.jdbc;
 
 import org.exoplatform.commons.utils.PrivilegedFileHelper;
+import org.exoplatform.services.database.utils.JDBCUtils;
 import org.exoplatform.services.jcr.access.AccessControlEntry;
 import org.exoplatform.services.jcr.access.AccessControlList;
 import org.exoplatform.services.jcr.dataflow.ItemState;
@@ -193,6 +194,10 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
    protected PreparedStatement findWorkspaceDataSize;
 
    protected PreparedStatement findNodeDataSize;
+
+   protected PreparedStatement findNodePropertiesOnValueStorage;
+
+   protected PreparedStatement findWorkspacePropertiesOnValueStorage;
 
    /**
     * Read-only flag, if true the connection is marked as READ-ONLY.
@@ -651,6 +656,16 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
          if (findNodeDataSize != null)
          {
             findNodeDataSize.close();
+         }
+
+         if (findNodePropertiesOnValueStorage != null)
+         {
+            findNodePropertiesOnValueStorage.close();
+         }
+
+         if (findWorkspacePropertiesOnValueStorage != null)
+         {
+            findWorkspacePropertiesOnValueStorage.close();
          }
       }
       catch (SQLException e)
@@ -1483,21 +1498,22 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
     */
    public long getNodesCount() throws RepositoryException
    {
-      ResultSet countNodes;
       try
       {
-         countNodes = findNodesCount();
-         if (countNodes.next())
+         ResultSet countNodes = findNodesCount();
+         try
          {
             return countNodes.getLong(1);
+         }
+         finally
+         {
+            JDBCUtils.freeResources(countNodes, null, null);
          }
       }
       catch (SQLException e)
       {
-         throw new RepositoryException(e);
+         throw new RepositoryException("Can not calculate nodes count", e);
       }
-
-      throw new RepositoryException("Can not calculate nodes count");
    }
 
    /**
@@ -1508,21 +1524,53 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
     */
    public long getWorkspaceDataSize() throws RepositoryException
    {
-      ResultSet workspaceDataSize;
+      long dataSize = 0;
+
+      ResultSet result = null;
       try
       {
-         workspaceDataSize = findWorkspaceDataSize();
-         if (workspaceDataSize.next())
+         result = findWorkspaceDataSize();
+         try
          {
-            return workspaceDataSize.getLong(1);
+            if (result.next())
+            {
+               dataSize += result.getLong(1);
+            }
+         }
+         finally
+         {
+            JDBCUtils.freeResources(result, null, null);
+         }
+
+         result = findWorkspacePropertiesOnValueStorage();
+         try
+         {
+            while (result.next())
+            {
+               String storageDesc = result.getString(DBConstants.COLUMN_VSTORAGE_DESC);
+               String propertyId = result.getString(DBConstants.COLUMN_VPROPERTY_ID);
+               int orderNum = result.getInt(DBConstants.COLUMN_VORDERNUM);
+
+               ValueIOChannel channel = containerConfig.valueStorageProvider.getChannel(storageDesc);
+
+               dataSize += channel.getValueSize(propertyId, orderNum);
+            }
+         }
+         finally
+         {
+            JDBCUtils.freeResources(result, null, null);
          }
       }
-      catch (SQLException e)
+      catch (IOException e)
       {
          throw new RepositoryException(e);
       }
+      catch (SQLException e)
+      {
+         throw new RepositoryException(e.getMessage(), e);
+      }
 
-      throw new RepositoryException("Can not calculate workspace data size " + containerConfig.containerName);
+      return dataSize;
    }
 
    /**
@@ -1533,21 +1581,53 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
     */
    public long getNodeDataSize(String nodeIdentifier) throws RepositoryException
    {
-      ResultSet workspaceDataSize;
+      long dataSize = 0;
+
+      ResultSet result = null;
       try
       {
-         workspaceDataSize = findNodeDataSize(nodeIdentifier);
-         if (workspaceDataSize.next())
+         result = findNodeDataSize(getInternalId(nodeIdentifier));
+         try
          {
-            return workspaceDataSize.getLong(1);
+            if (result.next())
+            {
+               dataSize += result.getLong(1);
+            }
+         }
+         finally
+         {
+            JDBCUtils.freeResources(result, null, null);
+         }
+
+         result = findNodePropertiesOnValueStorage(getInternalId(nodeIdentifier));
+         try
+         {
+            while (result.next())
+            {
+               String storageDesc = result.getString(DBConstants.COLUMN_VSTORAGE_DESC);
+               String propertyId = result.getString(DBConstants.COLUMN_VPROPERTY_ID);
+               int orderNum = result.getInt(DBConstants.COLUMN_VORDERNUM);
+
+               ValueIOChannel channel = containerConfig.valueStorageProvider.getChannel(storageDesc);
+
+               dataSize += channel.getValueSize(propertyId, orderNum);
+            }
+         }
+         finally
+         {
+            JDBCUtils.freeResources(result, null, null);
          }
       }
-      catch (SQLException e)
+      catch (IOException e)
       {
          throw new RepositoryException(e);
       }
+      catch (SQLException e)
+      {
+         throw new RepositoryException(e.getMessage(), e);
+      }
 
-      throw new RepositoryException("Can not calculate workspace data size " + containerConfig.containerName);
+      return dataSize;
    }
 
    // ------------------ Private methods ---------------
@@ -2886,5 +2966,9 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
 
    protected abstract ResultSet findWorkspaceDataSize() throws SQLException;
 
+   protected abstract ResultSet findWorkspacePropertiesOnValueStorage() throws SQLException;
+
    protected abstract ResultSet findNodeDataSize(String nodeIdentifier) throws SQLException;
+
+   protected abstract ResultSet findNodePropertiesOnValueStorage(String parentId) throws SQLException;
 }

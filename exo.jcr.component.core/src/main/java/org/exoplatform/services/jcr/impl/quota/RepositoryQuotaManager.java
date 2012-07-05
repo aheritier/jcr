@@ -98,6 +98,44 @@ public class RepositoryQuotaManager implements Startable
    }
 
    /**
+    * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)
+    */
+   public void setNodeQuota(String workspaceName, String nodePath, long quotaLimit, boolean asyncUpdate)
+      throws QuotaManagerException
+   {
+      WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+      wqm.setNodeQuota(nodePath, quotaLimit, asyncUpdate);
+   }
+
+   /**
+    * @see QuotaManager#setGroupOfNodesQuota(String, String, String, long, boolean)
+    */
+   public void setGroupOfNodesQuota(String workspaceName, String patternPath, long quotaLimit,
+      boolean asyncUpdate) throws QuotaManagerException
+   {
+      WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+      wqm.setGroupOfNodesQuota(patternPath, quotaLimit, asyncUpdate);
+   }
+
+   /**
+    * @see QuotaManager#removeNodeQuota(String, String, String)
+    */
+   public void removeNodeQuota(String workspaceName, String nodePath) throws QuotaManagerException
+   {
+      WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+      wqm.removeNodeQuota(nodePath);
+   }
+
+   /**
+    * @see QuotaManager#removeGroupOfNodesQuota(String, String, String)
+    */
+   public void removeGroupOfNodesQuota(String workspaceName, String nodePath) throws QuotaManagerException
+   {
+      WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+      wqm.removeGroupOfNodesQuota(nodePath);
+   }
+
+   /**
     * @see QuotaManager#getWorkspaceQuota(String, String)
     */
    public long getWorkspaceQuota(String workspaceName) throws QuotaManagerException
@@ -113,6 +151,15 @@ public class RepositoryQuotaManager implements Startable
    {
       WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
       wqm.setWorkspaceQuota(quotaLimti);
+   }
+
+   /**
+    * @see QuotaManager#removeWorkspaceQuota(String, String, long)
+    */
+   public void removeWorkspaceQuota(String workspaceName) throws QuotaManagerException
+   {
+      WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+      wqm.removeWorkspaceQuota();
    }
 
    /**
@@ -134,7 +181,7 @@ public class RepositoryQuotaManager implements Startable
    }
 
    /**
-    * {@inheritDoc}
+    * @see QuotaManager#setRepositoryQuota(String, long)
     */
    @Managed
    @ManagedDescription("Sets repository quta limit")
@@ -144,6 +191,17 @@ public class RepositoryQuotaManager implements Startable
       
       TrackRepositoryTask task = new TrackRepositoryTask(this, quotaLimit);
       executor.execute(task);
+   }
+
+   /**
+    * @see QuotaManager#removeRepositoryQuota(String)
+    */
+   @Managed
+   @ManagedDescription("Removes repository quta limit")
+   public void removeRepositoryQuota() throws QuotaManagerException
+   {
+      alerted = false;
+      quotaPersister.removeRepositoryQuota(rName);
    }
 
    /**
@@ -168,18 +226,7 @@ public class RepositoryQuotaManager implements Startable
          quotaPersister.setRepositoryDataSize(rName, dataSize);
       }
 
-      if (dataSize > quotaLimit)
-      {
-         alertRepsitory();
-      }
-   }
-
-   /**
-    * Marks repository as alerted, when data size exceeded quota limit.
-    */
-   protected void alertRepsitory()
-   {
-      alerted = true;
+      alerted = dataSize > quotaLimit;
    }
 
    /**
@@ -230,6 +277,7 @@ public class RepositoryQuotaManager implements Startable
     */
    public void start()
    {
+      // TODO
       quotaManager.registerRepositoryQuotaManager(rName, this);
    }
 

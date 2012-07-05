@@ -821,7 +821,6 @@ public class JBossCacheWorkspaceStorageCache implements WorkspaceStorageCache, S
       {
          cache.getNode(fqn).setResident(true);
       }
-
    }
 
    protected static String readJBCConfig(final WorkspaceEntry wsConfig) throws RepositoryConfigurationException

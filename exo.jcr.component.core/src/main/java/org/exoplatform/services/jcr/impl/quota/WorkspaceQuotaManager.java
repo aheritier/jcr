@@ -131,7 +131,7 @@ public class WorkspaceQuotaManager implements Startable
    {
       try
       {
-         return quotaPersister.getNodeQuota(rName, wsName, nodePath);
+         return quotaPersister.getNodeDataSize(rName, wsName, nodePath);
       }
       catch (UnknownQuotaUsedException e)
       {
@@ -150,6 +150,50 @@ public class WorkspaceQuotaManager implements Startable
    }
 
    /**
+    * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)
+    */
+   @Managed
+   @ManagedDescription("Sets a node quota limit")
+   public void setNodeQuota(String nodePath, long quotaLimit, boolean asyncUpdate) throws QuotaManagerException
+   {
+      quotaPersister.setNodeQuota(rName, wsName, nodePath, quotaLimit, asyncUpdate);
+
+      TrackNodeTask task = new TrackNodeTask(this, nodePath, quotaLimit, asyncUpdate);
+      executor.execute(task);
+   }
+
+   /**
+    * @see QuotaManager#setGroupOfNodesQuota(String, String, String, long, boolean)
+    */
+   @Managed
+   @ManagedDescription("Sets a quota limit for a bunch of nodes")
+   public void setGroupOfNodesQuota(String patternPath, long quotaLimit, boolean asyncUpdate)
+      throws QuotaManagerException
+   {
+      quotaPersister.setGroupOfNodeQuota(rName, wsName, patternPath, quotaLimit, asyncUpdate);
+   }
+
+   /**
+    * @see QuotaManager#removeNodeQuota(String, String, String)
+    */
+   @Managed
+   @ManagedDescription("Removes a quota limit for a node")
+   public void removeNodeQuota(String nodePath) throws QuotaManagerException
+   {
+      quotaPersister.removeNodeQuota(rName, wsName, nodePath);
+   }
+
+   /**
+    * @see QuotaManager#removeGroupOfNodesQuota(String, String, String)
+    */
+   @Managed
+   @ManagedDescription("Removes a quota limit for a bunch of nodes")
+   public void removeGroupOfNodesQuota(String nodePath) throws QuotaManagerException
+   {
+      quotaPersister.removeGroupOfNodesQuota(rName, wsName, nodePath);
+   }
+
+   /**
     * @see QuotaManager#setWorkspaceQuota(String, String, long)
     */
    @ManagedDescription("Sets workspace quota limit")
@@ -159,6 +203,16 @@ public class WorkspaceQuotaManager implements Startable
 
       TrackWorkspaceTask quotaTask = new TrackWorkspaceTask(this, quotaLimit);
       executor.execute(quotaTask);
+   }
+
+   /**
+    * @see QuotaManager#removeWorkspaceQuota(String, String, long)
+    */
+   @ManagedDescription("Removes workspace quota limit")
+   public void removeWorkspaceQuota() throws QuotaManagerException
+   {
+      alerted = false;
+      quotaPersister.removeWorkspaceQuota(rName, wsName);
    }
 
    /**
@@ -225,14 +279,6 @@ public class WorkspaceQuotaManager implements Startable
    }
 
    /**
-    * Marks workspace as alerted, when data size exceeded quota limit.
-    */
-   protected void alertWorkspace()
-   {
-      alerted = true;
-   }
-
-   /**
     * Tracks workspace by calculating the size if a stored content,
     *
     * @param quotaLimit
@@ -254,10 +300,26 @@ public class WorkspaceQuotaManager implements Startable
          quotaPersister.setWorkspaceDataSize(rName, wsName, dataSize);
       }
 
-      if (dataSize > quotaLimit)
+      alerted = dataSize > quotaLimit; 
+   }
+
+   /**
+    * Tracks Node by calculating the size if a stored content,
+    */
+   protected void trackNode(String nodePath, long quotaLimit, boolean asyncUpdate) throws QuotaManagerException
+   {
+      long dataSize;
+
+      try
       {
-         alertWorkspace();
+         dataSize = quotaPersister.getNodeDataSize(rName, wsName, nodePath);
       }
+      catch (UnknownQuotaUsedException e)
+      {
+         dataSize = getNodeDataSizeDirectly(nodePath);
+         quotaPersister.setNodeDataSize(rName, wsName, nodePath, dataSize);
+      }
+
    }
 
    /**

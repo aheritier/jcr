@@ -25,6 +25,7 @@ import org.exoplatform.services.jcr.impl.util.io.DirectoryHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Iterator;
 
 import javax.jcr.Node;
@@ -104,6 +105,26 @@ public class TestWorkspaceQuotaManager extends JcrAPIBaseTest
 
       long measuredSize =  wQuotaManager.getNodeDataSize("/test");
       long expectedSize = ((ByteArrayInputStream)node.getProperty("jcr:primaryType").getStream()).available();
+
+      assertEquals(expectedSize, measuredSize);
+   }
+
+   /**
+    * Checks if node data size returns correct value.
+    */
+   public void testNodeDataSizeFromValueStorage() throws Exception
+   {
+      Node node = session.getRootNode().addNode("test");
+      node.setProperty("value", new FileInputStream(createBLOBTempFile(1000)));
+      session.save();
+
+      WorkspaceQuotaManager wQuotaManager =
+         (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws").getComponent(WorkspaceQuotaManager.class);
+
+      long measuredSize = wQuotaManager.getNodeDataSize("/test");
+
+      long expectedSize = ((ByteArrayInputStream)node.getProperty("jcr:primaryType").getStream()).available();
+      expectedSize += node.getProperty("value").getStream().available();
 
       assertEquals(expectedSize, measuredSize);
    }

@@ -220,6 +220,15 @@ public abstract class FileIOChannel extends ValueFileIOHelper implements ValueIO
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public long getValueSize(String propertyId, int orderNumber) throws IOException
+   {
+      File f = getFile(propertyId, orderNumber);
+      return f.exists() ? f.length() : 0;
+   }
+
+   /**
     * Makes storage file path by propertyId and order number.<br/>
     * 
     * @param propertyId

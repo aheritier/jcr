@@ -71,6 +71,10 @@ public class JBCQuotaManagerUtil
 
    public static final String DEFAULT_JBOSSCACHE_JDBC_TABLE_NAME = "jcr_quota";
 
+   public static final String DEFAULT_JBOSSCACHE_CLUSTER_NAME = "JCR-cluster-quota";
+
+   public static final String DEFAULT_JGROUPS_CONFIGURATION = "udp-mux.xml";
+
    public static final String DEFAULT_JBOSSCACHE_JDBC_TABLE_CREATE = "true";
 
    public static final String DEFAULT_JBOSSCACHE_JDBC_TABLE_DROP = "false";
@@ -116,6 +120,9 @@ public class JBCQuotaManagerUtil
       qmEntry.putParameterValue(JBOSSCACHE_JDBC_CL_PARENT_COLUMN, DEFAULT_JBOSSCACHE_JDBC_CL_PARENT_COLUMN);
       qmEntry.putParameterValue(JBOSSCACHE_QUOTA_LIMIT_REGION, JBCQuotaPersister.QUOTA.toString());
       qmEntry.putParameterValue(JBOSSCACHE_QUOTA_USED_REGION, JBCQuotaPersister.DATA_SIZE.toString());
+
+      qmEntry.putParameterValue(JBOSSCACHE_CLUSTER_NAME, DEFAULT_JBOSSCACHE_CLUSTER_NAME);
+      qmEntry.putParameterValue(JGROUPS_CONFIGURATION, DEFAULT_JGROUPS_CONFIGURATION);
    }
 
    private static void putConfiguredValues(InitParams initParams, MappedParametrizedObjectEntry qmEntry)

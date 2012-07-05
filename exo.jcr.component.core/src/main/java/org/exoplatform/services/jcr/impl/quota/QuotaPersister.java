@@ -35,9 +35,38 @@ public interface QuotaPersister
    long getNodeQuota(String repositoryName, String workspaceName, String nodePath) throws QuotaManagerException;
 
    /**
+    * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)
+    */
+   void setNodeQuota(String repositoryName, String workspaceName, String nodePath, long quotaLimit, boolean asyncUpdate)
+      throws QuotaManagerException;
+
+   /**
+    * @see QuotaManager#removeNodeQuota(String, String, String)
+    */
+   void removeNodeQuota(String repositoryName, String workspaceName, String nodePath) throws QuotaManagerException;
+
+   /**
+    * @see QuotaManager#removeGroupOfNodesQuota(String, String, String)
+    */
+   void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String nodePath)
+      throws QuotaManagerException;
+
+   /**
+    * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)
+    */
+   void setGroupOfNodeQuota(String repositoryName, String workspaceName, String patternPath, long quotaLimit,
+      boolean asyncUpdate) throws QuotaManagerException;
+
+   /**
     * @see QuotaManager#getNodeDataSize(String, String, String)
     */
    long getNodeDataSize(String repositoryName, String workspaceName, String nodePath)
+      throws QuotaManagerException;
+
+   /**
+    * Persists node data size.
+    */
+   void setNodeDataSize(String repositoryName, String workspaceName, String nodePath, long dataSize)
       throws QuotaManagerException;
 
    /**
@@ -50,6 +79,11 @@ public interface QuotaPersister
     */
    void setWorkspaceQuota(String repositoryName, String workspaceName, long quotaLimit)
       throws QuotaManagerException;
+
+   /**
+    * @see QuotaManager#removeWorkspaceQuota(String, String, long)
+    */
+   void removeWorkspaceQuota(String repositoryName, String workspaceName) throws QuotaManagerException;
 
    /**
     * Persists workspace data size.
@@ -70,7 +104,12 @@ public interface QuotaPersister
     * @see QuotaManager#setRepositoryQuota(String, long)
     */
    void setRepositoryQuota(String repositoryName, long quotaLimit) throws QuotaManagerException;
-   
+
+   /**
+    * @see QuotaManager#removeRepositoryQuota
+    */
+   void removeRepositoryQuota(String repositoryName) throws QuotaManagerException;
+
    /**
     * @see QuotaManager#getRepositoryDataSize(String)
     */
@@ -80,6 +119,11 @@ public interface QuotaPersister
     * Persists repository data size.
     */
    void setRepositoryDataSize(String repositoryName, long dataSize) throws QuotaManagerException;
+
+   /**
+    * Register repository in persister. 
+    */
+   void registerRepository(String repositoryName) throws QuotaManagerException;
 
    /**
     * @see QuotaManager#getGlobalDataSize()
@@ -100,5 +144,10 @@ public interface QuotaPersister
     * @see QuotaManager#setGlobalQuota(long)
     */
    void setGlobalQuota(long quotaLimit) throws QuotaManagerException;
+
+   /**
+    * @see QuotaManager#removeGlobalQuota
+    */
+   void removeGlobalQuota() throws QuotaManagerException;
 
 }

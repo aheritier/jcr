@@ -33,6 +33,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.jboss.cache.Cache;
 import org.jboss.cache.Fqn;
+import org.jboss.cache.Node;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -42,8 +43,8 @@ import javax.jcr.RepositoryException;
 /**
  * Cache structure:
  * <ul>
- *    <li>$QUOTA_LIMIT</li>
- *    <li>$QUOTA_USED</li>
+ *    <li>$QUOTA</li>
+ *    <li>$DATA_SIZE</li>
  * </ul>
  * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
@@ -77,6 +78,11 @@ public class JBCQuotaPersister implements QuotaPersister
    protected static final String SIZE = "$SIZE";
 
    /**
+    * Key name.
+    */
+   protected static final String ASYNC_UPATE = "$ASYNC_UPATE";
+
+   /**
     * Relative element name.
     */
    protected static final String QUOTA_PATHES = "$PATHES";
@@ -103,6 +109,9 @@ public class JBCQuotaPersister implements QuotaPersister
          cache = ExoJBossCacheFactory.getShareableUniqueInstanceWithoutEviction(CacheType.QUOTA_CACHE, cache);
          cache.create();
          cache.start();
+
+         createResidentNode(QUOTA);
+         createResidentNode(DATA_SIZE);
       }
       catch (RepositoryException e)
       {
@@ -124,7 +133,7 @@ public class JBCQuotaPersister implements QuotaPersister
       {
          Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS);
 
-         Set<Object> children = cache.getNode(fqn).getChildrenNames();
+         Set<Object> children = cache.getChildrenNames(fqn);
          for (Object pattern : children)
          {
             if (PathPatternUtils.matches((String)pattern, nodePath, false))
@@ -141,11 +150,68 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
+   public void setNodeQuota(String repositoryName, String workspaceName, String nodePath, long quotaLimit,
+      boolean asyncUpdate) throws QuotaManagerException
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHES);
+      cache.put(fqn, SIZE, quotaLimit);
+      cache.put(fqn, ASYNC_UPATE, asyncUpdate);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setGroupOfNodeQuota(String repositoryName, String workspaceName, String patternPath, long quotaLimit,
+      boolean asyncUpdate) throws QuotaManagerException
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS);
+      cache.put(fqn, SIZE, quotaLimit);
+      cache.put(fqn, ASYNC_UPATE, asyncUpdate);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void removeNodeQuota(String repositoryName, String workspaceName, String nodePath)
+      throws QuotaManagerException
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHES, nodePath);
+      cache.remove(fqn, SIZE);
+      cache.remove(fqn, ASYNC_UPATE);
+
+      fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName, nodePath);
+      cache.remove(fqn, SIZE);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String nodePath)
+      throws QuotaManagerException
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, nodePath);
+      cache.remove(fqn, SIZE);
+      cache.remove(fqn, ASYNC_UPATE);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public long getNodeDataSize(String repositoryName, String workspaceName, String nodePath)
       throws QuotaManagerException
    {
       Fqn<String> relativeFqn = Fqn.fromElements(repositoryName, workspaceName, nodePath);
       return getDataSize(relativeFqn);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setNodeDataSize(String repositoryName, String workspaceName, String nodePath, long dataSize)
+      throws QuotaManagerException
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName, nodePath);
+      cache.put(fqn, SIZE, dataSize);
    }
 
    /**
@@ -165,6 +231,18 @@ public class JBCQuotaPersister implements QuotaPersister
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName);
       cache.put(fqn, SIZE, quotaLimit);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void removeWorkspaceQuota(String repositoryName, String workspaceName) throws QuotaManagerException
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName);
+      cache.remove(fqn, SIZE);
+
+      fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
+      cache.remove(fqn, SIZE);
    }
 
    /**
@@ -225,6 +303,26 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
+   public void removeRepositoryQuota(String repositoryName) throws QuotaManagerException
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName);
+      cache.remove(fqn, SIZE);
+
+      fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName);
+      cache.remove(fqn, SIZE);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void registerRepository(String repositoryName) throws QuotaManagerException
+   {
+      cache.getNode(QUOTA).addChild(Fqn.fromElements(repositoryName));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public long getGlobalQuota() throws QuotaManagerException
    {
       return getQuota(Fqn.ROOT);
@@ -236,6 +334,15 @@ public class JBCQuotaPersister implements QuotaPersister
    public void setGlobalQuota(long quotaLimit) throws QuotaManagerException
    {
       cache.put(QUOTA, SIZE, quotaLimit);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void removeGlobalQuota() throws QuotaManagerException
+   {
+      cache.remove(QUOTA, SIZE);
+      cache.remove(DATA_SIZE, SIZE);
    }
 
    /**
@@ -303,4 +410,20 @@ public class JBCQuotaPersister implements QuotaPersister
       return size;
    }
 
+   /**
+    * Checks if node with give FQN not exists and creates resident node.
+    */
+   private void createResidentNode(Fqn<String> fqn)
+   {
+      Node<Serializable, Object> cacheRoot = cache.getRoot();
+      if (!cacheRoot.hasChild(fqn))
+      {
+         cache.getInvocationContext().getOptionOverrides().setCacheModeLocal(true);
+         cacheRoot.addChild(fqn).setResident(true);
+      }
+      else
+      {
+         cache.getNode(fqn).setResident(true);
+      }
+   }
 }

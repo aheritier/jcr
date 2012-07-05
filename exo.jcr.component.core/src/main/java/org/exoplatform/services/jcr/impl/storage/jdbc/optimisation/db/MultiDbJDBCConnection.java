@@ -229,9 +229,16 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
 
       FIND_WORKSPACE_DATA_SIZE = "select sum(length(data)) from " + JCR_VALUE;
 
+      FIND_WORKSPACE_PROPERTIES_ON_VALUE_STORAGE =
+         "select PROPERTY_ID, STORAGE_DESC, ORDER_NUM from " + JCR_VALUE + " where STORAGE_DESC is not null";
+
       FIND_NODE_DATA_SIZE =
          "select sum(length(data)) from " + JCR_ITEM + " I, " + JCR_VALUE
             + " V  where I.PARENT_ID=? and I.I_CLASS=2 and I.ID=V.PROPERTY_ID";
+
+      FIND_NODE_PROPERTIES_ON_VALUE_STORAGE =
+         "select V.PROPERTY_ID, V.STORAGE_DESC, V.ORDER_NUM from " + JCR_ITEM + " I, " + JCR_VALUE + " V  "
+            + "where I.PARENT_ID=? and I.I_CLASS=2 and I.ID=V.PROPERTY_ID and V.STORAGE_DESC is not null";
    }
 
    /**
@@ -1117,12 +1124,22 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
       {
          findWorkspaceDataSize = dbConnection.prepareStatement(FIND_WORKSPACE_DATA_SIZE);
       }
-      else
-      {
-         findWorkspaceDataSize.clearParameters();
-      }
 
       return findWorkspaceDataSize.executeQuery();
+   }
+
+   /** 
+    * {@inheritDoc} 
+    */
+   protected ResultSet findWorkspacePropertiesOnValueStorage() throws SQLException
+   {
+      if (findWorkspacePropertiesOnValueStorage == null)
+      {
+         findWorkspacePropertiesOnValueStorage =
+            dbConnection.prepareStatement(FIND_WORKSPACE_PROPERTIES_ON_VALUE_STORAGE);
+      }
+
+      return findWorkspacePropertiesOnValueStorage.executeQuery();
    }
 
    /** 
@@ -1134,13 +1151,24 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
       {
          findNodeDataSize = dbConnection.prepareStatement(FIND_NODE_DATA_SIZE);
       }
-      else
-      {
-         findNodeDataSize.clearParameters();
-      }
 
-      findNodeDataSize.setString(1, getInternalId(parentId));
+      findNodeDataSize.setString(1, parentId);
 
       return findNodeDataSize.executeQuery();
+   }
+
+   /** 
+    * {@inheritDoc} 
+    */
+   protected ResultSet findNodePropertiesOnValueStorage(String parentId) throws SQLException
+   {
+      if (findNodePropertiesOnValueStorage == null)
+      {
+         findNodePropertiesOnValueStorage = dbConnection.prepareStatement(FIND_NODE_PROPERTIES_ON_VALUE_STORAGE);
+      }
+
+      findNodePropertiesOnValueStorage.setString(1, parentId);
+
+      return findNodePropertiesOnValueStorage.executeQuery();
    }
 }

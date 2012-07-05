@@ -243,6 +243,16 @@ public class DBConstants extends DialectConstants
     */
    protected String FIND_NODE_DATA_SIZE;
 
+   /**
+    * FIND_NODE_PROPERTIES_ON_VALUE_STORAGE.
+    */
+   protected String FIND_NODE_PROPERTIES_ON_VALUE_STORAGE;
+
+   /**
+    * FIND_WORKSPACE_PROPERTIES_ON_VALUE_STORAGE.
+    */
+   protected String FIND_WORKSPACE_PROPERTIES_ON_VALUE_STORAGE;
+
    // ======================== ITEMS table ======================== 
    /**
     * COLUMN_ID.

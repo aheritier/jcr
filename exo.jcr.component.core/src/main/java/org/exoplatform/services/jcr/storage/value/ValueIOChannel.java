@@ -76,6 +76,17 @@ public interface ValueIOChannel
    void repairValueData(String propertyId, int orderNumber) throws IOException;
 
    /**
+    * Returns value data size.
+    * 
+    * @param propertyId 
+    *          Property ID
+    * @param orderNumber 
+    *          Property order number
+    * @throws IOException is thrown if can not create new empty file
+    */
+   long getValueSize(String propertyId, int orderNumber) throws IOException;
+
+   /**
     * Add or update Property value.
     * 
     * @param propertyId

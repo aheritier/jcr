@@ -156,8 +156,28 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    public void setNodeQuota(String repositoryName, String workspaceName, String nodePath, long quotaLimit,
       boolean asyncUpdate) throws QuotaManagerException
    {
-      // TODO Auto-generated method stub
+      RepositoryQuotaManager rqm = getRepositoryQuotaManager(repositoryName);
+      rqm.setNodeQuota(workspaceName, nodePath, quotaLimit, asyncUpdate);
+   }
 
+   /**
+    * {@inheritDoc}
+    */
+   public void removeNodeQuota(String repositoryName, String workspaceName, String nodePath)
+      throws QuotaManagerException
+   {
+      RepositoryQuotaManager rqm = getRepositoryQuotaManager(repositoryName);
+      rqm.removeNodeQuota(workspaceName, nodePath);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String nodePath)
+      throws QuotaManagerException
+   {
+      RepositoryQuotaManager rqm = getRepositoryQuotaManager(repositoryName);
+      rqm.removeGroupOfNodesQuota(workspaceName, nodePath);
    }
 
    /**
@@ -172,10 +192,11 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    /**
     * {@inheritDoc}
     */
-   public void setGroupOfNodesQuota(String repositoryName, String workspaceName, String ancestorPath, long quotaLimit,
+   public void setGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath, long quotaLimit,
       boolean asyncUpdate) throws QuotaManagerException
    {
-      // TODO Auto-generated method stub
+      RepositoryQuotaManager rqm = getRepositoryQuotaManager(repositoryName);
+      rqm.setGroupOfNodesQuota(workspaceName, patternPath, quotaLimit, asyncUpdate);
    }
 
    /**
@@ -186,6 +207,15 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    {
       RepositoryQuotaManager rqm = getRepositoryQuotaManager(repositoryName);
       rqm.setWorkspaceQuota(workspaceName, quotaLimit);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void removeWorkspaceQuota(String repositoryName, String workspaceName) throws QuotaManagerException
+   {
+      RepositoryQuotaManager rqm = getRepositoryQuotaManager(repositoryName);
+      rqm.removeWorkspaceQuota(workspaceName);
    }
 
    /**
@@ -218,11 +248,19 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    /**
     * {@inheritDoc}
     */
-   public void setRepositoryQuota(String repositoryName, long quotaLimit)
-      throws QuotaManagerException
+   public void setRepositoryQuota(String repositoryName, long quotaLimit) throws QuotaManagerException
    {
       RepositoryQuotaManager rqm = getRepositoryQuotaManager(repositoryName);
       rqm.setRepositoryQuota(quotaLimit);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void removeRepositoryQuota(String repositoryName) throws QuotaManagerException
+   {
+      RepositoryQuotaManager rqm = getRepositoryQuotaManager(repositoryName);
+      rqm.removeRepositoryQuota();
    }
 
    /**
@@ -272,6 +310,8 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    /**
     * {@inheritDoc}
     */
+   @Managed
+   @ManagedDescription("Returns global quota limit")
    public void setGlobalQuota(long quotaLimit) throws QuotaManagerException
    {
       quotaPersister.setGlobalQuota(quotaLimit);
@@ -283,6 +323,19 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    /**
     * {@inheritDoc}
     */
+   @Managed
+   @ManagedDescription("Removes global quota limit")
+   public void removeGlobalQuota() throws QuotaManagerException
+   {
+      alerted = false;
+      quotaPersister.removeGlobalQuota();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Managed
+   @ManagedDescription("Returns global quota limit")
    public long getGlobalQuota() throws QuotaManagerException
    {
       return quotaPersister.getGlobalQuota();
@@ -310,10 +363,7 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
          quotaPersister.setGlobalDataSize(dataSize);
       }
 
-      if (dataSize > quotaLimit)
-      {
-         alertGlobal();
-      }
+      alerted = dataSize > quotaLimit;
    }
 
    /**
@@ -351,7 +401,7 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
     * Registers {@link RepositoryQuotaManager} by name. To delegate repository based operation
     * to appropriate level. 
     */
-   public void registerRepositoryQuotaManager(String repositoryName, RepositoryQuotaManager rQuotaManager)
+   protected void registerRepositoryQuotaManager(String repositoryName, RepositoryQuotaManager rQuotaManager)
    {
       rQuotaManagers.put(repositoryName, rQuotaManager);
    }
@@ -359,7 +409,7 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    /**
     * Unregisters {@link RepositoryQuotaManager} by name. 
     */
-   public void unregisterRepositoryQuotaManager(String repositoryName)
+   protected void unregisterRepositoryQuotaManager(String repositoryName)
    {
       rQuotaManagers.remove(repositoryName);
    }
@@ -393,14 +443,6 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    ExceededQuotaBehavior getExceededQuotaBehaviour()
    {
       return exceededQuotaBehavior;
-   }
-
-   /**
-    * Marks JCR instance as alerted, when data size exceeded quota limit.
-    */
-   protected void alertGlobal()
-   {
-      alerted = true;
    }
 
    /**
