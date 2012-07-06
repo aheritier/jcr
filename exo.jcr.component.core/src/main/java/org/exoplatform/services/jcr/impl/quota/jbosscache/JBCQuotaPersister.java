@@ -25,8 +25,8 @@ import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
 import org.exoplatform.services.jcr.impl.quota.PathPatternUtils;
 import org.exoplatform.services.jcr.impl.quota.QuotaManagerException;
 import org.exoplatform.services.jcr.impl.quota.QuotaPersister;
+import org.exoplatform.services.jcr.impl.quota.UnknownQuotaDataSizeException;
 import org.exoplatform.services.jcr.impl.quota.UnknownQuotaLimitException;
-import org.exoplatform.services.jcr.impl.quota.UnknownQuotaUsedException;
 import org.exoplatform.services.jcr.jbosscache.ExoJBossCacheFactory;
 import org.exoplatform.services.jcr.jbosscache.ExoJBossCacheFactory.CacheType;
 import org.exoplatform.services.log.ExoLogger;
@@ -122,12 +122,13 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public long getNodeQuota(String repositoryName, String workspaceName, String nodePath) throws QuotaManagerException
+   public long getNodeQuota(String repositoryName, String workspaceName, String nodePath)
+      throws UnknownQuotaLimitException
    {
-      Fqn<String> relativeFqn = Fqn.fromElements(repositoryName, workspaceName, QUOTA_PATHES, nodePath);
       try
       {
-         return getQuota(relativeFqn);
+         Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHES, nodePath);
+         return getQuota(fqn);
       }
       catch (UnknownQuotaLimitException e)
       {
@@ -138,8 +139,8 @@ public class JBCQuotaPersister implements QuotaPersister
          {
             if (PathPatternUtils.matches((String)pattern, nodePath, false))
             {
-               relativeFqn = Fqn.fromElements(repositoryName, workspaceName, QUOTA_PATHES, (String)pattern);
-               return getQuota(relativeFqn);
+               fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, nodePath);
+               return getQuota(fqn);
             }
          }
 
@@ -151,7 +152,7 @@ public class JBCQuotaPersister implements QuotaPersister
     * {@inheritDoc}
     */
    public void setNodeQuota(String repositoryName, String workspaceName, String nodePath, long quotaLimit,
-      boolean asyncUpdate) throws QuotaManagerException
+      boolean asyncUpdate)
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHES);
       cache.put(fqn, SIZE, quotaLimit);
@@ -162,7 +163,7 @@ public class JBCQuotaPersister implements QuotaPersister
     * {@inheritDoc}
     */
    public void setGroupOfNodeQuota(String repositoryName, String workspaceName, String patternPath, long quotaLimit,
-      boolean asyncUpdate) throws QuotaManagerException
+      boolean asyncUpdate)
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS);
       cache.put(fqn, SIZE, quotaLimit);
@@ -173,7 +174,6 @@ public class JBCQuotaPersister implements QuotaPersister
     * {@inheritDoc}
     */
    public void removeNodeQuota(String repositoryName, String workspaceName, String nodePath)
-      throws QuotaManagerException
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHES, nodePath);
       cache.remove(fqn, SIZE);
@@ -187,7 +187,6 @@ public class JBCQuotaPersister implements QuotaPersister
     * {@inheritDoc}
     */
    public void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String nodePath)
-      throws QuotaManagerException
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, nodePath);
       cache.remove(fqn, SIZE);
@@ -198,17 +197,16 @@ public class JBCQuotaPersister implements QuotaPersister
     * {@inheritDoc}
     */
    public long getNodeDataSize(String repositoryName, String workspaceName, String nodePath)
-      throws QuotaManagerException
+      throws UnknownQuotaDataSizeException
    {
-      Fqn<String> relativeFqn = Fqn.fromElements(repositoryName, workspaceName, nodePath);
-      return getDataSize(relativeFqn);
+      Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName, nodePath);
+      return getDataSize(fqn);
    }
 
    /**
     * {@inheritDoc}
     */
    public void setNodeDataSize(String repositoryName, String workspaceName, String nodePath, long dataSize)
-      throws QuotaManagerException
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName, nodePath);
       cache.put(fqn, SIZE, dataSize);
@@ -217,17 +215,16 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public long getWorkspaceQuota(String repositoryName, String workspaceName) throws QuotaManagerException
+   public long getWorkspaceQuota(String repositoryName, String workspaceName) throws UnknownQuotaLimitException
    {
-      Fqn<String> relativeFqn = Fqn.fromElements(repositoryName, workspaceName);
-      return getQuota(relativeFqn);
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName);
+      return getQuota(fqn);
    }
 
    /**
     * {@inheritDoc}
     */
    public void setWorkspaceQuota(String repositoryName, String workspaceName, long quotaLimit)
-      throws QuotaManagerException
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName);
       cache.put(fqn, SIZE, quotaLimit);
@@ -236,12 +233,18 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public void removeWorkspaceQuota(String repositoryName, String workspaceName) throws QuotaManagerException
+   public void removeWorkspaceQuota(String repositoryName, String workspaceName)
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName);
       cache.remove(fqn, SIZE);
+   }
 
-      fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
+   /**
+    * {@inheritDoc}
+    */
+   public void removeWorkspaceDataSize(String repositoryName, String workspaceName)
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
       cache.remove(fqn, SIZE);
    }
 
@@ -249,7 +252,6 @@ public class JBCQuotaPersister implements QuotaPersister
     * {@inheritDoc}
     */
    public void setWorkspaceDataSize(String repositoryName, String workspaceName, long dataSize)
-      throws QuotaManagerException
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
       cache.put(fqn, SIZE, dataSize);
@@ -258,25 +260,25 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public long getWorkspaceDataSize(String repositoryName, String workspaceName) throws QuotaManagerException
+   public long getWorkspaceDataSize(String repositoryName, String workspaceName) throws UnknownQuotaDataSizeException
    {
-      Fqn<String> relativeFqn = Fqn.fromElements(repositoryName, workspaceName);
-      return getDataSize(relativeFqn);
+      Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
+      return getDataSize(fqn);
    }
 
    /**
     * {@inheritDoc}
     */
-   public long getRepositoryDataSize(String repositoryName) throws QuotaManagerException
+   public long getRepositoryDataSize(String repositoryName) throws UnknownQuotaDataSizeException
    {
-      Fqn<String> relativeFqn = Fqn.fromElements(repositoryName);
-      return getDataSize(relativeFqn);
+      Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName);
+      return getDataSize(fqn);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void setRepositoryDataSize(String repositoryName, long dataSize) throws QuotaManagerException
+   public void setRepositoryDataSize(String repositoryName, long dataSize)
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName);
       cache.put(fqn, SIZE, dataSize);
@@ -285,16 +287,16 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public long getRepositoryQuota(String repositoryName) throws QuotaManagerException
+   public long getRepositoryQuota(String repositoryName) throws UnknownQuotaLimitException
    {
-      Fqn<String> relativeFqn = Fqn.fromElements(repositoryName);
-      return getQuota(relativeFqn);
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName);
+      return getQuota(fqn);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void setRepositoryQuota(String repositoryName, long quotaLimit) throws QuotaManagerException
+   public void setRepositoryQuota(String repositoryName, long quotaLimit)
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName);
       cache.put(fqn, SIZE, quotaLimit);
@@ -303,35 +305,33 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public void removeRepositoryQuota(String repositoryName) throws QuotaManagerException
+   public void removeRepositoryQuota(String repositoryName)
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName);
       cache.remove(fqn, SIZE);
+   }
 
-      fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName);
+   /**
+    * {@inheritDoc}
+    */
+   public void removeRepositoryDataSize(String repositoryName)
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName);
       cache.remove(fqn, SIZE);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void registerRepository(String repositoryName) throws QuotaManagerException
+   public long getGlobalQuota() throws UnknownQuotaLimitException
    {
-      cache.getNode(QUOTA).addChild(Fqn.fromElements(repositoryName));
+      return getQuota(QUOTA);
    }
 
    /**
     * {@inheritDoc}
     */
-   public long getGlobalQuota() throws QuotaManagerException
-   {
-      return getQuota(Fqn.ROOT);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setGlobalQuota(long quotaLimit) throws QuotaManagerException
+   public void setGlobalQuota(long quotaLimit)
    {
       cache.put(QUOTA, SIZE, quotaLimit);
    }
@@ -339,24 +339,31 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public void removeGlobalQuota() throws QuotaManagerException
+   public void removeGlobalQuota()
    {
       cache.remove(QUOTA, SIZE);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void removeGlobalDataSize()
+   {
       cache.remove(DATA_SIZE, SIZE);
    }
 
    /**
     * {@inheritDoc}
     */
-   public long getGlobalDataSize() throws QuotaManagerException
+   public long getGlobalDataSize() throws UnknownQuotaDataSizeException
    {
-      return getDataSize(Fqn.ROOT);
+      return getDataSize(DATA_SIZE);
    }
 
    /**
     * @inheritDoc}
     */
-   public void setGlobalDataSize(long dataSize) throws QuotaManagerException
+   public void setGlobalDataSize(long dataSize)
    {
       cache.put(DATA_SIZE, SIZE, dataSize);
    }
@@ -376,10 +383,10 @@ public class JBCQuotaPersister implements QuotaPersister
       }
    }
 
-   private long getQuota(Fqn<String> relativeFqn) throws UnknownQuotaLimitException
+   private long getQuota(Fqn<String> fqn) throws UnknownQuotaLimitException
    {
-      Fqn<String> fqn = Fqn.fromRelativeFqn(QUOTA, relativeFqn);
-      Long size = getSize(fqn);
+      cache.getInvocationContext().getOptionOverrides().setForceWriteLock(true);
+      Long size = (Long)cache.get(fqn, SIZE);
 
       if (size == null)
       {
@@ -389,23 +396,15 @@ public class JBCQuotaPersister implements QuotaPersister
       return size;
    }
 
-   private long getDataSize(Fqn<String> relativeFqn) throws UnknownQuotaUsedException
-   {
-      Fqn<String> fqn = Fqn.fromRelativeFqn(DATA_SIZE, relativeFqn);
-      Long size = getSize(fqn);
-
-      if (size == null)
-      {
-         throw new UnknownQuotaUsedException("Data size is unknown");
-      }
-
-      return size;
-   }
-
-   private Long getSize(Fqn<String> fqn)
+   private long getDataSize(Fqn<String> fqn) throws UnknownQuotaDataSizeException
    {
       cache.getInvocationContext().getOptionOverrides().setForceWriteLock(true);
       Long size = (Long)cache.get(fqn, SIZE);
+
+      if (size == null)
+      {
+         throw new UnknownQuotaDataSizeException("Data size is unknown");
+      }
 
       return size;
    }

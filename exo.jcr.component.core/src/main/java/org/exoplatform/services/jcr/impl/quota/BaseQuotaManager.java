@@ -36,20 +36,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: AbstractQuotaManager.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: BaseQuotaManager.java 34360 2009-07-22 23:58:59Z tolusha $
  */
 @Managed
 @NameTemplate(@Property(key = "service", value = "QuotaManager"))
-public abstract class AbstractQuotaManager implements QuotaManager, Startable
+public abstract class BaseQuotaManager implements QuotaManager, Startable
 {
 
    /**
     * Logger.
     */
-   protected final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.AbstractQuotaManager");
+   protected final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.BaseQuotaManager");
 
    /**
     * Cache configuration properties.
@@ -60,6 +61,11 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
     * Exceeded quota behavior value parameter.
     */
    public static final String EXCEEDED_QUOTA_BEHAVIOUR = "exceeded-quota-behaviour";
+
+   /**
+    * Message when entity quota limit is exceeded.
+    */
+   protected static final String EXCEEDED_QUOTA_MESSAGE = "Global data size exceeded global quota limit on ";
 
    /**
     * All {@link WorkspaceQuotaManager} belonging to repository.
@@ -73,14 +79,14 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    protected final RPCService rpcService;
 
    /**
-    * What should to do when node exceeds quota limit. There are two behavior:
+    * What should to do when node exceeds quota limit. There are two behaviors:
     * <ul>
     *    <li>{@link ExceededQuotaBehavior#WARNING}: log a warning</li>
-    *    <li>{@link ExceededQuotaBehavior#ERROR}: throw an exception</li>
+    *    <li>{@link ExceededQuotaBehavior#EXCEPTION}: throw an exception</li>
     * </ul>
     */
    protected final ExceededQuotaBehavior exceededQuotaBehavior;
-   
+
    /**
     * Executor service.
     */
@@ -104,19 +110,28 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    /**
     * Indicates if global data size exceeded quota limit.
     */
-   protected boolean alerted;
+   protected AtomicBoolean alerted = new AtomicBoolean();
+
+   /**
+    * Indicates that JCR instance is tracked.
+    */
+   protected AtomicBoolean tracked = new AtomicBoolean();
+
+   /**
+    * Indicates that JCR instance is quoted.
+    */
+   protected AtomicBoolean quoted = new AtomicBoolean();
 
    /**
     * QuotaManager constructor.
     */
-   public AbstractQuotaManager(InitParams initParams, RPCService rpcService, ConfigurationManager cfm)
+   public BaseQuotaManager(InitParams initParams, RPCService rpcService, ConfigurationManager cfm)
       throws RepositoryConfigurationException, QuotaManagerException
    {
       ValueParam param = initParams.getValueParam(EXCEEDED_QUOTA_BEHAVIOUR);
       this.exceededQuotaBehavior =
-         param == null ? ExceededQuotaBehavior.WARNING : ExceededQuotaBehavior
-            .valueOf(param.getValue().toUpperCase());
-      
+         param == null ? ExceededQuotaBehavior.WARNING : ExceededQuotaBehavior.valueOf(param.getValue().toUpperCase());
+
       this.cfm = cfm;
       this.initParams = initParams;
       this.rpcService = rpcService;
@@ -129,12 +144,34 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
             return new Thread(arg0, "QuotaManagerThread");
          }
       });
+
+      try
+      {
+         long quotaLimit = quotaPersister.getGlobalQuota();
+
+         quoted.set(true);
+         tracked.set(true);
+
+         try
+         {
+            long dataSize = quotaPersister.getGlobalDataSize();
+            alerted.set(dataSize > quotaLimit);
+         }
+         catch (UnknownQuotaDataSizeException e)
+         {
+            // Maybe there is not information about data size yet
+         }
+      }
+      catch (UnknownQuotaLimitException e)
+      {
+         // There is no quota, there is not reason to track 
+      }
    }
 
    /**
     * QuotaManager constructor.
     */
-   public AbstractQuotaManager(InitParams initParams, ConfigurationManager cfm) throws RepositoryConfigurationException,
+   public BaseQuotaManager(InitParams initParams, ConfigurationManager cfm) throws RepositoryConfigurationException,
       QuotaManagerException
    {
       this(initParams, null, cfm);
@@ -301,7 +338,7 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
       {
          return quotaPersister.getGlobalDataSize();
       }
-      catch (UnknownQuotaUsedException e)
+      catch (UnknownQuotaDataSizeException e)
       {
          return getGlobalDataSizeDirectly();
       }
@@ -314,10 +351,10 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    @ManagedDescription("Returns global quota limit")
    public void setGlobalQuota(long quotaLimit) throws QuotaManagerException
    {
+      quoted.set(true);
       quotaPersister.setGlobalQuota(quotaLimit);
 
-      TrackGlobalTask task = new TrackGlobalTask(this, quotaLimit);
-      executor.execute(task);
+      trackGlobal();
    }
 
    /**
@@ -327,8 +364,12 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    @ManagedDescription("Removes global quota limit")
    public void removeGlobalQuota() throws QuotaManagerException
    {
-      alerted = false;
+      alerted.set(false);
+      quoted.set(false);
+
       quotaPersister.removeGlobalQuota();
+
+      untrackGlobal();
    }
 
    /**
@@ -342,28 +383,38 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    }
 
    /**
-    * Tracks whole JCR instance by calculating the size if a stored content,
+    * Adds global tracking.
     *
-    * @param quotaLimit
-    *          the quota limit         
     * @throws QuotaManagerException
     *          if any exception is occurred
     */
-   protected void trackGlobal(long quotaLimit) throws QuotaManagerException
+   protected void trackGlobal() throws QuotaManagerException
    {
-      long dataSize;
-
-      try
+      tracked.set(true);
+      for (RepositoryQuotaManager rqm : rQuotaManagers.values())
       {
-         dataSize = quotaPersister.getGlobalDataSize();
+         rqm.trackRepository();
       }
-      catch (UnknownQuotaUsedException e)
-      {
-         dataSize = getGlobalDataSizeDirectly();
-         quotaPersister.setGlobalDataSize(dataSize);
-      }
+   }
 
-      alerted = dataSize > quotaLimit;
+   /**
+    * Removes global tracking.
+    *
+    * @throws QuotaManagerException
+    *          if any exception is occurred
+    */
+   protected void untrackGlobal() throws QuotaManagerException
+   {
+      tracked.set(false);
+      quotaPersister.removeGlobalDataSize();
+
+      for (RepositoryQuotaManager repositoryQuotaManager : rQuotaManagers.values())
+      {
+         if (!repositoryQuotaManager.isTracked())
+         {
+            repositoryQuotaManager.untrackRepository();
+         }
+      }
    }
 
    /**
@@ -398,6 +449,30 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    }
 
    /**
+    * Accumulate global data size changes.
+    * 
+    * @param delta
+    *          the size on which JCR instance was changed
+    */
+   protected void onAccumulateChanges(long delta)
+   {
+      if (tracked.get())
+      {
+         long dataSize = 0;
+         try
+         {
+            dataSize = quotaPersister.getGlobalDataSize();
+         }
+         catch (UnknownQuotaDataSizeException e)
+         {
+            // it's ok, maybe there is no data size yet
+         }
+
+         quotaPersister.setGlobalDataSize(Math.max(dataSize + delta, 0));
+      }
+   }
+
+   /**
     * Registers {@link RepositoryQuotaManager} by name. To delegate repository based operation
     * to appropriate level. 
     */
@@ -418,7 +493,7 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
     * Behavior when quota exceeded.
     */
    public enum ExceededQuotaBehavior {
-      WARNING, ERROR
+      WARNING, EXCEPTION
    }
 
    /**
@@ -435,6 +510,14 @@ public abstract class AbstractQuotaManager implements QuotaManager, Startable
    protected QuotaPersister getQuotaPersister()
    {
       return quotaPersister;
+   }
+
+   /**
+    * Returns {@link #tracked}.
+    */
+   protected boolean isTracked()
+   {
+      return tracked.get();
    }
 
    /**

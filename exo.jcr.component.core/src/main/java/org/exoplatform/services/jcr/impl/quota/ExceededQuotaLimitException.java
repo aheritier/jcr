@@ -18,15 +18,26 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
+import org.exoplatform.services.jcr.util.StringNumberParser;
+
 /**
- * Is occurred when there is no information about data size
- * already used by specific entity.
+ * Is occurred when entity data size is exceeded quota limit.
  * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: UnsetQuotaLimitException.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: ExceededQuotaLimitException.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class UnknownQuotaUsedException extends QuotaManagerException
+public class ExceededQuotaLimitException extends QuotaManagerException
 {
+
+   /**
+    * Entity quota limit.
+    */
+   private final long quotaLimit;
+
+   /**
+    * Entity data size.
+    */
+   private final long dataSize;
 
    /**
     * Constructs a new exception with the specified detail message.  The
@@ -36,9 +47,38 @@ public class UnknownQuotaUsedException extends QuotaManagerException
     * @param   message   the detail message. The detail message is saved for 
     *          later retrieval by the {@link #getMessage()} method.
     */
-   public UnknownQuotaUsedException(String message)
+   public ExceededQuotaLimitException(String message, long quotaLimit, long dataSize)
    {
       super(message);
+
+      this.quotaLimit = quotaLimit;
+      this.dataSize = dataSize;
+   }
+
+   /**
+    * Getter for {@link #dataSize}.
+    */
+   public long getDataSize()
+   {
+      return dataSize;
+   }
+
+   /**
+    * Getter for {@link #quotaLimit}.
+    */
+   public long getQuotaLimit()
+   {
+      return quotaLimit;
+   }
+
+   private static String createMessage(long quotaLimit, long dataSize)
+   {
+      StringBuilder message = new StringBuilder();
+      message.append("Global data size exceeded global quota limit on ");
+      message.append(StringNumberParser.serializeLong(dataSize - quotaLimit));
+      message.append("B");
+      
+      return message.toString();
    }
 
 }

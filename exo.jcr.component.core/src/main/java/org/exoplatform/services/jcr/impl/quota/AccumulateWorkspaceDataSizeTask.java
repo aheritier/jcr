@@ -21,30 +21,26 @@ package org.exoplatform.services.jcr.impl.quota;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: TrackWorkspaceTask.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class TrackRepositoryTask implements Runnable
+public class AccumulateWorkspaceDataSizeTask implements Runnable
 {
 
    /**
     * Logger.
     */
-   private final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.TrackRepositoryTask");
+   private final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.AccumulateWorkspaceDataSizeTask");
 
-   private final RepositoryQuotaManager quotaManager;
-
-   private final long quotaLimit;
+   private final WorkspaceQuotaManager workspaceQuotaManager;
 
    /**
-    * TrackRepositoryTask constructor. 
+    * TrackWorkspaceTask constructor. 
     */
-   public TrackRepositoryTask(RepositoryQuotaManager quotaManager, long quotaLimit)
+   public AccumulateWorkspaceDataSizeTask(WorkspaceQuotaManager quotaManager)
    {
-      this.quotaManager = quotaManager;
-      this.quotaLimit = quotaLimit;
+      this.workspaceQuotaManager = quotaManager;
    }
 
    /**
@@ -54,7 +50,8 @@ public class TrackRepositoryTask implements Runnable
    {
       try
       {
-         quotaManager.trackRepository(quotaLimit);
+         long dataSize = workspaceQuotaManager.getWorkspaceDataSize();
+         workspaceQuotaManager.onAccumulateChanges(dataSize);
       }
       catch (QuotaManagerException e)
       {

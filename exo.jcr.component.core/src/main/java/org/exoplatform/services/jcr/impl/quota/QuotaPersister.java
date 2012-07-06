@@ -32,122 +32,127 @@ public interface QuotaPersister
    /**
     * @see QuotaManager#getNodeQuota(String, String, String)
     */
-   long getNodeQuota(String repositoryName, String workspaceName, String nodePath) throws QuotaManagerException;
+   long getNodeQuota(String repositoryName, String workspaceName, String nodePath) throws UnknownQuotaLimitException;
 
    /**
     * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)
     */
-   void setNodeQuota(String repositoryName, String workspaceName, String nodePath, long quotaLimit, boolean asyncUpdate)
-      throws QuotaManagerException;
+   void setNodeQuota(String repositoryName, String workspaceName, String nodePath, long quotaLimit, boolean asyncUpdate);
 
    /**
     * @see QuotaManager#removeNodeQuota(String, String, String)
     */
-   void removeNodeQuota(String repositoryName, String workspaceName, String nodePath) throws QuotaManagerException;
+   void removeNodeQuota(String repositoryName, String workspaceName, String nodePath);
 
    /**
     * @see QuotaManager#removeGroupOfNodesQuota(String, String, String)
     */
-   void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String nodePath)
-      throws QuotaManagerException;
+   void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String nodePath);
 
    /**
     * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)
     */
    void setGroupOfNodeQuota(String repositoryName, String workspaceName, String patternPath, long quotaLimit,
-      boolean asyncUpdate) throws QuotaManagerException;
+      boolean asyncUpdate);
 
    /**
     * @see QuotaManager#getNodeDataSize(String, String, String)
     */
    long getNodeDataSize(String repositoryName, String workspaceName, String nodePath)
-      throws QuotaManagerException;
+      throws UnknownQuotaDataSizeException;
 
    /**
     * Persists node data size.
     */
-   void setNodeDataSize(String repositoryName, String workspaceName, String nodePath, long dataSize)
-      throws QuotaManagerException;
+   void setNodeDataSize(String repositoryName, String workspaceName, String nodePath, long dataSize);
 
    /**
     * @see QuotaManager#getWorkspaceQuota(String, String)
     */
-   long getWorkspaceQuota(String repositoryName, String workspaceName) throws QuotaManagerException;
+   long getWorkspaceQuota(String repositoryName, String workspaceName) throws UnknownQuotaLimitException;
 
    /**
     * @see QuotaManager#setWorkspaceQuota(String, String, long)
     */
-   void setWorkspaceQuota(String repositoryName, String workspaceName, long quotaLimit)
-      throws QuotaManagerException;
+   void setWorkspaceQuota(String repositoryName, String workspaceName, long quotaLimit);
 
    /**
     * @see QuotaManager#removeWorkspaceQuota(String, String, long)
     */
-   void removeWorkspaceQuota(String repositoryName, String workspaceName) throws QuotaManagerException;
+   void removeWorkspaceQuota(String repositoryName, String workspaceName);
+
+   /**
+    * Removes record about workspace data size.
+    */
+   void removeWorkspaceDataSize(String repositoryName, String workspaceName);
 
    /**
     * Persists workspace data size.
     */
-   void setWorkspaceDataSize(String repositoryName, String workspaceName, long dataSize) throws QuotaManagerException;
+   void setWorkspaceDataSize(String repositoryName, String workspaceName, long dataSize);
 
    /**
     * @see QuotaManager#getWorkspaceDataSize(String, String)
     */
-   long getWorkspaceDataSize(String repositoryName, String workspaceName) throws QuotaManagerException;
+   long getWorkspaceDataSize(String repositoryName, String workspaceName) throws UnknownQuotaDataSizeException;
 
    /**
     * @see QuotaManager#getRepositoryQuota(String)
     */
-   long getRepositoryQuota(String repositoryName) throws QuotaManagerException;
+   long getRepositoryQuota(String repositoryName) throws UnknownQuotaLimitException;
 
    /**
     * @see QuotaManager#setRepositoryQuota(String, long)
     */
-   void setRepositoryQuota(String repositoryName, long quotaLimit) throws QuotaManagerException;
+   void setRepositoryQuota(String repositoryName, long quotaLimit);
 
    /**
     * @see QuotaManager#removeRepositoryQuota
     */
-   void removeRepositoryQuota(String repositoryName) throws QuotaManagerException;
+   void removeRepositoryQuota(String repositoryName);
+
+   /**
+    * Removes records about repository data size.
+    */
+   void removeRepositoryDataSize(String repositoryName);
 
    /**
     * @see QuotaManager#getRepositoryDataSize(String)
     */
-   long getRepositoryDataSize(String repositoryName) throws QuotaManagerException;
-   
+   long getRepositoryDataSize(String repositoryName) throws UnknownQuotaDataSizeException;
+
    /**
     * Persists repository data size.
     */
-   void setRepositoryDataSize(String repositoryName, long dataSize) throws QuotaManagerException;
-
-   /**
-    * Register repository in persister. 
-    */
-   void registerRepository(String repositoryName) throws QuotaManagerException;
+   void setRepositoryDataSize(String repositoryName, long dataSize);
 
    /**
     * @see QuotaManager#getGlobalDataSize()
     */
-   long getGlobalDataSize() throws QuotaManagerException;
+   long getGlobalDataSize() throws UnknownQuotaDataSizeException;
 
    /**
     * Persists global data size.
     */
-   void setGlobalDataSize(long dataSize) throws QuotaManagerException;
+   void setGlobalDataSize(long dataSize);
 
    /**
-    * @see QuotaManager#getGlobalQuota()
+    * @see QuotaManager#getGlobalQuota() 
     */
-   long getGlobalQuota() throws QuotaManagerException;
+   long getGlobalQuota() throws UnknownQuotaLimitException;
 
    /**
     * @see QuotaManager#setGlobalQuota(long)
     */
-   void setGlobalQuota(long quotaLimit) throws QuotaManagerException;
+   void setGlobalQuota(long quotaLimit);
 
    /**
     * @see QuotaManager#removeGlobalQuota
     */
-   void removeGlobalQuota() throws QuotaManagerException;
+   void removeGlobalQuota();
 
+   /**
+    * Removes record about global data size.
+    */
+   void removeGlobalDataSize();
 }

@@ -40,6 +40,8 @@ import org.exoplatform.services.jcr.impl.core.RepositoryImpl;
 import org.exoplatform.services.jcr.impl.core.query.SearchManager;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspacePersistentDataManager;
 import org.exoplatform.services.jcr.impl.util.io.DirectoryHelper;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
 
 import java.io.File;
@@ -48,6 +50,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jcr.RepositoryException;
 
@@ -59,6 +62,11 @@ import javax.jcr.RepositoryException;
 @NameTemplate(@Property(key = "service", value = "WorkspaceQuotaManager"))
 public class WorkspaceQuotaManager implements Startable
 {
+
+   /**
+    * Logger.
+    */
+   protected final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.WorkspaceQuotaManagerr");
 
    /**
     * Workspace name.
@@ -88,7 +96,7 @@ public class WorkspaceQuotaManager implements Startable
    /**
     * Quota manager of repository level.
     */
-   protected final RepositoryQuotaManager rQuotaManager;
+   protected final RepositoryQuotaManager repositoryQuotaManager;
 
    /**
     * Executor service.
@@ -103,7 +111,17 @@ public class WorkspaceQuotaManager implements Startable
    /**
     * Indicates if workspace data size exceeded quota limit.
     */
-   protected boolean alerted;
+   protected AtomicBoolean alerted = new AtomicBoolean();
+
+   /**
+    * Indicates that workspace is tracked.
+    */
+   protected AtomicBoolean tracked = new AtomicBoolean();
+
+   /**
+    * Indicates that workspace is quoted. 
+    */
+   protected AtomicBoolean quoted = new AtomicBoolean();
 
    /**
     * WorkspaceQuotaManager constructor.
@@ -116,9 +134,31 @@ public class WorkspaceQuotaManager implements Startable
       this.wsContainer = repository.getWorkspaceContainer(wsName);
       this.dataManager = dataManager;
       this.lFactory = repository.getLocationFactory();
-      this.rQuotaManager = rQuotaManager;
+      this.repositoryQuotaManager = rQuotaManager;
       this.executor = rQuotaManager.getExecutorSevice();
       this.quotaPersister = rQuotaManager.getQuotaPersister();
+
+      try
+      {
+         long quotaLimit = quotaPersister.getWorkspaceQuota(rName, wsName);
+         quoted.set(true);
+         tracked.set(true);
+
+         try
+         {
+            long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
+            alerted.set(dataSize > quotaLimit);
+         }
+         catch (UnknownQuotaDataSizeException e)
+         {
+            // Maybe there is not information about data size yet
+         }
+      }
+      catch (UnknownQuotaLimitException e)
+      {
+         // There is no quota, there is not reason to track, except if repository tracking exists
+         tracked.set(repositoryQuotaManager.isTracked());
+      }
    }
 
    /**
@@ -133,7 +173,7 @@ public class WorkspaceQuotaManager implements Startable
       {
          return quotaPersister.getNodeDataSize(rName, wsName, nodePath);
       }
-      catch (UnknownQuotaUsedException e)
+      catch (UnknownQuotaDataSizeException e)
       {
          return getNodeDataSizeDirectly(nodePath);
       }
@@ -199,10 +239,10 @@ public class WorkspaceQuotaManager implements Startable
    @ManagedDescription("Sets workspace quota limit")
    public void setWorkspaceQuota(long quotaLimit) throws QuotaManagerException
    {
+      quoted.set(true);
       quotaPersister.setWorkspaceQuota(rName, wsName, quotaLimit);
 
-      TrackWorkspaceTask quotaTask = new TrackWorkspaceTask(this, quotaLimit);
-      executor.execute(quotaTask);
+      trackWorkspace();
    }
 
    /**
@@ -211,8 +251,15 @@ public class WorkspaceQuotaManager implements Startable
    @ManagedDescription("Removes workspace quota limit")
    public void removeWorkspaceQuota() throws QuotaManagerException
    {
-      alerted = false;
+      quoted.set(false);
+      alerted.set(false);
+
       quotaPersister.removeWorkspaceQuota(rName, wsName);
+
+      if (!repositoryQuotaManager.isTracked())
+      {
+         untrackWorkspace();
+      }
    }
 
    /**
@@ -236,7 +283,7 @@ public class WorkspaceQuotaManager implements Startable
       {
          return quotaPersister.getWorkspaceDataSize(rName, wsName);
       }
-      catch (UnknownQuotaUsedException e)
+      catch (UnknownQuotaDataSizeException e)
       {
          return getWorkspaceDataSizeDirectly();
       }
@@ -279,28 +326,29 @@ public class WorkspaceQuotaManager implements Startable
    }
 
    /**
-    * Tracks workspace by calculating the size if a stored content,
+    * Adds workspace tracking.
     *
-    * @param quotaLimit
-    *          the quota limit         
     * @throws QuotaManagerException
     *          if any exception is occurred
     */
-   protected void trackWorkspace(long quotaLimit) throws QuotaManagerException
+   protected void trackWorkspace() throws QuotaManagerException
    {
-      long dataSize;
+      tracked.set(true);
 
-      try
-      {
-         dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
-      }
-      catch (UnknownQuotaUsedException e)
-      {
-         dataSize = getWorkspaceDataSizeDirectly();
-         quotaPersister.setWorkspaceDataSize(rName, wsName, dataSize);
-      }
+      AccumulateWorkspaceDataSizeTask quotaTask = new AccumulateWorkspaceDataSizeTask(this);
+      executor.execute(quotaTask);
+   }
 
-      alerted = dataSize > quotaLimit; 
+   /**
+    * Removes workspace tracking.
+    *
+    * @throws QuotaManagerException
+    *          if any exception is occurred
+    */
+   public void untrackWorkspace() throws QuotaManagerException
+   {
+      tracked.set(false);
+      quotaPersister.removeWorkspaceDataSize(rName, wsName);
    }
 
    /**
@@ -314,12 +362,45 @@ public class WorkspaceQuotaManager implements Startable
       {
          dataSize = quotaPersister.getNodeDataSize(rName, wsName, nodePath);
       }
-      catch (UnknownQuotaUsedException e)
+      catch (UnknownQuotaDataSizeException e)
       {
          dataSize = getNodeDataSizeDirectly(nodePath);
          quotaPersister.setNodeDataSize(rName, wsName, nodePath, dataSize);
       }
+   }
 
+   /**
+    * Accumulate global data size changes.
+    * 
+    * @param delta
+    *          the size on which workspace was changed
+    */
+   protected void onAccumulateChanges(long delta)
+   {
+      if (tracked.get())
+      {
+         long dataSize = 0;
+         try
+         {
+            dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
+         }
+         catch (UnknownQuotaDataSizeException e)
+         {
+            // it's ok, maybe there is no data size yet
+         }
+
+         quotaPersister.setWorkspaceDataSize(rName, wsName, Math.max(dataSize + delta, 0));
+      }
+
+      repositoryQuotaManager.onAccumulateChanges(delta);
+   }
+
+   /**
+    * Returns {@link #tracked}.
+    */
+   protected boolean isTracked()
+   {
+      return tracked.get();
    }
 
    /**
@@ -430,7 +511,21 @@ public class WorkspaceQuotaManager implements Startable
     */
    public void start()
    {
-      rQuotaManager.registerWorkspaceQuotaManager(wsName, this);
+      repositoryQuotaManager.registerWorkspaceQuotaManager(wsName, this);
+
+      // TODO
+      if (tracked.get())
+      {
+         try
+         {
+            quotaPersister.getWorkspaceDataSize(rName, wsName);
+         }
+         catch (UnknownQuotaDataSizeException e)
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         }
+      }
    }
 
    /**
@@ -438,6 +533,6 @@ public class WorkspaceQuotaManager implements Startable
     */
    public void stop()
    {
-      rQuotaManager.unregisterWorkspaceQuotaManager(wsName);
+      repositoryQuotaManager.unregisterWorkspaceQuotaManager(wsName);
    }
 }

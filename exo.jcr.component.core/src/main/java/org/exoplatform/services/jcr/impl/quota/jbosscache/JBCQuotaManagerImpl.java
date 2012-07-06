@@ -22,7 +22,7 @@ import org.exoplatform.container.configuration.ConfigurationManager;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
 import org.exoplatform.services.jcr.impl.quota.QuotaManagerException;
-import org.exoplatform.services.jcr.impl.quota.AbstractQuotaManager;
+import org.exoplatform.services.jcr.impl.quota.BaseQuotaManager;
 import org.exoplatform.services.jcr.impl.quota.QuotaPersister;
 import org.exoplatform.services.rpc.RPCService;
 
@@ -32,7 +32,7 @@ import org.exoplatform.services.rpc.RPCService;
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: JBCQuotaManagerImpl.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class JBCQuotaManagerImpl extends AbstractQuotaManager
+public class JBCQuotaManagerImpl extends BaseQuotaManager
 {
 
    /**

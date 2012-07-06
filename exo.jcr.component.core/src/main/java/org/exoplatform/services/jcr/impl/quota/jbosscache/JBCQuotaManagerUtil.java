@@ -22,7 +22,7 @@ import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.PropertiesParam;
 import org.exoplatform.container.xml.Property;
 import org.exoplatform.services.jcr.config.MappedParametrizedObjectEntry;
-import org.exoplatform.services.jcr.impl.quota.AbstractQuotaManager;
+import org.exoplatform.services.jcr.impl.quota.BaseQuotaManager;
 import org.exoplatform.services.jcr.jbosscache.ExoJBossCacheFactory;
 
 import java.util.Iterator;
@@ -127,7 +127,7 @@ public class JBCQuotaManagerUtil
 
    private static void putConfiguredValues(InitParams initParams, MappedParametrizedObjectEntry qmEntry)
    {
-      PropertiesParam props = initParams.getPropertiesParam(AbstractQuotaManager.CACHE_CONFIGURATION_PROPERTIES_PARAM);
+      PropertiesParam props = initParams.getPropertiesParam(BaseQuotaManager.CACHE_CONFIGURATION_PROPERTIES_PARAM);
       for (Iterator<Property> iter = props.getPropertyIterator(); iter.hasNext();)
       {
          Property prop = iter.next();
