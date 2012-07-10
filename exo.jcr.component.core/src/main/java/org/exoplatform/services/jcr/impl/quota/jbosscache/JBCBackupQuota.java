@@ -34,14 +34,14 @@ import java.util.zip.ZipEntry;
 
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: JBCQuotaPersister.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: JBCBackupQuota.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class JBCBackupUtil
+public class JBCBackupQuota
 {
    /**
     * Logger.
     */
-   protected final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.JBCBackupUtil");
+   protected final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.JBCBackupQuota");
 
    /**
     * Cache.
@@ -51,7 +51,7 @@ public class JBCBackupUtil
    /**
     * BackupUtil constructor.
     */
-   JBCBackupUtil(Cache<Serializable, Object> cache)
+   JBCBackupQuota(Cache<Serializable, Object> cache)
    {
       this.cache = cache;
    }

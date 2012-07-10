@@ -50,7 +50,7 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    /**
     * Logger.
     */
-   protected final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.BaseQuotaManager");
+   protected static final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.BaseQuotaManager");
 
    /**
     * Cache configuration properties.
@@ -61,11 +61,6 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
     * Exceeded quota behavior value parameter.
     */
    public static final String EXCEEDED_QUOTA_BEHAVIOUR = "exceeded-quota-behaviour";
-
-   /**
-    * Message when entity quota limit is exceeded.
-    */
-   protected static final String EXCEEDED_QUOTA_MESSAGE = "Global data size exceeded global quota limit on ";
 
    /**
     * All {@link WorkspaceQuotaManager} belonging to repository.
@@ -398,6 +393,19 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    }
 
    /**
+    * Checks if new changes can exceeds some limits.
+    * 
+    * @throws ExceededQuotaLimitException if data size exceeded quota limit
+    */
+   protected void onValidateChanges() throws ExceededQuotaLimitException
+   {
+      if (alerted.get())
+      {
+         behaveOnQuotaExceeded("Global data size exceeded quota limit");
+      }
+   }
+
+   /**
     * Registers {@link RepositoryQuotaManager} by name. To delegate repository based operation
     * to appropriate level. 
     */
@@ -419,30 +427,6 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
     */
    public enum ExceededQuotaBehavior {
       WARNING, EXCEPTION
-   }
-
-   /**
-    * Returns {@link Executor} instance.
-    */
-   protected Executor getExecutorSevice()
-   {
-      return executor;
-   }
-
-   /**
-    * Returns {@link QuotaPersister} instance.
-    */
-   protected QuotaPersister getQuotaPersister()
-   {
-      return quotaPersister;
-   }
-
-   /**
-    * Returns behavior when quota limit is exceeded.
-    */
-   ExceededQuotaBehavior getExceededQuotaBehaviour()
-   {
-      return exceededQuotaBehavior;
    }
 
    /**
@@ -506,6 +490,23 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
       }
 
       return rqm;
+   }
+
+   /**
+    * What to do if data size exceeded quota limit. Throwing exception or logging only.
+    */
+   protected void behaveOnQuotaExceeded(String message)
+      throws ExceededQuotaLimitException
+   {
+      switch (exceededQuotaBehavior)
+      {
+         case EXCEPTION :
+            throw new ExceededQuotaLimitException(message);
+
+         case WARNING :
+            LOG.warn(message);
+            break;
+      }
    }
 
    /**

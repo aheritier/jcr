@@ -19,14 +19,12 @@
 package org.exoplatform.services.jcr.impl.quota.jbosscache;
 
 import org.exoplatform.container.configuration.ConfigurationManager;
-import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.jcr.config.MappedParametrizedObjectEntry;
 import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
 import org.exoplatform.services.jcr.impl.backup.BackupException;
 import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectReader;
 import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectWriter;
 import org.exoplatform.services.jcr.impl.quota.PathPatternUtils;
-import org.exoplatform.services.jcr.impl.quota.QuotaManagerException;
 import org.exoplatform.services.jcr.impl.quota.QuotaPersister;
 import org.exoplatform.services.jcr.impl.quota.UnknownQuotaDataSizeException;
 import org.exoplatform.services.jcr.impl.quota.UnknownQuotaLimitException;
@@ -41,8 +39,6 @@ import org.jboss.cache.Node;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Set;
-
-import javax.jcr.RepositoryException;
 
 /**
  * Cache structure:
@@ -69,7 +65,7 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * Backup, restore, clean utility.
     */
-   protected final JBCBackupUtil backupUtil;
+   protected final JBCBackupQuota backupUtil;
 
    /**
     * Based region where allowed quota sized is stored. Should not be covered by eviction.
@@ -104,30 +100,21 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * JBCQuotaPersister constructor.
     */
-   protected JBCQuotaPersister(InitParams initParams, ConfigurationManager cfm)
-      throws RepositoryConfigurationException, QuotaManagerException
+   protected JBCQuotaPersister(MappedParametrizedObjectEntry entry, ConfigurationManager cfm)
+      throws RepositoryConfigurationException
    {
       // create cache using custom factory
       ExoJBossCacheFactory<Serializable, Object> factory = new ExoJBossCacheFactory<Serializable, Object>(cfm);
 
-      try
-      {
-         MappedParametrizedObjectEntry qmEntry = JBCQuotaManagerUtil.prepareJBCParameters(initParams);
+      cache = factory.createCache(entry);
+      cache = ExoJBossCacheFactory.getShareableUniqueInstanceWithoutEviction(CacheType.QUOTA_CACHE, cache);
+      cache.create();
+      cache.start();
 
-         cache = factory.createCache(qmEntry);
-         cache = ExoJBossCacheFactory.getShareableUniqueInstanceWithoutEviction(CacheType.QUOTA_CACHE, cache);
-         cache.create();
-         cache.start();
+      createResidentNode(QUOTA);
+      createResidentNode(DATA_SIZE);
 
-         createResidentNode(QUOTA);
-         createResidentNode(DATA_SIZE);
-
-         backupUtil = new JBCBackupUtil(cache);
-      }
-      catch (RepositoryException e)
-      {
-         throw new QuotaManagerException(e.getMessage(), e);
-      }
+      backupUtil = new JBCBackupQuota(cache);
    }
 
    /**

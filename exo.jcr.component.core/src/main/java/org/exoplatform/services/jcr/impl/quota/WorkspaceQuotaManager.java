@@ -31,6 +31,10 @@ import org.exoplatform.services.jcr.config.WorkspaceEntry;
 import org.exoplatform.services.jcr.core.WorkspaceContainerFacade;
 import org.exoplatform.services.jcr.dataflow.ItemDataConsumer;
 import org.exoplatform.services.jcr.dataflow.ItemDataTraversingVisitor;
+import org.exoplatform.services.jcr.dataflow.ItemState;
+import org.exoplatform.services.jcr.dataflow.ItemStateChangesLog;
+import org.exoplatform.services.jcr.dataflow.persistent.MandatoryItemsPersistenceListener;
+import org.exoplatform.services.jcr.datamodel.ItemData;
 import org.exoplatform.services.jcr.datamodel.ItemType;
 import org.exoplatform.services.jcr.datamodel.NodeData;
 import org.exoplatform.services.jcr.datamodel.PropertyData;
@@ -51,6 +55,7 @@ import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectWriter;
 import org.exoplatform.services.jcr.impl.util.io.DirectoryHelper;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.jboss.cache.util.concurrent.ConcurrentHashSet;
 import org.picocontainer.Startable;
 
 import java.io.File;
@@ -59,6 +64,7 @@ import java.lang.reflect.Method;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -122,11 +128,26 @@ public class WorkspaceQuotaManager implements Startable, Backupable
     * Indicates if workspace data size exceeded quota limit.
     */
    protected AtomicBoolean alerted = new AtomicBoolean();
+   
+   /**
+    * List of alerted nodes in workspace.
+    */
+   protected Set<String> alertedNodes = new ConcurrentHashSet<String>();
 
    /**
     * File name for backuped data.
     */
    protected static final String BACKUP_FILE_NAME = "quota";
+
+   /**
+    * {@link MandatoryItemsPersistenceListener} implementation.
+    */
+   protected final ValidateChangesListener validateChangesListener = new ValidateChangesListener();
+
+   /**
+    * {@link MandatoryItemsPersistenceListener} implementation.
+    */
+   protected final AccumulateChangesListener accumulateChangesListener = new AccumulateChangesListener();
 
    /**
     * WorkspaceQuotaManager constructor.
@@ -140,8 +161,11 @@ public class WorkspaceQuotaManager implements Startable, Backupable
       this.dataManager = dataManager;
       this.lFactory = repository.getLocationFactory();
       this.repositoryQuotaManager = rQuotaManager;
-      this.executor = rQuotaManager.getExecutorSevice();
-      this.quotaPersister = rQuotaManager.getQuotaPersister();
+      this.executor = rQuotaManager.globalQuotaManager.executor;
+      this.quotaPersister = rQuotaManager.globalQuotaManager.quotaPersister;
+
+      dataManager.addItemPersistenceListener(accumulateChangesListener);
+      dataManager.addItemPersistenceListener(validateChangesListener);
 
       validateAlerted();
    }
@@ -185,6 +209,8 @@ public class WorkspaceQuotaManager implements Startable, Backupable
 
       TrackNodeTask task = new TrackNodeTask(this, nodePath, quotaLimit, asyncUpdate);
       executor.execute(task);
+
+      // TODO: validateAlertee
    }
 
    /**
@@ -196,6 +222,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable
       throws QuotaManagerException
    {
       quotaPersister.setGroupOfNodeQuota(rName, wsName, patternPath, quotaLimit, asyncUpdate);
+      // TODO: validateAlertee
    }
 
    /**
@@ -342,6 +369,73 @@ public class WorkspaceQuotaManager implements Startable, Backupable
    }
 
    /**
+    * Accumulate workspace data size changes.
+    * 
+    * @param delta
+    *          the size on which workspace was changed
+    */
+   protected void onAccumulateChanges(ItemStateChangesLog itemStates)
+   {
+      // TODO
+      long delta = 0;
+
+      for (ItemState state : itemStates.getAllStates())
+      {
+
+      }
+      
+      onAccumulateChanges(delta);
+   }
+
+   /**
+    * Checks if new changes can exceeds some limits.
+    * 
+    * @throws ExceededQuotaLimitException if data size exceeded quota limit
+    */
+   protected void onValidateChanges(ItemStateChangesLog itemStates) throws ExceededQuotaLimitException
+   {
+      boolean newContentArrived = false;
+
+      for (ItemState state : itemStates.getAllStates())
+      {
+         if (state.isAdded() || state.isUpdated() || state.isRenamed())
+         {
+            newContentArrived = true;
+
+            ItemData data = state.getData();
+            
+            String nodePath;
+            try
+            {
+               nodePath = lFactory.createJCRPath(data.getQPath()).getAsString(false);
+            }
+            catch (RepositoryException e)
+            {
+               throw new IllegalStateException(e.getMessage(), e);
+            }
+
+            if (!data.isNode() && alertedNodes.contains(nodePath))
+            {
+               repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Node /" + rName + "/" + wsName + "/"
+                  + nodePath + " data size exceeded quota limit");
+            }
+         }
+      }
+
+      if (newContentArrived)
+      {
+         if (alerted.get())
+         {
+            repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Workspace /" + rName + "/" + wsName
+               + " data size exceeded quota limit");
+
+         }
+
+         repositoryQuotaManager.onValidateChanges();
+      }
+   }
+
+   /**
     * Checks if data size exceeded quota limit.
     */
    private void validateAlerted()
@@ -388,11 +482,11 @@ public class WorkspaceQuotaManager implements Startable, Backupable
    }
 
    /**
-    * TODO
+    * Invalidate all alerted nodes {@link #alertedNodes}.
     */
    private void invalidateAlertedNodes()
    {
-      // TODO
+      alertedNodes.clear();
    }
 
    /**
@@ -536,6 +630,62 @@ public class WorkspaceQuotaManager implements Startable, Backupable
       }
 
       repositoryQuotaManager.unregisterWorkspaceQuotaManager(wsName);
+   }
+
+   // ====================================> Listeners
+
+   /**
+    * @link MandatoryItemsPersistenceListener} implementation.
+    */
+   private class AccumulateChangesListener implements MandatoryItemsPersistenceListener
+   {
+      /**
+       * {@inheritDoc}
+       * @throws IllegalStateException if data size exceeded quota limit
+       */
+      public void onSaveItems(ItemStateChangesLog itemStates)
+      {
+         onAccumulateChanges(itemStates);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public boolean isTXAware()
+      {
+         return false;
+      }
+   }
+
+   /**
+    * @link MandatoryItemsPersistenceListener} implementation.
+    */
+   private class ValidateChangesListener implements MandatoryItemsPersistenceListener
+   {
+      /**
+       * {@inheritDoc}
+       * @throws IllegalStateException if data size exceeded quota limit
+       */
+      public void onSaveItems(ItemStateChangesLog itemStates)
+      {
+         try
+         {
+            onValidateChanges(itemStates);
+         }
+         catch (ExceededQuotaLimitException e)
+         {
+            throw new IllegalStateException(e.getMessage(), e);
+         }
+      }
+
+
+      /**
+       * {@inheritDoc}
+       */
+      public boolean isTXAware()
+      {
+         return true;
+      }
    }
 
    // ====================================> Backupable

@@ -83,8 +83,8 @@ public class RepositoryQuotaManager implements Startable
    {
       this.rName = rEntry.getName();
       this.globalQuotaManager = quotaManager;
-      this.executor = getExecutorSevice();
-      this.quotaPersister = getQuotaPersister();
+      this.executor = globalQuotaManager.executor;
+      this.quotaPersister = globalQuotaManager.quotaPersister;
 
       validateAlerted();
    }
@@ -295,6 +295,21 @@ public class RepositoryQuotaManager implements Startable
    }
 
    /**
+    * Checks if new changes can exceeds some limits.
+    * 
+    * @throws ExceededQuotaLimitException if data size exceeded quota limit
+    */
+   protected void onValidateChanges() throws ExceededQuotaLimitException
+   {
+      if (alerted.get())
+      {
+         globalQuotaManager.behaveOnQuotaExceeded("Repository " + rName + " data size exceeded quota limit");
+      }
+
+      globalQuotaManager.onValidateChanges();
+   }
+
+   /**
     * Checks if data size exceeded quota limit.
     */
    private void validateAlerted()
@@ -347,22 +362,6 @@ public class RepositoryQuotaManager implements Startable
    public void unregisterWorkspaceQuotaManager(String workspaceName)
    {
       wsQuotaManagers.remove(workspaceName);
-   }
-
-   /**
-    * Returns {@link Executor} instance.
-    */
-   protected Executor getExecutorSevice()
-   {
-      return globalQuotaManager.getExecutorSevice();
-   }
-
-   /**
-    * Returns {@link QuotaPersister} instance.
-    */
-   protected QuotaPersister getQuotaPersister()
-   {
-      return globalQuotaManager.getQuotaPersister();
    }
 
    /**
