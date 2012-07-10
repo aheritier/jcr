@@ -50,7 +50,7 @@ public class AccumulateWorkspaceDataSizeTask implements Runnable
    {
       try
       {
-         long dataSize = workspaceQuotaManager.getWorkspaceDataSize();
+         long dataSize = workspaceQuotaManager.getWorkspaceDataSizeDirectly();
          workspaceQuotaManager.onAccumulateChanges(dataSize);
       }
       catch (QuotaManagerException e)

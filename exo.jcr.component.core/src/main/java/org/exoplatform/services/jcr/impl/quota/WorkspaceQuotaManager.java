@@ -18,6 +18,8 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
+import org.exoplatform.commons.utils.PrivilegedFileHelper;
+import org.exoplatform.commons.utils.PrivilegedSystemHelper;
 import org.exoplatform.commons.utils.SecurityHelper;
 import org.exoplatform.management.annotations.Managed;
 import org.exoplatform.management.annotations.ManagedDescription;
@@ -34,17 +36,25 @@ import org.exoplatform.services.jcr.datamodel.NodeData;
 import org.exoplatform.services.jcr.datamodel.PropertyData;
 import org.exoplatform.services.jcr.datamodel.QPathEntry;
 import org.exoplatform.services.jcr.impl.Constants;
+import org.exoplatform.services.jcr.impl.backup.BackupException;
+import org.exoplatform.services.jcr.impl.backup.Backupable;
+import org.exoplatform.services.jcr.impl.backup.DataRestore;
+import org.exoplatform.services.jcr.impl.backup.rdbms.DBBackup;
+import org.exoplatform.services.jcr.impl.backup.rdbms.DataRestoreContext;
 import org.exoplatform.services.jcr.impl.core.JCRPath;
 import org.exoplatform.services.jcr.impl.core.LocationFactory;
 import org.exoplatform.services.jcr.impl.core.RepositoryImpl;
 import org.exoplatform.services.jcr.impl.core.query.SearchManager;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspacePersistentDataManager;
+import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectReader;
+import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectWriter;
 import org.exoplatform.services.jcr.impl.util.io.DirectoryHelper;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -60,7 +70,7 @@ import javax.jcr.RepositoryException;
  */
 @Managed
 @NameTemplate(@Property(key = "service", value = "WorkspaceQuotaManager"))
-public class WorkspaceQuotaManager implements Startable
+public class WorkspaceQuotaManager implements Startable, Backupable
 {
 
    /**
@@ -114,14 +124,9 @@ public class WorkspaceQuotaManager implements Startable
    protected AtomicBoolean alerted = new AtomicBoolean();
 
    /**
-    * Indicates that workspace is tracked.
+    * File name for backuped data.
     */
-   protected AtomicBoolean tracked = new AtomicBoolean();
-
-   /**
-    * Indicates that workspace is quoted. 
-    */
-   protected AtomicBoolean quoted = new AtomicBoolean();
+   protected static final String BACKUP_FILE_NAME = "quota";
 
    /**
     * WorkspaceQuotaManager constructor.
@@ -138,27 +143,7 @@ public class WorkspaceQuotaManager implements Startable
       this.executor = rQuotaManager.getExecutorSevice();
       this.quotaPersister = rQuotaManager.getQuotaPersister();
 
-      try
-      {
-         long quotaLimit = quotaPersister.getWorkspaceQuota(rName, wsName);
-         quoted.set(true);
-         tracked.set(true);
-
-         try
-         {
-            long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
-            alerted.set(dataSize > quotaLimit);
-         }
-         catch (UnknownQuotaDataSizeException e)
-         {
-            // Maybe there is not information about data size yet
-         }
-      }
-      catch (UnknownQuotaLimitException e)
-      {
-         // There is no quota, there is not reason to track, except if repository tracking exists
-         tracked.set(repositoryQuotaManager.isTracked());
-      }
+      validateAlerted();
    }
 
    /**
@@ -239,10 +224,8 @@ public class WorkspaceQuotaManager implements Startable
    @ManagedDescription("Sets workspace quota limit")
    public void setWorkspaceQuota(long quotaLimit) throws QuotaManagerException
    {
-      quoted.set(true);
       quotaPersister.setWorkspaceQuota(rName, wsName, quotaLimit);
-
-      trackWorkspace();
+      validateAlerted();
    }
 
    /**
@@ -251,15 +234,8 @@ public class WorkspaceQuotaManager implements Startable
    @ManagedDescription("Removes workspace quota limit")
    public void removeWorkspaceQuota() throws QuotaManagerException
    {
-      quoted.set(false);
-      alerted.set(false);
-
+      invalidateAlerted();
       quotaPersister.removeWorkspaceQuota(rName, wsName);
-
-      if (!repositoryQuotaManager.isTracked())
-      {
-         untrackWorkspace();
-      }
    }
 
    /**
@@ -279,14 +255,7 @@ public class WorkspaceQuotaManager implements Startable
    @ManagedDescription("Returns a size of the Workspace")
    public long getWorkspaceDataSize() throws QuotaManagerException
    {
-      try
-      {
-         return quotaPersister.getWorkspaceDataSize(rName, wsName);
-      }
-      catch (UnknownQuotaDataSizeException e)
-      {
-         return getWorkspaceDataSizeDirectly();
-      }
+      return quotaPersister.getWorkspaceDataSize(rName, wsName);
    }
 
    /**
@@ -326,32 +295,6 @@ public class WorkspaceQuotaManager implements Startable
    }
 
    /**
-    * Adds workspace tracking.
-    *
-    * @throws QuotaManagerException
-    *          if any exception is occurred
-    */
-   protected void trackWorkspace() throws QuotaManagerException
-   {
-      tracked.set(true);
-
-      AccumulateWorkspaceDataSizeTask quotaTask = new AccumulateWorkspaceDataSizeTask(this);
-      executor.execute(quotaTask);
-   }
-
-   /**
-    * Removes workspace tracking.
-    *
-    * @throws QuotaManagerException
-    *          if any exception is occurred
-    */
-   public void untrackWorkspace() throws QuotaManagerException
-   {
-      tracked.set(false);
-      quotaPersister.removeWorkspaceDataSize(rName, wsName);
-   }
-
-   /**
     * Tracks Node by calculating the size if a stored content,
     */
    protected void trackNode(String nodePath, long quotaLimit, boolean asyncUpdate) throws QuotaManagerException
@@ -370,37 +313,86 @@ public class WorkspaceQuotaManager implements Startable
    }
 
    /**
-    * Accumulate global data size changes.
+    * Accumulate workspace data size changes.
     * 
     * @param delta
     *          the size on which workspace was changed
     */
    protected void onAccumulateChanges(long delta)
    {
-      if (tracked.get())
+      long dataSize = 0;
+      try
       {
-         long dataSize = 0;
-         try
-         {
-            dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
-         }
-         catch (UnknownQuotaDataSizeException e)
-         {
-            // it's ok, maybe there is no data size yet
-         }
-
-         quotaPersister.setWorkspaceDataSize(rName, wsName, Math.max(dataSize + delta, 0));
+         dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
       }
+      catch (UnknownQuotaDataSizeException e)
+      {
+         if (LOG.isTraceEnabled())
+         {
+            LOG.trace(e.getMessage(), e);
+         }
+      }
+
+      long newDataSize = Math.max(dataSize + delta, 0);
+      quotaPersister.setWorkspaceDataSize(rName, wsName, newDataSize);
+
+      validateAlerted();
 
       repositoryQuotaManager.onAccumulateChanges(delta);
    }
 
    /**
-    * Returns {@link #tracked}.
+    * Checks if data size exceeded quota limit.
     */
-   protected boolean isTracked()
+   private void validateAlerted()
    {
-      return tracked.get();
+      try
+      {
+         long quotaLimit = quotaPersister.getWorkspaceQuota(rName, wsName);
+         try
+         {
+            long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
+            alerted.set(dataSize > quotaLimit);
+         }
+         catch (UnknownQuotaDataSizeException e)
+         {
+            if (LOG.isTraceEnabled())
+            {
+               LOG.trace(e.getMessage(), e);
+            }
+         }
+      }
+      catch (UnknownQuotaLimitException e)
+      {
+         if (LOG.isTraceEnabled())
+         {
+            LOG.trace(e.getMessage(), e);
+         }
+      }
+   }
+
+   /**
+    * TODO
+    */
+   private void validateAlertedNodes()
+   {
+      // TODO
+   }
+
+   /**
+    * Invalidates {@link #alerted}.
+    */
+   private void invalidateAlerted()
+   {
+      alerted.set(false);
+   }
+
+   /**
+    * TODO
+    */
+   private void invalidateAlertedNodes()
+   {
+      // TODO
    }
 
    /**
@@ -437,7 +429,7 @@ public class WorkspaceQuotaManager implements Startable
    /**
     * Calculate workspace data size by asking directly respective {@link WorkspacePersistentDataManager}.  
     */
-   private long getWorkspaceDataSizeDirectly() throws QuotaManagerException
+   protected long getWorkspaceDataSizeDirectly() throws QuotaManagerException
    {
       try
       {
@@ -513,18 +505,15 @@ public class WorkspaceQuotaManager implements Startable
    {
       repositoryQuotaManager.registerWorkspaceQuotaManager(wsName, this);
 
-      // TODO
-      if (tracked.get())
+      try
       {
-         try
-         {
-            quotaPersister.getWorkspaceDataSize(rName, wsName);
-         }
-         catch (UnknownQuotaDataSizeException e)
-         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-         }
+         long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
+         repositoryQuotaManager.onAccumulateChanges(dataSize);
+      }
+      catch (UnknownQuotaDataSizeException e)
+      {
+         AccumulateWorkspaceDataSizeTask quotaTask = new AccumulateWorkspaceDataSizeTask(this);
+         executor.execute(quotaTask);
       }
    }
 
@@ -533,6 +522,197 @@ public class WorkspaceQuotaManager implements Startable
     */
    public void stop()
    {
+      try
+      {
+         long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
+         repositoryQuotaManager.onAccumulateChanges(-dataSize);
+      }
+      catch (UnknownQuotaDataSizeException e)
+      {
+         if (LOG.isTraceEnabled())
+         {
+            LOG.trace(e.getMessage(), e);
+         }
+      }
+
       repositoryQuotaManager.unregisterWorkspaceQuotaManager(wsName);
+   }
+
+   // ====================================> Backupable
+
+   /**
+    * {@inheritDoc}
+    */
+   public void backup(File storageDir) throws BackupException
+   {
+      File backupFile = new File(storageDir, BACKUP_FILE_NAME + DBBackup.CONTENT_FILE_SUFFIX);
+      doBackup(backupFile);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void clean() throws BackupException
+   {
+      doClean();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public DataRestore getDataRestorer(DataRestoreContext context) throws BackupException
+   {
+      return new WorkspaceQuotaRestore(context);
+   }
+
+   /**
+    * {@link DataRestore} implementation for quota. 
+    */
+   private class WorkspaceQuotaRestore implements DataRestore
+   {
+
+      private final File tempFile;
+
+      private final File backupFile;
+
+      
+      /**
+       * WorkspaceQuotaRestore constructor.
+       */
+      WorkspaceQuotaRestore(DataRestoreContext context)
+      {
+         File storageDir = (File)context.getObject(DataRestoreContext.STORAGE_DIR);
+         this.backupFile = new File(storageDir, BACKUP_FILE_NAME + DBBackup.CONTENT_FILE_SUFFIX);
+
+         File tempDir = new File(PrivilegedSystemHelper.getProperty("java.io.tmpdir"));
+         this.tempFile = new File(tempDir, "temp.dump");
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void clean() throws BackupException
+      {
+         doBackup(tempFile);
+         doClean();
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void restore() throws BackupException
+      {
+         doRestore(backupFile);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void commit() throws BackupException
+      {
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void rollback() throws BackupException
+      {
+         doClean();
+         doRestore(tempFile);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void close() throws BackupException
+      {
+         tempFile.delete();
+      }
+   }
+
+   /**
+    * Backups data to define file.
+    */
+   private void doRestore(File backupFile) throws BackupException
+   {
+      ZipObjectReader reader = null;
+      try
+      {
+         reader = new ZipObjectReader(PrivilegedFileHelper.zipInputStream(backupFile));
+         quotaPersister.restoreWorkspaceData(rName, wsName, reader);
+      }
+      catch (IOException e)
+      {
+         throw new BackupException(e);
+      }
+      finally
+      {
+         if (reader != null)
+         {
+            try
+            {
+               reader.close();
+            }
+            catch (IOException e)
+            {
+               LOG.error("Can't close input stream", e);
+            }
+         }
+      }
+
+      validateAlerted();
+      validateAlertedNodes();
+   }
+
+   /**
+    * Backups data to define file.
+    */
+   private void doBackup(File backupFile) throws BackupException
+   {
+      ZipObjectWriter writer = null;
+      try
+      {
+         writer = new ZipObjectWriter(PrivilegedFileHelper.zipOutputStream(backupFile));
+         quotaPersister.backupWorkspaceData(rName, wsName, writer);
+      }
+      catch (IOException e)
+      {
+         throw new BackupException(e);
+      }
+      finally
+      {
+         if (writer != null)
+         {
+            try
+            {
+               writer.close();
+            }
+            catch (IOException e)
+            {
+               LOG.error("Can't close output stream", e);
+            }
+         }
+      }
+   }
+
+   private void doClean() throws BackupException
+   {
+      try
+      {
+         long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
+         onAccumulateChanges(-dataSize);
+      }
+      catch (UnknownQuotaDataSizeException e)
+      {
+         if (LOG.isTraceEnabled())
+         {
+            LOG.trace(e.getMessage(), e);
+         }
+      }
+
+      invalidateAlerted();
+      invalidateAlertedNodes();
+
+      quotaPersister.clearWorkspaceData(rName, wsName);
    }
 }

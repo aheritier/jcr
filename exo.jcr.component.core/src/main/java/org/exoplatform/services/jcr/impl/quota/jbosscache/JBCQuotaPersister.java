@@ -22,6 +22,9 @@ import org.exoplatform.container.configuration.ConfigurationManager;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.jcr.config.MappedParametrizedObjectEntry;
 import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
+import org.exoplatform.services.jcr.impl.backup.BackupException;
+import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectReader;
+import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectWriter;
 import org.exoplatform.services.jcr.impl.quota.PathPatternUtils;
 import org.exoplatform.services.jcr.impl.quota.QuotaManagerException;
 import org.exoplatform.services.jcr.impl.quota.QuotaPersister;
@@ -35,6 +38,7 @@ import org.jboss.cache.Cache;
 import org.jboss.cache.Fqn;
 import org.jboss.cache.Node;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -60,37 +64,42 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * JBoss cache.
     */
-   private Cache<Serializable, Object> cache;
+   protected Cache<Serializable, Object> cache;
+
+   /**
+    * Backup, restore, clean utility.
+    */
+   protected final JBCBackupUtil backupUtil;
 
    /**
     * Based region where allowed quota sized is stored. Should not be covered by eviction.
     */
-   protected static final Fqn<String> QUOTA = Fqn.fromElements("$QUOTA");
+   public static final Fqn<String> QUOTA = Fqn.fromElements("$QUOTA");
 
    /**
     * Based region where used quota sized is stored. May be covered by eviction.
     */
-   protected static final Fqn<String> DATA_SIZE = Fqn.fromElements("$DATA_SIZE");
+   public static final Fqn<String> DATA_SIZE = Fqn.fromElements("$DATA_SIZE");
 
    /**
     * Key name.
     */
-   protected static final String SIZE = "$SIZE";
+   public static final String SIZE = "$SIZE";
 
    /**
     * Key name.
     */
-   protected static final String ASYNC_UPATE = "$ASYNC_UPATE";
+   public static final String ASYNC_UPATE = "$ASYNC_UPATE";
 
    /**
     * Relative element name.
     */
-   protected static final String QUOTA_PATHES = "$PATHES";
+   public static final String QUOTA_PATHES = "$PATHES";
 
    /**
     * Relative element name.
     */
-   protected static final String QUOTA_PATTERNS = "$PATTERNS";
+   public static final String QUOTA_PATTERNS = "$PATTERNS";
 
    /**
     * JBCQuotaPersister constructor.
@@ -112,6 +121,8 @@ public class JBCQuotaPersister implements QuotaPersister
 
          createResidentNode(QUOTA);
          createResidentNode(DATA_SIZE);
+
+         backupUtil = new JBCBackupUtil(cache);
       }
       catch (RepositoryException e)
       {
@@ -176,21 +187,35 @@ public class JBCQuotaPersister implements QuotaPersister
    public void removeNodeQuota(String repositoryName, String workspaceName, String nodePath)
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHES, nodePath);
-      cache.remove(fqn, SIZE);
-      cache.remove(fqn, ASYNC_UPATE);
+      cache.removeNode(fqn);
 
       fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName, nodePath);
-      cache.remove(fqn, SIZE);
+      cache.removeNode(fqn);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String nodePath)
+   public void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath)
    {
-      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, nodePath);
-      cache.remove(fqn, SIZE);
-      cache.remove(fqn, ASYNC_UPATE);
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, patternPath);
+      cache.removeNode(fqn);
+      
+      Fqn<String> fqnNode = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
+      for (Object nodePath : cache.getChildrenNames(fqn))
+      {
+         if (PathPatternUtils.matches(patternPath, (String)nodePath, false))
+         {
+            fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHES, (String)nodePath);
+
+            Node node = cache.getNode(fqn);
+            if (node == null)
+            {
+               cache.removeNode(fqnNode);
+            }
+            // TODO
+         }
+      }
    }
 
    /**
@@ -242,10 +267,42 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public void removeWorkspaceDataSize(String repositoryName, String workspaceName)
+   public void clearWorkspaceData(String repositoryName, String workspaceName)
    {
-      Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
-      cache.remove(fqn, SIZE);
+      backupUtil.clearWorkspaceData(repositoryName, workspaceName);
+   }
+
+   /**
+    * {@inheritDoc}
+    * @throws IOException 
+    */
+   public void backupWorkspaceData(String repositoryName, String workspaceName, ZipObjectWriter writer)
+      throws BackupException
+   {
+      try
+      {
+         backupUtil.backupWorkspaceData(repositoryName, workspaceName, writer);
+      }
+      catch (IOException e)
+      {
+         throw new BackupException(e.getMessage(), e);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void restoreWorkspaceData(String repositoryName, String workspaceName, ZipObjectReader reader)
+      throws BackupException
+   {
+      try
+      {
+         backupUtil.restoreWorkspaceData(repositoryName, workspaceName, reader);
+      }
+      catch (IOException e)
+      {
+         throw new BackupException(e.getMessage(), e);
+      }
    }
 
    /**
@@ -314,15 +371,6 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public void removeRepositoryDataSize(String repositoryName)
-   {
-      Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName);
-      cache.remove(fqn, SIZE);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    public long getGlobalQuota() throws UnknownQuotaLimitException
    {
       return getQuota(QUOTA);
@@ -342,14 +390,6 @@ public class JBCQuotaPersister implements QuotaPersister
    public void removeGlobalQuota()
    {
       cache.remove(QUOTA, SIZE);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void removeGlobalDataSize()
-   {
-      cache.remove(DATA_SIZE, SIZE);
    }
 
    /**

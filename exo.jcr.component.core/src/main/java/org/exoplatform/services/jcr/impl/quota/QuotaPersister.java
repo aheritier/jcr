@@ -18,6 +18,11 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
+import org.exoplatform.services.jcr.impl.backup.BackupException;
+import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectReader;
+import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectWriter;
+
+
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: QuotaPersister.java 34360 2009-07-22 23:58:59Z tolusha $
@@ -47,7 +52,7 @@ public interface QuotaPersister
    /**
     * @see QuotaManager#removeGroupOfNodesQuota(String, String, String)
     */
-   void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String nodePath);
+   void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath);
 
    /**
     * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)
@@ -82,11 +87,6 @@ public interface QuotaPersister
    void removeWorkspaceQuota(String repositoryName, String workspaceName);
 
    /**
-    * Removes record about workspace data size.
-    */
-   void removeWorkspaceDataSize(String repositoryName, String workspaceName);
-
-   /**
     * Persists workspace data size.
     */
    void setWorkspaceDataSize(String repositoryName, String workspaceName, long dataSize);
@@ -110,11 +110,6 @@ public interface QuotaPersister
     * @see QuotaManager#removeRepositoryQuota
     */
    void removeRepositoryQuota(String repositoryName);
-
-   /**
-    * Removes records about repository data size.
-    */
-   void removeRepositoryDataSize(String repositoryName);
 
    /**
     * @see QuotaManager#getRepositoryDataSize(String)
@@ -151,8 +146,21 @@ public interface QuotaPersister
     */
    void removeGlobalQuota();
 
+   // ==========================> backup methods
+
    /**
-    * Removes record about global data size.
+    * Removes all record about workspace entity.
     */
-   void removeGlobalDataSize();
+   void clearWorkspaceData(String repositoryName, String workspaceName) throws BackupException;
+
+   /**
+    * Backups all record about workspace entity.
+    */
+   void backupWorkspaceData(String repositoryName, String workspaceName, ZipObjectWriter writer) throws BackupException;
+
+   /**
+    * Restore all record about workspace entity.
+    */
+   void restoreWorkspaceData(String repositoryName, String workspaceName, ZipObjectReader reader)
+      throws BackupException;
 }

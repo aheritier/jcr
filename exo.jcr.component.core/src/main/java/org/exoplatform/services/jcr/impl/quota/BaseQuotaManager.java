@@ -113,16 +113,6 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    protected AtomicBoolean alerted = new AtomicBoolean();
 
    /**
-    * Indicates that JCR instance is tracked.
-    */
-   protected AtomicBoolean tracked = new AtomicBoolean();
-
-   /**
-    * Indicates that JCR instance is quoted.
-    */
-   protected AtomicBoolean quoted = new AtomicBoolean();
-
-   /**
     * QuotaManager constructor.
     */
    public BaseQuotaManager(InitParams initParams, RPCService rpcService, ConfigurationManager cfm)
@@ -145,27 +135,7 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
          }
       });
 
-      try
-      {
-         long quotaLimit = quotaPersister.getGlobalQuota();
-
-         quoted.set(true);
-         tracked.set(true);
-
-         try
-         {
-            long dataSize = quotaPersister.getGlobalDataSize();
-            alerted.set(dataSize > quotaLimit);
-         }
-         catch (UnknownQuotaDataSizeException e)
-         {
-            // Maybe there is not information about data size yet
-         }
-      }
-      catch (UnknownQuotaLimitException e)
-      {
-         // There is no quota, there is not reason to track 
-      }
+      validateAlerted();
    }
 
    /**
@@ -334,14 +304,7 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    @ManagedDescription("Returns global data size")
    public long getGlobalDataSize() throws QuotaManagerException
    {
-      try
-      {
-         return quotaPersister.getGlobalDataSize();
-      }
-      catch (UnknownQuotaDataSizeException e)
-      {
-         return getGlobalDataSizeDirectly();
-      }
+      return quotaPersister.getGlobalDataSize();
    }
 
    /**
@@ -351,10 +314,8 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    @ManagedDescription("Returns global quota limit")
    public void setGlobalQuota(long quotaLimit) throws QuotaManagerException
    {
-      quoted.set(true);
       quotaPersister.setGlobalQuota(quotaLimit);
-
-      trackGlobal();
+      validateAlerted();
    }
 
    /**
@@ -364,12 +325,8 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    @ManagedDescription("Removes global quota limit")
    public void removeGlobalQuota() throws QuotaManagerException
    {
-      alerted.set(false);
-      quoted.set(false);
-
+      invalidateAlerted();
       quotaPersister.removeGlobalQuota();
-
-      untrackGlobal();
    }
 
    /**
@@ -380,41 +337,6 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    public long getGlobalQuota() throws QuotaManagerException
    {
       return quotaPersister.getGlobalQuota();
-   }
-
-   /**
-    * Adds global tracking.
-    *
-    * @throws QuotaManagerException
-    *          if any exception is occurred
-    */
-   protected void trackGlobal() throws QuotaManagerException
-   {
-      tracked.set(true);
-      for (RepositoryQuotaManager rqm : rQuotaManagers.values())
-      {
-         rqm.trackRepository();
-      }
-   }
-
-   /**
-    * Removes global tracking.
-    *
-    * @throws QuotaManagerException
-    *          if any exception is occurred
-    */
-   protected void untrackGlobal() throws QuotaManagerException
-   {
-      tracked.set(false);
-      quotaPersister.removeGlobalDataSize();
-
-      for (RepositoryQuotaManager repositoryQuotaManager : rQuotaManagers.values())
-      {
-         if (!repositoryQuotaManager.isTracked())
-         {
-            repositoryQuotaManager.untrackRepository();
-         }
-      }
    }
 
    /**
@@ -456,20 +378,23 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
     */
    protected void onAccumulateChanges(long delta)
    {
-      if (tracked.get())
+      long dataSize = 0;
+      try
       {
-         long dataSize = 0;
-         try
-         {
-            dataSize = quotaPersister.getGlobalDataSize();
-         }
-         catch (UnknownQuotaDataSizeException e)
-         {
-            // it's ok, maybe there is no data size yet
-         }
-
-         quotaPersister.setGlobalDataSize(Math.max(dataSize + delta, 0));
+         dataSize = quotaPersister.getGlobalDataSize();
       }
+      catch (UnknownQuotaDataSizeException e)
+      {
+         if (LOG.isTraceEnabled())
+         {
+            LOG.trace(e.getMessage(), e);
+         }
+      }
+
+      long newDataSize = Math.max(dataSize + delta, 0);
+      quotaPersister.setGlobalDataSize(newDataSize);
+
+      validateAlerted();
    }
 
    /**
@@ -513,14 +438,6 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    }
 
    /**
-    * Returns {@link #tracked}.
-    */
-   protected boolean isTracked()
-   {
-      return tracked.get();
-   }
-
-   /**
     * Returns behavior when quota limit is exceeded.
     */
    ExceededQuotaBehavior getExceededQuotaBehaviour()
@@ -529,14 +446,52 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    }
 
    /**
+    * Checks if data size exceeded quota limit.
+    */
+   private void validateAlerted()
+   {
+      try
+      {
+         long quotaLimit = quotaPersister.getGlobalQuota();
+         try
+         {
+            long dataSize = quotaPersister.getGlobalDataSize();
+            alerted.set(dataSize > quotaLimit);
+         }
+         catch (UnknownQuotaDataSizeException e)
+         {
+            if (LOG.isTraceEnabled())
+            {
+               LOG.trace(e.getMessage(), e);
+            }
+         }
+      }
+      catch (UnknownQuotaLimitException e)
+      {
+         if (LOG.isTraceEnabled())
+         {
+            LOG.trace(e.getMessage(), e);
+         }
+      }
+   }
+
+   /**
+    * Invalidates {@link #alerted}.
+    */
+   private void invalidateAlerted()
+   {
+      alerted.set(false);
+   }
+
+   /**
     * Calculates the global size by summing sized of all repositories.
     */
-   private long getGlobalDataSizeDirectly() throws QuotaManagerException
+   protected long getGlobalDataSizeDirectly() throws QuotaManagerException
    {
       long size = 0;
       for (RepositoryQuotaManager rqm : rQuotaManagers.values())
       {
-         size += rqm.getRepositoryDataSize();
+         size += rqm.getRepositoryDataSizeDirectly();
       }
 
       return size;

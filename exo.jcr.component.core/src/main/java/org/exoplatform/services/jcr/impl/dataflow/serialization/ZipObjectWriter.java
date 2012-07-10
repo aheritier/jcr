@@ -29,7 +29,7 @@ import java.util.zip.ZipOutputStream;
  * @author <a href="mailto:alex.reshetnyak@exoplatform.com.ua">Alex Reshetnyak</a>
  * @version $Id: ObjectZipWriterImpl 111 2008-11-11 11:11:11Z rainf0x $
  */
-public class ObjectZipWriterImpl extends ObjectWriterImpl
+public class ZipObjectWriter extends ObjectWriterImpl
 {
 
    /**
@@ -45,7 +45,7 @@ public class ObjectZipWriterImpl extends ObjectWriterImpl
     * @throws IOException
     *          if any errors occurred 
     */
-   public ObjectZipWriterImpl(ZipOutputStream out)
+   public ZipObjectWriter(ZipOutputStream out)
    {
       super(out);
       this.out = out;

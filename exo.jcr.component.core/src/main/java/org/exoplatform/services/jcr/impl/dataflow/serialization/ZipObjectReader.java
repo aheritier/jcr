@@ -29,7 +29,7 @@ import java.util.zip.ZipInputStream;
  * @author <a href="mailto:alex.reshetnyak@exoplatform.com.ua">Alex Reshetnyak</a>
  * @version $Id: ObjectZipReaderImpl 111 2008-11-11 11:11:11Z rainf0x $
  */
-public class ObjectZipReaderImpl extends ObjectReaderImpl
+public class ZipObjectReader extends ObjectReaderImpl
 {
 
    /**
@@ -43,7 +43,7 @@ public class ObjectZipReaderImpl extends ObjectReaderImpl
     * @param in
     *          original InputStream
     */
-   public ObjectZipReaderImpl(ZipInputStream in)
+   public ZipObjectReader(ZipInputStream in)
    {
       super(in);
       this.in = in;

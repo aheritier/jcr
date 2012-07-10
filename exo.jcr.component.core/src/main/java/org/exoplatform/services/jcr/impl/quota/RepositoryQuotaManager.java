@@ -77,16 +77,6 @@ public class RepositoryQuotaManager implements Startable
    protected AtomicBoolean alerted = new AtomicBoolean();
 
    /**
-    * Indicates that repository is tracked.
-    */
-   protected AtomicBoolean tracked = new AtomicBoolean();
-
-   /**
-    * Indicates that repository is quoted.
-    */
-   protected AtomicBoolean quoted = new AtomicBoolean();
-
-   /**
     * RepositoryQuotaManagerImpl constructor.
     */
    public RepositoryQuotaManager(BaseQuotaManager quotaManager, RepositoryEntry rEntry)
@@ -96,27 +86,7 @@ public class RepositoryQuotaManager implements Startable
       this.executor = getExecutorSevice();
       this.quotaPersister = getQuotaPersister();
 
-      try
-      {
-         long quotaLimit = quotaPersister.getRepositoryQuota(rName);
-         quoted.set(true);
-         tracked.set(true);
-
-         try
-         {
-            long dataSize = quotaPersister.getRepositoryDataSize(rName);
-            alerted.set(dataSize > quotaLimit);
-         }
-         catch (UnknownQuotaDataSizeException e)
-         {
-            // Maybe there is not information about data size yet
-         }
-      }
-      catch (UnknownQuotaLimitException e)
-      {
-         // There is no quota, there is not reason to track, except if global tracking exists
-         tracked.set(globalQuotaManager.isTracked());
-      }
+      validateAlerted();
    }
 
    /**
@@ -227,10 +197,8 @@ public class RepositoryQuotaManager implements Startable
    @ManagedDescription("Sets repository quta limit")
    public void setRepositoryQuota(long quotaLimit) throws QuotaManagerException
    {
-      quoted.set(true);
       quotaPersister.setRepositoryQuota(rName, quotaLimit);
-
-      trackRepository();
+      validateAlerted();
    }
 
    /**
@@ -240,51 +208,8 @@ public class RepositoryQuotaManager implements Startable
    @ManagedDescription("Removes repository quta limit")
    public void removeRepositoryQuota() throws QuotaManagerException
    {
-      alerted.set(false);
-      quoted.set(false);
-
+      invalidateAlerted();
       quotaPersister.removeRepositoryQuota(rName);
-
-      if (!globalQuotaManager.isTracked())
-      {
-         untrackRepository();
-      }
-   }
-
-   /**
-    * Adds repository tracking.
-    *
-    * @throws QuotaManagerException
-    *          if any exception is occurred
-    */
-   protected void trackRepository() throws QuotaManagerException
-   {
-      tracked.set(true);
-
-      for (WorkspaceQuotaManager wQuotaManager : wsQuotaManagers.values())
-      {
-         wQuotaManager.trackWorkspace();
-      }
-   }
-
-   /**
-    * Removes repository tracking.
-    *
-    * @throws QuotaManagerException
-    *          if any exception is occurred
-    */
-   protected void untrackRepository() throws QuotaManagerException
-   {
-      tracked.set(false);
-      quotaPersister.removeRepositoryDataSize(rName);
-
-      for (WorkspaceQuotaManager workspaceQuotaManager : wsQuotaManagers.values())
-      {
-         if (!workspaceQuotaManager.isTracked())
-         {
-            workspaceQuotaManager.untrackWorkspace();
-         }
-      }
    }
 
    /**
@@ -304,14 +229,7 @@ public class RepositoryQuotaManager implements Startable
    @ManagedDescription("Returns repository data size")
    public long getRepositoryDataSize() throws QuotaManagerException
    {
-      try
-      {
-         return quotaPersister.getRepositoryDataSize(rName);
-      }
-      catch (UnknownQuotaDataSizeException e)
-      {
-         return getRepositoryDataSizeDirectly();
-      }
+      return quotaPersister.getRepositoryDataSize(rName);
    }
 
    /**
@@ -348,29 +266,70 @@ public class RepositoryQuotaManager implements Startable
    }
 
    /**
-    * Accumulate global data size changes.
+    * Accumulate repository data size changes.
     * 
     * @param delta
     *          the size on which repository was changed
     */
    protected void onAccumulateChanges(long delta)
    {
-      if (tracked.get())
+      long dataSize = 0;
+      try
       {
-         long dataSize = 0;
+         dataSize = quotaPersister.getRepositoryDataSize(rName);
+      }
+      catch (UnknownQuotaDataSizeException e)
+      {
+         if (LOG.isTraceEnabled())
+         {
+            LOG.trace(e.getMessage(), e);
+         }
+      }
+
+      long newDataSize = Math.max(dataSize + delta, 0);
+      quotaPersister.setRepositoryDataSize(rName, newDataSize);
+
+      validateAlerted();
+
+      globalQuotaManager.onAccumulateChanges(delta);
+   }
+
+   /**
+    * Checks if data size exceeded quota limit.
+    */
+   private void validateAlerted()
+   {
+      try
+      {
+         long quotaLimit = quotaPersister.getRepositoryQuota(rName);
          try
          {
-            dataSize = quotaPersister.getRepositoryDataSize(rName);
+            long dataSize = quotaPersister.getRepositoryDataSize(rName);
+            alerted.set(dataSize > quotaLimit);
          }
          catch (UnknownQuotaDataSizeException e)
          {
-            // it's ok, maybe there is no data size yet
+            if (LOG.isTraceEnabled())
+            {
+               LOG.trace(e.getMessage(), e);
+            }
          }
-
-         quotaPersister.setRepositoryDataSize(rName, Math.max(dataSize + delta, 0));
       }
+      catch (UnknownQuotaLimitException e)
+      {
+         if (LOG.isTraceEnabled())
+         {
+            LOG.trace(e.getMessage(), e);
+         }
+      }
+   }
 
-      globalQuotaManager.onAccumulateChanges(delta);
+   /**
+    * Invalidates {@link #alerted}.
+    */
+   private void invalidateAlerted()
+   {
+      alerted.set(false);
    }
 
    /**
@@ -407,22 +366,14 @@ public class RepositoryQuotaManager implements Startable
    }
 
    /**
-    * Returns {@link #tracked}.
-    */
-   protected boolean isTracked()
-   {
-      return tracked.get();
-   }
-
-   /**
     * Returns repository data size by summing size of all workspaces.
     */
-   private long getRepositoryDataSizeDirectly() throws QuotaManagerException
+   protected long getRepositoryDataSizeDirectly() throws QuotaManagerException
    {
       long size = 0;
       for (WorkspaceQuotaManager wQuotaManager : wsQuotaManagers.values())
       {
-         size += wQuotaManager.getWorkspaceDataSize();
+         size += wQuotaManager.getWorkspaceDataSizeDirectly();
       }
 
       return size;
