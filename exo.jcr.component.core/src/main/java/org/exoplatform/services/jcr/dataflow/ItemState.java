@@ -23,6 +23,7 @@ import org.exoplatform.services.jcr.datamodel.IllegalPathException;
 import org.exoplatform.services.jcr.datamodel.ItemData;
 import org.exoplatform.services.jcr.datamodel.QPath;
 import org.exoplatform.services.jcr.impl.Constants;
+import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
@@ -70,12 +71,12 @@ public class ItemState implements Externalizable
    private boolean isPersisted = true;
 
    /**
-    * Indicates that item is created internaly by system
+    * Indicates that item is created internally by system
     */
    private transient boolean internallyCreated = false;
 
    /**
-    * if storing of this state ahould cause event firing
+    * if storing of this state should cause event firing
     */
    protected transient boolean eventFire;
 
@@ -90,15 +91,12 @@ public class ItemState implements Externalizable
    private QPath oldPath;
 
    /**
-    * The constructor
-    * 
-    * @param data
-    *          underlying data
-    * @param state
-    * @param eventFire
-    *          - if the state cause some event firing
-    * @param ancestorToSave
-    *          - path of item which should be called in save (usually for session.move())
+    * Handler to manage changing in persisted content size.
+    */
+   private transient ContentSizeHandler sizeHandler;
+
+   /**
+    * ItemState constructor.
     */
    public ItemState(ItemData data, int state, boolean eventFire, QPath ancestorToSave)
    {
@@ -106,15 +104,7 @@ public class ItemState implements Externalizable
    }
 
    /**
-    * @param data
-    *          underlying data
-    * @param state
-    * @param eventFire
-    *          - if the state cause some event firing
-    * @param ancestorToSave
-    *          - path of item which should be called in save (usually for session.move())
-    * @param isInternalCreated
-    *          - indicates that item is created internally by system
+    * ItemState constructor.
     */
    public ItemState(ItemData data, int state, boolean eventFire, QPath ancestorToSave, boolean isInternalCreated)
    {
@@ -122,17 +112,7 @@ public class ItemState implements Externalizable
    }
 
    /**
-    * @param data
-    *          underlying data
-    * @param state
-    * @param eventFire
-    *          - if the state cause some event firing
-    * @param ancestorToSave
-    *          - path of item which should be called in save (usually for session.move())
-    * @param isInternalCreated
-    *          - indicates that item is created internally by system
-    * @param oldPath
-    *          - store to old node path during Session.move() operation           
+    * ItemState constructor.
     */
    public ItemState(ItemData data, int state, boolean eventFire, QPath ancestorToSave, boolean isInternalCreated,
       boolean isPersisted, QPath oldPath)
@@ -141,6 +121,19 @@ public class ItemState implements Externalizable
       this.oldPath = oldPath;
    }
 
+   /**
+    * ItemState constructor.
+    */
+   public ItemState(ItemData data, int state, boolean eventFire, QPath ancestorToSave, boolean isInternalCreated,
+      boolean isPersisted, QPath oldPath, ContentSizeHandler sizeHandler)
+   {
+      this(data, state, eventFire, ancestorToSave, isInternalCreated, isPersisted, oldPath);
+      this.sizeHandler = sizeHandler;
+   }
+
+   /**
+    * ItemState constructor.
+    */
    public ItemState(ItemData data, int state, boolean eventFire, QPath ancestorToSave, boolean isInternalCreated,
       boolean isPersisted)
    {
@@ -479,4 +472,16 @@ public class ItemState implements Externalizable
       data = (ItemData)in.readObject();
    }
 
+   /**
+    * @see {@link ContentSizeHandler#getChangedSize()} 
+    */
+   public long getChangedSize()
+   {
+      if (sizeHandler == null)
+      {
+         throw new IllegalStateException("Changed size value is undefine. May be it is not appropriate place to invoke");
+      }
+
+      return sizeHandler.getChangedSize();
+   }
 }

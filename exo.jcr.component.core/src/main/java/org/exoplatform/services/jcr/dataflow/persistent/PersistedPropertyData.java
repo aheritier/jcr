@@ -40,7 +40,6 @@ import javax.jcr.RepositoryException;
  * @author Gennady Azarenkov
  * @version $Id$
  */
-
 public class PersistedPropertyData extends PersistedItemData implements PropertyData, Externalizable
 {
 
@@ -56,7 +55,7 @@ public class PersistedPropertyData extends PersistedItemData implements Property
    protected int type;
 
    protected boolean multiValued;
-
+   
    /**
     * Empty constructor to serialization.
     */

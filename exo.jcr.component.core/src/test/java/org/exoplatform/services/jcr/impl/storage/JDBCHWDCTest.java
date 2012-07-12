@@ -37,6 +37,7 @@ import org.exoplatform.services.jcr.impl.dataflow.TransientNodeData;
 import org.exoplatform.services.jcr.impl.dataflow.TransientPropertyData;
 import org.exoplatform.services.jcr.impl.dataflow.TransientValueData;
 import org.exoplatform.services.jcr.impl.dataflow.session.TransactionableDataManager;
+import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer;
 import org.exoplatform.services.jcr.storage.WorkspaceStorageConnection;
 import org.exoplatform.services.jcr.util.IdGenerator;
@@ -120,9 +121,9 @@ public class JDBCHWDCTest extends JcrImplBaseTest
       try
       {
          con.add(nodeData);
-         con.add(ptData);
-         con.add(mtData);
-         con.add(uuidData);
+         con.add(ptData, new ContentSizeHandler());
+         con.add(mtData, new ContentSizeHandler());
+         con.add(uuidData, new ContentSizeHandler());
          con.commit();
       }
       catch (Exception e)

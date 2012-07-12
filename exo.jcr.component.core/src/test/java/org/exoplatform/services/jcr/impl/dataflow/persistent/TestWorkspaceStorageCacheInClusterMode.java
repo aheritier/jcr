@@ -42,6 +42,7 @@ import org.exoplatform.services.jcr.impl.Constants;
 import org.exoplatform.services.jcr.impl.core.itemfilters.PatternQPathEntry;
 import org.exoplatform.services.jcr.impl.core.itemfilters.PatternQPathEntryFilter;
 import org.exoplatform.services.jcr.impl.core.itemfilters.QPathEntryFilter;
+import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.SystemDataContainerHolder;
 import org.exoplatform.services.jcr.impl.storage.WorkspaceDataContainerBase;
 import org.exoplatform.services.jcr.storage.WorkspaceDataContainer;
@@ -642,7 +643,8 @@ public abstract class TestWorkspaceStorageCacheInClusterMode<T extends Workspace
          this.itemAdded = data;
       }
 
-      public void add(PropertyData data) throws RepositoryException, UnsupportedOperationException,
+      public void add(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+         UnsupportedOperationException,
          InvalidItemStateException, IllegalStateException
       {
          this.itemAdded = data;
@@ -677,8 +679,8 @@ public abstract class TestWorkspaceStorageCacheInClusterMode<T extends Workspace
          this.itemDeleted = true;
       }
 
-      public void delete(PropertyData data) throws RepositoryException, UnsupportedOperationException,
-         InvalidItemStateException, IllegalStateException
+      public void delete(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+         UnsupportedOperationException, InvalidItemStateException, IllegalStateException
       {
          this.itemDeleted = true;
       }
@@ -911,8 +913,8 @@ public abstract class TestWorkspaceStorageCacheInClusterMode<T extends Workspace
       {
       }
 
-      public void update(PropertyData data) throws RepositoryException, UnsupportedOperationException,
-         InvalidItemStateException, IllegalStateException
+      public void update(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+         UnsupportedOperationException, InvalidItemStateException, IllegalStateException
       {
       }
 

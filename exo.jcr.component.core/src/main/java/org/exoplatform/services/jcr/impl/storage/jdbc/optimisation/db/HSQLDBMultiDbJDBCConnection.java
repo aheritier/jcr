@@ -64,6 +64,11 @@ public class HSQLDBMultiDbJDBCConnection extends MultiDbJDBCConnection
    protected void prepareQueries() throws SQLException
    {
       super.prepareQueries();
+
+      FIND_PROPERTY_BY_ID =
+         "select bit_length(DATA)/8, I.P_TYPE, V.STORAGE_DESC from " + JCR_ITEM + " I, " + JCR_VALUE
+            + " V where I.ID = ? and V.PROPERTY_ID = I.ID";
+
       FIND_PROPERTY_BY_NAME =
          "select V.DATA" + " from " + JCR_ITEM + " I, " + JCR_VALUE + " V"
             + " where I.PARENT_ID=? and I.I_CLASS=2 and I.NAME=? and I.ID=V.PROPERTY_ID order by V.ORDER_NUM";
@@ -88,11 +93,13 @@ public class HSQLDBMultiDbJDBCConnection extends MultiDbJDBCConnection
             + " V.ORDER_NUM, V.DATA, V.STORAGE_DESC from " + JCR_ITEM + " I LEFT OUTER JOIN " + JCR_VALUE
             + " V ON (V.PROPERTY_ID=I.ID)" + " where I.PARENT_ID=? and I.I_CLASS=2 order by I.NAME";
 
-      FIND_WORKSPACE_DATA_SIZE = "select sum(bit_length(data)/8) from " + JCR_VALUE;
+      FIND_WORKSPACE_DATA_SIZE = "select sum(bit_length(DATA)/8) from " + JCR_VALUE;
 
       FIND_NODE_DATA_SIZE =
-         "select sum(bit_length(data)/8) from " + JCR_ITEM + " I, " + JCR_VALUE
+         "select sum(bit_length(DATA)/8) from " + JCR_ITEM + " I, " + JCR_VALUE
             + " V  where I.PARENT_ID=? and I.I_CLASS=2 and I.ID=V.PROPERTY_ID";
+
+      FIND_VALUE_STORAGE_DESC_AND_SIZE = "select bit_length(DATA)/8, STORAGE_DESC from " + JCR_VALUE + " where PROPERTY_ID=?";
    }
 
    /**

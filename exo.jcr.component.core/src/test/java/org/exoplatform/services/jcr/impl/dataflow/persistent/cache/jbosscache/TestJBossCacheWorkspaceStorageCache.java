@@ -42,6 +42,7 @@ import org.exoplatform.services.jcr.impl.dataflow.persistent.ACLHolder;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.CacheableWorkspaceDataManager;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspaceStorageCacheBaseCase;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.jbosscache.JBossCacheWorkspaceStorageCache;
+import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.SystemDataContainerHolder;
 import org.exoplatform.services.jcr.impl.storage.WorkspaceDataContainerBase;
 import org.exoplatform.services.jcr.storage.WorkspaceDataContainer;
@@ -259,7 +260,8 @@ public class TestJBossCacheWorkspaceStorageCache extends WorkspaceStorageCacheBa
          childNodesCount++;
       }
 
-      public void add(PropertyData data) throws RepositoryException, UnsupportedOperationException,
+      public void add(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+         UnsupportedOperationException,
          InvalidItemStateException, IllegalStateException
       {
       }
@@ -277,8 +279,8 @@ public class TestJBossCacheWorkspaceStorageCache extends WorkspaceStorageCacheBa
       {
       }
 
-      public void delete(PropertyData data) throws RepositoryException, UnsupportedOperationException,
-         InvalidItemStateException, IllegalStateException
+      public void delete(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+         UnsupportedOperationException, InvalidItemStateException, IllegalStateException
       {
       }
 
@@ -364,8 +366,8 @@ public class TestJBossCacheWorkspaceStorageCache extends WorkspaceStorageCacheBa
       {
       }
 
-      public void update(PropertyData data) throws RepositoryException, UnsupportedOperationException,
-         InvalidItemStateException, IllegalStateException
+      public void update(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+         UnsupportedOperationException, InvalidItemStateException, IllegalStateException
       {
       }
 

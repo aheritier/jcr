@@ -144,11 +144,6 @@ public class DBConstants extends DialectConstants
    protected String FIND_VALUES_BY_PROPERTYID;
 
    /**
-    * FIND_VALUE_BY_PROPERTYID_OREDERNUMB.
-    */
-   protected String FIND_VALUES_VSTORAGE_DESC_BY_PROPERTYID;
-
-   /**
     * FIND_NODES_BY_PARENTID.
     */
    protected String FIND_NODES_BY_PARENTID;
@@ -252,6 +247,11 @@ public class DBConstants extends DialectConstants
     * FIND_WORKSPACE_PROPERTIES_ON_VALUE_STORAGE.
     */
    protected String FIND_WORKSPACE_PROPERTIES_ON_VALUE_STORAGE;
+
+   /**
+    * FIND_VALUE_STORAGE_DESC_AND_SIZE.
+    */
+   protected String FIND_VALUE_STORAGE_DESC_AND_SIZE;
 
    // ======================== ITEMS table ======================== 
    /**

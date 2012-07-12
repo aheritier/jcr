@@ -137,13 +137,13 @@ public class TestWorkspaceQuotaManager extends JcrAPIBaseTest
       WorkspaceQuotaManager wQuotaManager =
          (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws").getComponent(WorkspaceQuotaManager.class);
 
-      long workspaceSize = wQuotaManager.getWorkspaceDataSize();
+      long workspaceSize = wQuotaManager.getWorkspaceDataSizeDirectly();
       long nodesSize = 0;
       
       Iterator<Node> nodes = session.getRootNode().getNodes();
       while (nodes.hasNext())
       {
-         nodesSize += wQuotaManager.getNodeDataSize(nodes.next().getPath());
+         nodesSize += wQuotaManager.getNodeDataSizeDirectly(nodes.next().getPath());
       }
 
       Iterator<Property> props = session.getRootNode().getProperties();

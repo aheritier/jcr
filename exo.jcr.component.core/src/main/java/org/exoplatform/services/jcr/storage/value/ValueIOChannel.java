@@ -20,6 +20,7 @@ package org.exoplatform.services.jcr.storage.value;
 
 import org.exoplatform.services.jcr.datamodel.ValueData;
 import org.exoplatform.services.jcr.impl.dataflow.SpoolConfig;
+import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.value.ValueDataNotFoundException;
 
 import java.io.IOException;
@@ -87,16 +88,29 @@ public interface ValueIOChannel
    long getValueSize(String propertyId, int orderNumber) throws IOException;
 
    /**
+    * Returns value data size. Property may contains several values 
+    * differing only order number. This method returns value size
+    * of them. For specific value use {@link #getValueSize(String, int)} 
+    * 
+    * @param propertyId 
+    *          Property ID
+    * @throws IOException is thrown if can not create new empty file
+    */
+   long getValueSize(String propertyId) throws IOException;
+
+   /**
     * Add or update Property value.
     * 
     * @param propertyId
     *          - Property ID
     * @param data
     *          - ValueData
+    * @param sizeHandler
+    *          accumulates size changing         
     * @throws IOException
     *           if error occurs
     */
-   void write(String propertyId, ValueData data) throws IOException;
+   void write(String propertyId, ValueData data, ContentSizeHandler sizeHandler) throws IOException;
 
    /**
     * Delete Property all values.

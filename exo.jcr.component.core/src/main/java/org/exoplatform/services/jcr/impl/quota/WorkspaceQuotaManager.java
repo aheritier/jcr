@@ -492,7 +492,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable
    /**
     * Calculates node data size by asking directly respective {@link WorkspacePersistentDataManager}.  
     */
-   private long getNodeDataSizeDirectly(String nodePath) throws QuotaManagerException
+   protected long getNodeDataSizeDirectly(String nodePath) throws QuotaManagerException
    {
       if (nodePath.equals(JCRPath.ROOT_PATH))
       {

@@ -139,8 +139,6 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
       FIND_VALUES_BY_PROPERTYID =
          "select PROPERTY_ID, ORDER_NUM, DATA, STORAGE_DESC from JCR_SVALUE where PROPERTY_ID=? order by ORDER_NUM";
 
-      FIND_VALUES_VSTORAGE_DESC_BY_PROPERTYID = "select distinct STORAGE_DESC from JCR_SVALUE where PROPERTY_ID=?";
-
       FIND_NODES_BY_PARENTID =
          "select * from JCR_SITEM" + " where I_CLASS=1 and CONTAINER_NAME=? and PARENT_ID=?" + " order by N_ORDER_NUM";
 
@@ -204,7 +202,7 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
             + " where P.I_CLASS=2 and P.CONTAINER_NAME=? and V.PROPERTY_ID=P.ID order by J.ID";
 
       FIND_PROPERTY_BY_ID =
-         "select I.P_TYPE, V.STORAGE_DESC from JCR_SITEM I, JCR_SVALUE V where I.ID = ? and V.PROPERTY_ID = I.ID";
+         "select length(DATA), I.P_TYPE, V.STORAGE_DESC from JCR_SITEM I, JCR_SVALUE V where I.ID = ? and V.PROPERTY_ID = I.ID";
       DELETE_VALUE_BY_ORDER_NUM = "delete from JCR_SVALUE where PROPERTY_ID=? and ORDER_NUM >= ?";
       UPDATE_VALUE = "update JCR_SVALUE set DATA=?, STORAGE_DESC=? where PROPERTY_ID=? and ORDER_NUM=?";
 
@@ -226,7 +224,7 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
       FIND_NODES_COUNT = "select count(*) from JCR_SITEM I where I.I_CLASS=1 and I.CONTAINER_NAME=?";
 
       FIND_WORKSPACE_DATA_SIZE =
-         "select sum(length(data)) from JCR_SITEM I, JCR_SVALUE V where I.I_CLASS=2 and I.CONTAINER_NAME=?"
+         "select sum(length(DATA)) from JCR_SITEM I, JCR_SVALUE V where I.I_CLASS=2 and I.CONTAINER_NAME=?"
             + " and I.ID=V.PROPERTY_ID";
 
       FIND_WORKSPACE_PROPERTIES_ON_VALUE_STORAGE =
@@ -234,7 +232,7 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
             + " where I.I_CLASS=2 and I.CONTAINER_NAME=? and I.ID=V.PROPERTY_ID and V.STORAGE_DESC is not null";
 
       FIND_NODE_DATA_SIZE =
-         "select sum(length(data)) from JCR_SITEM I, JCR_SVALUE V where I.PARENT_ID=? and I.I_CLASS=2"
+         "select sum(length(DATA)) from JCR_SITEM I, JCR_SVALUE V where I.PARENT_ID=? and I.I_CLASS=2"
             + " and I.CONTAINER_NAME=? and I.ID=V.PROPERTY_ID";
 
       FIND_NODE_PROPERTIES_ON_VALUE_STORAGE =
@@ -242,6 +240,7 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
             + " where I.PARENT_ID=? and I.I_CLASS=2 and I.CONTAINER_NAME=? and I.ID=V.PROPERTY_ID"
             + " and V.STORAGE_DESC is not null";
 
+      FIND_VALUE_STORAGE_DESC_AND_SIZE = "select length(DATA), STORAGE_DESC from JCR_SVALUE where PROPERTY_ID=?";
    }
 
    /**
@@ -675,26 +674,6 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
 
       findValuesByPropertyId.setString(1, cid);
       return findValuesByPropertyId.executeQuery();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected ResultSet findValuesStorageDescriptorsByPropertyId(String cid) throws SQLException
-   {
-      if (findValuesStorageDescriptorsByPropertyId == null)
-      {
-         findValuesStorageDescriptorsByPropertyId =
-            dbConnection.prepareStatement(FIND_VALUES_VSTORAGE_DESC_BY_PROPERTYID);
-      }
-      else
-      {
-         findValuesStorageDescriptorsByPropertyId.clearParameters();
-      }
-
-      findValuesStorageDescriptorsByPropertyId.setString(1, cid);
-      return findValuesStorageDescriptorsByPropertyId.executeQuery();
    }
 
    /**
@@ -1215,5 +1194,20 @@ public class SingleDbJDBCConnection extends CQJDBCStorageConnection
       findNodePropertiesOnValueStorage.setString(2, containerConfig.containerName);
 
       return findNodePropertiesOnValueStorage.executeQuery();
+   }
+
+   /** 
+    * {@inheritDoc} 
+    */
+   protected ResultSet findValueStorageDescAndSize(String cid) throws SQLException
+   {
+      if (findValueStorageDescAndSize == null)
+      {
+         findValueStorageDescAndSize = dbConnection.prepareStatement(FIND_VALUE_STORAGE_DESC_AND_SIZE);
+      }
+
+      findValueStorageDescAndSize.setString(1, cid);
+
+      return findValueStorageDescAndSize.executeQuery();
    }
 }

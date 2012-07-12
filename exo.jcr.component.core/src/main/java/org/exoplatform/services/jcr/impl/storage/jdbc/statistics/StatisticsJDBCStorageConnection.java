@@ -23,6 +23,7 @@ import org.exoplatform.services.jcr.datamodel.PropertyData;
 import org.exoplatform.services.jcr.datamodel.QPathEntry;
 import org.exoplatform.services.jcr.impl.core.itemfilters.QPathEntryFilter;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.ACLHolder;
+import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer;
 import org.exoplatform.services.jcr.statistics.JCRStatisticsManager;
 import org.exoplatform.services.jcr.statistics.Statistics;
@@ -317,14 +318,15 @@ public class StatisticsJDBCStorageConnection implements WorkspaceStorageConnecti
    /**
     * {@inheritDoc}
     */
-   public void add(PropertyData data) throws RepositoryException, UnsupportedOperationException,
+   public void add(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      UnsupportedOperationException,
       InvalidItemStateException, IllegalStateException
    {
       Statistics s = ALL_STATISTICS.get(ADD_PROPERTY_DATA_DESCR);
       try
       {
          s.begin();
-         wcs.add(data);
+         wcs.add(data, sizeHandler);
       }
       finally
       {
@@ -387,14 +389,15 @@ public class StatisticsJDBCStorageConnection implements WorkspaceStorageConnecti
    /**
     * {@inheritDoc}
     */
-   public void delete(PropertyData data) throws RepositoryException, UnsupportedOperationException,
+   public void delete(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      UnsupportedOperationException,
       InvalidItemStateException, IllegalStateException
    {
       Statistics s = ALL_STATISTICS.get(DELETE_PROPERTY_DATA_DESCR);
       try
       {
          s.begin();
-         wcs.delete(data);
+         wcs.delete(data, sizeHandler);
       }
       finally
       {
@@ -684,14 +687,15 @@ public class StatisticsJDBCStorageConnection implements WorkspaceStorageConnecti
    /**
     * {@inheritDoc}
     */
-   public void update(PropertyData data) throws RepositoryException, UnsupportedOperationException,
+   public void update(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      UnsupportedOperationException,
       InvalidItemStateException, IllegalStateException
    {
       Statistics s = ALL_STATISTICS.get(UPDATE_PROPERTY_DATA_DESCR);
       try
       {
          s.begin();
-         wcs.update(data);
+         wcs.update(data, sizeHandler);
       }
       finally
       {

@@ -195,8 +195,7 @@ public class JBCQuotaPersister implements QuotaPersister
          {
             fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHES, (String)nodePath);
 
-            Node node = cache.getNode(fqn);
-            if (node == null)
+            if (cache.getNode(fqn) == null)
             {
                cache.removeNode(fqnNode);
             }

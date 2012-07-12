@@ -25,6 +25,7 @@ import org.exoplatform.services.jcr.datamodel.PropertyData;
 import org.exoplatform.services.jcr.datamodel.QPathEntry;
 import org.exoplatform.services.jcr.impl.core.itemfilters.QPathEntryFilter;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.ACLHolder;
+import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 
 import java.util.List;
 
@@ -262,6 +263,8 @@ public interface WorkspaceStorageConnection
     * 
     * @param data
     *          - the new data
+    * @param sizeHandler
+    *          accumulate changed size         
     * @throws InvalidItemStateException
     *           if the item already exists
     * @throws UnsupportedOperationException
@@ -271,8 +274,8 @@ public interface WorkspaceStorageConnection
     * @throws IllegalStateException
     *           if connection is closed
     */
-   void add(PropertyData data) throws RepositoryException, UnsupportedOperationException, InvalidItemStateException,
-      IllegalStateException;
+   void add(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      UnsupportedOperationException, InvalidItemStateException, IllegalStateException;
 
    /**
     * Updates <code>NodeData</code>.
@@ -299,6 +302,8 @@ public interface WorkspaceStorageConnection
     * 
     * @param data
     *          - the new data
+    * @param sizeHandler
+    *          accumulates changed size         
     * @throws InvalidItemStateException
     *           (1)if the data is already updated, i.e. persisted version value of persisted data >=
     *           of new data's persisted version value (2) if the persisted data is not PropertyData
@@ -311,8 +316,8 @@ public interface WorkspaceStorageConnection
     * @throws IllegalStateException
     *           if connection is closed
     */
-   void update(PropertyData data) throws RepositoryException, UnsupportedOperationException, InvalidItemStateException,
-      IllegalStateException;
+   void update(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      UnsupportedOperationException, InvalidItemStateException, IllegalStateException;
 
    /**
     * Renames <code>NodeData</code> using Node identifier and new name and index from the data.
@@ -357,7 +362,8 @@ public interface WorkspaceStorageConnection
     * 
     * @param data
     *          that identifies data to be deleted
-    * 
+    * @param sizeHandler
+    *          accumulate changed size         
     * @throws InvalidItemStateException
     *           if the data is already deleted
     * @throws UnsupportedOperationException
@@ -367,8 +373,8 @@ public interface WorkspaceStorageConnection
     * @throws IllegalStateException
     *           if connection is closed
     */
-   void delete(PropertyData data) throws RepositoryException, UnsupportedOperationException, InvalidItemStateException,
-      IllegalStateException;
+   void delete(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      UnsupportedOperationException, InvalidItemStateException, IllegalStateException;
 
    /**
     * Prepare the commit phase.

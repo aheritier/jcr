@@ -67,6 +67,9 @@ public class HSQLDBSingleDbJDBCConnection extends SingleDbJDBCConnection
 
       super.prepareQueries();
 
+      FIND_PROPERTY_BY_ID =
+         "select bit_length(DATA)/8, I.P_TYPE, V.STORAGE_DESC from JCR_SITEM I, JCR_SVALUE V where I.ID = ? and V.PROPERTY_ID = I.ID";
+
       FIND_ITEM_BY_NAME =
          "select * from JCR_SITEM"
             + " where PARENT_ID=? and CONTAINER_NAME=? and NAME=? and I_INDEX=? order by I_CLASS, VERSION DESC";
@@ -100,12 +103,14 @@ public class HSQLDBSingleDbJDBCConnection extends SingleDbJDBCConnection
             + " where I.PARENT_ID=? and I.I_CLASS=2 and I.CONTAINER_NAME=? order by I.NAME";
 
       FIND_WORKSPACE_DATA_SIZE =
-         "select sum(bit_length(data)/8) from JCR_SITEM I, JCR_SVALUE V where I.I_CLASS=2 and I.CONTAINER_NAME=?"
+         "select sum(bit_length(DATA)/8) from JCR_SITEM I, JCR_SVALUE V where I.I_CLASS=2 and I.CONTAINER_NAME=?"
             + " and I.ID=V.PROPERTY_ID";
 
       FIND_NODE_DATA_SIZE =
-         "select sum(bit_length(data)/8) from JCR_SITEM I, JCR_SVALUE V where I.PARENT_ID=? and I.I_CLASS=2"
+         "select sum(bit_length(DATA)/8) from JCR_SITEM I, JCR_SVALUE V where I.PARENT_ID=? and I.I_CLASS=2"
             + " and I.CONTAINER_NAME=? and I.ID=V.PROPERTY_ID";
+
+      FIND_VALUE_STORAGE_DESC_AND_SIZE = "select bit_length(DATA)/8, STORAGE_DESC from JCR_SVALUE where PROPERTY_ID=?";
    }
 
    /**

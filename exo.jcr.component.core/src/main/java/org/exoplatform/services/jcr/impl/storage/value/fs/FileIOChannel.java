@@ -21,6 +21,7 @@ package org.exoplatform.services.jcr.impl.storage.value.fs;
 import org.exoplatform.services.jcr.datamodel.ValueData;
 import org.exoplatform.services.jcr.impl.dataflow.SpoolConfig;
 import org.exoplatform.services.jcr.impl.dataflow.ValueDataUtil;
+import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.value.ValueDataNotFoundException;
 import org.exoplatform.services.jcr.impl.storage.value.ValueDataResourceHolder;
 import org.exoplatform.services.jcr.impl.storage.value.ValueOperation;
@@ -29,8 +30,6 @@ import org.exoplatform.services.jcr.impl.storage.value.fs.operations.ValueFileIO
 import org.exoplatform.services.jcr.impl.storage.value.fs.operations.WriteValue;
 import org.exoplatform.services.jcr.impl.util.io.FileCleaner;
 import org.exoplatform.services.jcr.storage.value.ValueIOChannel;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,11 +44,6 @@ import java.util.List;
  */
 public abstract class FileIOChannel extends ValueFileIOHelper implements ValueIOChannel
 {
-
-   /**
-    * Logger.
-    */
-   private static final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.FileIOChannel");
 
    /**
     * Temporary directory. Used for I/O transaction operations and locks.
@@ -104,9 +98,10 @@ public abstract class FileIOChannel extends ValueFileIOHelper implements ValueIO
    /**
     * {@inheritDoc}
     */
-   public void write(String propertyId, ValueData value) throws IOException
+   public void write(String propertyId, ValueData value, ContentSizeHandler sizeHandler) throws IOException
    {
-      WriteValue o = new WriteValue(getFile(propertyId, value.getOrderNumber()), value, resources, cleaner, tempDir);
+      WriteValue o =
+         new WriteValue(getFile(propertyId, value.getOrderNumber()), value, resources, cleaner, tempDir, sizeHandler);
       o.execute();
       changes.add(o);
    }
@@ -226,6 +221,20 @@ public abstract class FileIOChannel extends ValueFileIOHelper implements ValueIO
    {
       File f = getFile(propertyId, orderNumber);
       return f.exists() ? f.length() : 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getValueSize(String propertyId) throws IOException
+   {
+      long size = 0;
+      for (File file : getFiles(propertyId))
+      {
+         size += file.length();
+      }
+
+      return size;
    }
 
    /**

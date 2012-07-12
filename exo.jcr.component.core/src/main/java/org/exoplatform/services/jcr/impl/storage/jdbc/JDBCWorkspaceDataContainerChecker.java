@@ -40,6 +40,7 @@ import org.exoplatform.services.jcr.impl.core.lock.LockTableHandler;
 import org.exoplatform.services.jcr.impl.core.lock.LockTableHandlerFactory;
 import org.exoplatform.services.jcr.impl.core.lock.cacheable.AbstractCacheableLockManager;
 import org.exoplatform.services.jcr.impl.core.nodetype.NodeTypeDataManagerImpl;
+import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.value.ValueDataNotFoundException;
 import org.exoplatform.services.jcr.impl.storage.value.ValueStorageNotFoundException;
 import org.exoplatform.services.jcr.impl.util.jdbc.DBInitializerHelper;
@@ -176,12 +177,12 @@ public class JDBCWorkspaceDataContainerChecker
                   PropertyData prop =
                      (PropertyData)conn.getItemData(parent, new QPathEntry(Constants.JCR_LOCKISDEEP, 0),
                         ItemType.PROPERTY);
-                  conn.delete(prop);
+                  conn.delete(prop, new ContentSizeHandler());
 
                   prop =
                      (PropertyData)conn.getItemData(parent, new QPathEntry(Constants.JCR_LOCKOWNER, 0),
                         ItemType.PROPERTY);
-                  conn.delete(prop);
+                  conn.delete(prop, new ContentSizeHandler());
 
                   conn.commit();
 

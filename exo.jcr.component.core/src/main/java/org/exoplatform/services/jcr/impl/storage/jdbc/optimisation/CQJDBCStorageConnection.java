@@ -38,6 +38,7 @@ import org.exoplatform.services.jcr.impl.core.itemfilters.QPathEntryFilter;
 import org.exoplatform.services.jcr.impl.dataflow.ValueDataUtil;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.ACLHolder;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.StreamPersistedValueData;
+import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.JCRInvalidItemStateException;
 import org.exoplatform.services.jcr.impl.storage.jdbc.JDBCDataContainerConfig;
 import org.exoplatform.services.jcr.impl.storage.jdbc.JDBCStorageConnection;
@@ -489,8 +490,8 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
     * {@inheritDoc}
     */
    @Override
-   public void update(PropertyData data) throws RepositoryException, UnsupportedOperationException,
-      InvalidItemStateException, IllegalStateException
+   public void update(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      UnsupportedOperationException, InvalidItemStateException, IllegalStateException
    {
       checkIfOpened();
       ResultSet rs = null;
@@ -514,6 +515,10 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
             if (!rs.wasNull())
             {
                storageDescs.add(storageId);
+            }
+            else
+            {
+               sizeHandler.accumulateSize(-rs.getLong(1));
             }
          }
 
@@ -544,8 +549,8 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
                + data.getIdentifier() + ") value: " + e.getMessage(), e);
          }
 
-         deleteValues(cid, data, storageDescs, totalOldValues);
-         addOrUpdateValues(cid, data, totalOldValues);
+         deleteValues(cid, data, storageDescs, totalOldValues, sizeHandler);
+         addOrUpdateValues(cid, data, totalOldValues, sizeHandler);
       }
       catch (IOException e)
       {
@@ -583,13 +588,14 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
     * {@inheritDoc}
     */
    @Override
-   protected void addValues(String cid, PropertyData data) throws IOException, SQLException, RepositoryException
+   protected void addValues(String cid, PropertyData data, ContentSizeHandler sizeHandler) throws IOException,
+      SQLException, RepositoryException
    {
-      addOrUpdateValues(cid, data, 0);
+      addOrUpdateValues(cid, data, 0, sizeHandler);
    }
 
-   protected void addOrUpdateValues(String cid, PropertyData data, int totalOldValues) throws IOException,
-      RepositoryException, SQLException
+   protected void addOrUpdateValues(String cid, PropertyData data, int totalOldValues, ContentSizeHandler sizeHandler)
+      throws IOException, RepositoryException, SQLException
    {
       List<ValueData> vdata = data.getValues();
 
@@ -618,37 +624,37 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
                      cid + i + "." + data.getPersistedVersion());
                try
                {
-                  writeValueHelper.writeStreamedValue(swapFile, streamData);
+                  long vlen = writeValueHelper.writeStreamedValue(swapFile, streamData);
+                  if (vlen <= Integer.MAX_VALUE)
+                  {
+                     streamLength = (int)vlen;
+                  }
+                  else
+                  {
+                     throw new RepositoryException("Value data large of allowed by JDBC (Integer.MAX_VALUE) " + vlen
+                        + ". Property " + data.getQPath().getAsString());
+                  }
                }
                finally
                {
                   swapFile.spoolDone();
                }
 
-               long vlen = swapFile.length();
-               if (vlen <= Integer.MAX_VALUE)
-               {
-                  streamLength = (int)vlen;
-               }
-               else
-               {
-                  throw new RepositoryException("Value data large of allowed by JDBC (Integer.MAX_VALUE) " + vlen
-                     + ". Property " + data.getQPath().getAsString());
-               }
-
                stream = streamData.getAsStream();
             }
             storageId = null;
+            sizeHandler.accumulateSize(streamLength);
          }
          else
          {
             // write Value in external VS
-            channel.write(data.getIdentifier(), vd);
+            channel.write(data.getIdentifier(), vd, sizeHandler);
             valueChanges.add(channel);
             storageId = channel.getStorageId();
             stream = null;
             streamLength = 0;
          }
+
          if (i < totalOldValues)
          {
             updateValueData(cid, i, stream, streamLength, storageId);
@@ -660,14 +666,16 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
       }
    }
 
-   private void deleteValues(String cid, PropertyData pdata, Set<String> storageDescs, int totalOldValues)
-      throws ValueStorageNotFoundException, IOException, SQLException
+   private void deleteValues(String cid, PropertyData pdata, Set<String> storageDescs, int totalOldValues,
+      ContentSizeHandler sizeHandler) throws ValueStorageNotFoundException, IOException, SQLException
    {
       for (String storageId : storageDescs)
       {
          final ValueIOChannel channel = this.containerConfig.valueStorageProvider.getChannel(storageId);
          try
          {
+            sizeHandler.accumulateSize(-channel.getValueSize(pdata.getIdentifier()));
+
             channel.delete(pdata.getIdentifier());
             valueChanges.add(channel);
          }
@@ -676,6 +684,7 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
             channel.close();
          }
       }
+
       if (pdata.getValues().size() < totalOldValues)
       {
          // Remove the extra values

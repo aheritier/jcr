@@ -44,6 +44,7 @@ import org.exoplatform.services.jcr.impl.dataflow.AbstractValueData;
 import org.exoplatform.services.jcr.impl.dataflow.TransientValueData;
 import org.exoplatform.services.jcr.impl.dataflow.session.TransactionableResourceManager;
 import org.exoplatform.services.jcr.impl.dataflow.session.TransactionableResourceManagerListener;
+import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.SystemDataContainerHolder;
 import org.exoplatform.services.jcr.storage.WorkspaceDataContainer;
 import org.exoplatform.services.jcr.storage.WorkspaceStorageConnection;
@@ -623,9 +624,11 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
                }
             }
 
+            ContentSizeHandler sizeHandler = new ContentSizeHandler();
+
             ItemState itemState =
                new ItemState(newData, prevState.getState(), prevState.isEventFire(), prevState.getAncestorToSave(),
-                  prevState.isInternallyCreated(), prevState.isPersisted(), prevState.getOldPath());
+                  prevState.isInternallyCreated(), prevState.isPersisted(), prevState.getOldPath(), sizeHandler);
 
             newLog.add(itemState);
 
@@ -651,19 +654,19 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
 
                if (itemState.isAdded())
                {
-                  doAdd(data, conn, addedNodes);
+                  doAdd(data, conn, addedNodes, sizeHandler);
                }
                else if (itemState.isUpdated())
                {
-                  doUpdate(data, conn);
+                  doUpdate(data, conn, sizeHandler);
                }
                else if (itemState.isDeleted())
                {
-                  doDelete(data, conn);
+                  doDelete(data, conn, sizeHandler);
                }
                else if (itemState.isRenamed())
                {
-                  doRename(data, conn, addedNodes);
+                  doRename(data, conn, addedNodes, sizeHandler);
                }
 
                if (LOG.isDebugEnabled())
@@ -933,12 +936,13 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
     * @param item
     *          to delete
     * @param con
+    * @param sizeHandler 
     * @throws RepositoryException
     * @throws InvalidItemStateException
     *           if the item is already deleted
     */
-   protected void doDelete(final ItemData item, final WorkspaceStorageConnection con) throws RepositoryException,
-      InvalidItemStateException
+   protected void doDelete(final ItemData item, final WorkspaceStorageConnection con, ContentSizeHandler sizeHandler)
+      throws RepositoryException, InvalidItemStateException
    {
 
       if (item.isNode())
@@ -947,7 +951,7 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
       }
       else
       {
-         con.delete((PropertyData)item);
+         con.delete((PropertyData)item, sizeHandler);
       }
    }
 
@@ -958,12 +962,13 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
     *          to update
     * @param con
     *          connection
+    * @param sizeHandler 
     * @throws RepositoryException
     * @throws InvalidItemStateException
     *           if the item not found
     */
-   protected void doUpdate(final ItemData item, final WorkspaceStorageConnection con) throws RepositoryException,
-      InvalidItemStateException
+   protected void doUpdate(final ItemData item, final WorkspaceStorageConnection con, ContentSizeHandler sizeHandler)
+      throws RepositoryException, InvalidItemStateException
    {
 
       if (item.isNode())
@@ -972,7 +977,7 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
       }
       else
       {
-         con.update((PropertyData)item);
+         con.update((PropertyData)item, sizeHandler);
       }
    }
 
@@ -983,14 +988,15 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
     *          to add
     * @param con
     *          connection
+    * @param sizeHandler 
+    *          accumulates size changing
     * @throws RepositoryException
     * @throws InvalidItemStateException
     *           if the item is already added
     */
-   protected void doAdd(final ItemData item, final WorkspaceStorageConnection con, final Set<QPath> addedNodes)
-      throws RepositoryException, InvalidItemStateException
+   protected void doAdd(final ItemData item, final WorkspaceStorageConnection con, final Set<QPath> addedNodes,
+      ContentSizeHandler sizeHandler) throws RepositoryException, InvalidItemStateException
    {
-
       if (item.isNode())
       {
          final NodeData node = (NodeData)item;
@@ -1002,7 +1008,7 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
       }
       else
       {
-         con.add((PropertyData)item);
+         con.add((PropertyData)item, sizeHandler);
       }
    }
 
@@ -1012,11 +1018,12 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
     * @param item
     * @param con
     * @param addedNodes
+    * @param sizeHandler 
     * @throws RepositoryException
     * @throws InvalidItemStateException
     */
-   protected void doRename(final ItemData item, final WorkspaceStorageConnection con, final Set<QPath> addedNodes)
-      throws RepositoryException, InvalidItemStateException
+   protected void doRename(final ItemData item, final WorkspaceStorageConnection con, final Set<QPath> addedNodes,
+      ContentSizeHandler sizeHandler) throws RepositoryException, InvalidItemStateException
    {
       final NodeData node = (NodeData)item;
 
