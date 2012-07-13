@@ -18,6 +18,8 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
+import org.exoplatform.services.jcr.impl.backup.DataRestore;
+import org.exoplatform.services.jcr.impl.backup.rdbms.DataRestoreContext;
 import org.exoplatform.services.jcr.impl.core.JCRPath;
 import org.exoplatform.services.jcr.impl.core.PropertyImpl;
 import org.exoplatform.services.jcr.impl.util.io.DirectoryHelper;
@@ -88,7 +90,7 @@ public class TestWorkspaceQuotaManager extends AbstractQuotaManagerTest
       Node node = session.getRootNode().addNode("test");
       session.save();
 
-      long measuredSize = wsQuotaManager.getNodeDataSize("/test");
+      long measuredSize = wsQuotaManager.getNodeDataSizeDirectly("/test");
       long expectedSize = ((ByteArrayInputStream)node.getProperty("jcr:primaryType").getStream()).available();
 
       assertEquals(expectedSize, measuredSize);
@@ -103,7 +105,7 @@ public class TestWorkspaceQuotaManager extends AbstractQuotaManagerTest
       node.setProperty("value", new FileInputStream(createBLOBTempFile(1000)));
       session.save();
 
-      long measuredSize = wsQuotaManager.getNodeDataSize("/test");
+      long measuredSize = wsQuotaManager.getNodeDataSizeDirectly("/test");
 
       long expectedSize = ((ByteArrayInputStream)node.getProperty("jcr:primaryType").getStream()).available();
       expectedSize += node.getProperty("value").getStream().available();
@@ -144,5 +146,50 @@ public class TestWorkspaceQuotaManager extends AbstractQuotaManagerTest
       }
 
       assertEquals(nodesSize, workspaceSize);
+   }
+
+   /**
+    * Backup operation.
+    */
+   public void testBackupRestoreClean() throws Exception
+   {
+      File tempDir = new File("target/temp");
+      
+      Node testRoot = root.addNode("testRoot");
+
+      testRoot.addNode("test1").addNode("content");
+      testRoot.addNode("test2").addNode("content").addNode("content");
+      root.save();
+      
+      wsQuotaManager.setNodeQuota("/testRoot/test1", 1000, false);
+      wsQuotaManager.setNodeQuota("/testRoot/test2", 1000, false);
+      wsQuotaManager.setGroupOfNodesQuota("/testRoot/*", 2000, true);
+
+      wsQuotaManager.suspend(); // waits until all tasks are done
+      wsQuotaManager.resume();
+
+      wsQuotaManager.removeNodeQuota("/testRoot/test2");
+
+      wsQuotaManager.suspend();
+      assertTrue(wsQuotaManager.isSuspended());
+
+      long node1DataSize = wsQuotaManager.getNodeDataSize("/testRoot/test1");
+      long node2DataSize = wsQuotaManager.getNodeDataSize("/testRoot/test2");
+      long wsDataSize = wsQuotaManager.getWorkspaceDataSize();
+      long node1Quota = wsQuotaManager.getNodeQuota("/testRoot/test1");
+      long node2Quota = wsQuotaManager.getNodeQuota("/testRoot/test2");
+
+      assertEquals(node1Quota, 1000);
+      assertEquals(node2Quota, 2000);
+
+      wsQuotaManager.backup(tempDir);
+
+      DataRestoreContext context = new DataRestoreContext(new String[]{DataRestoreContext.STORAGE_DIR}, new Object[]{tempDir});
+      DataRestore restorer = wsQuotaManager.getDataRestorer(context);
+
+      restorer.clean();
+
+      wsQuotaManager.resume();
+      assertFalse(wsQuotaManager.isSuspended());
    }
 }

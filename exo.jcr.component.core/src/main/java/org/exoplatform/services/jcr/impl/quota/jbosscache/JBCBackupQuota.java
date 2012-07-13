@@ -134,7 +134,7 @@ public class JBCBackupQuota
 
    private void backupWorkspaceNodesQuotaPathes(String rName, String wsName, ZipObjectWriter writer) throws IOException
    {
-      writer.putNextEntry(new ZipEntry("workspace-nodes-quota-patterns"));
+      writer.putNextEntry(new ZipEntry("workspace-nodes-quota-paths"));
 
       Fqn<String> parentFqn =
          Fqn.fromRelativeElements(JBCQuotaPersister.QUOTA, rName, wsName, JBCQuotaPersister.QUOTA_PATHS);
@@ -154,13 +154,13 @@ public class JBCBackupQuota
          Fqn<String> nodeFqn = Fqn.fromRelativeElements(parentFqn, (String)path);
 
          Long dataSize = (Long)cache.get(nodeFqn, JBCQuotaPersister.SIZE);
-         Boolean asyncUpdate = (Boolean)cache.get(nodeFqn, JBCQuotaPersister.ASYNC_UPATE);
 
          writer.writeString((String)path);
          writer.writeLong(dataSize);
 
          if (asyncKeyInclusive)
          {
+            Boolean asyncUpdate = (Boolean)cache.get(nodeFqn, JBCQuotaPersister.ASYNC_UPATE);
             writer.writeBoolean(asyncUpdate);
          }
       }

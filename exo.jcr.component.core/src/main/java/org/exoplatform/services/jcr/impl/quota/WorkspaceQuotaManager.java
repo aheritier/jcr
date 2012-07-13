@@ -34,7 +34,6 @@ import org.exoplatform.services.jcr.dataflow.ItemDataTraversingVisitor;
 import org.exoplatform.services.jcr.dataflow.ItemState;
 import org.exoplatform.services.jcr.dataflow.ItemStateChangesLog;
 import org.exoplatform.services.jcr.dataflow.persistent.MandatoryItemsPersistenceListener;
-import org.exoplatform.services.jcr.datamodel.ItemData;
 import org.exoplatform.services.jcr.datamodel.ItemType;
 import org.exoplatform.services.jcr.datamodel.NodeData;
 import org.exoplatform.services.jcr.datamodel.PropertyData;
@@ -66,6 +65,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -221,12 +221,12 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
 
       try
       {
-         long dataSize = quotaPersister.getNodeDataSize(rName, wsName, nodePath);
-         defineAlertedPath(nodePath, dataSize, quotaLimit);
+         quotaPersister.getNodeDataSize(rName, wsName, nodePath);
+         defineAlertedPath(nodePath);
       }
       catch (UnknownQuotaDataSizeException e)
       {
-         Runnable task = new SetNodeQuotaTask(this, nodePath, quotaLimit);
+         Runnable task = new DefineAlertedNodeTask(this, nodePath);
          executor.execute(task);
       }
    }
@@ -260,8 +260,8 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    @ManagedDescription("Removes a quota limit for a bunch of nodes")
    public void removeGroupOfNodesQuota(String patternPath) throws QuotaManagerException
    {
-      quotaPersister.removeGroupOfNodesQuota(rName, wsName, patternPath);
-      defineAlertedPaths();
+      Set<String> removedPaths = quotaPersister.removeGroupOfNodesQuota(rName, wsName, patternPath);
+      alertedPaths.remove(removedPaths);
    }
 
    /**
@@ -371,7 +371,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    protected void defineAlertedState()
    {
-      // TODO
       try
       {
          long quotaLimit = quotaPersister.getWorkspaceQuota(rName, wsName);
@@ -403,7 +402,15 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          try
          {
             long quotaLimit = quotaPersister.getNodeQuotaByPathOrPattern(rName, wsName, nodePath);
-            defineAlertedPath(nodePath, dataSize, quotaLimit);
+
+            if (dataSize > quotaLimit)
+            {
+               alertedPaths.remove(nodePath);
+            }
+            else
+            {
+               alertedPaths.add(nodePath);
+            }
          }
          catch (UnknownQuotaLimitException e)
          {
@@ -417,29 +424,10 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * Define if node path should be marked as alerted. It means
-    * node data size exceeded quota limit.
-    * 
-    * @param dataSize
-    *          known node data size
-    * @param quotaLimit
-    *          known node limit         
+    * Gets all alerted paths.
     */
-   protected void defineAlertedPath(String nodePath, long dataSize, long quotaLimit)
-   {
-      if (dataSize > quotaLimit)
-      {
-         alertedPaths.remove(nodePath);
-      }
-      else
-      {
-         alertedPaths.add(nodePath);
-      }
-   }
-
    protected void defineAlertedPaths()
    {
-      // TODO
       alertedPaths = quotaPersister.getAlertedPaths(rName, wsName);
    }
 
@@ -636,32 +624,33 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          try
          {
             boolean newContentArrivedInWS = false;
+            Set<String> checkedAlertedPaths = new HashSet<String>();
 
             for (ItemState state : itemStates.getAllStates())
             {
-               ItemData data = state.getData();
-
-               // TODO only one by path!!!
-               // TODO alertPaths contain pattern?
                if (state.isAdded() || state.isUpdated() || state.isRenamed())
                {
-                  newContentArrivedInWS = true;
-
-                  String nodePath;
+                  String itemPath;
                   try
                   {
-                     nodePath = lFactory.createJCRPath(data.getQPath()).getAsString(false);
+                     itemPath = lFactory.createJCRPath(state.getData().getQPath()).getAsString(false);
                   }
                   catch (RepositoryException e)
                   {
                      throw new IllegalStateException(e.getMessage(), e);
                   }
 
-                  if (!data.isNode() && alertedPaths.contains(nodePath))
+                  for (String alertedPath : alertedPaths)
                   {
-                     repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Node " + uniqueName + nodePath
-                        + " data size exceeded quota limit");
+                     if (!checkedAlertedPaths.contains(alertedPath)
+                        && PathPatternUtils.acceptDescendant(alertedPath, itemPath))
+                     {
+                        repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Node " + uniqueName
+                           + alertedPath + " data size exceeded quota limit");
+                     }
                   }
+
+                  newContentArrivedInWS = true;
                }
             }
 
@@ -890,8 +879,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
 
       quotaPersister.clearWorkspaceData(rName, wsName);
-
-      defineAlertedPaths();
+      alertedPaths.clear();
    }
 
    // =========================================> Suspendable

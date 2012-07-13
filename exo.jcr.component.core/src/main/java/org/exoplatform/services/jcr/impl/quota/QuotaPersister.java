@@ -52,8 +52,9 @@ public interface QuotaPersister
 
    /**
     * @see QuotaManager#removeGroupOfNodesQuota(String, String, String)
+    * @return removed node paths for which pattern quota was set but path quota was not 
     */
-   void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath);
+   Set<String> removeGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath);
 
    /**
     * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)

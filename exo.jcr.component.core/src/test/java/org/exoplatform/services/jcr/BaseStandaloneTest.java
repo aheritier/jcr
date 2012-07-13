@@ -77,8 +77,6 @@ public abstract class BaseStandaloneTest extends TestCase
 
    protected static Log log = ExoLogger.getLogger("exo.jcr.component.core.JCRTest");
 
-   protected static String TEMP_PATH = "./temp/fsroot";
-
    protected static String WORKSPACE = "ws";
 
    protected SessionImpl session;
