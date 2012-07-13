@@ -1983,7 +1983,8 @@ public class JBossCacheWorkspaceStorageCache implements WorkspaceStorageCache, S
 
                PropertyData newProp =
                   new PersistedPropertyData(prevProp.getIdentifier(), newPath, prevProp.getParentIdentifier(),
-                     prevProp.getPersistedVersion(), prevProp.getType(), prevProp.isMultiValued(), prevProp.getValues());
+                     prevProp.getPersistedVersion(), prevProp.getType(), prevProp.isMultiValued(),
+ prevProp.getValues());
                cache.put(makeItemFqn(newProp.getIdentifier()), ITEM_DATA, newProp);
             }
          }

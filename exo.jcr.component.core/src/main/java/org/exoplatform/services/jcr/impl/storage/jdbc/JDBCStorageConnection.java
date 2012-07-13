@@ -2474,6 +2474,7 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
             QPath.makeChildPath(parentPath == null ? traverseQPath(cpid) : parentPath, InternalQName.parse(cname));
 
          String identifier = getIdentifier(cid);
+
          List<ValueData> values = readValues(cid, cptype, identifier, cversion);
          PersistedPropertyData pdata =
             new PersistedPropertyData(identifier, qpath, getIdentifier(cpid), cversion, cptype, cpmultivalued, values);
@@ -2572,10 +2573,9 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
     * @throws ValueStorageNotFoundException
     *           if no such storage found with Value storageId
     */
-   private List<ValueData> readValues(String cid, int cptype, String identifier, int cversion) throws IOException,
-      SQLException, ValueStorageNotFoundException
+   private List<ValueData> readValues(String cid, int cptype, String identifier, int cversion)
+      throws IOException, SQLException, ValueStorageNotFoundException
    {
-
       List<ValueData> data = new ArrayList<ValueData>();
 
       final ResultSet valueRecords = findValuesByPropertyId(cid);
@@ -2585,11 +2585,13 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
          {
             final int orderNum = valueRecords.getInt(COLUMN_VORDERNUM);
             final String storageId = valueRecords.getString(COLUMN_VSTORAGE_DESC);
-            ValueData vdata =
+
+            ValueData valueData =
                valueRecords.wasNull() ? ValueDataUtil.readValueData(cid, cptype, orderNum, cversion,
                   valueRecords.getBinaryStream(COLUMN_VDATA), containerConfig.spoolConfig) : readValueData(identifier,
                   orderNum, cptype, storageId);
-            data.add(vdata);
+
+            data.add(valueData);
          }
       }
       finally
@@ -2721,12 +2723,6 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
 
    /**
     * Build node data and its properties data from temporary stored info.
-    * 
-    * @return NodeDataIndexing
-    * @throws RepositoryException
-    * @throws IOException 
-    * @throws SQLException 
-    * @throws IllegalNameException 
     */
    protected NodeDataIndexing createNodeDataIndexing(TempNodeData tempNode) throws RepositoryException, SQLException,
       IOException, IllegalNameException
@@ -2749,14 +2745,12 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
 
       // primary type if exists in the list of properties
       InternalQName ptName = null;
-      ValueData ptValue = null;
+      ValueData ptValueData = null;
+      
 
       SortedSet<TempPropertyData> ptTempProp = tempNode.properties.get(Constants.JCR_PRIMARYTYPE.getAsString());
-      if (ptTempProp != null)
-      {
-         ptValue = ptTempProp.first().getValueData();
-         ptName = InternalQName.parse(ValueDataUtil.getString(ptValue));
-      }
+      ptValueData = ptTempProp.first().getValueData();
+      ptName = InternalQName.parse(ValueDataUtil.getString(ptValueData));
 
       // mixins if exist in the list of properties
       List<ValueData> mixinsData = new ArrayList<ValueData>();
@@ -2787,15 +2781,15 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
          String identifier = getIdentifier(prop.id);
          QPath qpath = QPath.makeChildPath(parentPath, InternalQName.parse(prop.name));
 
-         List<ValueData> valueData = new ArrayList<ValueData>();
+         List<ValueData> values = new ArrayList<ValueData>();
 
          if (propName.equals(Constants.JCR_PRIMARYTYPE.getAsString()))
          {
-            valueData.add(ptValue);
+            values.add(ptValueData);
          }
          else if (propName.equals(Constants.JCR_MIXINTYPES.getAsString()))
          {
-            valueData = mixinsData;
+            values = mixinsData;
          }
          else
          {
@@ -2803,13 +2797,13 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
             {
                ExtendedTempPropertyData exTempProp = (ExtendedTempPropertyData)tempProp;
 
-               valueData.add(exTempProp.getValueData());
+               values.add(exTempProp.getValueData());
             }
          }
 
          // build property data
          PropertyData pdata =
-            new PersistedPropertyData(identifier, qpath, tempNode.cid, prop.version, prop.type, prop.multi, valueData);
+            new PersistedPropertyData(identifier, qpath, tempNode.cid, prop.version, prop.type, prop.multi, values);
 
          childProps.put(propName, pdata);
       }
@@ -2856,18 +2850,18 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
 
       protected ValueData data;
 
-      public TempPropertyData(ResultSet item) throws SQLException, IOException
-      {
-         this(item, true);
-      }
-
       /**
        * Constructor TempPropertyData.
        */
-      public TempPropertyData(ResultSet item, boolean readValue) throws SQLException, IOException
+      public TempPropertyData(ResultSet item) throws SQLException, IOException, ValueStorageNotFoundException
       {
          orderNum = item.getInt(COLUMN_VORDERNUM);
-         data = readValue ? new ByteArrayPersistedValueData(orderNum, item.getBytes(COLUMN_VDATA)) : null;
+         readData(item);
+      }
+      
+      protected void readData(ResultSet item) throws SQLException, ValueStorageNotFoundException, IOException
+      {
+         data = new ByteArrayPersistedValueData(orderNum, item.getBytes(COLUMN_VDATA));
       }
 
       public int compareTo(TempPropertyData o)
@@ -2900,14 +2894,20 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
 
       public ExtendedTempPropertyData(ResultSet item) throws SQLException, ValueStorageNotFoundException, IOException
       {
-         super(item, false);
+         super(item);
+
          id = item.getString("P_ID");
          name = item.getString("P_NAME");
          version = item.getInt("P_VERSION");
          type = item.getInt(COLUMN_PTYPE);
          multi = item.getBoolean("P_MULTIVALUED");
          storage_desc = item.getString(COLUMN_VSTORAGE_DESC);
+      }
+
+      protected void readData(ResultSet item) throws SQLException, ValueStorageNotFoundException, IOException
+      {
          InputStream is = item.getBinaryStream(COLUMN_VDATA);
+
          data =
             storage_desc == null ? ValueDataUtil.readValueData(id, type, orderNum, version, is,
                containerConfig.spoolConfig) : readValueData(getIdentifier(id), orderNum, type, storage_desc);

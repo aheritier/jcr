@@ -42,6 +42,9 @@ public interface QuotaManager
 
    /**
     * Returns a node quota limit, a maximum allowed node data size of this node.
+    * First will be tried to check if quota limit was explicitly set for this path.
+    * Otherwise will be tried to find pattern quota that matches for defined
+    * node path.
     * 
     * @param repositoryName
     *          the repository name            

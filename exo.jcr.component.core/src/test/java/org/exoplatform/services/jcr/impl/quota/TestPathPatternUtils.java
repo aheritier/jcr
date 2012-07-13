@@ -31,63 +31,86 @@ public class TestPathPatternUtils extends TestCase
     */
    public void testPattern() throws Exception
    {
-      assertTrue(PathPatternUtils.matches("/", "/", true));
-      assertTrue(PathPatternUtils.matches("/", "/a", true));
-      assertTrue(PathPatternUtils.matches("/", "/a/c", true));
+      assertTrue(PathPatternUtils.acceptDescendant("/", "/"));
+      assertTrue(PathPatternUtils.acceptDescendant("/", "/a"));
+      assertTrue(PathPatternUtils.acceptDescendant("/", "/a/c"));
+      assertTrue(PathPatternUtils.acceptName("/", "/"));
+      assertFalse(PathPatternUtils.acceptName("/", "/a"));
+      assertFalse(PathPatternUtils.acceptName("/", "/a/c"));
 
-      assertTrue(PathPatternUtils.matches("/a", "/a", true));
-      assertTrue(PathPatternUtils.matches("/a", "/a/c", true));
-      assertTrue(PathPatternUtils.matches("/a", "/a/c/", true));
-      assertFalse(PathPatternUtils.matches("/a", "/b", true));
-      assertFalse(PathPatternUtils.matches("/a", "/b/c", true));
-      assertFalse(PathPatternUtils.matches("/a", "/", true));
+      assertTrue(PathPatternUtils.acceptDescendant("/a", "/a"));
+      assertTrue(PathPatternUtils.acceptDescendant("/a", "/a/c"));
+      assertTrue(PathPatternUtils.acceptDescendant("/a", "/a/c/"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a", "/b"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a", "/b/c"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a", "/"));
+      assertTrue(PathPatternUtils.acceptName("/a", "/a"));
+      assertTrue(PathPatternUtils.acceptName("/a", "/a/"));
+      assertFalse(PathPatternUtils.acceptName("/a", "/a/c/"));
 
-      assertTrue(PathPatternUtils.matches("/a/b", "/a/b", true));
-      assertTrue(PathPatternUtils.matches("/a/b", "/a/b/c", true));
-      assertTrue(PathPatternUtils.matches("/a/b", "/a/b/c/", true));
-      assertFalse(PathPatternUtils.matches("/a/b", "/a/c", true));
-      assertFalse(PathPatternUtils.matches("/a/b", "/a", true));
-      assertFalse(PathPatternUtils.matches("/a/b", "/", true));
+      assertTrue(PathPatternUtils.acceptDescendant("/a/b", "/a/b"));
+      assertTrue(PathPatternUtils.acceptDescendant("/a/b", "/a/b/c"));
+      assertTrue(PathPatternUtils.acceptDescendant("/a/b", "/a/b/c/"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/b", "/a/c"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/b", "/a"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/b", "/"));
+      assertTrue(PathPatternUtils.acceptName("/a/b", "/a/b"));
+      assertFalse(PathPatternUtils.acceptName("/a/b", "/a/b/c"));
+      assertFalse(PathPatternUtils.acceptName("/a/b", "/a/b/c/"));
 
-      assertTrue(PathPatternUtils.matches("/*", "/aaa", true));
-      assertTrue(PathPatternUtils.matches("/*", "/aaa/bbb", true));
-      assertFalse(PathPatternUtils.matches("/*", "/", true));
+      assertTrue(PathPatternUtils.acceptDescendant("/*", "/aaa"));
+      assertTrue(PathPatternUtils.acceptDescendant("/*", "/aaa/bbb"));
+      assertFalse(PathPatternUtils.acceptDescendant("/*", "/"));
+      assertTrue(PathPatternUtils.acceptName("/*", "/aaa"));
+      assertFalse(PathPatternUtils.acceptName("/*", "/aaa/bbb"));
 
-      assertTrue(PathPatternUtils.matches("/a/*", "/a/bbb", true));
-      assertTrue(PathPatternUtils.matches("/a/*", "/a/bbb/c", true));
-      assertFalse(PathPatternUtils.matches("/a/*", "/c", true));
-      assertFalse(PathPatternUtils.matches("/a/*", "/", true));
+      assertTrue(PathPatternUtils.acceptDescendant("/a/*", "/a/bbb"));
+      assertTrue(PathPatternUtils.acceptDescendant("/a/*", "/a/bbb/c"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/*", "/c"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/*", "/"));
+      assertTrue(PathPatternUtils.acceptName("/a/*", "/a/bbb"));
+      assertFalse(PathPatternUtils.acceptName("/a/*", "/a/bbb/c"));
 
-      assertTrue(PathPatternUtils.matches("/a/*/b/*", "/a/ccc/b/ddd", true));
-      assertTrue(PathPatternUtils.matches("/a/*/b/*", "/a/ccc/b/ddd/ggg", true));
-      assertFalse(PathPatternUtils.matches("/a/*/b/*", "/d/ccc/b/ddd", true));
-      assertFalse(PathPatternUtils.matches("/a/*/b/*", "/a/ccc/e/ddd", true));
-      assertFalse(PathPatternUtils.matches("/a/*/b/*", "/a/ccc/b", true));
-      assertFalse(PathPatternUtils.matches("/a/*/b/*", "/a/ccc", true));
-      assertFalse(PathPatternUtils.matches("/a/*/b/*", "/a", true));
-      assertFalse(PathPatternUtils.matches("/a/*/b/*", "/", true));
+      assertTrue(PathPatternUtils.acceptDescendant("/a/*/b/*", "/a/ccc/b/ddd"));
+      assertTrue(PathPatternUtils.acceptDescendant("/a/*/b/*", "/a/ccc/b/ddd/ggg"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/*/b/*", "/d/ccc/b/ddd"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/*/b/*", "/a/ccc/e/ddd"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/*/b/*", "/a/ccc/b"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/*/b/*", "/a/ccc"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/*/b/*", "/a"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/*/b/*", "/"));
+      assertTrue(PathPatternUtils.acceptName("/a/*/b/*", "/a/ccc/b/ddd"));
+      assertFalse(PathPatternUtils.acceptName("/a/*/b/*", "/a/ccc/b/ddd/ggg"));
 
-      assertTrue(PathPatternUtils.matches("/%", "/a/c", true));
-      assertTrue(PathPatternUtils.matches("/%", "/a", true));
-      assertFalse(PathPatternUtils.matches("/%", "/aa", true));
-      assertFalse(PathPatternUtils.matches("/%", "/aa/c", true));
-      assertFalse(PathPatternUtils.matches("/%", "/", true));
+      assertTrue(PathPatternUtils.acceptDescendant("/%", "/a/c"));
+      assertTrue(PathPatternUtils.acceptDescendant("/%", "/a"));
+      assertFalse(PathPatternUtils.acceptDescendant("/%", "/aa"));
+      assertFalse(PathPatternUtils.acceptDescendant("/%", "/aa/c"));
+      assertFalse(PathPatternUtils.acceptDescendant("/%", "/"));
+      assertTrue(PathPatternUtils.acceptName("/%", "/a"));
+      assertFalse(PathPatternUtils.acceptName("/%", "/a/c"));
 
-      assertTrue(PathPatternUtils.matches("/%%%", "/aaa", true));
-      assertTrue(PathPatternUtils.matches("/%%%", "/aaa/bbb", true));
-      assertFalse(PathPatternUtils.matches("/%%%", "/aaaa", true));
-      assertFalse(PathPatternUtils.matches("/%%%", "/a", true));
-      assertFalse(PathPatternUtils.matches("/%%%", "/a/b/c", true));
-      assertFalse(PathPatternUtils.matches("/%%%", "/", true));
+      assertTrue(PathPatternUtils.acceptDescendant("/%%%", "/aaa"));
+      assertTrue(PathPatternUtils.acceptDescendant("/%%%", "/aaa/bbb"));
+      assertFalse(PathPatternUtils.acceptDescendant("/%%%", "/aaaa"));
+      assertFalse(PathPatternUtils.acceptDescendant("/%%%", "/a"));
+      assertFalse(PathPatternUtils.acceptDescendant("/%%%", "/a/b/c"));
+      assertFalse(PathPatternUtils.acceptDescendant("/%%%", "/"));
+      assertTrue(PathPatternUtils.acceptName("/%%%", "/aaa"));
+      assertFalse(PathPatternUtils.acceptName("/%%%", "/aaa/b"));
 
-      assertTrue(PathPatternUtils.matches("/a/%%", "/a/bb", true));
-      assertTrue(PathPatternUtils.matches("/a/%%", "/a/bb/c", true));
-      assertFalse(PathPatternUtils.matches("/a/%%", "/a/bbb", true));
-      assertFalse(PathPatternUtils.matches("/a/%%", "/a", true));
-      assertFalse(PathPatternUtils.matches("/a/%%", "/", true));
+      assertTrue(PathPatternUtils.acceptDescendant("/a/%%", "/a/bb"));
+      assertTrue(PathPatternUtils.acceptDescendant("/a/%%", "/a/bb/c"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/%%", "/a/bbb"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/%%", "/a"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/%%", "/"));
+      assertTrue(PathPatternUtils.acceptName("/a/%%", "/a/bb"));
+      assertFalse(PathPatternUtils.acceptName("/a/%%", "/a/bb/c"));
 
-      assertTrue(PathPatternUtils.matches("/a/%%/b/*", "/a/cc/b/eee", true));
-      assertTrue(PathPatternUtils.matches("/a/%%/b/*", "/a/cc/b/eee/ggg", true));
-      assertFalse(PathPatternUtils.matches("/a/%%/b/*", "/a/cc/d/eee/ggg", true));
+      assertTrue(PathPatternUtils.acceptDescendant("/a/%%/b/*", "/a/cc/b/eee"));
+      assertTrue(PathPatternUtils.acceptDescendant("/a/%%/b/*", "/a/cc/b/eee/ggg"));
+      assertFalse(PathPatternUtils.acceptDescendant("/a/%%/b/*", "/a/cc/d/eee/ggg"));
+      assertTrue(PathPatternUtils.acceptName("/a/%%/b/*", "/a/cc/b/eee"));
+      assertFalse(PathPatternUtils.acceptName("/a/%%/b/*", "/a/cc/b/eee/ggg"));
    }
 }

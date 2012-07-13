@@ -519,8 +519,8 @@ public class TestCacheableWorkspaceDataManager extends JcrImplBaseTest
          getChildPropertiesDataCalls.incrementAndGet();
          return Arrays
             .asList((PropertyData)new PersistedPropertyData("getChildPropertiesDataByPattern", null, null, 0,
-               PropertyType.STRING, false, Arrays
-                  .asList((ValueData)new ByteArrayPersistedValueData(1, "foo".getBytes()))));
+               PropertyType.STRING, false,
+               Arrays.asList((ValueData)new ByteArrayPersistedValueData(1, "foo".getBytes()))));
       }
 
       public AtomicInteger getItemDataByNodeDataNQPathEntryCalls = new AtomicInteger();

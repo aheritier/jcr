@@ -746,11 +746,12 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
                   if (!resultSet.wasNull())
                   {
                      final String storageId = resultSet.getString(COLUMN_VSTORAGE_DESC);
-                     ValueData vdata =
+                     ValueData valueData =
                         resultSet.wasNull() ? ValueDataUtil.readValueData(cid, cptype, orderNum, cversion,
                            resultSet.getBinaryStream(COLUMN_VDATA), containerConfig.spoolConfig) : readValueData(
                            identifier, orderNum, cptype, storageId);
-                     data.add(vdata);
+
+                     data.add(valueData);
                   }
 
                   isNotLast = resultSet.next();
@@ -884,11 +885,12 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
                   if (!resultSet.wasNull())
                   {
                      final String storageId = resultSet.getString(COLUMN_VSTORAGE_DESC);
-                     ValueData vdata =
+                     ValueData valueData =
                         resultSet.wasNull() ? ValueDataUtil.readValueData(cid, cptype, orderNum, cversion,
                            resultSet.getBinaryStream(COLUMN_VDATA), containerConfig.spoolConfig) : readValueData(
                            identifier, orderNum, cptype, storageId);
-                     data.add(vdata);
+
+                     data.add(valueData);
                   }
 
                   isNotLast = resultSet.next();
@@ -897,6 +899,7 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
 
                // To avoid using a temporary table, we sort the values manually
                Collections.sort(data, COMPARATOR_VALUE_DATA);
+
                //create property
                PersistedPropertyData pdata =
                   new PersistedPropertyData(identifier, qpath, getIdentifier(cpid), cversion, cptype, cpmultivalued,

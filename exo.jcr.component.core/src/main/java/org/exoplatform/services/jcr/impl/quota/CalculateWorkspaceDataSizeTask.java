@@ -23,33 +23,24 @@ import org.exoplatform.services.log.Log;
 
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: TrackNodeTask.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: CalculateWorkspaceDataSizeTask.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class TrackNodeTask implements Runnable
+public class CalculateWorkspaceDataSizeTask implements Runnable
 {
 
    /**
     * Logger.
     */
-   private final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.TrackNodeTask");
+   private final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.CalculateWorkspaceDataSizeTask");
 
-   private final WorkspaceQuotaManager quotaManager;
-
-   private final long quotaLimit;
-
-   private final String nodePath;
-
-   private final boolean asyncUpdate;
+   private final WorkspaceQuotaManager workspaceQuotaManager;
 
    /**
-    * TrackNodeTask constructor. 
+    * TrackWorkspaceTask constructor. 
     */
-   public TrackNodeTask(WorkspaceQuotaManager quotaManager, String nodePath, long quotaLimit, boolean asyncUpdate)
+   public CalculateWorkspaceDataSizeTask(WorkspaceQuotaManager quotaManager)
    {
-      this.quotaManager = quotaManager;
-      this.quotaLimit = quotaLimit;
-      this.nodePath = nodePath;
-      this.asyncUpdate = asyncUpdate;
+      this.workspaceQuotaManager = quotaManager;
    }
 
    /**
@@ -59,7 +50,8 @@ public class TrackNodeTask implements Runnable
    {
       try
       {
-         quotaManager.trackNode(nodePath, quotaLimit, asyncUpdate);
+         long dataSize = workspaceQuotaManager.getWorkspaceDataSizeDirectly();
+         workspaceQuotaManager.accumulateChanges(dataSize);
       }
       catch (QuotaManagerException e)
       {

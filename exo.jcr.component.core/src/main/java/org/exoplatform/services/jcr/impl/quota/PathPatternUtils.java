@@ -52,27 +52,40 @@ public class PathPatternUtils
    }
 
    /**
-    * Returns <code>true</code> if a specified path matches by pattern.
+    * Returns <code>true</code> if a specified path matches by pattern
+    * and has the same depth.
     * 
     * @param pattern
     *          pattern for node path
     * @param absPath
     *          node absolute path
-    * @param isDeep
-    *          indicates if children nodes can be matched by pattern or not
-    * 
     * @return a <code>boolean</code>.
     */
-   public static boolean matches(String pattern, String absPath, boolean isDeep)
+   public static boolean acceptName(String pattern, String absPath)
    {
       absPath = normalizePath(absPath);
       pattern = adopt2JavaPattern(pattern);
 
-      if (isDeep)
-      {
-         // allows any children after
-         pattern += "(/.+)?";
-      }
+      return absPath.matches(pattern);
+   }
+
+   /**
+    * Returns <code>true</code> if a specified path matches by pattern
+    * and has not less elements.
+    * 
+    * @param pattern
+    *          pattern for node path
+    * @param absPath
+    *          node absolute path
+    * @return a <code>boolean</code>.
+    */
+   public static boolean acceptDescendant(String pattern, String absPath)
+   {
+      absPath = normalizePath(absPath);
+      pattern = adopt2JavaPattern(pattern);
+
+      // allows any children after
+      pattern += "(/.+)?";
 
       return absPath.matches(pattern);
    }

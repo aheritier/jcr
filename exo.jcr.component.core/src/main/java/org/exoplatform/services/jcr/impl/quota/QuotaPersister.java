@@ -22,6 +22,7 @@ import org.exoplatform.services.jcr.impl.backup.BackupException;
 import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectReader;
 import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectWriter;
 
+import java.util.Set;
 
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
@@ -37,7 +38,7 @@ public interface QuotaPersister
    /**
     * @see QuotaManager#getNodeQuota(String, String, String)
     */
-   long getNodeQuota(String repositoryName, String workspaceName, String nodePath) throws UnknownQuotaLimitException;
+   long getNodeQuotaByPathOrPattern(String repositoryName, String workspaceName, String nodePath) throws UnknownQuotaLimitException;
 
    /**
     * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)
@@ -59,6 +60,11 @@ public interface QuotaPersister
     */
    void setGroupOfNodeQuota(String repositoryName, String workspaceName, String patternPath, long quotaLimit,
       boolean asyncUpdate);
+
+   /**
+    * Returns alerted node paths. 
+    */
+   Set<String> getAlertedPaths(String repositoryName, String workspaceName);
 
    /**
     * @see QuotaManager#getNodeDataSize(String, String, String)

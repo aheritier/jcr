@@ -33,9 +33,6 @@ import org.picocontainer.Startable;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -83,11 +80,6 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    protected final ExceededQuotaBehavior exceededQuotaBehavior;
 
    /**
-    * Executor service.
-    */
-   protected final Executor executor;
-
-   /**
     * {@link QuotaPersister}
     */
    protected final QuotaPersister quotaPersister;
@@ -120,17 +112,9 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
       this.cfm = cfm;
       this.initParams = initParams;
       this.rpcService = rpcService;
-
       this.quotaPersister = initQuotaPersister();
-      this.executor = Executors.newFixedThreadPool(1, new ThreadFactory()
-      {
-         public Thread newThread(Runnable arg0)
-         {
-            return new Thread(arg0, "QuotaManagerThread");
-         }
-      });
 
-      validateAlerted();
+      defineAlertedState();
    }
 
    /**
@@ -310,7 +294,7 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    public void setGlobalQuota(long quotaLimit) throws QuotaManagerException
    {
       quotaPersister.setGlobalQuota(quotaLimit);
-      validateAlerted();
+      defineAlertedState();
    }
 
    /**
@@ -320,8 +304,8 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    @ManagedDescription("Removes global quota limit")
    public void removeGlobalQuota() throws QuotaManagerException
    {
-      invalidateAlerted();
       quotaPersister.removeGlobalQuota();
+      defineAlertedState();
    }
 
    /**
@@ -363,15 +347,17 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    public void stop()
    {
       quotaPersister.destroy();
+      rQuotaManagers.clear();
    }
 
    /**
-    * Accumulate global data size changes.
+    * Accumulate changed data size. Can be either positive
+    * or negative.
     * 
     * @param delta
-    *          the size on which JCR instance was changed
+    *          the size on which entity was changed
     */
-   protected void onAccumulateChanges(long delta)
+   protected void accumulateChanges(long delta)
    {
       long dataSize = 0;
       try
@@ -389,15 +375,17 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
       long newDataSize = Math.max(dataSize + delta, 0);
       quotaPersister.setGlobalDataSize(newDataSize);
 
-      validateAlerted();
+      defineAlertedState();
    }
 
    /**
-    * Checks if new changes can exceeds some limits.
+    * Checks if entity can accumulate new changes. It is not possible
+    * when entity is alerted and {@link ExceededQuotaLimitException} 
+    * will be thrown.
     * 
-    * @throws ExceededQuotaLimitException if data size exceeded quota limit
+    * @throws ExceededQuotaLimitException if entity is alerted
     */
-   protected void onValidateChanges() throws ExceededQuotaLimitException
+   protected void validateAccumulateChanges() throws ExceededQuotaLimitException
    {
       if (alerted.get())
       {
@@ -430,9 +418,9 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    }
 
    /**
-    * Checks if data size exceeded quota limit.
+    * Define global alerted state based on values of quota limit and data size.
     */
-   private void validateAlerted()
+   private void defineAlertedState()
    {
       try
       {
@@ -444,27 +432,13 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
          }
          catch (UnknownQuotaDataSizeException e)
          {
-            if (LOG.isTraceEnabled())
-            {
-               LOG.trace(e.getMessage(), e);
-            }
+            alerted.set(false);
          }
       }
       catch (UnknownQuotaLimitException e)
       {
-         if (LOG.isTraceEnabled())
-         {
-            LOG.trace(e.getMessage(), e);
-         }
+         alerted.set(false);
       }
-   }
-
-   /**
-    * Invalidates {@link #alerted}.
-    */
-   private void invalidateAlerted()
-   {
-      alerted.set(false);
    }
 
    /**
@@ -494,9 +468,13 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
 
    /**
     * What to do if data size exceeded quota limit. Throwing exception or logging only.
+
+    * @param message
+    *          the detail message for exception or log operation
+    * @throws ExceededQuotaLimitException
+    *          if current behavior is {@link ExceededQuotaBehavior#EXCEPTION}           
     */
-   protected void behaveOnQuotaExceeded(String message)
-      throws ExceededQuotaLimitException
+   protected void behaveOnQuotaExceeded(String message) throws ExceededQuotaLimitException
    {
       switch (exceededQuotaBehavior)
       {

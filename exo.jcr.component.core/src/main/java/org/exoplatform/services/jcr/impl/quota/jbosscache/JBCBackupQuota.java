@@ -137,7 +137,7 @@ public class JBCBackupQuota
       writer.putNextEntry(new ZipEntry("workspace-nodes-quota-patterns"));
 
       Fqn<String> parentFqn =
-         Fqn.fromRelativeElements(JBCQuotaPersister.QUOTA, rName, wsName, JBCQuotaPersister.QUOTA_PATHES);
+         Fqn.fromRelativeElements(JBCQuotaPersister.QUOTA, rName, wsName, JBCQuotaPersister.QUOTA_PATHS);
       backupNodes(parentFqn, writer, true);
 
       writer.closeEntry();
@@ -184,7 +184,7 @@ public class JBCBackupQuota
       reader.getNextEntry();
 
       Fqn<String> base =
-         Fqn.fromRelativeElements(JBCQuotaPersister.QUOTA, rName, wsName, JBCQuotaPersister.QUOTA_PATHES);
+         Fqn.fromRelativeElements(JBCQuotaPersister.QUOTA, rName, wsName, JBCQuotaPersister.QUOTA_PATHS);
       restoreNodes(base, true, reader);
    }
 

@@ -18,7 +18,6 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
-import org.exoplatform.services.jcr.JcrAPIBaseTest;
 import org.exoplatform.services.jcr.impl.core.JCRPath;
 import org.exoplatform.services.jcr.impl.core.PropertyImpl;
 import org.exoplatform.services.jcr.impl.util.io.DirectoryHelper;
@@ -36,17 +35,15 @@ import javax.jcr.Value;
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: TestWorkspaceQuotaManager.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class TestWorkspaceQuotaManager extends JcrAPIBaseTest
+public class TestWorkspaceQuotaManager extends AbstractQuotaManagerTest
 {
+
    /**
     * Check the index size of non system workspace.
     */
    public void testWorkspaceIndexSize() throws Exception
    {
-      WorkspaceQuotaManager wQuotaManager =
-         (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws1").getComponent(WorkspaceQuotaManager.class);
-
-      long measuredSize = wQuotaManager.getWorkspaceIndexSize();
+      long measuredSize = ws1QuotaManager.getWorkspaceIndexSize();
       long exptectedSize = DirectoryHelper.getSize(new File("target/temp/index/db1/ws1"));
 
       assertEquals(exptectedSize, measuredSize);
@@ -57,10 +54,7 @@ public class TestWorkspaceQuotaManager extends JcrAPIBaseTest
     */
    public void testSystemWorkspaceIndexSize() throws Exception
    {
-      WorkspaceQuotaManager wQuotaManager =
-         (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws").getComponent(WorkspaceQuotaManager.class);
-
-      long measuredSize = wQuotaManager.getWorkspaceIndexSize();
+      long measuredSize = wsQuotaManager.getWorkspaceIndexSize();
 
       long exptectedSize = DirectoryHelper.getSize(new File("target/temp/index/db1/ws"));
       exptectedSize += DirectoryHelper.getSize(new File("target/temp/index/db1/ws_system"));
@@ -73,10 +67,7 @@ public class TestWorkspaceQuotaManager extends JcrAPIBaseTest
     */
    public void testWorkspaceDataSize() throws Exception
    {
-      WorkspaceQuotaManager wQuotaManager =
-         (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws").getComponent(WorkspaceQuotaManager.class);
-
-      long measuredSize = wQuotaManager.getWorkspaceDataSize();
+      long measuredSize = wsQuotaManager.getWorkspaceDataSize();
 
       assertTrue(measuredSize > 0);
    }
@@ -86,10 +77,7 @@ public class TestWorkspaceQuotaManager extends JcrAPIBaseTest
     */
    public void testRootNodeDataSize() throws Exception
    {
-      WorkspaceQuotaManager wQuotaManager =
-         (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws").getComponent(WorkspaceQuotaManager.class);
-
-      assertEquals(wQuotaManager.getWorkspaceDataSize(), wQuotaManager.getNodeDataSize(JCRPath.ROOT_PATH));
+      assertEquals(wsQuotaManager.getWorkspaceDataSize(), wsQuotaManager.getNodeDataSize(JCRPath.ROOT_PATH));
    }
 
    /**
@@ -100,10 +88,7 @@ public class TestWorkspaceQuotaManager extends JcrAPIBaseTest
       Node node = session.getRootNode().addNode("test");
       session.save();
 
-      WorkspaceQuotaManager wQuotaManager =
-         (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws").getComponent(WorkspaceQuotaManager.class);
-
-      long measuredSize =  wQuotaManager.getNodeDataSize("/test");
+      long measuredSize = wsQuotaManager.getNodeDataSize("/test");
       long expectedSize = ((ByteArrayInputStream)node.getProperty("jcr:primaryType").getStream()).available();
 
       assertEquals(expectedSize, measuredSize);
@@ -118,10 +103,7 @@ public class TestWorkspaceQuotaManager extends JcrAPIBaseTest
       node.setProperty("value", new FileInputStream(createBLOBTempFile(1000)));
       session.save();
 
-      WorkspaceQuotaManager wQuotaManager =
-         (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws").getComponent(WorkspaceQuotaManager.class);
-
-      long measuredSize = wQuotaManager.getNodeDataSize("/test");
+      long measuredSize = wsQuotaManager.getNodeDataSize("/test");
 
       long expectedSize = ((ByteArrayInputStream)node.getProperty("jcr:primaryType").getStream()).available();
       expectedSize += node.getProperty("value").getStream().available();
@@ -134,16 +116,13 @@ public class TestWorkspaceQuotaManager extends JcrAPIBaseTest
     */
    public void testWorkspaceSizeEqualToAllNodesSize() throws Exception
    {
-      WorkspaceQuotaManager wQuotaManager =
-         (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws").getComponent(WorkspaceQuotaManager.class);
-
-      long workspaceSize = wQuotaManager.getWorkspaceDataSizeDirectly();
+      long workspaceSize = wsQuotaManager.getWorkspaceDataSizeDirectly();
       long nodesSize = 0;
       
       Iterator<Node> nodes = session.getRootNode().getNodes();
       while (nodes.hasNext())
       {
-         nodesSize += wQuotaManager.getNodeDataSizeDirectly(nodes.next().getPath());
+         nodesSize += wsQuotaManager.getNodeDataSizeDirectly(nodes.next().getPath());
       }
 
       Iterator<Property> props = session.getRootNode().getProperties();

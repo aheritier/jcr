@@ -18,44 +18,30 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
+import org.exoplatform.services.jcr.JcrAPIBaseTest;
 
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: TrackWorkspaceTask.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: AbstractQuotaManagerTest.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class AccumulateWorkspaceDataSizeTask implements Runnable
+public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
 {
 
-   /**
-    * Logger.
-    */
-   private final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.AccumulateWorkspaceDataSizeTask");
+   protected WorkspaceQuotaManager ws1QuotaManager;
 
-   private final WorkspaceQuotaManager workspaceQuotaManager;
-
-   /**
-    * TrackWorkspaceTask constructor. 
-    */
-   public AccumulateWorkspaceDataSizeTask(WorkspaceQuotaManager quotaManager)
-   {
-      this.workspaceQuotaManager = quotaManager;
-   }
+   protected WorkspaceQuotaManager wsQuotaManager;
 
    /**
     * {@inheritDoc}
     */
-   public void run()
+   public void setUp() throws Exception
    {
-      try
-      {
-         long dataSize = workspaceQuotaManager.getWorkspaceDataSizeDirectly();
-         workspaceQuotaManager.onAccumulateChanges(dataSize);
-      }
-      catch (QuotaManagerException e)
-      {
-         LOG.error(e.getMessage(), e);
-      }
+      super.setUp();
+
+      ws1QuotaManager =
+         (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws1").getComponent(WorkspaceQuotaManager.class);
+
+      wsQuotaManager =
+         (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws").getComponent(WorkspaceQuotaManager.class);
    }
 }

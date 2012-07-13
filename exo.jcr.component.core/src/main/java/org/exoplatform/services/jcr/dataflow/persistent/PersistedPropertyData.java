@@ -55,7 +55,7 @@ public class PersistedPropertyData extends PersistedItemData implements Property
    protected int type;
 
    protected boolean multiValued;
-   
+
    /**
     * Empty constructor to serialization.
     */
@@ -148,7 +148,6 @@ public class PersistedPropertyData extends PersistedItemData implements Property
       super.readExternal(in);
 
       type = in.readInt();
-
       multiValued = in.readBoolean();
 
       int listSize = in.readInt();

@@ -199,7 +199,8 @@ public abstract class WorkspaceStorageCacheBaseCase extends JcrImplBaseTest
       stringData.add(new ByteArrayPersistedValueData(1, "property data 2".getBytes()));
       stringData.add(new ByteArrayPersistedValueData(2, "property data 3".getBytes()));
       propertyData11 =
-         new PersistedPropertyData(propertyUuid11, propertyPath11, nodeUuid1, 1, PropertyType.STRING, false, stringData);
+         new PersistedPropertyData(propertyUuid11, propertyPath11, nodeUuid1, 1, PropertyType.STRING, false,
+ stringData);
 
       List<ValueData> binData = new ArrayList<ValueData>();
       binData.add(new ByteArrayPersistedValueData(0, "property data bin 1".getBytes()));

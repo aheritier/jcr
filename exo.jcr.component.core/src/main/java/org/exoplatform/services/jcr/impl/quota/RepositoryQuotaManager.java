@@ -29,7 +29,6 @@ import org.picocontainer.Startable;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -62,11 +61,6 @@ public class RepositoryQuotaManager implements Startable
    protected final BaseQuotaManager globalQuotaManager;
 
    /**
-    * Executor service.
-    */
-   protected final Executor executor;
-
-   /**
     * {@link QuotaPersister}
     */
    protected final QuotaPersister quotaPersister;
@@ -83,10 +77,9 @@ public class RepositoryQuotaManager implements Startable
    {
       this.rName = rEntry.getName();
       this.globalQuotaManager = quotaManager;
-      this.executor = globalQuotaManager.executor;
       this.quotaPersister = globalQuotaManager.quotaPersister;
 
-      validateAlerted();
+      defineAlertedState();
    }
 
    /**
@@ -198,7 +191,7 @@ public class RepositoryQuotaManager implements Startable
    public void setRepositoryQuota(long quotaLimit) throws QuotaManagerException
    {
       quotaPersister.setRepositoryQuota(rName, quotaLimit);
-      validateAlerted();
+      defineAlertedState();
    }
 
    /**
@@ -208,8 +201,8 @@ public class RepositoryQuotaManager implements Startable
    @ManagedDescription("Removes repository quta limit")
    public void removeRepositoryQuota() throws QuotaManagerException
    {
-      invalidateAlerted();
       quotaPersister.removeRepositoryQuota(rName);
+      defineAlertedState();
    }
 
    /**
@@ -266,12 +259,9 @@ public class RepositoryQuotaManager implements Startable
    }
 
    /**
-    * Accumulate repository data size changes.
-    * 
-    * @param delta
-    *          the size on which repository was changed
+    * @see BaseQuotaManager#accumulateChanges(long)
     */
-   protected void onAccumulateChanges(long delta)
+   protected void accumulateChanges(long delta)
    {
       long dataSize = 0;
       try
@@ -289,30 +279,28 @@ public class RepositoryQuotaManager implements Startable
       long newDataSize = Math.max(dataSize + delta, 0);
       quotaPersister.setRepositoryDataSize(rName, newDataSize);
 
-      validateAlerted();
+      defineAlertedState();
 
-      globalQuotaManager.onAccumulateChanges(delta);
+      globalQuotaManager.accumulateChanges(delta);
    }
 
    /**
-    * Checks if new changes can exceeds some limits.
-    * 
-    * @throws ExceededQuotaLimitException if data size exceeded quota limit
+    * @see BaseQuotaManager#validateAccumulateChanges()
     */
-   protected void onValidateChanges() throws ExceededQuotaLimitException
+   protected void validateAccumulateChanges() throws ExceededQuotaLimitException
    {
       if (alerted.get())
       {
          globalQuotaManager.behaveOnQuotaExceeded("Repository " + rName + " data size exceeded quota limit");
       }
 
-      globalQuotaManager.onValidateChanges();
+      globalQuotaManager.validateAccumulateChanges();
    }
 
    /**
-    * Checks if data size exceeded quota limit.
+    * Define repository alerted state based on values of quota limit and data size.
     */
-   private void validateAlerted()
+   private void defineAlertedState()
    {
       try
       {
@@ -324,27 +312,13 @@ public class RepositoryQuotaManager implements Startable
          }
          catch (UnknownQuotaDataSizeException e)
          {
-            if (LOG.isTraceEnabled())
-            {
-               LOG.trace(e.getMessage(), e);
-            }
+            alerted.set(false);
          }
       }
       catch (UnknownQuotaLimitException e)
       {
-         if (LOG.isTraceEnabled())
-         {
-            LOG.trace(e.getMessage(), e);
-         }
+         alerted.set(false);
       }
-   }
-
-   /**
-    * Invalidates {@link #alerted}.
-    */
-   private void invalidateAlerted()
-   {
-      alerted.set(false);
    }
 
    /**

@@ -38,6 +38,7 @@ import org.jboss.cache.Node;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -90,7 +91,7 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * Relative element name.
     */
-   public static final String QUOTA_PATHES = "$PATHES";
+   public static final String QUOTA_PATHS = "$PATHS";
 
    /**
     * Relative element name.
@@ -120,12 +121,12 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public long getNodeQuota(String repositoryName, String workspaceName, String nodePath)
+   public long getNodeQuotaByPathOrPattern(String repositoryName, String workspaceName, String nodePath)
       throws UnknownQuotaLimitException
    {
       try
       {
-         Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHES, nodePath);
+         Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, nodePath);
          return getQuota(fqn);
       }
       catch (UnknownQuotaLimitException e)
@@ -135,7 +136,7 @@ public class JBCQuotaPersister implements QuotaPersister
          Set<Object> children = cache.getChildrenNames(fqn);
          for (Object pattern : children)
          {
-            if (PathPatternUtils.matches((String)pattern, nodePath, false))
+            if (PathPatternUtils.acceptName((String)pattern, nodePath))
             {
                fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, nodePath);
                return getQuota(fqn);
@@ -152,7 +153,7 @@ public class JBCQuotaPersister implements QuotaPersister
    public void setNodeQuota(String repositoryName, String workspaceName, String nodePath, long quotaLimit,
       boolean asyncUpdate)
    {
-      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHES);
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS);
       cache.put(fqn, SIZE, quotaLimit);
       cache.put(fqn, ASYNC_UPATE, asyncUpdate);
    }
@@ -173,8 +174,18 @@ public class JBCQuotaPersister implements QuotaPersister
     */
    public void removeNodeQuota(String repositoryName, String workspaceName, String nodePath)
    {
-      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHES, nodePath);
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, nodePath);
       cache.removeNode(fqn);
+
+      // remove node data size only if only node path does't match any pattern
+      Fqn<String> parent = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS);
+      for (Object patternPath : cache.getChildrenNames(parent))
+      {
+         if (PathPatternUtils.acceptName((String)patternPath, nodePath))
+         {
+            return;
+         }
+      }
 
       fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName, nodePath);
       cache.removeNode(fqn);
@@ -188,20 +199,74 @@ public class JBCQuotaPersister implements QuotaPersister
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, patternPath);
       cache.removeNode(fqn);
       
-      Fqn<String> fqnNode = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
-      for (Object nodePath : cache.getChildrenNames(fqn))
+      // removes data size for all nodes matched by pattern
+      // only if only quota was not set explicitly by setQuota() method 
+      Fqn<String> parent = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
+      for (Object nodePath : cache.getChildrenNames(parent))
       {
-         if (PathPatternUtils.matches(patternPath, (String)nodePath, false))
+         if (PathPatternUtils.acceptName(patternPath, (String)nodePath))
          {
-            fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHES, (String)nodePath);
+            Fqn<String> fqnQuota =
+               Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, (String)nodePath);
 
-            if (cache.getNode(fqn) == null)
+            if (cache.getNode(fqnQuota) == null)
             {
-               cache.removeNode(fqnNode);
+               cache.removeNode(Fqn.fromRelativeElements(parent, nodePath));
             }
-            // TODO
          }
       }
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public Set<String> getAlertedPaths(String repositoryName, String workspaceName)
+   {
+      Set<String> result = new HashSet<String>();
+
+      Fqn<String> fqnParentDataSize = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
+      for (Object nodePath : cache.getChildrenNames(fqnParentDataSize))
+      {
+         Fqn<String> fqnDataSize = Fqn.fromRelativeElements(fqnParentDataSize, (String)nodePath);
+
+         // check quota by path
+         Fqn<String> fqnQuota =
+            Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, (String)nodePath);
+         Node quotaNoda = cache.getNode(fqnQuota);
+         if (quotaNoda != null)
+         {
+            long quotaLimit = (Long)quotaNoda.get(SIZE);
+            long dataSize = (Long)cache.get(fqnDataSize, SIZE);
+
+            if (quotaLimit > dataSize)
+            {
+               result.add((String)nodePath);
+            }
+
+            continue;
+         }
+
+         // check quota by pattern
+         Fqn<String> fqnParentPattern = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS);
+         for (Object patternPath : cache.getChildrenNames(fqnParentPattern))
+         {
+            if (PathPatternUtils.acceptName((String)patternPath, (String)nodePath))
+            {
+               Fqn<String> fqnPathern = Fqn.fromRelativeElements(fqnParentPattern, (String)patternPath);
+
+               long quotaLimit = (Long)cache.get(fqnPathern, SIZE);
+               long dataSize = (Long)cache.get(fqnDataSize, SIZE);
+
+               if (quotaLimit > dataSize)
+               {
+                  result.add((String)nodePath);
+                  break;
+               }
+            }
+         }
+      }
+
+      return result;
    }
 
    /**

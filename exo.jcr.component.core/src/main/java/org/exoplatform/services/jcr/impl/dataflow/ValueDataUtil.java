@@ -83,6 +83,7 @@ public class ValueDataUtil
    public static PersistedValueData readValueData(String cid, int type, int orderNumber, int version,
       final InputStream content, SpoolConfig spoolConfig) throws IOException
    {
+
       byte[] buffer = new byte[0];
       byte[] spoolBuffer = new byte[ValueFileIOHelper.IOBUFFER_SIZE];
       
