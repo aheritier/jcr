@@ -144,7 +144,7 @@ public class RepositoryQuotaManager implements Startable
    public long getWorkspaceQuota(String workspaceName) throws QuotaManagerException
    {
       WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
-      return wqm.getWorkspaceQuota(workspaceName);
+      return wqm.getWorkspaceQuota();
    }
 
    /**

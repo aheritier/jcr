@@ -31,6 +31,8 @@ public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
 
    protected WorkspaceQuotaManager wsQuotaManager;
 
+   protected RepositoryQuotaManager dbQuotaManager;
+
    /**
     * {@inheritDoc}
     */
@@ -38,6 +40,9 @@ public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
    {
       super.setUp();
 
+      dbQuotaManager =
+         (RepositoryQuotaManager)repository.getWorkspaceContainer("ws").getComponent(RepositoryQuotaManager.class);
+      
       ws1QuotaManager =
          (WorkspaceQuotaManager)repository.getWorkspaceContainer("ws1").getComponent(WorkspaceQuotaManager.class);
 

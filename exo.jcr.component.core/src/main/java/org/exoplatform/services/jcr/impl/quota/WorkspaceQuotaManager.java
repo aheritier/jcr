@@ -166,6 +166,12 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    protected AtomicBoolean isSuspended = new AtomicBoolean();
 
    /**
+    * Contains node paths for which {@link DefineAlertedNodeTask} currently is run. 
+    * Does't allow execution several tasks over common path.
+    */
+   protected Set<String> runNodesTasks = new ConcurrentHashSet<String>();
+
+   /**
     * WorkspaceQuotaManager constructor.
     */
    public WorkspaceQuotaManager(RepositoryImpl repository, RepositoryQuotaManager rQuotaManager,
@@ -197,6 +203,11 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    public long getNodeDataSize(@ManagedDescription("The absolute path to node") @ManagedName("nodePath") String nodePath)
       throws QuotaManagerException
    {
+      if (nodePath.equals(JCRPath.ROOT_PATH))
+      {
+         return quotaPersister.getWorkspaceDataSize(rName, wsName);
+      }
+
       return quotaPersister.getNodeDataSize(rName, wsName, nodePath);
    }
 
@@ -226,8 +237,17 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
       catch (UnknownQuotaDataSizeException e)
       {
-         Runnable task = new DefineAlertedNodeTask(this, nodePath);
-         executor.execute(task);
+         if (!runNodesTasks.contains(nodePath))
+         {
+            synchronized (runNodesTasks)
+            {
+               if (!runNodesTasks.contains(nodePath))
+               {
+                  Runnable task = new DefineAlertedNodeTask(this, nodePath, runNodesTasks);
+                  executor.execute(task);
+               }
+            }
+         }
       }
    }
 
@@ -289,7 +309,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    @Managed
    @ManagedDescription("Returns workspace quota limit")
-   public long getWorkspaceQuota(String workspaceName) throws QuotaManagerException
+   public long getWorkspaceQuota() throws QuotaManagerException
    {
       return quotaPersister.getWorkspaceQuota(rName, wsName);
    }
@@ -819,7 +839,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       try
       {
          long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
-         accumulateChanges(dataSize);
+         repositoryQuotaManager.accumulateChanges(dataSize);
       }
       catch (UnknownQuotaDataSizeException e)
       {
@@ -829,6 +849,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          }
       }
 
+      defineAlertedState();
       defineAlertedPaths();
    }
 

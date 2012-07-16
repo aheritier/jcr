@@ -21,6 +21,8 @@ package org.exoplatform.services.jcr.impl.quota;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
+import java.util.Set;
+
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: DefineAlertedNodeTask.java 34360 2009-07-22 23:58:59Z tolusha $
@@ -42,16 +44,19 @@ public class DefineAlertedNodeTask implements Runnable
 
    private final String nodePath;
 
+   private final Set<String> runNodesTasks;
+
    /**
     * DefineAlertedNodeTask constructor.
     */
-   public DefineAlertedNodeTask(WorkspaceQuotaManager quotaManager, String nodePath)
+   public DefineAlertedNodeTask(WorkspaceQuotaManager quotaManager, String nodePath, Set<String> runNodesTasks)
    {
       this.quotaManager = quotaManager;
       this.nodePath = nodePath;
       this.quotaPersister = quotaManager.quotaPersister;
       this.rName = quotaManager.rName;
       this.wsName = quotaManager.wsName;
+      this.runNodesTasks = runNodesTasks;
    }
 
    /**
@@ -69,6 +74,10 @@ public class DefineAlertedNodeTask implements Runnable
       catch (QuotaManagerException e)
       {
          LOG.error(e.getMessage(), e);
+      }
+      finally
+      {
+         runNodesTasks.remove(nodePath);
       }
    }
 }

@@ -161,6 +161,8 @@ public class TestWorkspaceQuotaManager extends AbstractQuotaManagerTest
       testRoot.addNode("test2").addNode("content").addNode("content");
       root.save();
       
+
+      //      wsQuotaManager.setWorkspaceQuota(10000);
       wsQuotaManager.setNodeQuota("/testRoot/test1", 1000, false);
       wsQuotaManager.setNodeQuota("/testRoot/test2", 1000, false);
       wsQuotaManager.setGroupOfNodesQuota("/testRoot/*", 2000, true);
@@ -173,9 +175,10 @@ public class TestWorkspaceQuotaManager extends AbstractQuotaManagerTest
       wsQuotaManager.suspend();
       assertTrue(wsQuotaManager.isSuspended());
 
+      long repDataSize = dbQuotaManager.getRepositoryDataSize();
+      long wsDataSize = wsQuotaManager.getWorkspaceDataSize();
       long node1DataSize = wsQuotaManager.getNodeDataSize("/testRoot/test1");
       long node2DataSize = wsQuotaManager.getNodeDataSize("/testRoot/test2");
-      long wsDataSize = wsQuotaManager.getWorkspaceDataSize();
       long node1Quota = wsQuotaManager.getNodeQuota("/testRoot/test1");
       long node2Quota = wsQuotaManager.getNodeQuota("/testRoot/test2");
 
@@ -188,6 +191,84 @@ public class TestWorkspaceQuotaManager extends AbstractQuotaManagerTest
       DataRestore restorer = wsQuotaManager.getDataRestorer(context);
 
       restorer.clean();
+
+      assertEquals(dbQuotaManager.getRepositoryDataSize(), repDataSize - wsDataSize);
+
+      try
+      {
+         wsQuotaManager.getWorkspaceQuota();
+         fail("Quota should be unknown after clean");
+      }
+      catch (UnknownQuotaLimitException e)
+      {
+      }
+
+      try
+      {
+         wsQuotaManager.getWorkspaceDataSize();
+         fail("Data size should be unknown after clean");
+      }
+      catch (UnknownQuotaDataSizeException e)
+      {
+      }
+
+      try
+      {
+         wsQuotaManager.getNodeDataSize("/testRoot/test1");
+         fail("Data size should be unknown after clean");
+      }
+      catch (UnknownQuotaDataSizeException e)
+      {
+      }
+
+      try
+      {
+         wsQuotaManager.getNodeDataSize("/testRoot/test2");
+         fail("Data size should be unknown after clean");
+      }
+      catch (UnknownQuotaDataSizeException e)
+      {
+      }
+
+      try
+      {
+         wsQuotaManager.getNodeQuota("/testRoot/test1");
+         fail("Quota should be unknown after clean");
+      }
+      catch (UnknownQuotaLimitException e)
+      {
+      }
+
+      try
+      {
+         wsQuotaManager.getNodeQuota("/testRoot/test2");
+         fail("Quota should be unknown after clean");
+      }
+      catch (UnknownQuotaLimitException e)
+      {
+      }
+
+      restorer.rollback();
+
+      assertEquals(dbQuotaManager.getRepositoryDataSize(), repDataSize);
+      assertEquals(wsDataSize, wsQuotaManager.getWorkspaceDataSize());
+      assertEquals(node1DataSize, wsQuotaManager.getNodeDataSize("/testRoot/test1"));
+      assertEquals(node2DataSize, wsQuotaManager.getNodeDataSize("/testRoot/test2"));
+      assertEquals(node1Quota, wsQuotaManager.getNodeQuota("/testRoot/test1"));
+      assertEquals(node2Quota, wsQuotaManager.getNodeQuota("/testRoot/test2"));
+      
+      restorer.clean();
+      restorer.restore();
+
+      assertEquals(dbQuotaManager.getRepositoryDataSize(), repDataSize);
+      assertEquals(wsDataSize, wsQuotaManager.getWorkspaceDataSize());
+      assertEquals(node1DataSize, wsQuotaManager.getNodeDataSize("/testRoot/test1"));
+      assertEquals(node2DataSize, wsQuotaManager.getNodeDataSize("/testRoot/test2"));
+      assertEquals(node1Quota, wsQuotaManager.getNodeQuota("/testRoot/test1"));
+      assertEquals(node2Quota, wsQuotaManager.getNodeQuota("/testRoot/test2"));
+
+      restorer.commit();
+      restorer.close();
 
       wsQuotaManager.resume();
       assertFalse(wsQuotaManager.isSuspended());
