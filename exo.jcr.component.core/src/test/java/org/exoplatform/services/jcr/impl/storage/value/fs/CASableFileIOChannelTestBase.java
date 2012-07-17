@@ -21,8 +21,9 @@ package org.exoplatform.services.jcr.impl.storage.value.fs;
 import org.exoplatform.services.jcr.JcrImplBaseTest;
 import org.exoplatform.services.jcr.datamodel.ValueData;
 import org.exoplatform.services.jcr.impl.dataflow.SpoolConfig;
+import org.exoplatform.services.jcr.impl.dataflow.ValueDataUtil.ValueDataWrapper;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.SimpleChangedSizeHandler;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.StreamPersistedValueData;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.value.cas.RecordAlreadyExistsException;
 import org.exoplatform.services.jcr.impl.storage.value.cas.RecordNotFoundException;
 import org.exoplatform.services.jcr.impl.storage.value.cas.ValueContentAddressStorage;
@@ -111,7 +112,7 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
       ValueData value =
          new StreamPersistedValueData(0, new FileInputStream(testFile), SpoolConfig.getDefaultSpoolConfig());
 
-      fch.write(propertyId, value, new ContentSizeHandler());
+      fch.write(propertyId, value, new SimpleChangedSizeHandler());
       fch.commit();
 
       File vsfile =
@@ -142,7 +143,7 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
       String propertyId = IdGenerator.generate();
       ValueData value =
          new StreamPersistedValueData(0, new FileInputStream(testFile), SpoolConfig.getDefaultSpoolConfig());
-      fch.write(propertyId, value, new ContentSizeHandler());
+      fch.write(propertyId, value, new SimpleChangedSizeHandler());
       fch.commit();
 
       long initialSize = calcDirSize(rootDir);
@@ -152,7 +153,7 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
          fch = openCASChannel(digestType);
          fch.write(new String(propertyId),
             new StreamPersistedValueData(0, new FileInputStream(testFile), SpoolConfig.getDefaultSpoolConfig()),
-            new ContentSizeHandler());
+            new SimpleChangedSizeHandler());
          fch.commit();
 
          fail("RecordAlreadyExistsException should be thrown, record exists");
@@ -184,11 +185,11 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
       {
          ValueData value =
             new StreamPersistedValueData(0, new FileInputStream(testFile), SpoolConfig.getDefaultSpoolConfig());
-         fch.write(propertyId, value, new ContentSizeHandler());
+         fch.write(propertyId, value, new SimpleChangedSizeHandler());
          fch.delete(propertyId);
          fch.write(propertyId,
             new StreamPersistedValueData(0, new FileInputStream(testFile), SpoolConfig.getDefaultSpoolConfig()),
-            new ContentSizeHandler());
+            new SimpleChangedSizeHandler());
          fch.commit();
 
          // long initialSize = calcDirSize(rootDir);
@@ -214,14 +215,14 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
       String propertyId = IdGenerator.generate();
       ValueData value =
          new StreamPersistedValueData(0, new FileInputStream(testFile), SpoolConfig.getDefaultSpoolConfig());
-      fch.write(propertyId, value, new ContentSizeHandler());
+      fch.write(propertyId, value, new SimpleChangedSizeHandler());
       fch.commit();
 
-      ValueData fvalue =
+      ValueDataWrapper vdWrapper =
          fch.read(propertyId, value.getOrderNumber(), PropertyType.BINARY, SpoolConfig.getDefaultSpoolConfig());
 
       InputStream etalon, tested;
-      compareStream(etalon = new FileInputStream(testFile), tested = fvalue.getAsStream());
+      compareStream(etalon = new FileInputStream(testFile), tested = vdWrapper.value.getAsStream());
       etalon.close();
       tested.close();
    }
@@ -239,7 +240,7 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
       String propertyId = IdGenerator.generate();
       ValueData value =
          new StreamPersistedValueData(0, new FileInputStream(testFile), SpoolConfig.getDefaultSpoolConfig());
-      fch.write(propertyId, value, new ContentSizeHandler());
+      fch.write(propertyId, value, new SimpleChangedSizeHandler());
       fch.commit();
 
       File vsfile =
@@ -325,7 +326,7 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
       {
          fch.write(propertyId,
             new StreamPersistedValueData(i, new FileInputStream(testFile), SpoolConfig.getDefaultSpoolConfig()),
-            new ContentSizeHandler());
+            new SimpleChangedSizeHandler());
       }
       fch.commit();
 
@@ -356,7 +357,7 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
          addedSize += f.length();
          fch.write(propertyId,
             new StreamPersistedValueData(i, new FileInputStream(f), SpoolConfig.getDefaultSpoolConfig()),
-            new ContentSizeHandler());
+            new SimpleChangedSizeHandler());
       }
       fch.commit();
 
@@ -386,7 +387,7 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
          FileIOChannel fch = openCASChannel(digestType);
          fch.write(propertyId,
             new StreamPersistedValueData(0, new FileInputStream(testFile), SpoolConfig.getDefaultSpoolConfig()),
-            new ContentSizeHandler());
+            new SimpleChangedSizeHandler());
          fch.commit();
       }
 
@@ -417,7 +418,7 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
          FileIOChannel fch = openCASChannel(digestType);
          fch.write(propertyId,
             new StreamPersistedValueData(i, new FileInputStream(f), SpoolConfig.getDefaultSpoolConfig()),
-            new ContentSizeHandler());
+            new SimpleChangedSizeHandler());
          fch.commit();
       }
 
@@ -449,7 +450,7 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
          FileIOChannel fch = openCASChannel(digestType);
          fch.write(pid,
             new StreamPersistedValueData(0, new FileInputStream(testFile), SpoolConfig.getDefaultSpoolConfig()),
-            new ContentSizeHandler());
+            new SimpleChangedSizeHandler());
          fch.commit();
       }
 
@@ -491,7 +492,7 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
 
          FileIOChannel fch = openCASChannel(digestType);
          fch.write(pid, new StreamPersistedValueData(i, new FileInputStream(f), SpoolConfig.getDefaultSpoolConfig()),
-            new ContentSizeHandler());
+            new SimpleChangedSizeHandler());
          fch.commit();
       }
 
@@ -539,7 +540,7 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
          else
             m1filesCount++;
 
-         fch.write(property1MultivaluedId, v, new ContentSizeHandler());
+         fch.write(property1MultivaluedId, v, new SimpleChangedSizeHandler());
       }
       fch.commit();
 
@@ -566,7 +567,7 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
             addedSize += (m2fileSize = f.length()); // add size
             v = new StreamPersistedValueData(i, new FileInputStream(f), SpoolConfig.getDefaultSpoolConfig());
          }
-         fch.write(property2MultivaluedId, v, new ContentSizeHandler());
+         fch.write(property2MultivaluedId, v, new SimpleChangedSizeHandler());
       }
       fch.commit();
 
@@ -595,7 +596,7 @@ public abstract class CASableFileIOChannelTestBase extends JcrImplBaseTest
             v = new StreamPersistedValueData(i, new FileInputStream(f), SpoolConfig.getDefaultSpoolConfig());
          }
          FileIOChannel vfch = openCASChannel(digestType);
-         vfch.write(pid, v, new ContentSizeHandler());
+         vfch.write(pid, v, new SimpleChangedSizeHandler());
          vfch.commit();
       }
 

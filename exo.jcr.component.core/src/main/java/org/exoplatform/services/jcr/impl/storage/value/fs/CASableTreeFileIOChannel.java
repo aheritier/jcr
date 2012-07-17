@@ -19,7 +19,7 @@
 package org.exoplatform.services.jcr.impl.storage.value.fs;
 
 import org.exoplatform.services.jcr.datamodel.ValueData;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.ChangedSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.value.ValueDataResourceHolder;
 import org.exoplatform.services.jcr.impl.storage.value.cas.RecordNotFoundException;
 import org.exoplatform.services.jcr.impl.storage.value.cas.ValueContentAddressStorage;
@@ -107,7 +107,7 @@ public class CASableTreeFileIOChannel extends TreeFileIOChannel
    }
 
    @Override
-   public void write(String propertyId, ValueData value, ContentSizeHandler sizeHandler) throws IOException
+   public void write(String propertyId, ValueData value, ChangedSizeHandler sizeHandler) throws IOException
    {
       CASableWriteValue o =
          new CASableWriteValue(value, resources, cleaner, tempDir, propertyId, vcas, cas, sizeHandler);

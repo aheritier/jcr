@@ -21,7 +21,8 @@ package org.exoplatform.services.jcr.impl.storage.value.fs;
 import org.exoplatform.services.jcr.datamodel.ValueData;
 import org.exoplatform.services.jcr.impl.dataflow.SpoolConfig;
 import org.exoplatform.services.jcr.impl.dataflow.ValueDataUtil;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
+import org.exoplatform.services.jcr.impl.dataflow.ValueDataUtil.ValueDataWrapper;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.ChangedSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.value.ValueDataNotFoundException;
 import org.exoplatform.services.jcr.impl.storage.value.ValueDataResourceHolder;
 import org.exoplatform.services.jcr.impl.storage.value.ValueOperation;
@@ -98,7 +99,7 @@ public abstract class FileIOChannel extends ValueFileIOHelper implements ValueIO
    /**
     * {@inheritDoc}
     */
-   public void write(String propertyId, ValueData value, ContentSizeHandler sizeHandler) throws IOException
+   public void write(String propertyId, ValueData value, ChangedSizeHandler sizeHandler) throws IOException
    {
       WriteValue o =
          new WriteValue(getFile(propertyId, value.getOrderNumber()), value, resources, cleaner, tempDir, sizeHandler);
@@ -183,7 +184,7 @@ public abstract class FileIOChannel extends ValueFileIOHelper implements ValueIO
    /**
     * {@inheritDoc}
     */
-   public ValueData read(String propertyId, int orderNumber, int type, SpoolConfig spoolConfig) throws IOException
+   public ValueDataWrapper read(String propertyId, int orderNumber, int type, SpoolConfig spoolConfig) throws IOException
    {
       File file = getFile(propertyId, orderNumber);
       return ValueDataUtil.readValueData(type, orderNumber, file, spoolConfig);

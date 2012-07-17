@@ -205,7 +205,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    {
       if (nodePath.equals(JCRPath.ROOT_PATH))
       {
-         return quotaPersister.getWorkspaceDataSize(rName, wsName);
+         return getWorkspaceDataSize();
       }
 
       return quotaPersister.getNodeDataSize(rName, wsName, nodePath);
@@ -218,6 +218,11 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    @ManagedDescription("Returns a node quota limit")
    public long getNodeQuota(String nodePath) throws QuotaManagerException
    {
+      if (nodePath.equals(JCRPath.ROOT_PATH))
+      {
+         return getWorkspaceQuota();
+      }
+
       return quotaPersister.getNodeQuotaByPathOrPattern(rName, wsName, nodePath);
    }
 
@@ -228,23 +233,30 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    @ManagedDescription("Sets a node quota limit")
    public void setNodeQuota(String nodePath, long quotaLimit, boolean asyncUpdate) throws QuotaManagerException
    {
-      quotaPersister.setNodeQuota(rName, wsName, nodePath, quotaLimit, asyncUpdate);
-
-      try
+      if (nodePath.equals(JCRPath.ROOT_PATH))
       {
-         quotaPersister.getNodeDataSize(rName, wsName, nodePath);
-         defineAlertedPath(nodePath);
+         setWorkspaceQuota(quotaLimit);
       }
-      catch (UnknownQuotaDataSizeException e)
+      else
       {
-         if (!runNodesTasks.contains(nodePath))
+         quotaPersister.setNodeQuota(rName, wsName, nodePath, quotaLimit, asyncUpdate);
+
+         try
          {
-            synchronized (runNodesTasks)
+            quotaPersister.getNodeDataSize(rName, wsName, nodePath);
+            defineAlertedPath(nodePath);
+         }
+         catch (UnknownQuotaDataSizeException e)
+         {
+            if (!runNodesTasks.contains(nodePath))
             {
-               if (!runNodesTasks.contains(nodePath))
+               synchronized (runNodesTasks)
                {
-                  Runnable task = new DefineAlertedNodeTask(this, nodePath, runNodesTasks);
-                  executor.execute(task);
+                  if (!runNodesTasks.contains(nodePath))
+                  {
+                     Runnable task = new DefineAlertedNodeTask(this, nodePath, runNodesTasks);
+                     executor.execute(task);
+                  }
                }
             }
          }
@@ -259,7 +271,14 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    public void setGroupOfNodesQuota(String patternPath, long quotaLimit, boolean asyncUpdate)
       throws QuotaManagerException
    {
-      quotaPersister.setGroupOfNodeQuota(rName, wsName, patternPath, quotaLimit, asyncUpdate);
+      if (patternPath.equals(JCRPath.ROOT_PATH))
+      {
+         setWorkspaceQuota(quotaLimit);
+      }
+      else
+      {
+         quotaPersister.setGroupOfNodeQuota(rName, wsName, patternPath, quotaLimit, asyncUpdate);
+      }
    }
 
    /**
@@ -269,8 +288,15 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    @ManagedDescription("Removes a quota limit for a node")
    public void removeNodeQuota(String nodePath) throws QuotaManagerException
    {
-      quotaPersister.removeNodeQuota(rName, wsName, nodePath);
-      defineAlertedPath(nodePath);
+      if (nodePath.equals(JCRPath.ROOT_PATH))
+      {
+         removeWorkspaceQuota();
+      }
+      else
+      {
+         quotaPersister.removeNodeQuota(rName, wsName, nodePath);
+         defineAlertedPath(nodePath);
+      }
    }
 
    /**
@@ -280,8 +306,15 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    @ManagedDescription("Removes a quota limit for a bunch of nodes")
    public void removeGroupOfNodesQuota(String patternPath) throws QuotaManagerException
    {
-      Set<String> removedPaths = quotaPersister.removeGroupOfNodesQuota(rName, wsName, patternPath);
-      alertedPaths.remove(removedPaths);
+      if (patternPath.equals(JCRPath.ROOT_PATH))
+      {
+         removeWorkspaceQuota();
+      }
+      else
+      {
+         Set<String> removedPaths = quotaPersister.removeGroupOfNodesQuota(rName, wsName, patternPath);
+         alertedPaths.remove(removedPaths);
+      }
    }
 
    /**

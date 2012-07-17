@@ -40,9 +40,9 @@ import org.exoplatform.services.jcr.impl.Constants;
 import org.exoplatform.services.jcr.impl.core.itemfilters.QPathEntryFilter;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.ACLHolder;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.CacheableWorkspaceDataManager;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.ChangedSizeHandler;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspaceStorageCacheBaseCase;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.jbosscache.JBossCacheWorkspaceStorageCache;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.SystemDataContainerHolder;
 import org.exoplatform.services.jcr.impl.storage.WorkspaceDataContainerBase;
 import org.exoplatform.services.jcr.storage.WorkspaceDataContainer;
@@ -260,7 +260,7 @@ public class TestJBossCacheWorkspaceStorageCache extends WorkspaceStorageCacheBa
          childNodesCount++;
       }
 
-      public void add(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      public void add(PropertyData data, ChangedSizeHandler sizeHandler) throws RepositoryException,
          UnsupportedOperationException,
          InvalidItemStateException, IllegalStateException
       {
@@ -279,7 +279,7 @@ public class TestJBossCacheWorkspaceStorageCache extends WorkspaceStorageCacheBa
       {
       }
 
-      public void delete(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      public void delete(PropertyData data, ChangedSizeHandler sizeHandler) throws RepositoryException,
          UnsupportedOperationException, InvalidItemStateException, IllegalStateException
       {
       }
@@ -366,7 +366,7 @@ public class TestJBossCacheWorkspaceStorageCache extends WorkspaceStorageCacheBa
       {
       }
 
-      public void update(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      public void update(PropertyData data, ChangedSizeHandler sizeHandler) throws RepositoryException,
          UnsupportedOperationException, InvalidItemStateException, IllegalStateException
       {
       }

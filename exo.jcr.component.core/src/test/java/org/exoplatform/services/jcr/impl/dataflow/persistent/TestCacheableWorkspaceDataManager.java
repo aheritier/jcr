@@ -32,7 +32,6 @@ import org.exoplatform.services.jcr.datamodel.QPath;
 import org.exoplatform.services.jcr.datamodel.QPathEntry;
 import org.exoplatform.services.jcr.datamodel.ValueData;
 import org.exoplatform.services.jcr.impl.core.itemfilters.QPathEntryFilter;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.SystemDataContainerHolder;
 import org.exoplatform.services.jcr.impl.storage.WorkspaceDataContainerBase;
 import org.exoplatform.services.jcr.storage.WorkspaceDataContainer;
@@ -457,7 +456,7 @@ public class TestCacheableWorkspaceDataManager extends JcrImplBaseTest
       {
       }
 
-      public void add(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      public void add(PropertyData data, ChangedSizeHandler sizeHandler) throws RepositoryException,
          UnsupportedOperationException,
          InvalidItemStateException, IllegalStateException
       {
@@ -480,7 +479,7 @@ public class TestCacheableWorkspaceDataManager extends JcrImplBaseTest
       {
       }
 
-      public void delete(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      public void delete(PropertyData data, ChangedSizeHandler sizeHandler) throws RepositoryException,
          UnsupportedOperationException, InvalidItemStateException, IllegalStateException
       {
       }
@@ -507,20 +506,18 @@ public class TestCacheableWorkspaceDataManager extends JcrImplBaseTest
          IllegalStateException
       {
          getChildPropertiesDataCalls.incrementAndGet();
-         return Arrays
-            .asList((PropertyData)new PersistedPropertyData("getChildPropertiesData", null, null, 0,
-               PropertyType.STRING, false,
-               Arrays.asList((ValueData)new ByteArrayPersistedValueData(1, "foo".getBytes()))));
+         return Arrays.asList((PropertyData)new PersistedPropertyData("getChildPropertiesData", null, null, 0,
+            PropertyType.STRING, false, Arrays.asList((ValueData)new ByteArrayPersistedValueData(1, "foo".getBytes())),
+            new SimplePersistedSize(0)));
       }
 
       public List<PropertyData> getChildPropertiesData(NodeData parent, List<QPathEntryFilter> pattern)
          throws RepositoryException, IllegalStateException
       {
          getChildPropertiesDataCalls.incrementAndGet();
-         return Arrays
-            .asList((PropertyData)new PersistedPropertyData("getChildPropertiesDataByPattern", null, null, 0,
-               PropertyType.STRING, false,
-               Arrays.asList((ValueData)new ByteArrayPersistedValueData(1, "foo".getBytes()))));
+         return Arrays.asList((PropertyData)new PersistedPropertyData("getChildPropertiesDataByPattern", null, null, 0,
+            PropertyType.STRING, false, Arrays.asList((ValueData)new ByteArrayPersistedValueData(1, "foo".getBytes())),
+            new SimplePersistedSize(0)));
       }
 
       public AtomicInteger getItemDataByNodeDataNQPathEntryCalls = new AtomicInteger();
@@ -551,9 +548,9 @@ public class TestCacheableWorkspaceDataManager extends JcrImplBaseTest
          IllegalStateException, UnsupportedOperationException
       {
          getReferencesDataCalls.incrementAndGet();
-         return Arrays
-            .asList((PropertyData)new PersistedPropertyData("getReferencesData", null, null, 0, PropertyType.STRING,
-               false, Arrays.asList((ValueData)new ByteArrayPersistedValueData(1, "foo".getBytes()))));
+         return Arrays.asList((PropertyData)new PersistedPropertyData("getReferencesData", null, null, 0,
+            PropertyType.STRING, false, Arrays.asList((ValueData)new ByteArrayPersistedValueData(1, "foo".getBytes())),
+            new SimplePersistedSize(0)));
       }
 
       public boolean isOpened()
@@ -567,10 +564,9 @@ public class TestCacheableWorkspaceDataManager extends JcrImplBaseTest
          IllegalStateException
       {
          listChildPropertiesDataCalls.incrementAndGet();
-         return Arrays
-            .asList((PropertyData)new PersistedPropertyData("listChildPropertiesData", null, null, 0,
-               PropertyType.STRING, false,
-               Arrays.asList((ValueData)new ByteArrayPersistedValueData(1, "foo".getBytes()))));
+         return Arrays.asList((PropertyData)new PersistedPropertyData("listChildPropertiesData", null, null, 0,
+            PropertyType.STRING, false, Arrays.asList((ValueData)new ByteArrayPersistedValueData(1, "foo".getBytes())),
+            new SimplePersistedSize(0)));
       }
 
       public void rename(NodeData data) throws RepositoryException, UnsupportedOperationException,
@@ -587,7 +583,7 @@ public class TestCacheableWorkspaceDataManager extends JcrImplBaseTest
       {
       }
 
-      public void update(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      public void update(PropertyData data, ChangedSizeHandler sizeHandler) throws RepositoryException,
          UnsupportedOperationException, InvalidItemStateException, IllegalStateException
       {
       }

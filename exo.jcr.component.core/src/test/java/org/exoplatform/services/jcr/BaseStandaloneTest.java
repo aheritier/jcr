@@ -36,8 +36,8 @@ import org.exoplatform.services.jcr.impl.core.RepositoryImpl;
 import org.exoplatform.services.jcr.impl.core.SessionImpl;
 import org.exoplatform.services.jcr.impl.core.itemfilters.QPathEntryFilter;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.ACLHolder;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.ChangedSizeHandler;
 import org.exoplatform.services.jcr.impl.dataflow.serialization.ReaderSpoolFileHolder;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.util.io.FileCleaner;
 import org.exoplatform.services.jcr.impl.util.io.FileCleanerHolder;
 import org.exoplatform.services.jcr.storage.WorkspaceDataContainer;
@@ -655,7 +655,7 @@ public abstract class BaseStandaloneTest extends TestCase
          throw new UnsupportedOperationException("TestWorkspaceStorageConnection: operation is unsupported.");
       }
 
-      public void add(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      public void add(PropertyData data, ChangedSizeHandler sizeHandler) throws RepositoryException,
          UnsupportedOperationException,
          InvalidItemStateException, IllegalStateException
       {
@@ -668,7 +668,7 @@ public abstract class BaseStandaloneTest extends TestCase
          throw new UnsupportedOperationException("TestWorkspaceStorageConnection: operation is unsupported.");
       }
 
-      public void update(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      public void update(PropertyData data, ChangedSizeHandler sizeHandler) throws RepositoryException,
          UnsupportedOperationException, InvalidItemStateException, IllegalStateException
       {
          throw new UnsupportedOperationException("TestWorkspaceStorageConnection: operation is unsupported.");
@@ -686,7 +686,7 @@ public abstract class BaseStandaloneTest extends TestCase
          throw new UnsupportedOperationException("TestWorkspaceStorageConnection: operation is unsupported.");
       }
 
-      public void delete(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+      public void delete(PropertyData data, ChangedSizeHandler sizeHandler) throws RepositoryException,
          UnsupportedOperationException, InvalidItemStateException, IllegalStateException
       {
          throw new UnsupportedOperationException("TestWorkspaceStorageConnection: operation is unsupported.");

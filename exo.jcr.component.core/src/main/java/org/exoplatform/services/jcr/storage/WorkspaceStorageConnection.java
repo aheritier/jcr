@@ -25,7 +25,7 @@ import org.exoplatform.services.jcr.datamodel.PropertyData;
 import org.exoplatform.services.jcr.datamodel.QPathEntry;
 import org.exoplatform.services.jcr.impl.core.itemfilters.QPathEntryFilter;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.ACLHolder;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.ChangedSizeHandler;
 
 import java.util.List;
 
@@ -274,7 +274,7 @@ public interface WorkspaceStorageConnection
     * @throws IllegalStateException
     *           if connection is closed
     */
-   void add(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+   void add(PropertyData data, ChangedSizeHandler sizeHandler) throws RepositoryException,
       UnsupportedOperationException, InvalidItemStateException, IllegalStateException;
 
    /**
@@ -316,7 +316,7 @@ public interface WorkspaceStorageConnection
     * @throws IllegalStateException
     *           if connection is closed
     */
-   void update(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+   void update(PropertyData data, ChangedSizeHandler sizeHandler) throws RepositoryException,
       UnsupportedOperationException, InvalidItemStateException, IllegalStateException;
 
    /**
@@ -373,7 +373,7 @@ public interface WorkspaceStorageConnection
     * @throws IllegalStateException
     *           if connection is closed
     */
-   void delete(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+   void delete(PropertyData data, ChangedSizeHandler sizeHandler) throws RepositoryException,
       UnsupportedOperationException, InvalidItemStateException, IllegalStateException;
 
    /**

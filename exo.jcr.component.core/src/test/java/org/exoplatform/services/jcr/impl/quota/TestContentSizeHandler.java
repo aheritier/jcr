@@ -241,6 +241,78 @@ public class TestContentSizeHandler extends AbstractQuotaManagerTest
       assertEquals(expectedDelta, measuredDelta);
    }
 
+   /**
+    * Add and delete node.
+    */
+   public void testRenameNode() throws Exception
+   {
+      Node testRename = root.addNode("rename");
+      session.save();
+      long testRenameSize = wsQuotaManager.getNodeDataSizeDirectly(testRename.getPath());
+
+      testRoot.addNode("node");
+      testRoot.save();
+      testRootSize = wsQuotaManager.getNodeDataSizeDirectly(testRoot.getPath());
+
+      TesterItemsPersistenceListener pListener = new TesterItemsPersistenceListener(session);
+
+      session.move("/testRoot/node", "/rename/node");
+      session.save();
+
+      List<TransactionChangesLog> logs = pListener.pushChanges();
+
+      long expectedDelta = wsQuotaManager.getNodeDataSizeDirectly(testRoot.getPath()) - testRootSize;
+      long measuredDelta = calcChangedSize(logs, testRoot.getPath());
+
+      assertEquals(expectedDelta, measuredDelta);
+
+      expectedDelta = wsQuotaManager.getNodeDataSizeDirectly(testRename.getPath()) - testRenameSize;
+      measuredDelta = calcChangedSize(logs, testRename.getPath());
+
+      assertEquals(expectedDelta, measuredDelta);
+   }
+
+   /**
+    * Add and delete node.
+    */
+   public void testAddRenameRenameNode() throws Exception
+   {
+      Node testRename1 = root.addNode("rename1");
+      Node testRename2 = root.addNode("rename2");
+      session.save();
+      long testRename1Size = wsQuotaManager.getNodeDataSizeDirectly(testRename1.getPath());
+      long testRename2Size = wsQuotaManager.getNodeDataSizeDirectly(testRename2.getPath());
+
+      TesterItemsPersistenceListener pListener = new TesterItemsPersistenceListener(session);
+
+      testRoot.addNode("node");
+      root.getNode("testRoot/node").setProperty("prop1", "012345");
+      root.getNode("testRoot/node").setProperty("prop1", "0123456789");
+      session.move("/testRoot/node", "/rename1/node");
+
+      root.getNode("rename1/node").setProperty("prop2", "012345");
+      root.getNode("rename1/node").setProperty("prop2", "0123456789");
+      session.move("/rename1/node", "/rename2/node");
+      session.save();
+
+      List<TransactionChangesLog> logs = pListener.pushChanges();
+
+      long expectedDelta = wsQuotaManager.getNodeDataSizeDirectly(testRoot.getPath()) - testRootSize;
+      long measuredDelta = calcChangedSize(logs, testRoot.getPath());
+
+      assertEquals(expectedDelta, measuredDelta);
+
+      expectedDelta = wsQuotaManager.getNodeDataSizeDirectly(testRename1.getPath()) - testRename1Size;
+      measuredDelta = calcChangedSize(logs, testRename1.getPath());
+
+      assertEquals(expectedDelta, measuredDelta);
+
+      expectedDelta = wsQuotaManager.getNodeDataSizeDirectly(testRename2.getPath()) - testRename2Size;
+      measuredDelta = calcChangedSize(logs, testRename2.getPath());
+
+      assertEquals(expectedDelta, measuredDelta);
+   }
+
    private long calcChangedSize(List<TransactionChangesLog> logs, String nodePath) throws Exception
    {
       long delta = 0;

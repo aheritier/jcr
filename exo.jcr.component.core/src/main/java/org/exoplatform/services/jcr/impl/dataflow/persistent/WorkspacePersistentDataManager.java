@@ -44,7 +44,6 @@ import org.exoplatform.services.jcr.impl.dataflow.AbstractValueData;
 import org.exoplatform.services.jcr.impl.dataflow.TransientValueData;
 import org.exoplatform.services.jcr.impl.dataflow.session.TransactionableResourceManager;
 import org.exoplatform.services.jcr.impl.dataflow.session.TransactionableResourceManagerListener;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.SystemDataContainerHolder;
 import org.exoplatform.services.jcr.storage.WorkspaceDataContainer;
 import org.exoplatform.services.jcr.storage.WorkspaceStorageConnection;
@@ -181,7 +180,8 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
                   RemovableItemSate removableCheckedState = iterator.next();
                   ItemState checkedState = removableCheckedState.getState();
                   // if UUIDs or paths are the same 
-                  if (checkedState.getData().getIdentifier().equals(lastState.getData().getIdentifier()))
+                  if (checkedState.getData().getIdentifier().equals(lastState.getData().getIdentifier())
+                     && checkedState.getData().getQPath().equals(lastState.getData().getQPath()))
                   {
                      // remove updated state, because delete, add or update state 
                      if ((checkedState.isAdded() || checkedState.isUpdated()) && lastState.isDeleted())
@@ -566,6 +566,8 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
             ItemState prevState = iter.next();
             ItemData newData;
 
+            ChangedSizeHandler sizeHandler = initChangedSizeHandler(newLog, prevState);
+
             if (prevState.getData() instanceof PersistedItemData)
             {
                // use existing if persisted 
@@ -612,19 +614,17 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
                      newData =
                         new PersistedPropertyData(prevData.getIdentifier(), prevData.getQPath(),
                            prevData.getParentIdentifier(), prevData.getPersistedVersion() + 1, prevData.getType(),
-                           prevData.isMultiValued(), values);
+                           prevData.isMultiValued(), values, new DelegatedPersistedSize(sizeHandler));
                   }
                   else
                   {
                      newData =
                         new PersistedPropertyData(prevData.getIdentifier(), prevData.getQPath(),
                            prevData.getParentIdentifier(), prevData.getPersistedVersion() + 1, prevData.getType(),
-                           prevData.isMultiValued(), null);
+                           prevData.isMultiValued(), null, new DelegatedPersistedSize(sizeHandler));
                   }
                }
             }
-
-            ContentSizeHandler sizeHandler = new ContentSizeHandler();
 
             ItemState itemState =
                new ItemState(newData, prevState.getState(), prevState.isEventFire(), prevState.getAncestorToSave(),
@@ -666,7 +666,7 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
                }
                else if (itemState.isRenamed())
                {
-                  doRename(data, conn, addedNodes, sizeHandler);
+                  doRename(data, conn, addedNodes);
                }
 
                if (LOG.isDebugEnabled())
@@ -678,6 +678,43 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
          }
 
          return newLog;
+      }
+
+      /**
+       * Initialize appropriate {@link ChangedSizeHandler} instance. Should not exists for Node. If 
+       * current state already exists one it'll be returned as is. Special logic is implemented
+       * for none persisted states by trying to find in new changes log the last related state and refer
+       * on it. Otherwise {@link SimpleChangedSizeHandler} will be returned.
+       */
+      private ChangedSizeHandler initChangedSizeHandler(PlainChangesLogImpl newLog, ItemState state)
+      {
+         if (state.getData().isNode())
+         {
+            return null;
+         }
+         else if (state.getChangedSizeHandler() != null)
+         {
+            return state.getChangedSizeHandler();
+         }
+         else if (!state.isPersisted() && (state.isDeleted() || state.isRenamed()))
+         {
+            List<ItemState> states = newLog.getAllStates();
+            
+            for (int i = states.size() - 1; i >= 0; i--)
+            {
+               ItemState newState = states.get(i);
+               if (newState.getData().getIdentifier().equals(state.getData().getIdentifier()))
+               {
+                  return new OppositeChangedSizeHandler(newState.getChangedSizeHandler());
+               }
+            }
+
+            throw new IllegalStateException("Can't find appropriate ChangedSizeHandler");
+         }
+         else
+         {
+            return new SimpleChangedSizeHandler();
+         }
       }
    }
 
@@ -941,7 +978,7 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
     * @throws InvalidItemStateException
     *           if the item is already deleted
     */
-   protected void doDelete(final ItemData item, final WorkspaceStorageConnection con, ContentSizeHandler sizeHandler)
+   protected void doDelete(final ItemData item, final WorkspaceStorageConnection con, ChangedSizeHandler sizeHandler)
       throws RepositoryException, InvalidItemStateException
    {
 
@@ -967,7 +1004,7 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
     * @throws InvalidItemStateException
     *           if the item not found
     */
-   protected void doUpdate(final ItemData item, final WorkspaceStorageConnection con, ContentSizeHandler sizeHandler)
+   protected void doUpdate(final ItemData item, final WorkspaceStorageConnection con, ChangedSizeHandler sizeHandler)
       throws RepositoryException, InvalidItemStateException
    {
 
@@ -995,7 +1032,7 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
     *           if the item is already added
     */
    protected void doAdd(final ItemData item, final WorkspaceStorageConnection con, final Set<QPath> addedNodes,
-      ContentSizeHandler sizeHandler) throws RepositoryException, InvalidItemStateException
+      ChangedSizeHandler sizeHandler) throws RepositoryException, InvalidItemStateException
    {
       if (item.isNode())
       {
@@ -1018,12 +1055,12 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
     * @param item
     * @param con
     * @param addedNodes
-    * @param sizeHandler 
+    * @param delegated 
     * @throws RepositoryException
     * @throws InvalidItemStateException
     */
-   protected void doRename(final ItemData item, final WorkspaceStorageConnection con, final Set<QPath> addedNodes,
-      ContentSizeHandler sizeHandler) throws RepositoryException, InvalidItemStateException
+   protected void doRename(final ItemData item, final WorkspaceStorageConnection con, final Set<QPath> addedNodes)
+      throws RepositoryException, InvalidItemStateException
    {
       final NodeData node = (NodeData)item;
 

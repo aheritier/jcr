@@ -162,7 +162,6 @@ public class TestWorkspaceQuotaManager extends AbstractQuotaManagerTest
       root.save();
       
 
-      //      wsQuotaManager.setWorkspaceQuota(10000);
       wsQuotaManager.setNodeQuota("/testRoot/test1", 1000, false);
       wsQuotaManager.setNodeQuota("/testRoot/test2", 1000, false);
       wsQuotaManager.setGroupOfNodesQuota("/testRoot/*", 2000, true);

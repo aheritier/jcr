@@ -16,50 +16,36 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.exoplatform.services.jcr.impl.quota;
-
-import org.exoplatform.services.jcr.dataflow.ItemState;
+package org.exoplatform.services.jcr.impl.dataflow.persistent;
 
 /**
- * Manages persisted content size changes.
+ * Simple implementation of {@link PersistedSize} when size is already 
+ * known. For example, when data is read from storage.
  * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: ContentSizeHandler.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: SimplePersistedSize.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class ContentSizeHandler
+public class SimplePersistedSize implements PersistedSize
 {
    /**
-    * Accumulates persisted data size changing.
-    * In case of {@link ItemState#ADDED} it is positive value, for {@link ItemState#DELETED} it is
-    * negative value and so on.
+    * Actual size.
     */
-   private Long deltaSize = null;
-   
-   /**
-    * Returns {@link #deltaSize}.
-    */
-   public long getChangedSize()
-   {
-      if (deltaSize == null)
-      {
-         throw new IllegalStateException("Content size handler in illegal state");
-      }
+   private final long size;
 
-      return deltaSize;
+   /**
+    * SimplePersistedSize constructor.
+    */
+   public SimplePersistedSize(long size)
+   {
+      this.size = size;
    }
 
    /**
-    * Accumulates changes.
+    * {@inheritDoc}
     */
-   public void accumulateSize(long deltaSize)
+   public long getSize()
    {
-      if (this.deltaSize == null)
-      {
-         this.deltaSize = deltaSize;
-      }
-      else
-      {
-         this.deltaSize += deltaSize;
-      }
+      return size;
    }
+
 }

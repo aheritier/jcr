@@ -28,7 +28,7 @@ import org.exoplatform.services.jcr.datamodel.QPathEntry;
 import org.exoplatform.services.jcr.impl.core.PropertyImpl;
 import org.exoplatform.services.jcr.impl.dataflow.TransientPropertyData;
 import org.exoplatform.services.jcr.impl.dataflow.TransientValueData;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.SimpleChangedSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.jdbc.JDBCDataContainerConfig.DatabaseStructureType;
 import org.exoplatform.services.jcr.impl.storage.jdbc.JDBCStorageConnection;
 import org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer;
@@ -150,7 +150,7 @@ public class StorageUpdateTest extends JcrImplBaseTest
       {
          JDBCStorageConnection jdbcConn = (JDBCStorageConnection)conn;
 
-         conn.update(bugData, new ContentSizeHandler());
+         conn.update(bugData, new SimpleChangedSizeHandler());
          jdbcConn.getJdbcConnection().commit();
 
          NodeData parent =

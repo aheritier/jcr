@@ -20,7 +20,8 @@ package org.exoplatform.services.jcr.storage.value;
 
 import org.exoplatform.services.jcr.datamodel.ValueData;
 import org.exoplatform.services.jcr.impl.dataflow.SpoolConfig;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
+import org.exoplatform.services.jcr.impl.dataflow.ValueDataUtil.ValueDataWrapper;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.ChangedSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.value.ValueDataNotFoundException;
 
 import java.io.IOException;
@@ -50,7 +51,7 @@ public interface ValueIOChannel
     * @throws IOException
     *           if error occurs
     */
-   ValueData read(String propertyId, int orderNumber, int type, SpoolConfig spoolConfig)
+   ValueDataWrapper read(String propertyId, int orderNumber, int type, SpoolConfig spoolConfig)
       throws IOException;
 
    /**
@@ -110,7 +111,7 @@ public interface ValueIOChannel
     * @throws IOException
     *           if error occurs
     */
-   void write(String propertyId, ValueData data, ContentSizeHandler sizeHandler) throws IOException;
+   void write(String propertyId, ValueData data, ChangedSizeHandler sizeHandler) throws IOException;
 
    /**
     * Delete Property all values.

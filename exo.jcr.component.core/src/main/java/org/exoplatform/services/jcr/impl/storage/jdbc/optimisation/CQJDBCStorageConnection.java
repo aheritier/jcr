@@ -36,9 +36,11 @@ import org.exoplatform.services.jcr.datamodel.ValueData;
 import org.exoplatform.services.jcr.impl.Constants;
 import org.exoplatform.services.jcr.impl.core.itemfilters.QPathEntryFilter;
 import org.exoplatform.services.jcr.impl.dataflow.ValueDataUtil;
+import org.exoplatform.services.jcr.impl.dataflow.ValueDataUtil.ValueDataWrapper;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.ACLHolder;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.ChangedSizeHandler;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.SimplePersistedSize;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.StreamPersistedValueData;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.JCRInvalidItemStateException;
 import org.exoplatform.services.jcr.impl.storage.jdbc.JDBCDataContainerConfig;
 import org.exoplatform.services.jcr.impl.storage.jdbc.JDBCStorageConnection;
@@ -490,7 +492,7 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
     * {@inheritDoc}
     */
    @Override
-   public void update(PropertyData data, ContentSizeHandler sizeHandler) throws RepositoryException,
+   public void update(PropertyData data, ChangedSizeHandler sizeHandler) throws RepositoryException,
       UnsupportedOperationException, InvalidItemStateException, IllegalStateException
    {
       checkIfOpened();
@@ -518,7 +520,7 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
             }
             else
             {
-               sizeHandler.accumulateSize(-rs.getLong(1));
+               sizeHandler.accumulatePrevSize(rs.getLong(1));
             }
          }
 
@@ -588,13 +590,13 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
     * {@inheritDoc}
     */
    @Override
-   protected void addValues(String cid, PropertyData data, ContentSizeHandler sizeHandler) throws IOException,
+   protected void addValues(String cid, PropertyData data, ChangedSizeHandler sizeHandler) throws IOException,
       SQLException, RepositoryException
    {
       addOrUpdateValues(cid, data, 0, sizeHandler);
    }
 
-   protected void addOrUpdateValues(String cid, PropertyData data, int totalOldValues, ContentSizeHandler sizeHandler)
+   protected void addOrUpdateValues(String cid, PropertyData data, int totalOldValues, ChangedSizeHandler sizeHandler)
       throws IOException, RepositoryException, SQLException
    {
       List<ValueData> vdata = data.getValues();
@@ -643,7 +645,7 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
                stream = streamData.getAsStream();
             }
             storageId = null;
-            sizeHandler.accumulateSize(streamLength);
+            sizeHandler.accumulateNewSize(streamLength);
          }
          else
          {
@@ -667,14 +669,14 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
    }
 
    private void deleteValues(String cid, PropertyData pdata, Set<String> storageDescs, int totalOldValues,
-      ContentSizeHandler sizeHandler) throws ValueStorageNotFoundException, IOException, SQLException
+      ChangedSizeHandler sizeHandler) throws ValueStorageNotFoundException, IOException, SQLException
    {
       for (String storageId : storageDescs)
       {
          final ValueIOChannel channel = this.containerConfig.valueStorageProvider.getChannel(storageId);
          try
          {
-            sizeHandler.accumulateSize(-channel.getValueSize(pdata.getIdentifier()));
+            sizeHandler.accumulatePrevSize(channel.getValueSize(pdata.getIdentifier()));
 
             channel.delete(pdata.getIdentifier());
             valueChanges.add(channel);
@@ -739,6 +741,7 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
 
                // read values
                List<ValueData> data = new ArrayList<ValueData>();
+               long size = 0;
                do
                {
                   int orderNum = resultSet.getInt(COLUMN_VORDERNUM);
@@ -746,12 +749,13 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
                   if (!resultSet.wasNull())
                   {
                      final String storageId = resultSet.getString(COLUMN_VSTORAGE_DESC);
-                     ValueData valueData =
+                     ValueDataWrapper vdWrapper =
                         resultSet.wasNull() ? ValueDataUtil.readValueData(cid, cptype, orderNum, cversion,
                            resultSet.getBinaryStream(COLUMN_VDATA), containerConfig.spoolConfig) : readValueData(
                            identifier, orderNum, cptype, storageId);
 
-                     data.add(valueData);
+                     data.add(vdWrapper.value);
+                     size += vdWrapper.size;
                   }
 
                   isNotLast = resultSet.next();
@@ -763,7 +767,7 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
                //create property
                PersistedPropertyData pdata =
                   new PersistedPropertyData(identifier, qpath, getIdentifier(cpid), cversion, cptype, cpmultivalued,
-                     data);
+                     data, new SimplePersistedSize(size));
 
                children.add(pdata);
             }
@@ -878,6 +882,7 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
 
                // read values
                List<ValueData> data = new ArrayList<ValueData>();
+               long size = 0;
                do
                {
                   int orderNum = resultSet.getInt(COLUMN_VORDERNUM);
@@ -885,12 +890,13 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
                   if (!resultSet.wasNull())
                   {
                      final String storageId = resultSet.getString(COLUMN_VSTORAGE_DESC);
-                     ValueData valueData =
+                     ValueDataWrapper vdDataWrapper =
                         resultSet.wasNull() ? ValueDataUtil.readValueData(cid, cptype, orderNum, cversion,
                            resultSet.getBinaryStream(COLUMN_VDATA), containerConfig.spoolConfig) : readValueData(
                            identifier, orderNum, cptype, storageId);
 
-                     data.add(valueData);
+                     data.add(vdDataWrapper.value);
+                     size += vdDataWrapper.size;
                   }
 
                   isNotLast = resultSet.next();
@@ -903,7 +909,7 @@ abstract public class CQJDBCStorageConnection extends JDBCStorageConnection
                //create property
                PersistedPropertyData pdata =
                   new PersistedPropertyData(identifier, qpath, getIdentifier(cpid), cversion, cptype, cpmultivalued,
-                     data);
+                     data, new SimplePersistedSize(size));
 
                children.add(pdata);
             }

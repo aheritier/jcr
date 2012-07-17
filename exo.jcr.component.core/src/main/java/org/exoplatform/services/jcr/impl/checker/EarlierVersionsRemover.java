@@ -19,7 +19,7 @@
 package org.exoplatform.services.jcr.impl.checker;
 
 import org.exoplatform.services.jcr.datamodel.PropertyData;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.SimpleChangedSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.jdbc.DBConstants;
 import org.exoplatform.services.jcr.impl.storage.jdbc.JDBCStorageConnection;
 import org.exoplatform.services.jcr.impl.storage.jdbc.db.WorkspaceStorageConnectionFactory;
@@ -56,7 +56,7 @@ public class EarlierVersionsRemover extends AbstractInconsistencyRepair
 
          if (resultSet.getInt(DBConstants.COLUMN_VERSION) < maxVersion)
          {
-            conn.delete(data, new ContentSizeHandler());
+            conn.delete(data, new SimpleChangedSizeHandler());
          }
       }
       catch (IllegalStateException e)

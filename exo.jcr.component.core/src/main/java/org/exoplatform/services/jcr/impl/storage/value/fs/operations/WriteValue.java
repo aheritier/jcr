@@ -19,7 +19,7 @@
 package org.exoplatform.services.jcr.impl.storage.value.fs.operations;
 
 import org.exoplatform.services.jcr.datamodel.ValueData;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.ChangedSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.value.ValueDataResourceHolder;
 import org.exoplatform.services.jcr.impl.util.io.FileCleaner;
 
@@ -56,13 +56,13 @@ public class WriteValue extends ValueFileOperation
    /**
     * Accumulates content size.
     */
-   protected final ContentSizeHandler sizeHandler;
+   protected final ChangedSizeHandler sizeHandler;
 
    /**
     * WriteValue  constructor.
     */
    public WriteValue(File file, ValueData value, ValueDataResourceHolder resources, FileCleaner cleaner, File tempDir,
-      ContentSizeHandler sizeHandler)
+      ChangedSizeHandler sizeHandler)
    {
       super(resources, cleaner, tempDir);
 
@@ -97,7 +97,7 @@ public class WriteValue extends ValueFileOperation
          }
          // write value to the file
          long contentSize = writeValue(file, value);
-         sizeHandler.accumulateSize(contentSize);
+         sizeHandler.accumulateNewSize(contentSize);
       }
    }
 

@@ -52,6 +52,7 @@ import org.exoplatform.services.jcr.impl.backup.rdbms.DataRestoreContext;
 import org.exoplatform.services.jcr.impl.core.itemfilters.QPathEntryFilter;
 import org.exoplatform.services.jcr.impl.dataflow.TransientNodeData;
 import org.exoplatform.services.jcr.impl.dataflow.ValueDataUtil;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.SimplePersistedSize;
 import org.exoplatform.services.jcr.jbosscache.ExoJBossCacheFactory;
 import org.exoplatform.services.jcr.jbosscache.ExoJBossCacheFactory.CacheType;
 import org.exoplatform.services.jcr.jbosscache.PrivilegedJBossCacheHelper;
@@ -1900,7 +1901,8 @@ public class JBossCacheWorkspaceStorageCache implements WorkspaceStorageCache, S
             PropertyData newProp =
                new PersistedPropertyData(prop.getIdentifier(), prop.getQPath(), prop.getParentIdentifier(),
                   prop.getPersistedVersion(), prop.getType(), prop.isMultiValued(),
-                  ((PropertyData)prevData).getValues());
+                  ((PropertyData)prevData).getValues(), new SimplePersistedSize(
+                     ((PersistedPropertyData)prevData).getPersistedSize()));
 
             // update item data with new name and old values only
             cache.put(makeItemFqn(newProp.getIdentifier()), ITEM_DATA, newProp);
@@ -1984,7 +1986,8 @@ public class JBossCacheWorkspaceStorageCache implements WorkspaceStorageCache, S
                PropertyData newProp =
                   new PersistedPropertyData(prevProp.getIdentifier(), newPath, prevProp.getParentIdentifier(),
                      prevProp.getPersistedVersion(), prevProp.getType(), prevProp.isMultiValued(),
- prevProp.getValues());
+                     prevProp.getValues(), new SimplePersistedSize(
+                        ((PersistedPropertyData)prevProp).getPersistedSize()));
                cache.put(makeItemFqn(newProp.getIdentifier()), ITEM_DATA, newProp);
             }
          }

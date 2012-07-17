@@ -19,8 +19,8 @@
 package org.exoplatform.services.jcr.impl.storage.value.fs.operations;
 
 import org.exoplatform.services.jcr.datamodel.ValueData;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.ChangedSizeHandler;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.StreamPersistedValueData;
-import org.exoplatform.services.jcr.impl.quota.ContentSizeHandler;
 import org.exoplatform.services.jcr.impl.storage.value.ValueDataResourceHolder;
 import org.exoplatform.services.jcr.impl.storage.value.cas.RecordAlreadyExistsException;
 import org.exoplatform.services.jcr.impl.storage.value.cas.VCASException;
@@ -85,7 +85,7 @@ public class CASableWriteValue extends WriteValue
     * CASableWriteValue constructor.
     */
    public CASableWriteValue(ValueData value, ValueDataResourceHolder resources, FileCleaner cleaner, File tempDir,
-      String propertyId, ValueContentAddressStorage vcas, CASableIOSupport cas, ContentSizeHandler sizeHandler)
+      String propertyId, ValueContentAddressStorage vcas, CASableIOSupport cas, ChangedSizeHandler sizeHandler)
    {
       super(null, value, resources, cleaner, tempDir, sizeHandler);
 
@@ -111,7 +111,7 @@ public class CASableWriteValue extends WriteValue
       try
       {
          long contentSize = writeOutput(out, value);
-         sizeHandler.accumulateSize(contentSize);
+         sizeHandler.accumulateNewSize(contentSize);
       }
       finally
       {
