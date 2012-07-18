@@ -107,8 +107,8 @@ public class TestPathPatternUtils extends TestCase
       assertTrue(PathPatternUtils.acceptName("/a/%%", "/a/bb"));
       assertFalse(PathPatternUtils.acceptName("/a/%%", "/a/bb/c"));
 
-      assertTrue(PathPatternUtils.acceptDescendant("/a/%%/b/*", "/a/cc/b/eee"));
-      assertTrue(PathPatternUtils.acceptDescendant("/a/%%/b/*", "/a/cc/b/eee/ggg"));
+      assertTrue(PathPatternUtils.acceptDescendant("/a/%%/b/*", "/a/cb/b/eee"));
+      assertTrue(PathPatternUtils.acceptDescendant("/a/%%/b/*", "/a/dc/b/eee/ggg"));
       assertFalse(PathPatternUtils.acceptDescendant("/a/%%/b/*", "/a/cc/d/eee/ggg"));
       assertTrue(PathPatternUtils.acceptName("/a/%%/b/*", "/a/cc/b/eee"));
       assertFalse(PathPatternUtils.acceptName("/a/%%/b/*", "/a/cc/b/eee/ggg"));

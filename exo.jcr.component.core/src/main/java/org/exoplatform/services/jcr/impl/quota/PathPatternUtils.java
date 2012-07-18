@@ -18,13 +18,13 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
-
 import java.util.regex.Pattern;
 
 /**
  * Node absolute path pattern. Supports such elements:</br>
  * <code>*</code>: any node name</br>
  * <code>%</code>: any character</br>
+ * <code>/</code>: as only delimiter between entities
  * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: PathPatternUtils.java 34360 2009-07-22 23:58:59Z tolusha $
@@ -88,6 +88,25 @@ public class PathPatternUtils
       pattern += "(/.+)?";
 
       return absPath.matches(pattern);
+   }
+
+   /**
+    * Extract common ancestor.
+    */
+   public static String extractCommonAncestor(String pattern, String absPath)
+   {
+      pattern = normalizePath(pattern);
+      absPath = normalizePath(absPath);
+      
+      String[] entries = absPath.split("/");
+      
+      StringBuilder ancestor = new StringBuilder();
+      for (int i = 0; i < pattern.split("/").length; i++)
+      {
+         ancestor.append(entries[i]);
+      }
+
+      return ancestor.length() == 0 ? "/" : ancestor.toString();
    }
 
    /**

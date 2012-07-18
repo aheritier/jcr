@@ -25,14 +25,14 @@ import java.util.Set;
 
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: DefineAlertedNodeTask.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: CalculateNodeDataSizeTask.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class DefineAlertedNodeTask implements Runnable
+public class CalculateNodeDataSizeTask implements Runnable
 {
    /**
     * Logger.
     */
-   private final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.DefineAlertedNodeTask");
+   private final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.CalculateNodeDataSizeTask");
 
    private final WorkspaceQuotaManager quotaManager;
 
@@ -47,9 +47,9 @@ public class DefineAlertedNodeTask implements Runnable
    private final Set<String> runNodesTasks;
 
    /**
-    * DefineAlertedNodeTask constructor.
+    * CalculateNodeDataSizeTask constructor.
     */
-   public DefineAlertedNodeTask(WorkspaceQuotaManager quotaManager, String nodePath, Set<String> runNodesTasks)
+   public CalculateNodeDataSizeTask(WorkspaceQuotaManager quotaManager, String nodePath, Set<String> runNodesTasks)
    {
       this.quotaManager = quotaManager;
       this.nodePath = nodePath;
@@ -68,8 +68,6 @@ public class DefineAlertedNodeTask implements Runnable
       {
          long dataSize = quotaManager.getNodeDataSizeDirectly(nodePath);
          quotaPersister.setNodeDataSize(rName, wsName, nodePath, dataSize);
-
-         quotaManager.defineAlertedPath(nodePath);
       }
       catch (QuotaManagerException e)
       {

@@ -38,7 +38,8 @@ public interface QuotaPersister
    /**
     * @see QuotaManager#getNodeQuota(String, String, String)
     */
-   long getNodeQuotaByPathOrPattern(String repositoryName, String workspaceName, String nodePath) throws UnknownQuotaLimitException;
+   long getNodeQuotaOrGroupOfNodesQuota(String repositoryName, String workspaceName, String nodePath)
+      throws UnknownQuotaLimitException;
 
    /**
     * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)
@@ -52,20 +53,14 @@ public interface QuotaPersister
 
    /**
     * @see QuotaManager#removeGroupOfNodesQuota(String, String, String)
-    * @return removed node paths for which pattern quota was set but path quota was not 
     */
-   Set<String> removeGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath);
+   void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath);
 
    /**
-    * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)
+    * @see QuotaManager#setGroupOfNodesQuota(String, String, String, long, boolean)
     */
-   void setGroupOfNodeQuota(String repositoryName, String workspaceName, String patternPath, long quotaLimit,
+   void setGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath, long quotaLimit,
       boolean asyncUpdate);
-
-   /**
-    * Returns alerted node paths. 
-    */
-   Set<String> getAlertedPaths(String repositoryName, String workspaceName);
 
    /**
     * @see QuotaManager#getNodeDataSize(String, String, String)
@@ -78,6 +73,11 @@ public interface QuotaPersister
     */
    void setNodeDataSize(String repositoryName, String workspaceName, String nodePath, long dataSize);
 
+   /**
+    * Returns all paths of nodes with defined quota.
+    */
+   Set<String> getAllQuotableParentNodes(String repositoryName, String workspaceName, String nodePath);
+      
    /**
     * @see QuotaManager#getWorkspaceQuota(String, String)
     */
@@ -153,21 +153,63 @@ public interface QuotaPersister
     */
    void removeGlobalQuota();
 
-   // ==========================> backup methods
-
    /**
-    * Removes all record about workspace entity.
+    * Removes all info about workspace entity.
     */
    void clearWorkspaceData(String repositoryName, String workspaceName) throws BackupException;
 
    /**
-    * Backups all record about workspace entity.
+    * Backups all info about workspace entity.
     */
-   void backupWorkspaceData(String repositoryName, String workspaceName, ZipObjectWriter writer) throws BackupException;
+   void backupWorkspaceData(String repositoryName, String workspaceName, ZipObjectWriter out) throws BackupException;
 
    /**
-    * Restore all record about workspace entity.
+    * Restore all info about workspace entity.
     */
-   void restoreWorkspaceData(String repositoryName, String workspaceName, ZipObjectReader reader)
+   void restoreWorkspaceData(String repositoryName, String workspaceName, ZipObjectReader in)
       throws BackupException;
+
+   /**
+    * @see QuotaManager#getNodeQuota(String, String, String)
+    */
+   long getNodeQuota(String repositoryName, String workspaceName, String nodePath)
+      throws UnknownQuotaLimitException;
+
+   /**
+    * @see QuotaManager#getNodeQuota(String, String, String)
+    */
+   long getGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath)
+      throws UnknownQuotaLimitException;
+
+   /**
+    * Indicates if quota by specific path should use asynchronous update or not. 
+    */
+   boolean isNodeQuotaAsync(String repositoryName, String workspaceName, String nodePath)
+      throws UnknownQuotaLimitException;
+
+   /**
+    * Indicates if quota by specific pattern should use asynchronous update or not. 
+    */
+   boolean isGroupOfNodesQuotaAsync(String repositoryName, String workspaceName, String patternPath)
+      throws UnknownQuotaLimitException;
+
+   /**
+    * Returns pattern with quota that matches for specific node path. 
+    */
+   String getAcceptableGroupOfNodesQuota(String repositoryName, String workspaceName, String nodePath);
+
+   /**
+    * Returns all existed node paths with quota.
+    */
+   Set<String> getAllNodeQuota(String repositoryName, String workspaceName);
+
+   /**
+    * Returns all existed group of nodes quota. 
+    */
+   Set<String> getAllGroupOfNodesQuota(String repositoryName, String workspaceName);
+
+   /**
+    * Returns all traced nodes, which mean node data size is known.
+    */
+   Set<String> getAllTrackedNodes(String repositoryName, String workspaceName);
 }

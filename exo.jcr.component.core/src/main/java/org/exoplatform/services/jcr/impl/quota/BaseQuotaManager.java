@@ -33,7 +33,6 @@ import org.picocontainer.Startable;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
@@ -95,11 +94,6 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    protected final ConfigurationManager cfm;
 
    /**
-    * Indicates if global data size exceeded quota limit.
-    */
-   protected AtomicBoolean alerted = new AtomicBoolean();
-
-   /**
     * QuotaManager constructor.
     */
    public BaseQuotaManager(InitParams initParams, RPCService rpcService, ConfigurationManager cfm)
@@ -113,8 +107,6 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
       this.initParams = initParams;
       this.rpcService = rpcService;
       this.quotaPersister = initQuotaPersister();
-
-      defineAlertedState();
    }
 
    /**
@@ -294,7 +286,6 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    public void setGlobalQuota(long quotaLimit) throws QuotaManagerException
    {
       quotaPersister.setGlobalQuota(quotaLimit);
-      defineAlertedState();
    }
 
    /**
@@ -305,7 +296,6 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    public void removeGlobalQuota() throws QuotaManagerException
    {
       quotaPersister.removeGlobalQuota();
-      defineAlertedState();
    }
 
    /**
@@ -374,22 +364,38 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
 
       long newDataSize = Math.max(dataSize + delta, 0);
       quotaPersister.setGlobalDataSize(newDataSize);
-
-      defineAlertedState();
    }
 
    /**
-    * Checks if entity can accumulate new changes. It is not possible
-    * when entity is alerted and {@link ExceededQuotaLimitException} 
-    * will be thrown.
+    * Checks if entity can accumulate new changes. It is not possible when 
+    * current behavior is {@link ExceededQuotaBehavior#EXCEPTION} and current
+    * data size with new changed size <code>delta</code> will exceeds quota limit.
     * 
-    * @throws ExceededQuotaLimitException if entity is alerted
+    * @throws ExceededQuotaLimitException if data size will exceeds quota limit 
     */
-   protected void validateAccumulateChanges() throws ExceededQuotaLimitException
+   protected void validateAccumulateChanges(long delta) throws ExceededQuotaLimitException
    {
-      if (alerted.get())
+      try
       {
-         behaveOnQuotaExceeded("Global data size exceeded quota limit");
+         long quotaLimit = quotaPersister.getGlobalQuota();
+
+         try
+         {
+            long dataSize = quotaPersister.getGlobalDataSize();
+
+            if (dataSize + delta > quotaLimit)
+            {
+               behaveOnQuotaExceeded("Global data size exceeded quota limit");
+            }
+         }
+         catch (UnknownQuotaDataSizeException e)
+         {
+            return;
+         }
+      }
+      catch (UnknownQuotaLimitException e)
+      {
+         return;
       }
    }
 
@@ -415,30 +421,6 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
     */
    public enum ExceededQuotaBehavior {
       WARNING, EXCEPTION
-   }
-
-   /**
-    * Define global alerted state based on values of quota limit and data size.
-    */
-   private void defineAlertedState()
-   {
-      try
-      {
-         long quotaLimit = quotaPersister.getGlobalQuota();
-         try
-         {
-            long dataSize = quotaPersister.getGlobalDataSize();
-            alerted.set(dataSize > quotaLimit);
-         }
-         catch (UnknownQuotaDataSizeException e)
-         {
-            alerted.set(false);
-         }
-      }
-      catch (UnknownQuotaLimitException e)
-      {
-         alerted.set(false);
-      }
    }
 
    /**
@@ -468,7 +450,8 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
 
    /**
     * What to do if data size exceeded quota limit. Throwing exception or logging only.
-
+    * Depends on preconfigured parameter.
+    * 
     * @param message
     *          the detail message for exception or log operation
     * @throws ExceededQuotaLimitException

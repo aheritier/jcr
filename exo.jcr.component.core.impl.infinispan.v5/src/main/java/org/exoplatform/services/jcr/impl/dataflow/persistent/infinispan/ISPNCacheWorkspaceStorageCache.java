@@ -55,6 +55,7 @@ import org.exoplatform.services.jcr.impl.core.itemfilters.QPathEntryFilter;
 import org.exoplatform.services.jcr.impl.dataflow.TransientNodeData;
 import org.exoplatform.services.jcr.impl.dataflow.TransientPropertyData;
 import org.exoplatform.services.jcr.impl.dataflow.ValueDataUtil;
+import org.exoplatform.services.jcr.impl.dataflow.persistent.SimplePersistedSize;
 import org.exoplatform.services.jcr.infinispan.AbstractMapper;
 import org.exoplatform.services.jcr.infinispan.CacheKey;
 import org.exoplatform.services.jcr.infinispan.ISPNCacheFactory;
@@ -1510,7 +1511,8 @@ public class ISPNCacheWorkspaceStorageCache implements WorkspaceStorageCache, Ba
             PropertyData newProp =
                new PersistedPropertyData(prop.getIdentifier(), prop.getQPath(), prop.getParentIdentifier(),
                   prop.getPersistedVersion(), prop.getType(), prop.isMultiValued(),
-                  ((PropertyData)prevData).getValues());
+                  ((PropertyData)prevData).getValues(), new SimplePersistedSize(
+                     ((PersistedPropertyData)prevData).getPersistedSize()));
 
             // update item data with new name and old values only
             cache.put(new CacheId(getOwnerId(), newProp.getIdentifier()), newProp, false);

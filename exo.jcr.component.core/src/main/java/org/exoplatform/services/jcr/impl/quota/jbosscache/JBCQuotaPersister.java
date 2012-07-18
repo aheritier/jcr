@@ -21,22 +21,15 @@ package org.exoplatform.services.jcr.impl.quota.jbosscache;
 import org.exoplatform.container.configuration.ConfigurationManager;
 import org.exoplatform.services.jcr.config.MappedParametrizedObjectEntry;
 import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
-import org.exoplatform.services.jcr.impl.backup.BackupException;
-import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectReader;
-import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectWriter;
-import org.exoplatform.services.jcr.impl.quota.PathPatternUtils;
-import org.exoplatform.services.jcr.impl.quota.QuotaPersister;
+import org.exoplatform.services.jcr.impl.quota.AbstractQuotaPersister;
 import org.exoplatform.services.jcr.impl.quota.UnknownQuotaDataSizeException;
 import org.exoplatform.services.jcr.impl.quota.UnknownQuotaLimitException;
 import org.exoplatform.services.jcr.jbosscache.ExoJBossCacheFactory;
 import org.exoplatform.services.jcr.jbosscache.ExoJBossCacheFactory.CacheType;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.jboss.cache.Cache;
 import org.jboss.cache.Fqn;
 import org.jboss.cache.Node;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -51,22 +44,13 @@ import java.util.Set;
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: JBCQuotaPersister.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class JBCQuotaPersister implements QuotaPersister
+public class JBCQuotaPersister extends AbstractQuotaPersister
 {
-   /**
-    * Logger.
-    */
-   protected final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.JBCQuotaPersister");
 
    /**
     * JBoss cache.
     */
    protected Cache<Serializable, Object> cache;
-
-   /**
-    * Backup, restore, clean utility.
-    */
-   protected final JBCBackupQuota backupUtil;
 
    /**
     * Based region where allowed quota sized is stored. Should not be covered by eviction.
@@ -114,39 +98,6 @@ public class JBCQuotaPersister implements QuotaPersister
 
       createResidentNode(QUOTA);
       createResidentNode(DATA_SIZE);
-
-      backupUtil = new JBCBackupQuota(cache);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public long getNodeQuotaByPathOrPattern(String repositoryName, String workspaceName, String nodePath)
-      throws UnknownQuotaLimitException
-   {
-      nodePath = escaping(nodePath);
-
-      try
-      {
-         Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, nodePath);
-         return getQuota(fqn);
-      }
-      catch (UnknownQuotaLimitException e)
-      {
-         Fqn<String> fqnParentQuotaPattern = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS);
-
-         Set<Object> children = cache.getChildrenNames(fqnParentQuotaPattern);
-         for (Object pattern : children)
-         {
-            if (PathPatternUtils.acceptName(unescaping((String)pattern), unescaping(nodePath)))
-            {
-               fqnParentQuotaPattern = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, (String)pattern);
-               return getQuota(fqnParentQuotaPattern);
-            }
-         }
-
-         throw e;
-      }
    }
 
    /**
@@ -165,7 +116,7 @@ public class JBCQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public void setGroupOfNodeQuota(String repositoryName, String workspaceName, String patternPath, long quotaLimit,
+   public void setGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath, long quotaLimit,
       boolean asyncUpdate)
    {
       patternPath = escaping(patternPath);
@@ -173,115 +124,6 @@ public class JBCQuotaPersister implements QuotaPersister
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, patternPath);
       cache.put(fqn, SIZE, quotaLimit);
       cache.put(fqn, ASYNC_UPATE, asyncUpdate);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void removeNodeQuota(String repositoryName, String workspaceName, String nodePath)
-   {
-      nodePath = escaping(nodePath);
-
-      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, nodePath);
-      cache.removeNode(fqn);
-
-      // remove node data size only if only node path does't match any pattern
-      Fqn<String> parent = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS);
-      for (Object patternPath : cache.getChildrenNames(parent))
-      {
-         if (PathPatternUtils.acceptName(unescaping((String)patternPath), unescaping(nodePath)))
-         {
-            return;
-         }
-      }
-
-      fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName, nodePath);
-      cache.removeNode(fqn);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Set<String> removeGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath)
-   {
-      patternPath = escaping(patternPath);
-
-      Set<String> removedPaths = new HashSet<String>();
-
-      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, patternPath);
-      cache.removeNode(fqn);
-      
-      // removes data size for all nodes matched by pattern
-      // only if only quota was not set explicitly by setQuota() method 
-      Fqn<String> fqnParentDataSize = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
-      for (Object nodePath : cache.getChildrenNames(fqnParentDataSize))
-      {
-         if (PathPatternUtils.acceptName(unescaping(patternPath), unescaping((String)nodePath)))
-         {
-            Fqn<String> fqnQuota =
-               Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, (String)nodePath);
-
-            if (cache.getNode(fqnQuota) == null)
-            {
-               cache.removeNode(Fqn.fromRelativeElements(fqnParentDataSize, (String)nodePath));
-               removedPaths.add(unescaping((String)nodePath));
-            }
-         }
-      }
-
-      return removedPaths;
-   }
-   
-   /**
-    * {@inheritDoc}
-    */
-   public Set<String> getAlertedPaths(String repositoryName, String workspaceName)
-   {
-      Set<String> result = new HashSet<String>();
-
-      Fqn<String> fqnParentDataSize = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
-      for (Object nodePath : cache.getChildrenNames(fqnParentDataSize))
-      {
-         Fqn<String> fqnDataSize = Fqn.fromRelativeElements(fqnParentDataSize, (String)nodePath);
-
-         // check quota by path
-         Fqn<String> fqnQuota =
-            Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, (String)nodePath);
-         Node quotaNoda = cache.getNode(fqnQuota);
-         if (quotaNoda != null)
-         {
-            long quotaLimit = (Long)quotaNoda.get(SIZE);
-            long dataSize = (Long)cache.get(fqnDataSize, SIZE);
-
-            if (quotaLimit > dataSize)
-            {
-               result.add(unescaping((String)nodePath));
-            }
-
-            continue;
-         }
-
-         // check quota by pattern
-         Fqn<String> fqnParentPattern = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS);
-         for (Object patternPath : cache.getChildrenNames(fqnParentPattern))
-         {
-            if (PathPatternUtils.acceptName(unescaping((String)patternPath), unescaping((String)nodePath)))
-            {
-               Fqn<String> fqnPathern = Fqn.fromRelativeElements(fqnParentPattern, (String)patternPath);
-
-               long quotaLimit = (Long)cache.get(fqnPathern, SIZE);
-               long dataSize = (Long)cache.get(fqnDataSize, SIZE);
-
-               if (quotaLimit > dataSize)
-               {
-                  result.add(unescaping((String)nodePath));
-                  break;
-               }
-            }
-         }
-      }
-
-      return result;
    }
 
    /**
@@ -332,47 +174,6 @@ public class JBCQuotaPersister implements QuotaPersister
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName);
       cache.remove(fqn, SIZE);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void clearWorkspaceData(String repositoryName, String workspaceName)
-   {
-      backupUtil.clearWorkspaceData(repositoryName, workspaceName);
-   }
-
-   /**
-    * {@inheritDoc}
-    * @throws IOException 
-    */
-   public void backupWorkspaceData(String repositoryName, String workspaceName, ZipObjectWriter writer)
-      throws BackupException
-   {
-      try
-      {
-         backupUtil.backupWorkspaceData(repositoryName, workspaceName, writer);
-      }
-      catch (IOException e)
-      {
-         throw new BackupException(e.getMessage(), e);
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void restoreWorkspaceData(String repositoryName, String workspaceName, ZipObjectReader reader)
-      throws BackupException
-   {
-      try
-      {
-         backupUtil.restoreWorkspaceData(repositoryName, workspaceName, reader);
-      }
-      catch (IOException e)
-      {
-         throw new BackupException(e.getMessage(), e);
-      }
    }
 
    /**
@@ -493,10 +294,123 @@ public class JBCQuotaPersister implements QuotaPersister
       }
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   public void clearWorkspaceData(String repositoryName, String workspaceName)
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(JBCQuotaPersister.DATA_SIZE, repositoryName, workspaceName);
+      cache.removeNode(fqn);
+
+      fqn = Fqn.fromRelativeElements(JBCQuotaPersister.QUOTA, repositoryName, workspaceName);
+      cache.removeNode(fqn);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isNodeQuotaAsync(String repositoryName, String workspaceName, String nodePath)
+      throws UnknownQuotaLimitException
+   {
+      nodePath = escaping(nodePath);
+
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, nodePath);
+      return getAsyncUpdate(fqn);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isGroupOfNodesQuotaAsync(String repositoryName, String workspaceName, String patternPath)
+      throws UnknownQuotaLimitException
+   {
+      patternPath = escaping(patternPath);
+
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, patternPath);
+      return getAsyncUpdate(fqn);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getNodeQuota(String repositoryName, String workspaceName, String nodePath)
+      throws UnknownQuotaLimitException
+   {
+      nodePath = escaping(nodePath);
+
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, nodePath);
+      return getQuota(fqn);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath)
+      throws UnknownQuotaLimitException
+   {
+      patternPath = escaping(patternPath);
+
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, patternPath);
+      return getQuota(fqn);
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public Set<String> getAllNodeQuota(String repositoryName, String workspaceName)
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS);
+      return getAllChildrenItems(fqn);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Set<String> getAllGroupOfNodesQuota(String repositoryName, String workspaceName)
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS);
+      return getAllChildrenItems(fqn);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Set<String> getAllTrackedNodes(String repositoryName, String workspaceName)
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
+      return getAllChildrenItems(fqn);
+   }
+
+   private Set<String> getAllChildrenItems(Fqn<String> fqn)
+   {
+      Set<String> result = new HashSet<String>();
+      for (Object path : cache.getChildrenNames(fqn))
+      {
+         result.add(unescaping((String)path));
+      }
+
+      return result;
+   }
+
+   // ==============================> private methods
+
    private long getQuota(Fqn<String> fqn) throws UnknownQuotaLimitException
    {
       cache.getInvocationContext().getOptionOverrides().setForceWriteLock(true);
       Long size = (Long)cache.get(fqn, SIZE);
+
+      if (size == null)
+      {
+         throw new UnknownQuotaLimitException("Quota was not set early");
+      }
+
+      return size;
+   }
+
+   private boolean getAsyncUpdate(Fqn<String> fqn) throws UnknownQuotaLimitException
+   {
+      cache.getInvocationContext().getOptionOverrides().setForceWriteLock(true);
+      Boolean size = (Boolean)cache.get(fqn, ASYNC_UPATE);
 
       if (size == null)
       {
@@ -544,5 +458,34 @@ public class JBCQuotaPersister implements QuotaPersister
    private String unescaping(String path)
    {
       return path.replace("\\", Fqn.SEPARATOR);
+   }
+
+   // ===============================> low-level methods
+
+   /**
+    * {@inheritDoc}
+    */
+   protected void removeDirectlyNodeQuota(String repositoryName, String workspaceName, String nodePath)
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, nodePath);
+      cache.removeNode(fqn);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected void removeDirectlyGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath)
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, patternPath);
+      cache.removeNode(fqn);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected void removeDirectlryNodeDataSize(String repositoryName, String workspaceName, String nodePath)
+   {
+      Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName, nodePath);
+      cache.removeNode(fqn);
    }
 }

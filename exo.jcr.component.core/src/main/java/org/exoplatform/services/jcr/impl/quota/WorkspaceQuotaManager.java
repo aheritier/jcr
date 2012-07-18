@@ -65,8 +65,10 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -136,16 +138,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    protected final QuotaPersister quotaPersister;
 
    /**
-    * Indicates if workspace data size exceeded quota limit.
-    */
-   protected AtomicBoolean alerted = new AtomicBoolean();
-
-   /**
-    * List of alerted nodes in workspace.
-    */
-   protected Set<String> alertedPaths = new ConcurrentHashSet<String>();
-
-   /**
     * File name for backuped data.
     */
    protected static final String BACKUP_FILE_NAME = "quota";
@@ -166,7 +158,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    protected AtomicBoolean isSuspended = new AtomicBoolean();
 
    /**
-    * Contains node paths for which {@link DefineAlertedNodeTask} currently is run. 
+    * Contains node paths for which {@link CalculateNodeDataSizeTask} currently is run. 
     * Does't allow execution several tasks over common path.
     */
    protected Set<String> runNodesTasks = new ConcurrentHashSet<String>();
@@ -187,9 +179,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       this.quotaPersister = rQuotaManager.globalQuotaManager.quotaPersister;
 
       initExecutorService();
-
-      defineAlertedState();
-      defineAlertedPaths();
 
       dataManager.addItemPersistenceListener(accumulateChangesListener);
       dataManager.addItemPersistenceListener(validateChangesListener);
@@ -223,7 +212,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          return getWorkspaceQuota();
       }
 
-      return quotaPersister.getNodeQuotaByPathOrPattern(rName, wsName, nodePath);
+      return quotaPersister.getNodeQuotaOrGroupOfNodesQuota(rName, wsName, nodePath);
    }
 
    /**
@@ -239,25 +228,47 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
       else
       {
+         try
+         {
+            quotaPersister.getNodeQuotaOrGroupOfNodesQuota(rName, wsName, nodePath);
+         }
+         catch (UnknownQuotaLimitException e)
+         {
+            // have deal with setting new quota limit value
+            quotaPersister.setNodeQuota(rName, wsName, nodePath, quotaLimit, asyncUpdate);
+            tryCalculateNodeDataSizeTask(nodePath);
+
+            return;
+         }
+
+         // have deal with changing quota limit value
          quotaPersister.setNodeQuota(rName, wsName, nodePath, quotaLimit, asyncUpdate);
 
          try
          {
             quotaPersister.getNodeDataSize(rName, wsName, nodePath);
-            defineAlertedPath(nodePath);
          }
          catch (UnknownQuotaDataSizeException e)
          {
+            tryCalculateNodeDataSizeTask(nodePath);
+         }
+      }
+   }
+
+   /**
+    * Executes task {@link CalculateNodeDataSizeTask} if it is not in list
+    * current executing tasks.
+    */
+   private void tryCalculateNodeDataSizeTask(String nodePath)
+   {
+      if (!runNodesTasks.contains(nodePath))
+      {
+         synchronized (runNodesTasks)
+         {
             if (!runNodesTasks.contains(nodePath))
             {
-               synchronized (runNodesTasks)
-               {
-                  if (!runNodesTasks.contains(nodePath))
-                  {
-                     Runnable task = new DefineAlertedNodeTask(this, nodePath, runNodesTasks);
-                     executor.execute(task);
-                  }
-               }
+               Runnable task = new CalculateNodeDataSizeTask(this, nodePath, runNodesTasks);
+               executor.execute(task);
             }
          }
       }
@@ -277,7 +288,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
       else
       {
-         quotaPersister.setGroupOfNodeQuota(rName, wsName, patternPath, quotaLimit, asyncUpdate);
+         quotaPersister.setGroupOfNodesQuota(rName, wsName, patternPath, quotaLimit, asyncUpdate);
       }
    }
 
@@ -295,7 +306,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       else
       {
          quotaPersister.removeNodeQuota(rName, wsName, nodePath);
-         defineAlertedPath(nodePath);
       }
    }
 
@@ -312,8 +322,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
       else
       {
-         Set<String> removedPaths = quotaPersister.removeGroupOfNodesQuota(rName, wsName, patternPath);
-         alertedPaths.remove(removedPaths);
+         quotaPersister.removeGroupOfNodesQuota(rName, wsName, patternPath);
       }
    }
 
@@ -324,7 +333,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    public void setWorkspaceQuota(long quotaLimit) throws QuotaManagerException
    {
       quotaPersister.setWorkspaceQuota(rName, wsName, quotaLimit);
-      defineAlertedState();
    }
 
    /**
@@ -334,7 +342,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    public void removeWorkspaceQuota() throws QuotaManagerException
    {
       quotaPersister.removeWorkspaceQuota(rName, wsName);
-      defineAlertedState();
    }
 
    /**
@@ -414,74 +421,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       long newDataSize = Math.max(dataSize + delta, 0);
       quotaPersister.setWorkspaceDataSize(rName, wsName, newDataSize);
 
-      defineAlertedState();
-
       repositoryQuotaManager.accumulateChanges(delta);
-   }
-
-   /**
-    * Define workspace alerted state based on values of quota limit and data size.
-    */
-   protected void defineAlertedState()
-   {
-      try
-      {
-         long quotaLimit = quotaPersister.getWorkspaceQuota(rName, wsName);
-         try
-         {
-            long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
-            alerted.set(dataSize > quotaLimit);
-         }
-         catch (UnknownQuotaDataSizeException e)
-         {
-            alerted.set(false);
-         }
-      }
-      catch (UnknownQuotaLimitException e)
-      {
-         alerted.set(false);
-      }
-   }
-
-   /**
-    * Define if node path should be marked as alerted. It means
-    * node data size exceeded quota limit.
-    */
-   protected void defineAlertedPath(String nodePath)
-   {
-      try
-      {
-         long dataSize = quotaPersister.getNodeDataSize(rName, wsName, nodePath);
-         try
-         {
-            long quotaLimit = quotaPersister.getNodeQuotaByPathOrPattern(rName, wsName, nodePath);
-
-            if (dataSize > quotaLimit)
-            {
-               alertedPaths.remove(nodePath);
-            }
-            else
-            {
-               alertedPaths.add(nodePath);
-            }
-         }
-         catch (UnknownQuotaLimitException e)
-         {
-            alertedPaths.remove(nodePath);
-         }
-      }
-      catch (UnknownQuotaDataSizeException e)
-      {
-         alertedPaths.remove(nodePath);
-      }
-   }
-
-   /**
-    * Gets all alerted paths.
-    */
-   protected void defineAlertedPaths()
-   {
-      alertedPaths = quotaPersister.getAlertedPaths(rName, wsName);
    }
 
    /**
@@ -668,7 +608,8 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    {
       /**
        * {@inheritDoc}
-       * Checks if new changes can exceeds some limits.
+       * Checks if new changes can exceeds some limits. It either can be node, workspace, 
+       * repository or global JCR instance.
        * 
        * @throws IllegalStateException if data size exceeded quota limit
        */
@@ -676,12 +617,12 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       {
          try
          {
-            boolean newContentArrivedInWS = false;
-            Set<String> checkedAlertedPaths = new HashSet<String>();
+            long wsDelta = 0;
+            Map<String, Long> nodesDelta = new HashMap<String, Long>();
 
             for (ItemState state : itemStates.getAllStates())
             {
-               if (state.isAdded() || state.isUpdated() || state.isRenamed())
+               if (!state.getData().isNode())
                {
                   String itemPath;
                   try
@@ -693,31 +634,22 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
                      throw new IllegalStateException(e.getMessage(), e);
                   }
 
-                  for (String alertedPath : alertedPaths)
+                  // update changed size for every node
+                  Set<String> quotableParents = quotaPersister.getAllQuotableParentNodes(rName, wsName, itemPath);
+                  for (String parent : quotableParents)
                   {
-                     if (!checkedAlertedPaths.contains(alertedPath)
-                        && PathPatternUtils.acceptDescendant(alertedPath, itemPath))
-                     {
-                        repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Node " + uniqueName
-                           + alertedPath + " data size exceeded quota limit");
-                     }
+                     Long oldDelta = nodesDelta.get(parent);
+                     Long newDelta = state.getChangedSize() + (oldDelta != null ? oldDelta : 0);
+                     
+                     nodesDelta.put(parent, newDelta);
                   }
 
-                  newContentArrivedInWS = true;
+                  wsDelta += state.getChangedSize();
                }
             }
-
-            if (newContentArrivedInWS)
-            {
-               if (alerted.get())
-               {
-                  repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Workspace " + uniqueName
-                     + " data size exceeded quota limit");
-
-               }
-
-               repositoryQuotaManager.validateAccumulateChanges();
-            }
+            
+            validateAccumulateChanges(wsDelta);
+            validateAccumulateNodesChanges(nodesDelta);
          }
          catch (ExceededQuotaLimitException e)
          {
@@ -732,6 +664,70 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       {
          return true;
       }
+
+      /**
+       * @see BaseQuotaManager#validateAccumulateChanges(long)
+       */
+      private void validateAccumulateChanges(long delta) throws ExceededQuotaLimitException
+      {
+         try
+         {
+            long quotaLimit = quotaPersister.getWorkspaceQuota(rName, wsName);
+
+            try
+            {
+               long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
+
+               if (dataSize + delta > quotaLimit)
+               {
+                  repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Workspace " + uniqueName
+                     + " data size exceeded quota limit");
+               }
+            }
+            catch (UnknownQuotaDataSizeException e)
+            {
+               return;
+            }
+         }
+         catch (UnknownQuotaLimitException e)
+         {
+            return;
+         }
+      }
+
+      /**
+       * @see BaseQuotaManager#validateAccumulateChanges(long)
+       */
+      private void validateAccumulateNodesChanges(Map<String, Long> nodesDelta) throws ExceededQuotaLimitException
+      {
+         for (Entry<String, Long> entry : nodesDelta.entrySet())
+         {
+            String nodePath = entry.getKey();
+            Long delta = entry.getValue();
+
+            try
+            {
+               long dataSize = quotaPersister.getNodeDataSize(rName, wsName, nodePath);
+               try
+               {
+                  long quotaLimit = quotaPersister.getNodeQuotaOrGroupOfNodesQuota(rName, wsName, nodePath);
+                  if (dataSize + delta > quotaLimit)
+                  {
+                     repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Node " + uniqueName + nodePath
+                        + " data size exceeded quota limit");
+                  }
+               }
+               catch (UnknownQuotaLimitException e)
+               {
+                  continue;
+               }
+            }
+            catch (UnknownQuotaDataSizeException e)
+            {
+               continue;
+            }
+         }
+      }
    }
 
    /**
@@ -743,7 +739,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       {
          public Thread newThread(Runnable arg0)
          {
-            return new Thread(arg0, "QuotaManagerThread /" + rName + "/" + wsName);
+            return new Thread(arg0, "QuotaManagerThread " + uniqueName);
          }
       });
    }
@@ -844,11 +840,11 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    private void doRestore(File backupFile) throws BackupException
    {
-      ZipObjectReader reader = null;
+      ZipObjectReader in = null;
       try
       {
-         reader = new ZipObjectReader(PrivilegedFileHelper.zipInputStream(backupFile));
-         quotaPersister.restoreWorkspaceData(rName, wsName, reader);
+         in = new ZipObjectReader(PrivilegedFileHelper.zipInputStream(backupFile));
+         quotaPersister.restoreWorkspaceData(rName, wsName, in);
       }
       catch (IOException e)
       {
@@ -856,11 +852,11 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
       finally
       {
-         if (reader != null)
+         if (in != null)
          {
             try
             {
-               reader.close();
+               in.close();
             }
             catch (IOException e)
             {
@@ -881,9 +877,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
             LOG.trace(e.getMessage(), e);
          }
       }
-
-      defineAlertedState();
-      defineAlertedPaths();
    }
 
    /**
@@ -891,11 +884,11 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    private void doBackup(File backupFile) throws BackupException
    {
-      ZipObjectWriter writer = null;
+      ZipObjectWriter out = null;
       try
       {
-         writer = new ZipObjectWriter(PrivilegedFileHelper.zipOutputStream(backupFile));
-         quotaPersister.backupWorkspaceData(rName, wsName, writer);
+         out = new ZipObjectWriter(PrivilegedFileHelper.zipOutputStream(backupFile));
+         quotaPersister.backupWorkspaceData(rName, wsName, out);
       }
       catch (IOException e)
       {
@@ -903,11 +896,11 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
       finally
       {
-         if (writer != null)
+         if (out != null)
          {
             try
             {
-               writer.close();
+               out.close();
             }
             catch (IOException e)
             {
@@ -933,7 +926,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
 
       quotaPersister.clearWorkspaceData(rName, wsName);
-      alertedPaths.clear();
    }
 
    // =========================================> Suspendable
