@@ -19,7 +19,8 @@
 package org.exoplatform.services.jcr.dataflow;
 
 import org.exoplatform.services.jcr.dataflow.persistent.ItemsPersistenceListener;
-import org.exoplatform.services.jcr.dataflow.persistent.ItemsPersistenceListenerFilter;
+import org.exoplatform.services.jcr.dataflow.persistent.PersistenceCommitListener;
+import org.exoplatform.services.jcr.dataflow.persistent.PersistenceRollbackListener;
 
 /**
  * Created by The eXo Platform SAS.
@@ -32,12 +33,34 @@ import org.exoplatform.services.jcr.dataflow.persistent.ItemsPersistenceListener
 public interface PersistentDataManager extends DataManager
 {
 
+   /**
+    * Add listener to the list.
+    */
    void addItemPersistenceListener(ItemsPersistenceListener listener);
 
+   /**
+    * Remove listener from the list.
+    */
    void removeItemPersistenceListener(ItemsPersistenceListener listener);
 
-   void addItemPersistenceListenerFilter(ItemsPersistenceListenerFilter filter);
+   /**
+    * Add listener to the list.
+    */
+   public void addPersistenceRollbackListener(PersistenceRollbackListener listener);
 
-   void removeItemPersistenceListenerFilter(ItemsPersistenceListenerFilter filter);
+   /**
+    * Remove listener from the list.
+    */
+   public void removePersistenceRollbackListener(PersistenceRollbackListener listener);
+
+   /**
+    * Add listener to the list.
+    */
+   public void addPersistenceCommitListener(PersistenceCommitListener listener);
+
+   /**
+    * Remove listener from the list.
+    */
+   public void removePersistenceCommitListener(PersistenceCommitListener listener);
 
 }

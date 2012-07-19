@@ -71,7 +71,7 @@ public class CalculateNodeDataSizeTask implements Runnable
       }
       catch (QuotaManagerException e)
       {
-         LOG.error(e.getMessage(), e);
+         LOG.warn("Can't calculate node data size " + nodePath);
       }
       finally
       {

@@ -47,11 +47,11 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
     */
    public void removeNodeQuota(String repositoryName, String workspaceName, String nodePath)
    {
-      removeDirectlryNodeDataSize(repositoryName, workspaceName, nodePath);
+      removeDirectlyNodeQuota(repositoryName, workspaceName, nodePath);
       
       if (getAcceptableGroupOfNodesQuota(repositoryName, workspaceName, nodePath) == null)
       {
-         removeDirectlryNodeDataSize(repositoryName, workspaceName, nodePath);
+         removeDirectlyNodeDataSize(repositoryName, workspaceName, nodePath);
       }
    }
 
@@ -74,7 +74,7 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
             }
             catch (UnknownQuotaLimitException e)
             {
-               removeDirectlryNodeDataSize(repositoryName, workspaceName, nodePath);
+               removeDirectlyNodeDataSize(repositoryName, workspaceName, nodePath);
             }
          }
       }
@@ -118,7 +118,7 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
          }
       }
 
-      throw null;
+      return null;
    }
 
    /**
@@ -138,9 +138,9 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
 
       for (String pattern : getAllGroupOfNodesQuota(repositoryName, workspaceName))
       {
-         if (PathPatternUtils.acceptDescendant(pattern, nodePath))
+         String commonAncestor = PathPatternUtils.extractCommonAncestor(pattern, nodePath);
+         if (commonAncestor != null)
          {
-            String commonAncestor = PathPatternUtils.extractCommonAncestor(pattern, nodePath);
             quotableParents.add(commonAncestor);
          }
       }
@@ -361,7 +361,8 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
    {
       in.getNextEntry();
 
-      for (int i = 0; i < in.readInt(); i++)
+      int count = in.readInt();
+      for (int i = 0; i < count; i++)
       {
          String nodePath = in.readString();
          long dataSize = in.readLong();
@@ -375,7 +376,8 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
    {
       in.getNextEntry();
 
-      for (int i = 0; i < in.readInt(); i++)
+      int count = in.readInt();
+      for (int i = 0; i < count; i++)
       {
          String nodePath = in.readString();
          long quotaLimit = in.readLong();
@@ -390,7 +392,8 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
    {
       in.getNextEntry();
 
-      for (int i = 0; i < in.readInt(); i++)
+      int count = in.readInt();
+      for (int i = 0; i < count; i++)
       {
          String patternPath = in.readString();
          long quotaLimit = in.readLong();
@@ -415,5 +418,5 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
    /**
     * Low level method. Remove only record node data size.
     */
-   protected abstract void removeDirectlryNodeDataSize(String repositoryName, String workspaceName, String nodePath);
+   protected abstract void removeDirectlyNodeDataSize(String repositoryName, String workspaceName, String nodePath);
 }

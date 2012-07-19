@@ -26,11 +26,12 @@ import org.exoplatform.services.jcr.dataflow.PlainChangesLog;
 import org.exoplatform.services.jcr.dataflow.PlainChangesLogImpl;
 import org.exoplatform.services.jcr.dataflow.TransactionChangesLog;
 import org.exoplatform.services.jcr.dataflow.persistent.ItemsPersistenceListener;
-import org.exoplatform.services.jcr.dataflow.persistent.ItemsPersistenceListenerFilter;
 import org.exoplatform.services.jcr.dataflow.persistent.MandatoryItemsPersistenceListener;
 import org.exoplatform.services.jcr.dataflow.persistent.PersistedItemData;
 import org.exoplatform.services.jcr.dataflow.persistent.PersistedNodeData;
 import org.exoplatform.services.jcr.dataflow.persistent.PersistedPropertyData;
+import org.exoplatform.services.jcr.dataflow.persistent.PersistenceCommitListener;
+import org.exoplatform.services.jcr.dataflow.persistent.PersistenceRollbackListener;
 import org.exoplatform.services.jcr.datamodel.ItemData;
 import org.exoplatform.services.jcr.datamodel.ItemType;
 import org.exoplatform.services.jcr.datamodel.NodeData;
@@ -103,10 +104,15 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
    protected final List<MandatoryItemsPersistenceListener> mandatoryListeners;
 
    /**
-    * Persistent level listeners filters.
+    * Mandatory persistent level listeners.
     */
-   protected final List<ItemsPersistenceListenerFilter> listenerFilters;
+   protected final List<PersistenceRollbackListener> rollbackListeners;
 
+   /**
+    * Mandatory persistent level listeners.
+    */
+   protected final List<PersistenceCommitListener> commitListeners;
+   
    /**
     * The resource manager
     */
@@ -295,7 +301,9 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
 
       this.listeners = new ArrayList<ItemsPersistenceListener>();
       this.mandatoryListeners = new ArrayList<MandatoryItemsPersistenceListener>();
-      this.listenerFilters = new ArrayList<ItemsPersistenceListenerFilter>();
+      this.commitListeners = new ArrayList<PersistenceCommitListener>();
+      this.rollbackListeners = new ArrayList<PersistenceRollbackListener>();
+      
       this.txResourceManager = txResourceManager;
       this.transactionManager = transactionManager;
    }
@@ -479,6 +487,8 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
          {
             systemConnection.commit();
          }
+
+         notifyCommitListeners();
       }
 
       protected void prepare() throws IllegalStateException, RepositoryException
@@ -505,10 +515,13 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
          {
             thisConnection.rollback();
          }
+
          if (systemConnection != null && !systemConnection.equals(thisConnection) && systemConnection.isOpened())
          {
             systemConnection.rollback();
          }
+
+         notifyRollbackListeners();
       }
 
       protected WorkspaceStorageConnection getSystemConnection() throws RepositoryException
@@ -1084,9 +1097,7 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
    // ---------------------------------------------
 
    /**
-    * Adds listener to the list.
-    * 
-    * @param listener
+    * {@inheritDoc}
     */
    public void addItemPersistenceListener(ItemsPersistenceListener listener)
    {
@@ -1104,6 +1115,9 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
       }
    }
 
+   /**
+    * {@inheritDoc}
+    */
    public void removeItemPersistenceListener(ItemsPersistenceListener listener)
    {
       if (listener instanceof MandatoryItemsPersistenceListener)
@@ -1122,40 +1136,35 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
    }
 
    /**
-    * {@inheritDoc}
+    * Add listener to the list.
     */
-   public void addItemPersistenceListenerFilter(ItemsPersistenceListenerFilter filter)
+   public void addPersistenceRollbackListener(PersistenceRollbackListener listener)
    {
-      this.listenerFilters.add(filter);
+      rollbackListeners.add(listener);
    }
 
    /**
-    * {@inheritDoc}
+    * Remove listener from the list.
     */
-   public void removeItemPersistenceListenerFilter(ItemsPersistenceListenerFilter filter)
+   public void removePersistenceRollbackListener(PersistenceRollbackListener listener)
    {
-      this.listenerFilters.remove(filter);
+      rollbackListeners.remove(listener);
    }
 
    /**
-    * Check if the listener can be accepted. If at least one filter doesn't accept the listener it
-    * returns false, true otherwise.
-    * 
-    * @param listener
-    *          ItemsPersistenceListener
-    * @return boolean, true if accepted, false otherwise.
+    * Add listener to the list.
     */
-   protected boolean isListenerAccepted(ItemsPersistenceListener listener)
+   public void addPersistenceCommitListener(PersistenceCommitListener listener)
    {
-      for (ItemsPersistenceListenerFilter f : listenerFilters)
-      {
-         if (!f.accept(listener))
-         {
-            return false;
-         }
-      }
+      commitListeners.add(listener);
+   }
 
-      return true;
+   /**
+    * Remove listener from the list.
+    */
+   public void removePersistenceCommitListener(PersistenceCommitListener listener)
+   {
+      commitListeners.remove(listener);
    }
 
    /**
@@ -1178,10 +1187,32 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
 
       for (ItemsPersistenceListener listener : listeners)
       {
-         if (listener.isTXAware() == isListenerTXAware && isListenerAccepted(listener))
+         if (listener.isTXAware() == isListenerTXAware)
          {
             listener.onSaveItems(changesLog);
          }
+      }
+   }
+
+   /**
+    * Notify listeners when persistence is committed. 
+    */
+   protected void notifyCommitListeners()
+   {
+      for (PersistenceCommitListener listener : commitListeners)
+      {
+         listener.onCommit();
+      }
+   }
+
+   /**
+    * Notify listeners when persistence is rollbacked.
+    */
+   protected void notifyRollbackListeners()
+   {
+      for (PersistenceRollbackListener listener : rollbackListeners)
+      {
+         listener.onRollback();
       }
    }
 

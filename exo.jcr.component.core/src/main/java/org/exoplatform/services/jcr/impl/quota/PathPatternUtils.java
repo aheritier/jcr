@@ -95,18 +95,24 @@ public class PathPatternUtils
     */
    public static String extractCommonAncestor(String pattern, String absPath)
    {
-      pattern = normalizePath(pattern);
-      absPath = normalizePath(absPath);
-      
-      String[] entries = absPath.split("/");
-      
-      StringBuilder ancestor = new StringBuilder();
-      for (int i = 0; i < pattern.split("/").length; i++)
+      if (acceptDescendant(pattern, absPath))
       {
-         ancestor.append(entries[i]);
+         pattern = normalizePath(pattern);
+         absPath = normalizePath(absPath);
+
+         String[] entries = absPath.split("/");
+
+         StringBuilder ancestor = new StringBuilder();
+         for (int i = 1; i < pattern.split("/").length; i++)
+         {
+            ancestor.append("/");
+            ancestor.append(entries[i]);
+         }
+
+         return ancestor.toString();
       }
 
-      return ancestor.length() == 0 ? "/" : ancestor.toString();
+      return null;
    }
 
    /**

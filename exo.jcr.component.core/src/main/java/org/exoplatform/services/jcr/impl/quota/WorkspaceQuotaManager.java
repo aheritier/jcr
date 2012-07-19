@@ -34,6 +34,8 @@ import org.exoplatform.services.jcr.dataflow.ItemDataTraversingVisitor;
 import org.exoplatform.services.jcr.dataflow.ItemState;
 import org.exoplatform.services.jcr.dataflow.ItemStateChangesLog;
 import org.exoplatform.services.jcr.dataflow.persistent.MandatoryItemsPersistenceListener;
+import org.exoplatform.services.jcr.dataflow.persistent.PersistenceCommitListener;
+import org.exoplatform.services.jcr.dataflow.persistent.PersistenceRollbackListener;
 import org.exoplatform.services.jcr.datamodel.ItemType;
 import org.exoplatform.services.jcr.datamodel.NodeData;
 import org.exoplatform.services.jcr.datamodel.PropertyData;
@@ -113,7 +115,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    protected final WorkspaceContainerFacade wsContainer;
 
    /**
-    * {@link WorkspacePersistentDataManager} instance.
+    * {@link WorkspacePersistentDataManager}.
     */
    protected final WorkspacePersistentDataManager dataManager;
 
@@ -164,6 +166,18 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    protected Set<String> runNodesTasks = new ConcurrentHashSet<String>();
 
    /**
+    * Contains calculated nodes data size changes of last save.
+    * Will be cleared on persistence rollback or commit.
+    */
+   protected ThreadLocal<Map<String, Long>> nodesDataSizeChanges = new ThreadLocal<Map<String, Long>>();
+
+   /**
+    * Contains calculated workspace data size changes of last save.
+    * Will be cleared on persistence rollback or commit.
+    */
+   protected ThreadLocal<Long> workspaceDataSizeChanges = new ThreadLocal<Long>();
+
+   /**
     * WorkspaceQuotaManager constructor.
     */
    public WorkspaceQuotaManager(RepositoryImpl repository, RepositoryQuotaManager rQuotaManager,
@@ -180,7 +194,8 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
 
       initExecutorService();
 
-      dataManager.addItemPersistenceListener(accumulateChangesListener);
+      dataManager.addPersistenceRollbackListener(accumulateChangesListener);
+      dataManager.addPersistenceCommitListener(accumulateChangesListener);
       dataManager.addItemPersistenceListener(validateChangesListener);
    }
 
@@ -567,40 +582,73 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
 
       repositoryQuotaManager.unregisterWorkspaceQuotaManager(wsName);
+
+      dataManager.removeItemPersistenceListener(validateChangesListener);
+      dataManager.removePersistenceCommitListener(accumulateChangesListener);
+      dataManager.removePersistenceRollbackListener(accumulateChangesListener);
    }
 
    // ====================================> Listeners
 
    /**
-    * @link MandatoryItemsPersistenceListener} implementation.
-    * 
-    * Is not TX aware listener. Will receive changes when data is successfully committed
-    * to storage. It is allow accumulate new changed size and redefine alerted states 
-    * knowing that transaction will not be rollbacked.
+    * Accumulate changes when transaction is committed.
     */
-   private class AccumulateChangesListener implements MandatoryItemsPersistenceListener
+   private class AccumulateChangesListener implements PersistenceRollbackListener, PersistenceCommitListener
    {
+
       /**
        * {@inheritDoc}
        */
-      public void onSaveItems(ItemStateChangesLog itemStates)
+      public void onCommit()
       {
-         // TOOD
+         try
+         {
+            accumulateChanges(workspaceDataSizeChanges.get());
+            accumulateNodesChanges(nodesDataSizeChanges.get());
+         }
+         finally
+         {
+            nodesDataSizeChanges.remove();
+            workspaceDataSizeChanges.remove();
+         }
       }
 
       /**
        * {@inheritDoc}
        */
-      public boolean isTXAware()
+      public void onRollback()
       {
-         return false;
+         nodesDataSizeChanges.remove();
+         workspaceDataSizeChanges.remove();
+      }
+
+      /**
+       * @see WorkspaceQuotaManager#accumulateChanges(long)
+       */
+      private void accumulateNodesChanges(Map<String, Long> nodesDelta)
+      {
+         for (Entry<String, Long> entry : nodesDelta.entrySet())
+         {
+            String nodePath = entry.getKey();
+            Long delta = entry.getValue();
+
+            try
+            {
+               long dataSize = delta + quotaPersister.getNodeDataSize(rName, wsName, nodePath);
+               quotaPersister.setNodeDataSize(rName, wsName, nodePath, dataSize);
+            }
+            catch (UnknownQuotaDataSizeException e)
+            {
+               tryCalculateNodeDataSizeTask(nodePath);
+            }
+         }
       }
    }
 
    /**
     * @link MandatoryItemsPersistenceListener} implementation.
     * 
-    * Is TX aware listener. Will recieve changes before data is committed to storage.
+    * Is TX aware listener. Will receive changes before data is committed to storage.
     * It allows to validate does some entity can exceeds quota limit if new changes
     * is coming.
     */
@@ -627,7 +675,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
                   String itemPath;
                   try
                   {
-                     itemPath = lFactory.createJCRPath(state.getData().getQPath()).getAsString(false);
+                     itemPath = lFactory.createJCRPath(state.getData().getQPath().makeParentPath()).getAsString(false);
                   }
                   catch (RepositoryException e)
                   {
@@ -650,6 +698,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
             
             validateAccumulateChanges(wsDelta);
             validateAccumulateNodesChanges(nodesDelta);
+
+            workspaceDataSizeChanges.set(wsDelta);
+            nodesDataSizeChanges.set(nodesDelta);
          }
          catch (ExceededQuotaLimitException e)
          {
@@ -831,7 +882,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
        */
       public void close() throws BackupException
       {
-         tempFile.delete();
+         PrivilegedFileHelper.delete(tempFile);
       }
    }
 

@@ -113,4 +113,13 @@ public class TestPathPatternUtils extends TestCase
       assertTrue(PathPatternUtils.acceptName("/a/%%/b/*", "/a/cc/b/eee"));
       assertFalse(PathPatternUtils.acceptName("/a/%%/b/*", "/a/cc/b/eee/ggg"));
    }
+
+   /**
+    * Pattern testing.
+    */
+   public void testExtractCommonAncestor() throws Exception
+   {
+      assertEquals("/a/b", PathPatternUtils.extractCommonAncestor("/a/*", "/a/b/c"));
+      assertNull(PathPatternUtils.extractCommonAncestor("/a/*", "/b/c/d"));
+   }
 }

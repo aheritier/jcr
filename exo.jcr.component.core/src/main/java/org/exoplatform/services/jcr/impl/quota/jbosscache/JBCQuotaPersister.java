@@ -467,6 +467,8 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
     */
    protected void removeDirectlyNodeQuota(String repositoryName, String workspaceName, String nodePath)
    {
+      nodePath = escaping(nodePath);
+
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, nodePath);
       cache.removeNode(fqn);
    }
@@ -476,6 +478,8 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
     */
    protected void removeDirectlyGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath)
    {
+      patternPath = escaping(patternPath);
+
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, patternPath);
       cache.removeNode(fqn);
    }
@@ -483,8 +487,10 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
    /**
     * {@inheritDoc}
     */
-   protected void removeDirectlryNodeDataSize(String repositoryName, String workspaceName, String nodePath)
+   protected void removeDirectlyNodeDataSize(String repositoryName, String workspaceName, String nodePath)
    {
+      nodePath = escaping(nodePath);
+
       Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName, nodePath);
       cache.removeNode(fqn);
    }
