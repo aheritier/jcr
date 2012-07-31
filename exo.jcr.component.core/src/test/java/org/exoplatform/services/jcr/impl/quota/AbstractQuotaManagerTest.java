@@ -55,9 +55,22 @@ public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
     */
    public void tearDown() throws Exception
    {
-      //      wsQuotaManager.clean();
-      //      ws1QuotaManager.clean();
-
       super.tearDown();
+   }
+
+   protected void waitCalculationNodeDataSize(WorkspaceQuotaManager wqm, String nodePath) throws Exception
+   {
+      while (true)
+      {
+         try
+         {
+            wqm.getNodeDataSize(nodePath);
+            break;
+         }
+         catch (QuotaManagerException e)
+         {
+            Thread.sleep(1000);
+         }
+      }
    }
 }

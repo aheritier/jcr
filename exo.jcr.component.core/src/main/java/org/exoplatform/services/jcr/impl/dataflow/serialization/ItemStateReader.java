@@ -26,8 +26,6 @@ import org.exoplatform.services.jcr.datamodel.IllegalPathException;
 import org.exoplatform.services.jcr.datamodel.QPath;
 import org.exoplatform.services.jcr.impl.Constants;
 import org.exoplatform.services.jcr.impl.dataflow.SpoolConfig;
-import org.exoplatform.services.jcr.impl.dataflow.persistent.ChangedSizeHandler;
-import org.exoplatform.services.jcr.impl.dataflow.persistent.ReadOnlyChangedSizeHandler;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -97,17 +95,11 @@ public class ItemStateReader
             oldPath = QPath.parse(new String(buf, Constants.DEFAULT_ENCODING));
          }
 
-         ChangedSizeHandler sizeHandler = null;
-         if (in.readInt() == SerializationConstants.NOT_NULL_DATA)
-         {
-            sizeHandler = new ReadOnlyChangedSizeHandler(in.readLong(), in.readLong());
-         }
-
          boolean isNodeData = in.readBoolean();
          if (isNodeData)
          {
             PersistedNodeDataReader rdr = new PersistedNodeDataReader();
-            is = new ItemState(rdr.read(in), state, eventFire, null, false, isPersisted, oldPath, sizeHandler);
+            is = new ItemState(rdr.read(in), state, eventFire, null, false, isPersisted, oldPath);
          }
          else
          {

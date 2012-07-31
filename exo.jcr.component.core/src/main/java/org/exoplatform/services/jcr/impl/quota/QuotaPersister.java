@@ -74,10 +74,15 @@ public interface QuotaPersister
    void setNodeDataSize(String repositoryName, String workspaceName, String nodePath, long dataSize);
 
    /**
+    * Removes node data size.
+    */
+   void removeNodeDataSize(String repositoryName, String workspaceName, String nodePath);
+
+   /**
     * Returns all paths of nodes with defined quota.
     */
    Set<String> getAllQuotableParentNodes(String repositoryName, String workspaceName, String nodePath);
-      
+
    /**
     * @see QuotaManager#getWorkspaceQuota(String, String)
     */
@@ -209,7 +214,7 @@ public interface QuotaPersister
    Set<String> getAllGroupOfNodesQuota(String repositoryName, String workspaceName);
 
    /**
-    * Returns all traced nodes, which mean node data size is known.
+    * Returns all tracked nodes, which mean node data size is known.
     */
    Set<String> getAllTrackedNodes(String repositoryName, String workspaceName);
 }

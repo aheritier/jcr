@@ -71,17 +71,6 @@ public class ItemStateWriter
          out.write(buf);
       }
 
-      if (itemState.getChangedSizeHandler() == null)
-      {
-         out.writeInt(SerializationConstants.NULL_DATA);
-      }
-      else
-      {
-         out.writeInt(SerializationConstants.NOT_NULL_DATA);
-         out.writeLong(itemState.getChangedSizeHandler().getNewSize());
-         out.writeLong(itemState.getChangedSizeHandler().getPrevSize());
-      }
-
       // write flag isNodeData and ItemData
       ItemData data = itemState.getData();
 

@@ -152,6 +152,17 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
    /**
     * {@inheritDoc}
     */
+   public void removeNodeDataSize(String repositoryName, String workspaceName, String nodePath)
+   {
+      nodePath = escaping(nodePath);
+
+      Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName, nodePath);
+      cache.removeNode(fqn);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public long getWorkspaceQuota(String repositoryName, String workspaceName) throws UnknownQuotaLimitException
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName);
@@ -465,7 +476,7 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
    /**
     * {@inheritDoc}
     */
-   protected void removeDirectlyNodeQuota(String repositoryName, String workspaceName, String nodePath)
+   protected void removeInternallyNodeQuota(String repositoryName, String workspaceName, String nodePath)
    {
       nodePath = escaping(nodePath);
 
@@ -476,22 +487,11 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
    /**
     * {@inheritDoc}
     */
-   protected void removeDirectlyGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath)
+   protected void removeInternallyGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath)
    {
       patternPath = escaping(patternPath);
 
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, patternPath);
-      cache.removeNode(fqn);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   protected void removeDirectlyNodeDataSize(String repositoryName, String workspaceName, String nodePath)
-   {
-      nodePath = escaping(nodePath);
-
-      Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName, nodePath);
       cache.removeNode(fqn);
    }
 }

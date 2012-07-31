@@ -47,11 +47,11 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
     */
    public void removeNodeQuota(String repositoryName, String workspaceName, String nodePath)
    {
-      removeDirectlyNodeQuota(repositoryName, workspaceName, nodePath);
+      removeInternallyNodeQuota(repositoryName, workspaceName, nodePath);
       
       if (getAcceptableGroupOfNodesQuota(repositoryName, workspaceName, nodePath) == null)
       {
-         removeDirectlyNodeDataSize(repositoryName, workspaceName, nodePath);
+         removeNodeDataSize(repositoryName, workspaceName, nodePath);
       }
    }
 
@@ -74,7 +74,7 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
             }
             catch (UnknownQuotaLimitException e)
             {
-               removeDirectlyNodeDataSize(repositoryName, workspaceName, nodePath);
+               removeNodeDataSize(repositoryName, workspaceName, nodePath);
             }
          }
       }
@@ -408,15 +408,11 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
    /**
     * Low level method. Remove only record about node quota.
     */
-   protected abstract void removeDirectlyNodeQuota(String repositoryName, String workspaceName, String nodePath);
+   protected abstract void removeInternallyNodeQuota(String repositoryName, String workspaceName, String nodePath);
 
    /**
     * Low level method. Remove only record about group of nodes quota.
     */
-   protected abstract void removeDirectlyGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath);
+   protected abstract void removeInternallyGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath);
 
-   /**
-    * Low level method. Remove only record node data size.
-    */
-   protected abstract void removeDirectlyNodeDataSize(String repositoryName, String workspaceName, String nodePath);
 }

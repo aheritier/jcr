@@ -39,6 +39,7 @@ import org.exoplatform.services.jcr.dataflow.persistent.PersistenceRollbackListe
 import org.exoplatform.services.jcr.datamodel.ItemType;
 import org.exoplatform.services.jcr.datamodel.NodeData;
 import org.exoplatform.services.jcr.datamodel.PropertyData;
+import org.exoplatform.services.jcr.datamodel.QPath;
 import org.exoplatform.services.jcr.datamodel.QPathEntry;
 import org.exoplatform.services.jcr.impl.Constants;
 import org.exoplatform.services.jcr.impl.backup.BackupException;
@@ -57,6 +58,7 @@ import org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspacePersistent
 import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectReader;
 import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectWriter;
 import org.exoplatform.services.jcr.impl.util.io.DirectoryHelper;
+import org.exoplatform.services.jcr.storage.WorkspaceDataContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.jboss.cache.util.concurrent.ConcurrentHashSet;
@@ -68,6 +70,7 @@ import java.lang.reflect.Method;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -172,6 +175,13 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    protected ThreadLocal<Map<String, Long>> nodesDataSizeChanges = new ThreadLocal<Map<String, Long>>();
 
    /**
+    * List of nodes absolute paths for which changes were made but changed size is unknown. Most
+    * famous case when {@link WorkspaceDataContainer#TRIGGER_EVENTS_FOR_DESCENDENTS_ON_RENAME} is 
+    * set to false. 
+    */
+   protected ThreadLocal<Set<String>> unknownNodesDataSizeChanges = new ThreadLocal<Set<String>>();
+
+   /**
     * Contains calculated workspace data size changes of last save.
     * Will be cleared on persistence rollback or commit.
     */
@@ -251,7 +261,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          {
             // have deal with setting new quota limit value
             quotaPersister.setNodeQuota(rName, wsName, nodePath, quotaLimit, asyncUpdate);
-            tryCalculateNodeDataSizeTask(nodePath);
+            tryExecuteCalculateNodeDataSizeTask(nodePath);
 
             return;
          }
@@ -265,7 +275,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          }
          catch (UnknownQuotaDataSizeException e)
          {
-            tryCalculateNodeDataSizeTask(nodePath);
+            tryExecuteCalculateNodeDataSizeTask(nodePath);
          }
       }
    }
@@ -274,7 +284,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     * Executes task {@link CalculateNodeDataSizeTask} if it is not in list
     * current executing tasks.
     */
-   private void tryCalculateNodeDataSizeTask(String nodePath)
+   private void tryExecuteCalculateNodeDataSizeTask(String nodePath)
    {
       if (!runNodesTasks.contains(nodePath))
       {
@@ -457,6 +467,11 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          for (QPathEntry entry : path.getInternalPath().getEntries())
          {
             node = (NodeData)dataManager.getItemData(node, entry, ItemType.NODE);
+            
+            if (node == null)
+            {
+               return 0;
+            }
          }
 
          CalculateNodeDataSizeVisitor visitor = new CalculateNodeDataSizeVisitor(dataManager);
@@ -604,11 +619,13 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          try
          {
             accumulateChanges(workspaceDataSizeChanges.get());
-            accumulateNodesChanges(nodesDataSizeChanges.get());
+            accumulateNodesChanges(nodesDataSizeChanges.get(), unknownNodesDataSizeChanges.get());
          }
          finally
          {
             nodesDataSizeChanges.remove();
+            unknownNodesDataSizeChanges.remove();
+
             workspaceDataSizeChanges.remove();
          }
       }
@@ -619,14 +636,28 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       public void onRollback()
       {
          nodesDataSizeChanges.remove();
+         unknownNodesDataSizeChanges.remove();
+         
          workspaceDataSizeChanges.remove();
       }
 
       /**
        * @see WorkspaceQuotaManager#accumulateChanges(long)
        */
-      private void accumulateNodesChanges(Map<String, Long> nodesDelta)
+      private void accumulateNodesChanges(Map<String, Long> nodesDelta, Set<String> unknownChangedSize)
       {
+         Set<String> trackedNodes = quotaPersister.getAllTrackedNodes(rName, wsName);
+         for (String nodePath : unknownChangedSize)
+         {
+            for (String trackedPath : trackedNodes)
+            {
+               if (trackedPath.startsWith(nodePath))
+               {
+                  quotaPersister.removeNodeDataSize(rName, wsName, trackedPath);
+               }
+            }
+         }
+         
          for (Entry<String, Long> entry : nodesDelta.entrySet())
          {
             String nodePath = entry.getKey();
@@ -639,7 +670,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
             }
             catch (UnknownQuotaDataSizeException e)
             {
-               tryCalculateNodeDataSizeTask(nodePath);
+               tryExecuteCalculateNodeDataSizeTask(nodePath);
             }
          }
       }
@@ -667,20 +698,13 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          {
             long wsDelta = 0;
             Map<String, Long> nodesDelta = new HashMap<String, Long>();
+            Set<String> unknownChangedSize = new HashSet<String>();
 
             for (ItemState state : itemStates.getAllStates())
             {
                if (!state.getData().isNode())
                {
-                  String itemPath;
-                  try
-                  {
-                     itemPath = lFactory.createJCRPath(state.getData().getQPath().makeParentPath()).getAsString(false);
-                  }
-                  catch (RepositoryException e)
-                  {
-                     throw new IllegalStateException(e.getMessage(), e);
-                  }
+                  String itemPath = getPath(state.getData().getQPath().makeParentPath());
 
                   // update changed size for every node
                   Set<String> quotableParents = quotaPersister.getAllQuotableParentNodes(rName, wsName, itemPath);
@@ -692,15 +716,29 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
                      nodesDelta.put(parent, newDelta);
                   }
 
+                  // update changed size for workspace
                   wsDelta += state.getChangedSize();
+               }
+               else
+               {
+                  if (state.isPathChanged())
+                  {
+                     String itemPath = getPath(state.getData().getQPath());
+                     String oldPath = getPath(state.getOldPath());
+
+                     unknownChangedSize.add(itemPath);
+                     unknownChangedSize.add(oldPath);
+                  }
                }
             }
             
             validateAccumulateChanges(wsDelta);
             validateAccumulateNodesChanges(nodesDelta);
 
-            workspaceDataSizeChanges.set(wsDelta);
             nodesDataSizeChanges.set(nodesDelta);
+            unknownNodesDataSizeChanges.set(unknownChangedSize); // TODO name
+
+            workspaceDataSizeChanges.set(wsDelta);
          }
          catch (ExceededQuotaLimitException e)
          {
@@ -793,6 +831,25 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
             return new Thread(arg0, "QuotaManagerThread " + uniqueName);
          }
       });
+   }
+
+   /**
+    * Returns item absolute path.
+    * 
+    * @param path
+    *          {@link QPath} representation
+    * @throws IllegalStateException if something wrong
+    */
+   private String getPath(QPath path)
+   {
+      try
+      {
+         return lFactory.createJCRPath(path).getAsString(false);
+      }
+      catch (RepositoryException e)
+      {
+         throw new IllegalStateException(e.getMessage(), e);
+      }
    }
 
    // ====================================> Backupable
@@ -966,7 +1023,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       try
       {
          long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
-         accumulateChanges(-dataSize);
+         repositoryQuotaManager.accumulateChanges(-dataSize);
       }
       catch (UnknownQuotaDataSizeException e)
       {

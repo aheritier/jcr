@@ -456,17 +456,6 @@ public class ItemState implements Externalizable
          out.write(buf);
       }
 
-      if (sizeHandler == null)
-      {
-         out.writeInt(SerializationConstants.NULL_DATA);
-      }
-      else
-      {
-         out.writeInt(SerializationConstants.NOT_NULL_DATA);
-         out.writeLong(sizeHandler.getNewSize());
-         out.writeLong(sizeHandler.getPrevSize());
-      }
-
       out.writeObject(data);
    }
 
@@ -489,11 +478,6 @@ public class ItemState implements Externalizable
          {
             throw new IOException("Data currupted.", e);
          }
-      }
-      
-      if (in.readInt() == SerializationConstants.NOT_NULL_DATA)
-      {
-         sizeHandler = new ReadOnlyChangedSizeHandler(in.readLong(), in.readLong());
       }
 
       data = (ItemData)in.readObject();
