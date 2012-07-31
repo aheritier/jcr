@@ -70,10 +70,6 @@ public class JBCQuotaManagerImpl extends BaseQuotaManager
 
    public static final String JBOSSCACHE_JDBC_CL_PARENT_COLUMN = "jbosscache-cl-cache.jdbc.parent.column";
 
-   public static final String JBOSSCACHE_QUOTA_LIMIT_REGION = "jbosscache.quota.limit.region";
-
-   public static final String JBOSSCACHE_QUOTA_USED_REGION = "jbosscache.quota.used.region";
-
    // ------------------------------------------ DefaultValues
 
    public static final String DEFAULT_JBOSSCACHE_JDBC_TABLE_NAME = "jcr_quota";
@@ -160,8 +156,6 @@ public class JBCQuotaManagerImpl extends BaseQuotaManager
       qmEntry.putParameterValue(JBOSSCACHE_JDBC_CL_FQN_COLUMN_TYPE, DEFAULT_JBOSSCACHE_JDBC_CL_FQN_COLUMN_TYPE);
       qmEntry.putParameterValue(JBOSSCACHE_JDBC_CL_FQN_COLUMN, DEFAULT_JBOSSCACHE_JDBC_CL_FQN_COLUMN);
       qmEntry.putParameterValue(JBOSSCACHE_JDBC_CL_PARENT_COLUMN, DEFAULT_JBOSSCACHE_JDBC_CL_PARENT_COLUMN);
-      qmEntry.putParameterValue(JBOSSCACHE_QUOTA_LIMIT_REGION, JBCQuotaPersister.QUOTA.toString());
-      qmEntry.putParameterValue(JBOSSCACHE_QUOTA_USED_REGION, JBCQuotaPersister.DATA_SIZE.toString());
 
       qmEntry.putParameterValue(JBOSSCACHE_CLUSTER_NAME, DEFAULT_JBOSSCACHE_CLUSTER_NAME);
       qmEntry.putParameterValue(JGROUPS_CONFIGURATION, DEFAULT_JGROUPS_CONFIGURATION);

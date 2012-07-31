@@ -239,9 +239,9 @@ public class ExoJBossCacheFactory<K, V>
     * @param fqn the roof fqn of the region to add
     * @param cache the cache to which we want to add the region
     */
-   private static <K, V> void addEvictionRegion(Fqn<String> fqn, Cache<K, V> cache)
+   private static <K, V> void addEvictionRegion(Fqn<String> fqn, Cache<K, V> cache, Configuration cfg)
    {
-      EvictionConfig ec = cache.getConfiguration().getEvictionConfig();
+      EvictionConfig ec = cfg.getEvictionConfig();
       // Create the region and set the config
       Region region = cache.getRegion(fqn, true);
       if (ec != null && ec.getDefaultEvictionRegionConfig() != null)
@@ -279,36 +279,6 @@ public class ExoJBossCacheFactory<K, V>
             cache.getConfiguration().getClusterName() + rootFqn.toString().replace('/', '-'));
          return cache;
       }
-
-      cache = getShareableUniqueInstanceWithoutEviction(cacheType, cache);
-
-      addEvictionRegion(rootFqn, cache);
-      if (LOG.isDebugEnabled())
-      {
-         LOG.debug("The region " + rootFqn + " has been registered for a cache of type " + cacheType
-            + " and the container " + ExoContainerContext.getCurrentContainer().getContext().getName());
-      }
-      return cache;
-   }
-
-   /**
-    * Try to find if a Cache of the same type (i.e. their {@link Configuration} are equals)
-    * has already been registered for the same current container and the same {@link CacheType}.
-    * If no cache has been registered, we register the given cache otherwise we
-    * use the previously registered cache.
-    * 
-    * @param cacheType 
-    *          The type of the target cache
-    * @param cache 
-    *          the cache to register
-    * @return the given cache if has not been registered otherwise the cache of the same
-    *          type that has already been registered.
-    * @throws RepositoryConfigurationException
-    */
-   @SuppressWarnings("unchecked")
-   public static synchronized <K, V> Cache<K, V> getShareableUniqueInstanceWithoutEviction(CacheType cacheType,
-      Cache<K, V> cache) throws RepositoryConfigurationException
-   {
       ExoContainer container = ExoContainerContext.getCurrentContainer();
       Map<CacheType, Map<ConfigurationKey, CacheInstance>> allCacheTypes = CACHES.get(container);
       if (allCacheTypes == null)
@@ -349,9 +319,15 @@ public class ExoJBossCacheFactory<K, V>
 
          if (LOG.isDebugEnabled())
          {
-            LOG.debug("A new JBoss Cache instance has been registered for the region , a cache of type "
+            LOG.debug("A new JBoss Cache instance has been registered for the region " + rootFqn + ", a cache of type "
                + cacheType + " and the container " + container.getContext().getName());
          }
+      }
+      addEvictionRegion(rootFqn, cache, cfg);
+      if (LOG.isDebugEnabled())
+      {
+         LOG.debug("The region " + rootFqn + " has been registered for a cache of type " + cacheType
+            + " and the container " + container.getContext().getName());
       }
       return cache;
    }

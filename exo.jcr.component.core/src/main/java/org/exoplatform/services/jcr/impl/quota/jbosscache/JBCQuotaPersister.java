@@ -92,7 +92,7 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
       ExoJBossCacheFactory<Serializable, Object> factory = new ExoJBossCacheFactory<Serializable, Object>(cfm);
 
       cache = factory.createCache(entry);
-      cache = ExoJBossCacheFactory.getShareableUniqueInstanceWithoutEviction(CacheType.QUOTA_CACHE, cache);
+      cache = ExoJBossCacheFactory.getUniqueInstance(CacheType.QUOTA_CACHE, Fqn.ROOT, cache, true);
       cache.create();
       cache.start();
 
