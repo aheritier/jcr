@@ -60,7 +60,7 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
     */
    public void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath)
    {
-      removeGroupOfNodesQuota(repositoryName, workspaceName, patternPath);
+      removeInternallyGroupOfNodesQuota(repositoryName, workspaceName, patternPath);
 
       // removes data size for all nodes matched by pattern
       // only if only quota was not set explicitly 

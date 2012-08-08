@@ -468,7 +468,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          {
             node = (NodeData)dataManager.getItemData(node, entry, ItemType.NODE);
             
-            if (node == null)
+            if (node == null) // may be already removed
             {
                return 0;
             }
@@ -759,6 +759,8 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
        */
       private void validateAccumulateChanges(long delta) throws ExceededQuotaLimitException
       {
+         repositoryQuotaManager.validateAccumulateChanges(delta);
+
          try
          {
             long quotaLimit = quotaPersister.getWorkspaceQuota(rName, wsName);
@@ -802,7 +804,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
                   long quotaLimit = quotaPersister.getNodeQuotaOrGroupOfNodesQuota(rName, wsName, nodePath);
                   if (dataSize + delta > quotaLimit)
                   {
-                     repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Node " + uniqueName + nodePath
+                     repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Node " + nodePath
                         + " data size exceeded quota limit");
                   }
                }

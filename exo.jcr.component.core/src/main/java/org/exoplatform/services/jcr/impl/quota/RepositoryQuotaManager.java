@@ -277,6 +277,8 @@ public class RepositoryQuotaManager implements Startable
     */
    protected void validateAccumulateChanges(long delta) throws ExceededQuotaLimitException
    {
+      globalQuotaManager.validateAccumulateChanges(delta);
+
       try
       {
          long quotaLimit = quotaPersister.getRepositoryQuota(rName);
@@ -299,8 +301,6 @@ public class RepositoryQuotaManager implements Startable
       {
          return;
       }
-
-      globalQuotaManager.validateAccumulateChanges(delta);
    }
 
    /**

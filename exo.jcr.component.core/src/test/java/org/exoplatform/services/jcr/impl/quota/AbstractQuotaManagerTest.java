@@ -33,12 +33,16 @@ public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
 
    protected RepositoryQuotaManager dbQuotaManager;
 
+   protected QuotaManager quotaManager;
+
    /**
     * {@inheritDoc}
     */
    public void setUp() throws Exception
    {
       super.setUp();
+
+      quotaManager = (QuotaManager)repository.getWorkspaceContainer("ws").getComponent(QuotaManager.class);
 
       dbQuotaManager =
          (RepositoryQuotaManager)repository.getWorkspaceContainer("ws").getComponent(RepositoryQuotaManager.class);
@@ -71,6 +75,32 @@ public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
          {
             Thread.sleep(1000);
          }
+      }
+   }
+
+   protected boolean quotaShouldNotExists(WorkspaceQuotaManager wqm, String nodePath) throws QuotaManagerException
+   {
+      try
+      {
+         wqm.getNodeQuota(nodePath);
+         return false;
+      }
+      catch (UnknownQuotaLimitException e)
+      {
+         return true;
+      }
+   }
+
+   protected boolean dataSizeShouldNotExists(WorkspaceQuotaManager wqm, String nodePath) throws QuotaManagerException
+   {
+      try
+      {
+         wqm.getNodeDataSize(nodePath);
+         return false;
+      }
+      catch (UnknownQuotaDataSizeException e)
+      {
+         return true;
       }
    }
 }
