@@ -185,6 +185,23 @@
       </properties-param>
     </init-params>
   </component>
+
+  <component>
+    <key>org.exoplatform.services.jcr.impl.quota.QuotaManager</key>
+    <type>org.exoplatform.services.jcr.impl.quota.infinispan.ISPNQuotaManagerImpl</type>
+    <init-params>
+      <value-param>
+        <name>exceeded-quota-behaviour</name>
+        <value>exception</value>
+      </value-param>
+      <properties-param>
+        <name>cache-configuration</name>
+        <description>infinispan-configuration</description>
+        <property name="infinispan-cl-cache.jdbc.datasource" value="jdbcjcr"/>
+        <property name="infinispan-configuration" value="conf/standalone/test-infinispan-quota.xml" />
+      </properties-param>
+    </init-params>
+  </component>
   
   <component>
     <type>org.exoplatform.services.organization.impl.mock.DummyOrganizationService</type>

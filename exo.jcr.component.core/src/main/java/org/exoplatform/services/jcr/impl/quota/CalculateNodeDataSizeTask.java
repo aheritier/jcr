@@ -42,8 +42,6 @@ public class CalculateNodeDataSizeTask implements Runnable
 
    private final String wsName;
 
-   private final String uniqueName;
-
    private final String nodePath;
 
    private final Set<String> runNodesTasks;
@@ -58,7 +56,6 @@ public class CalculateNodeDataSizeTask implements Runnable
       this.quotaPersister = quotaManager.quotaPersister;
       this.rName = quotaManager.rName;
       this.wsName = quotaManager.wsName;
-      this.uniqueName = quotaManager.uniqueName;
       this.runNodesTasks = runNodesTasks;
    }
 

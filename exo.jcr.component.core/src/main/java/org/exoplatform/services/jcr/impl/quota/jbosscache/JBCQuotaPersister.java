@@ -163,6 +163,28 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
    /**
     * {@inheritDoc}
     */
+   public void removeNodeQuota(String repositoryName, String workspaceName, String nodePath)
+   {
+      nodePath = escaping(nodePath);
+
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, nodePath);
+      cache.removeNode(fqn);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath)
+   {
+      patternPath = escaping(patternPath);
+
+      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, patternPath);
+      cache.removeNode(fqn);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public long getWorkspaceQuota(String repositoryName, String workspaceName) throws UnknownQuotaLimitException
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName);
@@ -405,6 +427,9 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
 
    // ==============================> private methods
 
+   /**
+    * Returns quota value otherwise throws {@link UnknownQuotaLimitException}.
+    */
    private long getQuota(Fqn<String> fqn) throws UnknownQuotaLimitException
    {
       cache.getInvocationContext().getOptionOverrides().setForceWriteLock(true);
@@ -431,6 +456,9 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
       return size;
    }
 
+   /**
+    * Returns data size value otherwise throws {@link UnknownQuotaDataSizeException}.
+    */
    private long getDataSize(Fqn<String> fqn) throws UnknownQuotaDataSizeException
    {
       cache.getInvocationContext().getOptionOverrides().setForceWriteLock(true);
@@ -469,29 +497,5 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
    private String unescaping(String path)
    {
       return path.replace("\\", Fqn.SEPARATOR);
-   }
-
-   // ===============================> low-level methods
-
-   /**
-    * {@inheritDoc}
-    */
-   protected void removeInternallyNodeQuota(String repositoryName, String workspaceName, String nodePath)
-   {
-      nodePath = escaping(nodePath);
-
-      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATHS, nodePath);
-      cache.removeNode(fqn);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   protected void removeInternallyGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath)
-   {
-      patternPath = escaping(patternPath);
-
-      Fqn<String> fqn = Fqn.fromRelativeElements(QUOTA, repositoryName, workspaceName, QUOTA_PATTERNS, patternPath);
-      cache.removeNode(fqn);
    }
 }

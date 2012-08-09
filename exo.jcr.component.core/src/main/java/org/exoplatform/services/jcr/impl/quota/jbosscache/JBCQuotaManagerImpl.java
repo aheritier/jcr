@@ -29,6 +29,7 @@ import org.exoplatform.services.jcr.impl.quota.QuotaManagerException;
 import org.exoplatform.services.jcr.impl.quota.QuotaPersister;
 import org.exoplatform.services.jcr.jbosscache.ExoJBossCacheFactory;
 import org.exoplatform.services.rpc.RPCService;
+import org.exoplatform.services.transaction.TransactionService;
 
 import java.util.Iterator;
 
@@ -97,19 +98,19 @@ public class JBCQuotaManagerImpl extends BaseQuotaManager
    /**
     * JBCQuotaManagerImpl constructor.
     */
-   public JBCQuotaManagerImpl(InitParams initParams, RPCService rpcService, ConfigurationManager cfm)
-      throws RepositoryConfigurationException, QuotaManagerException
+   public JBCQuotaManagerImpl(InitParams initParams, RPCService rpcService, ConfigurationManager cfm,
+      TransactionService transactionService) throws RepositoryConfigurationException, QuotaManagerException
    {
-      super(initParams, rpcService, cfm);
+      super(initParams, rpcService, cfm, transactionService);
    }
 
    /**
     * JBCQuotaManagerImpl constructor.
     */
-   public JBCQuotaManagerImpl(InitParams initParams, ConfigurationManager cfm) throws RepositoryConfigurationException,
-      QuotaManagerException
+   public JBCQuotaManagerImpl(InitParams initParams, ConfigurationManager cfm, TransactionService transactionService)
+      throws RepositoryConfigurationException, QuotaManagerException
    {
-      this(initParams, null, cfm);
+      this(initParams, null, cfm, transactionService);
    }
 
    /**

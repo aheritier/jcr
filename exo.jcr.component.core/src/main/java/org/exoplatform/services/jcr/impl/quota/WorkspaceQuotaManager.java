@@ -330,7 +330,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
       else
       {
-         quotaPersister.removeNodeQuota(rName, wsName, nodePath);
+         quotaPersister.removeNodeQuotaAndDataSize(rName, wsName, nodePath);
       }
    }
 
@@ -347,7 +347,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
       else
       {
-         quotaPersister.removeGroupOfNodesQuota(rName, wsName, patternPath);
+         quotaPersister.removeGroupOfNodesAndDataSize(rName, wsName, patternPath);
       }
    }
 
@@ -581,7 +581,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    public void stop()
    {
-      executor.shutdownNow();
+      awaitTasksTermination();
 
       try
       {
@@ -736,7 +736,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
             validateAccumulateNodesChanges(nodesDelta);
 
             nodesDataSizeChanges.set(nodesDelta);
-            unknownNodesDataSizeChanges.set(unknownChangedSize); // TODO name
+            unknownNodesDataSizeChanges.set(unknownChangedSize);
 
             workspaceDataSizeChanges.set(wsDelta);
          }
@@ -1045,6 +1045,15 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    public void suspend() throws SuspendException
    {
+      awaitTasksTermination();
+      isSuspended.set(true);
+   }
+
+   /**
+    * Awaits until all tasks will be done.
+    */
+   private void awaitTasksTermination()
+   {
       executor.shutdown();
       try
       {
@@ -1052,10 +1061,8 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
       catch (InterruptedException e)
       {
-         throw new SuspendException(e.getMessage(), e);
+         LOG.warn("Termination has been interrupted");
       }
-
-      isSuspended.set(true);
    }
 
    /**

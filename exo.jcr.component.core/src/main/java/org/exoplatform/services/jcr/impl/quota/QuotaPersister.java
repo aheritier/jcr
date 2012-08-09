@@ -47,12 +47,24 @@ public interface QuotaPersister
    void setNodeQuota(String repositoryName, String workspaceName, String nodePath, long quotaLimit, boolean asyncUpdate);
 
    /**
-    * @see QuotaManager#removeNodeQuota(String, String, String)
+    * Removes node quota limit and node data size if node path is not matched by
+    * any patterns.
+    */
+   void removeNodeQuotaAndDataSize(String repositoryName, String workspaceName, String nodePath);
+
+   /**
+    * Removes node quota limit.
     */
    void removeNodeQuota(String repositoryName, String workspaceName, String nodePath);
 
    /**
-    * @see QuotaManager#removeGroupOfNodesQuota(String, String, String)
+    * Removes group of nodes quota limit and node data size if node path is matched by
+    * pattern and not equals to path.
+    */
+   void removeGroupOfNodesAndDataSize(String repositoryName, String workspaceName, String patternPath);
+
+   /**
+    * Removes group of nodes quota.
     */
    void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath);
 

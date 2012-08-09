@@ -45,9 +45,9 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public void removeNodeQuota(String repositoryName, String workspaceName, String nodePath)
+   public void removeNodeQuotaAndDataSize(String repositoryName, String workspaceName, String nodePath)
    {
-      removeInternallyNodeQuota(repositoryName, workspaceName, nodePath);
+      removeNodeQuota(repositoryName, workspaceName, nodePath);
       
       if (getAcceptableGroupOfNodesQuota(repositoryName, workspaceName, nodePath) == null)
       {
@@ -58,9 +58,9 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public void removeGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath)
+   public void removeGroupOfNodesAndDataSize(String repositoryName, String workspaceName, String patternPath)
    {
-      removeInternallyGroupOfNodesQuota(repositoryName, workspaceName, patternPath);
+      removeGroupOfNodesQuota(repositoryName, workspaceName, patternPath);
 
       // removes data size for all nodes matched by pattern
       // only if only quota was not set explicitly 
@@ -402,17 +402,5 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
          setGroupOfNodesQuota(repositoryName, workspaceName, patternPath, quotaLimit, asyncUpdate);
       }
    }
-
-   // =============================================== low-level methods
-
-   /**
-    * Low level method. Remove only record about node quota.
-    */
-   protected abstract void removeInternallyNodeQuota(String repositoryName, String workspaceName, String nodePath);
-
-   /**
-    * Low level method. Remove only record about group of nodes quota.
-    */
-   protected abstract void removeInternallyGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath);
 
 }

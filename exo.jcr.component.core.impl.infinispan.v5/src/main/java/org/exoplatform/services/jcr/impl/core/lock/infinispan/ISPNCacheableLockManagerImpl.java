@@ -21,8 +21,6 @@ import org.exoplatform.container.configuration.ConfigurationManager;
 import org.exoplatform.management.annotations.Managed;
 import org.exoplatform.management.jmx.annotations.NameTemplate;
 import org.exoplatform.management.jmx.annotations.Property;
-import org.exoplatform.services.database.utils.JDBCUtils;
-import org.exoplatform.services.jcr.config.MappedParametrizedObjectEntry;
 import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
 import org.exoplatform.services.jcr.config.WorkspaceEntry;
 import org.exoplatform.services.jcr.impl.core.lock.LockRemoverHolder;
@@ -40,7 +38,6 @@ import org.infinispan.Cache;
 import org.infinispan.lifecycle.ComponentStatus;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -111,8 +108,19 @@ public class ISPNCacheableLockManagerImpl extends AbstractCacheableLockManager
          // create cache using custom factory
          ISPNCacheFactory<Serializable, Object> factory = new ISPNCacheFactory<Serializable, Object>(cfm, transactionManager);
 
+         try
+         {
+            String dataSourceName = config.getLockManager().getParameterValue(INFINISPAN_JDBC_CL_DATASOURCE);
+            dataSource = (DataSource)new InitialContext().lookup(dataSourceName);
+         }
+         catch (NamingException e)
+         {
+            throw new RepositoryException(e.getMessage(), e);
+         }
+
          // configure cache loader parameters with correct DB data-types
-         configureJDBCCacheLoader(config.getLockManager());
+         ISPNCacheFactory.configureJDBCCacheLoader(config.getLockManager(), INFINISPAN_JDBC_CL_DATASOURCE,
+            INFINISPAN_JDBC_CL_DATA_COLUMN, INFINISPAN_JDBC_CL_ID_COLUMN, INFINISPAN_JDBC_CL_TIMESTAMP_COLUMN);
 
          cache = factory.createCache("L" + config.getUniqueName().replace("_", ""), config.getLockManager());
       }
@@ -192,71 +200,6 @@ public class ISPNCacheableLockManagerImpl extends AbstractCacheableLockManager
             return locksData;
          }
       };
-   }
-
-   /**
-    * If JDBC cache loader is used, then fills-in column types. If column type configured from jcr-configuration file,
-    * then nothing is overridden. Parameters are injected into the given parameterEntry.
-    */
-   private void configureJDBCCacheLoader(MappedParametrizedObjectEntry parameterEntry) throws RepositoryException
-   {
-      String dataSourceName = parameterEntry.getParameterValue(INFINISPAN_JDBC_CL_DATASOURCE, null);
-      // if data source is defined, then inject correct data-types.
-      // Also it cans be not defined and nothing should be injected 
-      //(i.e. no cache loader is used (possibly pattern is changed, to used another cache loader))
-      if (dataSourceName != null)
-      {
-         try
-         {
-            this.dataSource = (DataSource)new InitialContext().lookup(dataSourceName);
-         }
-         catch (NamingException e)
-         {
-            throw new RepositoryException(e.getMessage(), e);
-         }
-
-         String blobType;
-         String charType;
-         String timeStampType;
-         try
-         {
-            blobType = JDBCUtils.getAppropriateBlobType(dataSource);
-            charType = JDBCUtils.getAppropriateCharType(dataSource);
-            timeStampType = JDBCUtils.getAppropriateTimestamp(dataSource);
-         }
-         catch (SQLException e)
-         {
-            throw new RepositoryException(e.getMessage(), e);
-         }
-
-         // set parameters if not defined
-         // if parameter is missing in configuration, then 
-         // getParameterValue(INFINISPAN_JDBC_CL_DATA_COLUMN, INFINISPAN_JDBC_CL_AUTO) 
-         // will return INFINISPAN_JDBC_CL_AUTO. If parameter is present in configuration and 
-         //equals to "auto", then it should be replaced 
-         // with correct value for given database
-         if (parameterEntry.getParameterValue(INFINISPAN_JDBC_CL_DATA_COLUMN, INFINISPAN_JDBC_CL_AUTO)
-            .equalsIgnoreCase(INFINISPAN_JDBC_CL_AUTO))
-         {
-            parameterEntry.putParameterValue(INFINISPAN_JDBC_CL_DATA_COLUMN, blobType);
-         }
-
-         if (parameterEntry.getParameterValue(INFINISPAN_JDBC_CL_ID_COLUMN, INFINISPAN_JDBC_CL_AUTO).equalsIgnoreCase(
-            INFINISPAN_JDBC_CL_AUTO))
-         {
-            parameterEntry.putParameterValue(INFINISPAN_JDBC_CL_ID_COLUMN, charType);
-         }
-
-         if (parameterEntry.getParameterValue(INFINISPAN_JDBC_CL_TIMESTAMP_COLUMN, INFINISPAN_JDBC_CL_AUTO)
-            .equalsIgnoreCase(INFINISPAN_JDBC_CL_AUTO))
-         {
-            parameterEntry.putParameterValue(INFINISPAN_JDBC_CL_TIMESTAMP_COLUMN, timeStampType);
-         }
-      }
-      else
-      {
-         LOG.warn("CacheLoader DataSource " + INFINISPAN_JDBC_CL_DATASOURCE + " is not configured.");
-      }
    }
    
    /**
