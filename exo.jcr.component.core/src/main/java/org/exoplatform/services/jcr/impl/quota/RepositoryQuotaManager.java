@@ -323,7 +323,7 @@ public class RepositoryQuotaManager implements Startable
    /**
     * Returns repository data size by summing size of all workspaces.
     */
-   protected long getRepositoryDataSizeDirectly() throws QuotaManagerException
+   public long getRepositoryDataSizeDirectly() throws QuotaManagerException
    {
       long size = 0;
       for (WorkspaceQuotaManager wQuotaManager : wsQuotaManagers.values())

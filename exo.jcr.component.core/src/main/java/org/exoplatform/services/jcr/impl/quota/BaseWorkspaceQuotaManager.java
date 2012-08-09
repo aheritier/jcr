@@ -18,8 +18,6 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
-import org.exoplatform.commons.utils.PrivilegedFileHelper;
-import org.exoplatform.commons.utils.PrivilegedSystemHelper;
 import org.exoplatform.commons.utils.SecurityHelper;
 import org.exoplatform.management.annotations.Managed;
 import org.exoplatform.management.annotations.ManagedDescription;
@@ -42,30 +40,20 @@ import org.exoplatform.services.jcr.datamodel.PropertyData;
 import org.exoplatform.services.jcr.datamodel.QPath;
 import org.exoplatform.services.jcr.datamodel.QPathEntry;
 import org.exoplatform.services.jcr.impl.Constants;
-import org.exoplatform.services.jcr.impl.backup.BackupException;
-import org.exoplatform.services.jcr.impl.backup.Backupable;
-import org.exoplatform.services.jcr.impl.backup.DataRestore;
-import org.exoplatform.services.jcr.impl.backup.ResumeException;
-import org.exoplatform.services.jcr.impl.backup.SuspendException;
-import org.exoplatform.services.jcr.impl.backup.Suspendable;
-import org.exoplatform.services.jcr.impl.backup.rdbms.DBBackup;
-import org.exoplatform.services.jcr.impl.backup.rdbms.DataRestoreContext;
 import org.exoplatform.services.jcr.impl.core.JCRPath;
 import org.exoplatform.services.jcr.impl.core.LocationFactory;
 import org.exoplatform.services.jcr.impl.core.RepositoryImpl;
 import org.exoplatform.services.jcr.impl.core.query.SearchManager;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspacePersistentDataManager;
-import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectReader;
-import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectWriter;
 import org.exoplatform.services.jcr.impl.util.io.DirectoryHelper;
 import org.exoplatform.services.jcr.storage.WorkspaceDataContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.rpc.RPCService;
 import org.jboss.cache.util.concurrent.ConcurrentHashSet;
 import org.picocontainer.Startable;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -79,17 +67,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jcr.RepositoryException;
 
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: WorkspaceQuotaManager.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: BaseWorkspaceQuotaManager.java 34360 2009-07-22 23:58:59Z tolusha $
  */
 @Managed
 @NameTemplate(@Property(key = "service", value = "WorkspaceQuotaManager"))
-public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
+public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQuotaManager2
 {
 
    /**
@@ -143,9 +130,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    protected final QuotaPersister quotaPersister;
 
    /**
-    * File name for backuped data.
+    * {@link RPCService}
     */
-   protected static final String BACKUP_FILE_NAME = "quota";
+   protected final RPCService rpcService;
 
    /**
     * {@link MandatoryItemsPersistenceListener} implementation.
@@ -156,11 +143,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     * {@link MandatoryItemsPersistenceListener} implementation.
     */
    protected final AccumulateChangesListener accumulateChangesListener = new AccumulateChangesListener();
-
-   /**
-    * Indicates if component suspended or not.
-    */
-   protected AtomicBoolean isSuspended = new AtomicBoolean();
 
    /**
     * Contains node paths for which {@link CalculateNodeDataSizeTask} currently is run. 
@@ -188,9 +170,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    protected ThreadLocal<Long> workspaceDataSizeChanges = new ThreadLocal<Long>();
 
    /**
-    * WorkspaceQuotaManager constructor.
+    * BaseWorkspaceQuotaManager constructor.
     */
-   public WorkspaceQuotaManager(RepositoryImpl repository, RepositoryQuotaManager rQuotaManager,
+   public BaseWorkspaceQuotaManager(RepositoryImpl repository, RepositoryQuotaManager rQuotaManager,
       RepositoryEntry rEntry, WorkspaceEntry wsEntry, WorkspacePersistentDataManager dataManager)
    {
       this.rName = rEntry.getName();
@@ -201,6 +183,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       this.lFactory = repository.getLocationFactory();
       this.repositoryQuotaManager = rQuotaManager;
       this.quotaPersister = rQuotaManager.globalQuotaManager.quotaPersister;
+      this.rpcService = rQuotaManager.globalQuotaManager.rpcService;
 
       initExecutorService();
 
@@ -210,8 +193,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * @see QuotaManager#getNodeDataSize(String, String, String)
+    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getNodeDataSize(java.lang.String)
     */
+   @Override
    @Managed
    @ManagedDescription("Returns a node data size")
    public long getNodeDataSize(@ManagedDescription("The absolute path to node") @ManagedName("nodePath") String nodePath)
@@ -226,8 +210,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * @see QuotaManager#getNodeQuota(String, String, String)
+    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getNodeQuota(java.lang.String)
     */
+   @Override
    @Managed
    @ManagedDescription("Returns a node quota limit")
    public long getNodeQuota(String nodePath) throws QuotaManagerException
@@ -241,8 +226,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)
+    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#setNodeQuota(java.lang.String, long, boolean)
     */
+   @Override
    @Managed
    @ManagedDescription("Sets a node quota limit")
    public void setNodeQuota(String nodePath, long quotaLimit, boolean asyncUpdate) throws QuotaManagerException
@@ -300,8 +286,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * @see QuotaManager#setGroupOfNodesQuota(String, String, String, long, boolean)
+    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#setGroupOfNodesQuota(java.lang.String, long, boolean)
     */
+   @Override
    @Managed
    @ManagedDescription("Sets a quota limit for a bunch of nodes")
    public void setGroupOfNodesQuota(String patternPath, long quotaLimit, boolean asyncUpdate)
@@ -318,8 +305,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * @see QuotaManager#removeNodeQuota(String, String, String)
+    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#removeNodeQuota(java.lang.String)
     */
+   @Override
    @Managed
    @ManagedDescription("Removes a quota limit for a node")
    public void removeNodeQuota(String nodePath) throws QuotaManagerException
@@ -335,8 +323,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * @see QuotaManager#removeGroupOfNodesQuota(String, String, String)
+    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#removeGroupOfNodesQuota(java.lang.String)
     */
+   @Override
    @Managed
    @ManagedDescription("Removes a quota limit for a bunch of nodes")
    public void removeGroupOfNodesQuota(String patternPath) throws QuotaManagerException
@@ -352,8 +341,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * @see QuotaManager#setWorkspaceQuota(String, String, long)
+    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#setWorkspaceQuota(long)
     */
+   @Override
    @ManagedDescription("Sets workspace quota limit")
    public void setWorkspaceQuota(long quotaLimit) throws QuotaManagerException
    {
@@ -361,8 +351,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * @see QuotaManager#removeWorkspaceQuota(String, String, long)
+    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#removeWorkspaceQuota()
     */
+   @Override
    @ManagedDescription("Removes workspace quota limit")
    public void removeWorkspaceQuota() throws QuotaManagerException
    {
@@ -370,8 +361,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * @see QuotaManager#getWorkspaceQuota(String, String)
+    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getWorkspaceQuota()
     */
+   @Override
    @Managed
    @ManagedDescription("Returns workspace quota limit")
    public long getWorkspaceQuota() throws QuotaManagerException
@@ -380,8 +372,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * @see QuotaManager#getWorkspaceDataSize(String, String)
+    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getWorkspaceDataSize()
     */
+   @Override
    @Managed
    @ManagedDescription("Returns a size of the Workspace")
    public long getWorkspaceDataSize() throws QuotaManagerException
@@ -390,8 +383,9 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * @see QuotaManager#getWorkspaceIndexSize(String, String)
+    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getWorkspaceIndexSize()
     */
+   @Override
    @Managed
    @ManagedDescription("Returns a size of the index")
    public long getWorkspaceIndexSize() throws QuotaManagerException
@@ -450,9 +444,10 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * Calculates node data size by asking directly respective {@link WorkspacePersistentDataManager}.  
+    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getNodeDataSizeDirectly(java.lang.String)
     */
-   protected long getNodeDataSizeDirectly(String nodePath) throws QuotaManagerException
+   @Override
+   public long getNodeDataSizeDirectly(String nodePath) throws QuotaManagerException
    {
       if (nodePath.equals(JCRPath.ROOT_PATH))
       {
@@ -467,7 +462,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          for (QPathEntry entry : path.getInternalPath().getEntries())
          {
             node = (NodeData)dataManager.getItemData(node, entry, ItemType.NODE);
-            
+
             if (node == null) // may be already removed
             {
                return 0;
@@ -486,9 +481,10 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * Calculate workspace data size by asking directly respective {@link WorkspacePersistentDataManager}.  
+    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getWorkspaceDataSizeDirectly()
     */
-   protected long getWorkspaceDataSizeDirectly() throws QuotaManagerException
+   @Override
+   public long getWorkspaceDataSizeDirectly() throws QuotaManagerException
    {
       try
       {
@@ -637,7 +633,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       {
          nodesDataSizeChanges.remove();
          unknownNodesDataSizeChanges.remove();
-         
+
          workspaceDataSizeChanges.remove();
       }
 
@@ -657,7 +653,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
                }
             }
          }
-         
+
          for (Entry<String, Long> entry : nodesDelta.entrySet())
          {
             String nodePath = entry.getKey();
@@ -712,7 +708,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
                   {
                      Long oldDelta = nodesDelta.get(parent);
                      Long newDelta = state.getChangedSize() + (oldDelta != null ? oldDelta : 0);
-                     
+
                      nodesDelta.put(parent, newDelta);
                   }
 
@@ -731,7 +727,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
                   }
                }
             }
-            
+
             validateAccumulateChanges(wsDelta);
             validateAccumulateNodesChanges(nodesDelta);
 
@@ -824,7 +820,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    /**
     * Initialize executor service
     */
-   private void initExecutorService()
+   protected void initExecutorService()
    {
       this.executor = Executors.newFixedThreadPool(1, new ThreadFactory()
       {
@@ -854,205 +850,11 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
    }
 
-   // ====================================> Backupable
-
-   /**
-    * {@inheritDoc}
-    */
-   public void backup(File storageDir) throws BackupException
-   {
-      File backupFile = new File(storageDir, BACKUP_FILE_NAME + DBBackup.CONTENT_FILE_SUFFIX);
-      doBackup(backupFile);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void clean() throws BackupException
-   {
-      doClean();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public DataRestore getDataRestorer(DataRestoreContext context) throws BackupException
-   {
-      return new WorkspaceQuotaRestore(context);
-   }
-
-   /**
-    * {@link DataRestore} implementation for quota. 
-    */
-   private class WorkspaceQuotaRestore implements DataRestore
-   {
-
-      private final File tempFile;
-
-      private final File backupFile;
-
-      /**
-       * WorkspaceQuotaRestore constructor.
-       */
-      WorkspaceQuotaRestore(DataRestoreContext context)
-      {
-         File storageDir = (File)context.getObject(DataRestoreContext.STORAGE_DIR);
-         this.backupFile = new File(storageDir, BACKUP_FILE_NAME + DBBackup.CONTENT_FILE_SUFFIX);
-
-         File tempDir = new File(PrivilegedSystemHelper.getProperty("java.io.tmpdir"));
-         this.tempFile = new File(tempDir, "temp.dump");
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public void clean() throws BackupException
-      {
-         doBackup(tempFile);
-         doClean();
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public void restore() throws BackupException
-      {
-         doRestore(backupFile);
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public void commit() throws BackupException
-      {
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public void rollback() throws BackupException
-      {
-         doClean();
-         doRestore(tempFile);
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public void close() throws BackupException
-      {
-         PrivilegedFileHelper.delete(tempFile);
-      }
-   }
-
-   /**
-    * Restores content.
-    */
-   private void doRestore(File backupFile) throws BackupException
-   {
-      ZipObjectReader in = null;
-      try
-      {
-         in = new ZipObjectReader(PrivilegedFileHelper.zipInputStream(backupFile));
-         quotaPersister.restoreWorkspaceData(rName, wsName, in);
-      }
-      catch (IOException e)
-      {
-         throw new BackupException(e);
-      }
-      finally
-      {
-         if (in != null)
-         {
-            try
-            {
-               in.close();
-            }
-            catch (IOException e)
-            {
-               LOG.error("Can't close input stream", e);
-            }
-         }
-      }
-
-      try
-      {
-         long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
-         repositoryQuotaManager.accumulateChanges(dataSize);
-      }
-      catch (UnknownQuotaDataSizeException e)
-      {
-         if (LOG.isTraceEnabled())
-         {
-            LOG.trace(e.getMessage(), e);
-         }
-      }
-   }
-
-   /**
-    * Backups data to define file.
-    */
-   private void doBackup(File backupFile) throws BackupException
-   {
-      ZipObjectWriter out = null;
-      try
-      {
-         out = new ZipObjectWriter(PrivilegedFileHelper.zipOutputStream(backupFile));
-         quotaPersister.backupWorkspaceData(rName, wsName, out);
-      }
-      catch (IOException e)
-      {
-         throw new BackupException(e);
-      }
-      finally
-      {
-         if (out != null)
-         {
-            try
-            {
-               out.close();
-            }
-            catch (IOException e)
-            {
-               LOG.error("Can't close output stream", e);
-            }
-         }
-      }
-   }
-
-   private void doClean() throws BackupException
-   {
-      try
-      {
-         long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
-         repositoryQuotaManager.accumulateChanges(-dataSize);
-      }
-      catch (UnknownQuotaDataSizeException e)
-      {
-         if (LOG.isTraceEnabled())
-         {
-            LOG.trace(e.getMessage(), e);
-         }
-      }
-
-      quotaPersister.clearWorkspaceData(rName, wsName);
-   }
-
-   // =========================================> Suspendable
-
-   /**
-    * {@inheritDoc}
-    */
-   public void suspend() throws SuspendException
-   {
-      awaitTasksTermination();
-      isSuspended.set(true);
-   }
 
    /**
     * Awaits until all tasks will be done.
     */
-   private void awaitTasksTermination()
+   protected void awaitTasksTermination()
    {
       executor.shutdown();
       try
@@ -1063,31 +865,5 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       {
          LOG.warn("Termination has been interrupted");
       }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void resume() throws ResumeException
-   {
-      initExecutorService();
-
-      isSuspended.set(false);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isSuspended()
-   {
-      return isSuspended.get();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public int getPriority()
-   {
-      return Suspendable.PRIORITY_LOW;
    }
 }

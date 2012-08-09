@@ -111,7 +111,7 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
 
       this.cfm = cfm;
       this.initParams = initParams;
-      this.rpcService = rpcService;
+      this.rpcService = rpcService == null ? new DummyRPCServiceImpl() : rpcService;
       this.transactionService = transactionService;
       this.quotaPersister = initQuotaPersister();
    }
@@ -433,7 +433,7 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    /**
     * Calculates the global size by summing sized of all repositories.
     */
-   protected long getGlobalDataSizeDirectly() throws QuotaManagerException
+   public long getGlobalDataSizeDirectly() throws QuotaManagerException
    {
       long size = 0;
       for (RepositoryQuotaManager rqm : rQuotaManagers.values())
