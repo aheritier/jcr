@@ -36,7 +36,7 @@ public class CalculateWorkspaceDataSizeTask implements Runnable
    private final WorkspaceQuotaManager workspaceQuotaManager;
 
    /**
-    * TrackWorkspaceTask constructor. 
+    * CalculateWorkspaceDataSizeTask constructor. 
     */
    public CalculateWorkspaceDataSizeTask(WorkspaceQuotaManager quotaManager)
    {
@@ -51,7 +51,7 @@ public class CalculateWorkspaceDataSizeTask implements Runnable
       try
       {
          long dataSize = workspaceQuotaManager.getWorkspaceDataSizeDirectly();
-         workspaceQuotaManager.accumulateChanges(dataSize);
+         workspaceQuotaManager.accumulatePersistedChanges(dataSize);
       }
       catch (QuotaManagerException e)
       {

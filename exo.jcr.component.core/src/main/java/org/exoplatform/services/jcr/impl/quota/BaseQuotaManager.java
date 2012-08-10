@@ -26,6 +26,7 @@ import org.exoplatform.management.annotations.ManagedDescription;
 import org.exoplatform.management.jmx.annotations.NameTemplate;
 import org.exoplatform.management.jmx.annotations.Property;
 import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
+import org.exoplatform.services.jcr.impl.proccess.WorkerThread;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rpc.RPCService;
@@ -100,6 +101,18 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    protected final TransactionService transactionService;
 
    /**
+    * For test purposes. Indicate to have some different behavior instead of
+    * standard. For example, to apply all changes into cache instantly
+    * instead of using {@link WorkerThread} etc. 
+    */
+   protected final boolean testCase;
+
+   /**
+    * Value parameter name.
+    */
+   public static final String TEST_CASE = "test-case";
+
+   /**
     * QuotaManager constructor.
     */
    public BaseQuotaManager(InitParams initParams, RPCService rpcService, ConfigurationManager cfm,
@@ -108,6 +121,9 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
       ValueParam param = initParams.getValueParam(EXCEEDED_QUOTA_BEHAVIOUR);
       this.exceededQuotaBehavior =
          param == null ? ExceededQuotaBehavior.WARNING : ExceededQuotaBehavior.valueOf(param.getValue().toUpperCase());
+      
+      param = initParams.getValueParam(TEST_CASE);;
+      this.testCase = param == null ? false : Boolean.parseBoolean(param.getValue());
 
       this.cfm = cfm;
       this.initParams = initParams;
@@ -354,7 +370,7 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
     * @param delta
     *          the size on which entity was changed
     */
-   protected void accumulateChanges(long delta)
+   protected void accumulatePersistedChanges(long delta)
    {
       long dataSize = 0;
       try
@@ -374,13 +390,13 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    }
 
    /**
-    * Checks if entity can accumulate new changes. It is not possible when 
-    * current behavior is {@link ExceededQuotaBehavior#EXCEPTION} and current
-    * data size with new changed size <code>delta</code> will exceeds quota limit.
+    * Checks if entity can accept new changes. It is not possible when 
+    * current behavior is {@link ExceededQuotaBehavior#EXCEPTION} and 
+    * new data size with will exceeds quota limit.
     * 
-    * @throws ExceededQuotaLimitException if data size will exceeds quota limit 
+    * @throws ExceededQuotaLimitException if new data size will exceeds quota limit 
     */
-   protected void validateAccumulateChanges(long delta) throws ExceededQuotaLimitException
+   protected void validatePendingChanges(long delta) throws ExceededQuotaLimitException
    {
       try
       {

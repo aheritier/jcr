@@ -18,12 +18,12 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
+import org.exoplatform.commons.utils.PrivilegedFileHelper;
+import org.exoplatform.commons.utils.PrivilegedSystemHelper;
 import org.exoplatform.commons.utils.SecurityHelper;
 import org.exoplatform.management.annotations.Managed;
 import org.exoplatform.management.annotations.ManagedDescription;
 import org.exoplatform.management.annotations.ManagedName;
-import org.exoplatform.management.jmx.annotations.NameTemplate;
-import org.exoplatform.management.jmx.annotations.Property;
 import org.exoplatform.services.jcr.config.RepositoryEntry;
 import org.exoplatform.services.jcr.config.WorkspaceEntry;
 import org.exoplatform.services.jcr.core.WorkspaceContainerFacade;
@@ -40,11 +40,21 @@ import org.exoplatform.services.jcr.datamodel.PropertyData;
 import org.exoplatform.services.jcr.datamodel.QPath;
 import org.exoplatform.services.jcr.datamodel.QPathEntry;
 import org.exoplatform.services.jcr.impl.Constants;
+import org.exoplatform.services.jcr.impl.backup.BackupException;
+import org.exoplatform.services.jcr.impl.backup.Backupable;
+import org.exoplatform.services.jcr.impl.backup.DataRestore;
+import org.exoplatform.services.jcr.impl.backup.ResumeException;
+import org.exoplatform.services.jcr.impl.backup.SuspendException;
+import org.exoplatform.services.jcr.impl.backup.Suspendable;
+import org.exoplatform.services.jcr.impl.backup.rdbms.DBBackup;
+import org.exoplatform.services.jcr.impl.backup.rdbms.DataRestoreContext;
 import org.exoplatform.services.jcr.impl.core.JCRPath;
 import org.exoplatform.services.jcr.impl.core.LocationFactory;
 import org.exoplatform.services.jcr.impl.core.RepositoryImpl;
 import org.exoplatform.services.jcr.impl.core.query.SearchManager;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspacePersistentDataManager;
+import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectReader;
+import org.exoplatform.services.jcr.impl.dataflow.serialization.ZipObjectWriter;
 import org.exoplatform.services.jcr.impl.util.io.DirectoryHelper;
 import org.exoplatform.services.jcr.storage.WorkspaceDataContainer;
 import org.exoplatform.services.log.ExoLogger;
@@ -53,30 +63,35 @@ import org.exoplatform.services.rpc.RPCService;
 import org.jboss.cache.util.concurrent.ConcurrentHashSet;
 import org.picocontainer.Startable;
 
+import java.io.Externalizable;
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.lang.reflect.Method;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jcr.RepositoryException;
 
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: BaseWorkspaceQuotaManager.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: WorkspaceQuotaManager.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-@Managed
-@NameTemplate(@Property(key = "service", value = "WorkspaceQuotaManager"))
-public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQuotaManager2
+public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
 {
 
    /**
@@ -145,34 +160,41 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    protected final AccumulateChangesListener accumulateChangesListener = new AccumulateChangesListener();
 
    /**
+    * File name for backuped data.
+    */
+   protected static final String BACKUP_FILE_NAME = "quota";
+
+   /**
+    * Indicates if component suspended or not.
+    */
+   protected AtomicBoolean isSuspended = new AtomicBoolean();
+
+   /**
     * Contains node paths for which {@link CalculateNodeDataSizeTask} currently is run. 
     * Does't allow execution several tasks over common path.
     */
    protected Set<String> runNodesTasks = new ConcurrentHashSet<String>();
 
    /**
-    * Contains calculated nodes data size changes of last save.
-    * Will be cleared on persistence rollback or commit.
+    * Pending changes of current save. If save failed changes will be removed, otherwise
+    * is moved into changes log to be pushed to coordinator by timer.
     */
-   protected ThreadLocal<Map<String, Long>> nodesDataSizeChanges = new ThreadLocal<Map<String, Long>>();
+   protected ThreadLocal<ChangesItem> pendingChanges = new ThreadLocal<ChangesItem>();
 
    /**
-    * List of nodes absolute paths for which changes were made but changed size is unknown. Most
-    * famous case when {@link WorkspaceDataContainer#TRIGGER_EVENTS_FOR_DESCENDENTS_ON_RENAME} is 
-    * set to false. 
+    * Accumulates changes of every save.  
     */
-   protected ThreadLocal<Set<String>> unknownNodesDataSizeChanges = new ThreadLocal<Set<String>>();
+   protected ChangesLog changesLog = new ChangesLog();
 
    /**
-    * Contains calculated workspace data size changes of last save.
-    * Will be cleared on persistence rollback or commit.
+    * @see BaseQuotaManager#testCase.
     */
-   protected ThreadLocal<Long> workspaceDataSizeChanges = new ThreadLocal<Long>();
+   protected final boolean testCase;
 
    /**
     * BaseWorkspaceQuotaManager constructor.
     */
-   public BaseWorkspaceQuotaManager(RepositoryImpl repository, RepositoryQuotaManager rQuotaManager,
+   public WorkspaceQuotaManager(RepositoryImpl repository, RepositoryQuotaManager rQuotaManager,
       RepositoryEntry rEntry, WorkspaceEntry wsEntry, WorkspacePersistentDataManager dataManager)
    {
       this.rName = rEntry.getName();
@@ -184,6 +206,7 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
       this.repositoryQuotaManager = rQuotaManager;
       this.quotaPersister = rQuotaManager.globalQuotaManager.quotaPersister;
       this.rpcService = rQuotaManager.globalQuotaManager.rpcService;
+      this.testCase = rQuotaManager.globalQuotaManager.testCase;
 
       initExecutorService();
 
@@ -193,9 +216,8 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    }
 
    /**
-    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getNodeDataSize(java.lang.String)
+    * @see QuotaManager#getNodeDataSize(String, String, String)
     */
-   @Override
    @Managed
    @ManagedDescription("Returns a node data size")
    public long getNodeDataSize(@ManagedDescription("The absolute path to node") @ManagedName("nodePath") String nodePath)
@@ -210,9 +232,8 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    }
 
    /**
-    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getNodeQuota(java.lang.String)
+    * @see QuotaManager#getNodeQuota(String, String, String)
     */
-   @Override
    @Managed
    @ManagedDescription("Returns a node quota limit")
    public long getNodeQuota(String nodePath) throws QuotaManagerException
@@ -226,9 +247,8 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    }
 
    /**
-    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#setNodeQuota(java.lang.String, long, boolean)
+    * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)
     */
-   @Override
    @Managed
    @ManagedDescription("Sets a node quota limit")
    public void setNodeQuota(String nodePath, long quotaLimit, boolean asyncUpdate) throws QuotaManagerException
@@ -286,9 +306,8 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    }
 
    /**
-    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#setGroupOfNodesQuota(java.lang.String, long, boolean)
+    * @see QuotaManager#setGroupOfNodesQuota(String, String, String, long, boolean)
     */
-   @Override
    @Managed
    @ManagedDescription("Sets a quota limit for a bunch of nodes")
    public void setGroupOfNodesQuota(String patternPath, long quotaLimit, boolean asyncUpdate)
@@ -305,9 +324,8 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    }
 
    /**
-    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#removeNodeQuota(java.lang.String)
+    * @see QuotaManager#removeNodeQuota(String, String, String)
     */
-   @Override
    @Managed
    @ManagedDescription("Removes a quota limit for a node")
    public void removeNodeQuota(String nodePath) throws QuotaManagerException
@@ -323,9 +341,8 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    }
 
    /**
-    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#removeGroupOfNodesQuota(java.lang.String)
+    * @see QuotaManager#removeGroupOfNodesQuota(String, String, String)
     */
-   @Override
    @Managed
    @ManagedDescription("Removes a quota limit for a bunch of nodes")
    public void removeGroupOfNodesQuota(String patternPath) throws QuotaManagerException
@@ -341,9 +358,8 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    }
 
    /**
-    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#setWorkspaceQuota(long)
+    * @see QuotaManager#setWorkspaceQuota(String, String, long)
     */
-   @Override
    @ManagedDescription("Sets workspace quota limit")
    public void setWorkspaceQuota(long quotaLimit) throws QuotaManagerException
    {
@@ -351,9 +367,8 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    }
 
    /**
-    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#removeWorkspaceQuota()
+    * @see QuotaManager#removeWorkspaceQuota(String, String, long)
     */
-   @Override
    @ManagedDescription("Removes workspace quota limit")
    public void removeWorkspaceQuota() throws QuotaManagerException
    {
@@ -361,9 +376,8 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    }
 
    /**
-    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getWorkspaceQuota()
+    * @see QuotaManager#getWorkspaceQuota(String, String)
     */
-   @Override
    @Managed
    @ManagedDescription("Returns workspace quota limit")
    public long getWorkspaceQuota() throws QuotaManagerException
@@ -372,9 +386,8 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    }
 
    /**
-    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getWorkspaceDataSize()
+    * @see QuotaManager#getWorkspaceDataSize(String, String)
     */
-   @Override
    @Managed
    @ManagedDescription("Returns a size of the Workspace")
    public long getWorkspaceDataSize() throws QuotaManagerException
@@ -383,9 +396,8 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    }
 
    /**
-    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getWorkspaceIndexSize()
+    * @see QuotaManager#getWorkspaceIndexSize(String, String)
     */
-   @Override
    @Managed
    @ManagedDescription("Returns a size of the index")
    public long getWorkspaceIndexSize() throws QuotaManagerException
@@ -420,9 +432,9 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    }
 
    /**
-    * @see BaseQuotaManager#accumulateChanges(long)
+    * @see BaseQuotaManager#accumulatePersistedChanges(long)
     */
-   protected void accumulateChanges(long delta)
+   protected void accumulatePersistedChanges(long delta)
    {
       long dataSize = 0;
       try
@@ -440,13 +452,46 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
       long newDataSize = Math.max(dataSize + delta, 0);
       quotaPersister.setWorkspaceDataSize(rName, wsName, newDataSize);
 
-      repositoryQuotaManager.accumulateChanges(delta);
+      repositoryQuotaManager.accumulatePersistedChanges(delta);
    }
 
    /**
-    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getNodeDataSizeDirectly(java.lang.String)
+    * @see WorkspaceQuotaManager#accumulateChanges(long)
     */
-   @Override
+   protected void accumulatePersistedNodesChanges(Map<String, Long> nodesDelta, Set<String> unknownNodesDelta)
+   {
+      Set<String> trackedNodes = quotaPersister.getAllTrackedNodes(rName, wsName);
+      for (String nodePath : unknownNodesDelta)
+      {
+         for (String trackedPath : trackedNodes)
+         {
+            if (trackedPath.startsWith(nodePath))
+            {
+               quotaPersister.removeNodeDataSize(rName, wsName, trackedPath);
+            }
+         }
+      }
+
+      for (Entry<String, Long> entry : nodesDelta.entrySet())
+      {
+         String nodePath = entry.getKey();
+         Long delta = entry.getValue();
+
+         try
+         {
+            long dataSize = delta + quotaPersister.getNodeDataSize(rName, wsName, nodePath);
+            quotaPersister.setNodeDataSize(rName, wsName, nodePath, dataSize);
+         }
+         catch (UnknownQuotaDataSizeException e)
+         {
+            tryExecuteCalculateNodeDataSizeTask(nodePath);
+         }
+      }
+   }
+
+   /**
+    * Calculates node data size by asking directly respective {@link WorkspacePersistentDataManager}. 
+    */
    public long getNodeDataSizeDirectly(String nodePath) throws QuotaManagerException
    {
       if (nodePath.equals(JCRPath.ROOT_PATH))
@@ -481,9 +526,8 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
    }
 
    /**
-    * @see org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager2#getWorkspaceDataSizeDirectly()
+    * Calculate workspace data size by asking directly respective {@link WorkspacePersistentDataManager}.
     */
-   @Override
    public long getWorkspaceDataSizeDirectly() throws QuotaManagerException
    {
       try
@@ -563,7 +607,7 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
       try
       {
          long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
-         repositoryQuotaManager.accumulateChanges(dataSize);
+         repositoryQuotaManager.accumulatePersistedChanges(dataSize);
       }
       catch (UnknownQuotaDataSizeException e)
       {
@@ -582,7 +626,7 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
       try
       {
          long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
-         repositoryQuotaManager.accumulateChanges(-dataSize);
+         repositoryQuotaManager.accumulatePersistedChanges(-dataSize);
       }
       catch (UnknownQuotaDataSizeException e)
       {
@@ -612,17 +656,23 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
        */
       public void onCommit()
       {
+         ChangesItem changesItem = pendingChanges.get();
          try
          {
-            accumulateChanges(workspaceDataSizeChanges.get());
-            accumulateNodesChanges(nodesDataSizeChanges.get(), unknownNodesDataSizeChanges.get());
+            if (!testCase)
+            {
+               changesLog.add(pendingChanges.get());
+            }
+            else
+            {
+               // apply changes instantly
+               accumulatePersistedChanges(changesItem.workspaceDelta);
+               accumulatePersistedNodesChanges(changesItem.calculatedNodesDelta, changesItem.unknownNodesDelta);
+            }
          }
          finally
          {
-            nodesDataSizeChanges.remove();
-            unknownNodesDataSizeChanges.remove();
-
-            workspaceDataSizeChanges.remove();
+            pendingChanges.remove();
          }
       }
 
@@ -631,45 +681,10 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
        */
       public void onRollback()
       {
-         nodesDataSizeChanges.remove();
-         unknownNodesDataSizeChanges.remove();
-
-         workspaceDataSizeChanges.remove();
+         pendingChanges.remove();
       }
 
-      /**
-       * @see WorkspaceQuotaManager#accumulateChanges(long)
-       */
-      private void accumulateNodesChanges(Map<String, Long> nodesDelta, Set<String> unknownChangedSize)
-      {
-         Set<String> trackedNodes = quotaPersister.getAllTrackedNodes(rName, wsName);
-         for (String nodePath : unknownChangedSize)
-         {
-            for (String trackedPath : trackedNodes)
-            {
-               if (trackedPath.startsWith(nodePath))
-               {
-                  quotaPersister.removeNodeDataSize(rName, wsName, trackedPath);
-               }
-            }
-         }
 
-         for (Entry<String, Long> entry : nodesDelta.entrySet())
-         {
-            String nodePath = entry.getKey();
-            Long delta = entry.getValue();
-
-            try
-            {
-               long dataSize = delta + quotaPersister.getNodeDataSize(rName, wsName, nodePath);
-               quotaPersister.setNodeDataSize(rName, wsName, nodePath, dataSize);
-            }
-            catch (UnknownQuotaDataSizeException e)
-            {
-               tryExecuteCalculateNodeDataSizeTask(nodePath);
-            }
-         }
-      }
    }
 
    /**
@@ -692,9 +707,7 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
       {
          try
          {
-            long wsDelta = 0;
-            Map<String, Long> nodesDelta = new HashMap<String, Long>();
-            Set<String> unknownChangedSize = new HashSet<String>();
+            ChangesItem changesItem = new ChangesItem();
 
             for (ItemState state : itemStates.getAllStates())
             {
@@ -706,14 +719,14 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
                   Set<String> quotableParents = quotaPersister.getAllQuotableParentNodes(rName, wsName, itemPath);
                   for (String parent : quotableParents)
                   {
-                     Long oldDelta = nodesDelta.get(parent);
+                     Long oldDelta = changesItem.calculatedNodesDelta.get(parent);
                      Long newDelta = state.getChangedSize() + (oldDelta != null ? oldDelta : 0);
 
-                     nodesDelta.put(parent, newDelta);
+                     changesItem.calculatedNodesDelta.put(parent, newDelta);
                   }
 
                   // update changed size for workspace
-                  wsDelta += state.getChangedSize();
+                  changesItem.workspaceDelta += state.getChangedSize();
                }
                else
                {
@@ -722,19 +735,16 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
                      String itemPath = getPath(state.getData().getQPath());
                      String oldPath = getPath(state.getOldPath());
 
-                     unknownChangedSize.add(itemPath);
-                     unknownChangedSize.add(oldPath);
+                     changesItem.unknownNodesDelta.add(itemPath);
+                     changesItem.unknownNodesDelta.add(oldPath);
                   }
                }
             }
 
-            validateAccumulateChanges(wsDelta);
-            validateAccumulateNodesChanges(nodesDelta);
+            pendingChanges.set(changesItem);
 
-            nodesDataSizeChanges.set(nodesDelta);
-            unknownNodesDataSizeChanges.set(unknownChangedSize);
-
-            workspaceDataSizeChanges.set(wsDelta);
+            validatePendingChanges(changesItem.workspaceDelta);
+            validatePendingNodesChanges(changesItem.calculatedNodesDelta);
          }
          catch (ExceededQuotaLimitException e)
          {
@@ -751,12 +761,13 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
       }
 
       /**
-       * @see BaseQuotaManager#validateAccumulateChanges(long)
+       * @see BaseQuotaManager#validatePendingChanges(long)
        */
-      private void validateAccumulateChanges(long delta) throws ExceededQuotaLimitException
+      private void validatePendingChanges(long delta) throws ExceededQuotaLimitException
       {
-         repositoryQuotaManager.validateAccumulateChanges(delta);
+         delta += changesLog.getWorkspaceDelta();
 
+         repositoryQuotaManager.validatePendingChanges(delta);
          try
          {
             long quotaLimit = quotaPersister.getWorkspaceQuota(rName, wsName);
@@ -783,14 +794,14 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
       }
 
       /**
-       * @see BaseQuotaManager#validateAccumulateChanges(long)
+       * @see BaseQuotaManager#validatePendingChanges(long)
        */
-      private void validateAccumulateNodesChanges(Map<String, Long> nodesDelta) throws ExceededQuotaLimitException
+      private void validatePendingNodesChanges(Map<String, Long> nodesDelta) throws ExceededQuotaLimitException
       {
          for (Entry<String, Long> entry : nodesDelta.entrySet())
          {
             String nodePath = entry.getKey();
-            Long delta = entry.getValue();
+            Long delta = entry.getValue() + changesLog.getNodeDelta(nodePath);
 
             try
             {
@@ -850,7 +861,6 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
       }
    }
 
-
    /**
     * Awaits until all tasks will be done.
     */
@@ -864,6 +874,385 @@ public abstract class BaseWorkspaceQuotaManager implements Startable, WorkspaceQ
       catch (InterruptedException e)
       {
          LOG.warn("Termination has been interrupted");
+      }
+   }
+
+   // ======================================> Backup & Suspend
+
+   /**
+    * {@inheritDoc}
+    */
+   public void backup(File storageDir) throws BackupException
+   {
+      File backupFile = new File(storageDir, BACKUP_FILE_NAME + DBBackup.CONTENT_FILE_SUFFIX);
+      doBackup(backupFile);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void clean() throws BackupException
+   {
+      doClean();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public DataRestore getDataRestorer(DataRestoreContext context) throws BackupException
+   {
+      return new WorkspaceQuotaRestore(context);
+   }
+
+   /**
+    * {@link DataRestore} implementation for quota. 
+    */
+   private class WorkspaceQuotaRestore implements DataRestore
+   {
+
+      private final File tempFile;
+
+      private final File backupFile;
+
+      /**
+       * WorkspaceQuotaRestore constructor.
+       */
+      WorkspaceQuotaRestore(DataRestoreContext context)
+      {
+         File storageDir = (File)context.getObject(DataRestoreContext.STORAGE_DIR);
+         this.backupFile = new File(storageDir, BACKUP_FILE_NAME + DBBackup.CONTENT_FILE_SUFFIX);
+
+         File tempDir = new File(PrivilegedSystemHelper.getProperty("java.io.tmpdir"));
+         this.tempFile = new File(tempDir, "temp.dump");
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void clean() throws BackupException
+      {
+         doBackup(tempFile);
+         doClean();
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void restore() throws BackupException
+      {
+         doRestore(backupFile);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void commit() throws BackupException
+      {
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void rollback() throws BackupException
+      {
+         doClean();
+         doRestore(tempFile);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void close() throws BackupException
+      {
+         PrivilegedFileHelper.delete(tempFile);
+      }
+   }
+
+   /**
+    * Restores content.
+    */
+   private void doRestore(File backupFile) throws BackupException
+   {
+      ZipObjectReader in = null;
+      try
+      {
+         in = new ZipObjectReader(PrivilegedFileHelper.zipInputStream(backupFile));
+         quotaPersister.restoreWorkspaceData(rName, wsName, in);
+      }
+      catch (IOException e)
+      {
+         throw new BackupException(e);
+      }
+      finally
+      {
+         if (in != null)
+         {
+            try
+            {
+               in.close();
+            }
+            catch (IOException e)
+            {
+               LOG.error("Can't close input stream", e);
+            }
+         }
+      }
+
+      try
+      {
+         long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
+         repositoryQuotaManager.accumulatePersistedChanges(dataSize);
+      }
+      catch (UnknownQuotaDataSizeException e)
+      {
+         if (LOG.isTraceEnabled())
+         {
+            LOG.trace(e.getMessage(), e);
+         }
+      }
+   }
+
+   /**
+    * Backups data to define file.
+    */
+   private void doBackup(File backupFile) throws BackupException
+   {
+      ZipObjectWriter out = null;
+      try
+      {
+         out = new ZipObjectWriter(PrivilegedFileHelper.zipOutputStream(backupFile));
+         quotaPersister.backupWorkspaceData(rName, wsName, out);
+      }
+      catch (IOException e)
+      {
+         throw new BackupException(e);
+      }
+      finally
+      {
+         if (out != null)
+         {
+            try
+            {
+               out.close();
+            }
+            catch (IOException e)
+            {
+               LOG.error("Can't close output stream", e);
+            }
+         }
+      }
+   }
+
+   private void doClean() throws BackupException
+   {
+      try
+      {
+         long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
+         repositoryQuotaManager.accumulatePersistedChanges(-dataSize);
+      }
+      catch (UnknownQuotaDataSizeException e)
+      {
+         if (LOG.isTraceEnabled())
+         {
+            LOG.trace(e.getMessage(), e);
+         }
+      }
+
+      quotaPersister.clearWorkspaceData(rName, wsName);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void suspend() throws SuspendException
+   {
+      executor.shutdownNow();
+      isSuspended.set(true);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void resume() throws ResumeException
+   {
+      initExecutorService();
+      isSuspended.set(false);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isSuspended()
+   {
+      return isSuspended.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getPriority()
+   {
+      return Suspendable.PRIORITY_LOW;
+   }
+
+   // =================================================> Changes log
+
+   /** 
+    * Returns current changes log.
+    */
+   protected ChangesLog getChangesLog()
+   {
+      return changesLog;
+   }
+
+   /**
+    * Wraps changed data size information of particular save. First is put into pending changes
+    * and after save is performed being moved into changes log.
+    */
+   class ChangesItem implements Externalizable
+   {
+      /**
+       * Contains calculated workspace data size changes of particular save. 
+       */
+      long workspaceDelta;
+
+      /**
+       * Contains calculated nodes data size changes of particular save.
+       * Represents {@link Map} with absolute node path as key and changed node 
+       * data size of all its descendants as value respectively.
+       */
+      Map<String, Long> calculatedNodesDelta = new HashMap<String, Long>();;
+
+      /**
+       * Set absolute paths of nodes for which changes were made but changed size is unknown. Most
+       * famous case when {@link WorkspaceDataContainer#TRIGGER_EVENTS_FOR_DESCENDENTS_ON_RENAME} is 
+       * set to false and move operation is performed.
+       */
+      Set<String> unknownNodesDelta = new HashSet<String>();
+
+      /**
+       * Merges current changes with new one.
+       */
+      void merge(ChangesItem changesItem)
+      {
+         workspaceDelta += changesItem.workspaceDelta;
+
+         for (Entry<String, Long> changesEntry : changesItem.calculatedNodesDelta.entrySet())
+         {
+            String nodePath = changesEntry.getKey();
+            Long currentDelta = changesEntry.getValue();
+
+            Long oldDelta = calculatedNodesDelta.get(nodePath);
+            Long newDelta = currentDelta + (oldDelta == null ? 0 : oldDelta);
+
+            calculatedNodesDelta.put(nodePath, newDelta);
+         }
+
+         for (String path : changesItem.unknownNodesDelta)
+         {
+            unknownNodesDelta.add(path);
+         }
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void writeExternal(ObjectOutput out) throws IOException
+      {
+         out.writeLong(workspaceDelta);
+
+         out.writeInt(calculatedNodesDelta.size());
+         for (Entry<String, Long> entry : calculatedNodesDelta.entrySet())
+         {
+            writeString(out, entry.getKey());
+            out.writeLong(entry.getValue());
+         }
+
+         out.writeInt(unknownNodesDelta.size());
+         for (String path : unknownNodesDelta)
+         {
+            writeString(out, path);
+         }
+      }
+
+      private void writeString(ObjectOutput out, String str) throws IOException
+      {
+         byte[] data = str.getBytes(Constants.DEFAULT_ENCODING);
+         out.writeInt(data.length);
+         out.write(data);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
+      {
+         this.workspaceDelta = in.readLong();
+
+         int size = in.readInt();
+         this.calculatedNodesDelta = new HashMap<String, Long>(size);
+         for (int i = 0; i < size; i++)
+         {
+            String nodePath = readString(in);
+            Long delta = in.readLong();
+
+            calculatedNodesDelta.put(nodePath, delta);
+         }
+
+         size = in.readInt();
+         this.unknownNodesDelta = new HashSet<String>();
+         for (int i = 0; i < size; i++)
+         {
+            String nodePath = readString(in);
+            unknownNodesDelta.add(nodePath);
+         }
+      }
+
+      private String readString(ObjectInput in) throws IOException
+      {
+         byte[] data = new byte[in.readInt()];
+         in.readFully(data);
+
+         return new String(data, Constants.DEFAULT_ENCODING);
+      }
+   }
+
+   /**
+    * Accumulates changes of saves during whole period. Time from time
+    * all changes are pushed to coordinator.
+    */
+   class ChangesLog extends ConcurrentLinkedQueue<ChangesItem>
+   {
+      /**
+       * Returns total workspace changed size.
+       */
+      public long getWorkspaceDelta()
+      {
+         long wsDelta = 0;
+         
+         Iterator<ChangesItem> changes = iterator();
+         while (changes.hasNext())
+         {
+            wsDelta += changes.next().workspaceDelta;
+         }
+         
+         return wsDelta;
+      }
+
+      /**
+       * Return total changed size for particular node.
+       */
+      public long getNodeDelta(String nodePath)
+      {
+         long nodeDelta = 0;
+
+         Iterator<ChangesItem> changes = iterator();
+         while (changes.hasNext())
+         {
+            nodeDelta += changes.next().calculatedNodesDelta.get(nodePath);
+         }
+
+         return nodeDelta;
       }
    }
 }

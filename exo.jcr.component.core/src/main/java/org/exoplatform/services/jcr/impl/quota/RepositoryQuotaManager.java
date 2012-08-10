@@ -23,11 +23,18 @@ import org.exoplatform.management.annotations.ManagedDescription;
 import org.exoplatform.management.jmx.annotations.NameTemplate;
 import org.exoplatform.management.jmx.annotations.Property;
 import org.exoplatform.services.jcr.config.RepositoryEntry;
+import org.exoplatform.services.jcr.impl.proccess.WorkerThread;
+import org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager.ChangesItem;
+import org.exoplatform.services.jcr.impl.quota.WorkspaceQuotaManager.ChangesLog;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.rpc.RPCService;
+import org.exoplatform.services.rpc.RemoteCommand;
 import org.picocontainer.Startable;
 
+import java.io.Serializable;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -60,9 +67,30 @@ public class RepositoryQuotaManager implements Startable
    protected final BaseQuotaManager globalQuotaManager;
 
    /**
+    * {@link RPCService}
+    */
+   protected final RPCService rpcService;
+
+   /**
     * {@link QuotaPersister}
     */
    protected final QuotaPersister quotaPersister;
+
+   /**
+    * Task is obligated to push all changes to coordinator where they will
+    * be accumulated.
+    */
+   protected final PushTask pushTask;
+
+   /**
+    * Timeout for task.
+    */
+   protected final long DEFAULT_TIMEOUT = 5000; // 5 sec
+
+   /**
+    * Remote command is obligated to push changes log to coordinator.
+    */
+   protected RemoteCommand pushChangesLogTask;
 
    /**
     * RepositoryQuotaManagerImpl constructor.
@@ -72,6 +100,12 @@ public class RepositoryQuotaManager implements Startable
       this.rName = rEntry.getName();
       this.globalQuotaManager = quotaManager;
       this.quotaPersister = globalQuotaManager.quotaPersister;
+      this.rpcService = globalQuotaManager.rpcService;
+
+      this.pushTask = new PushTask("PushQuotaChangesTask-" + rName, DEFAULT_TIMEOUT);
+      this.pushTask.start();
+      
+      initRemoteCommands();
    }
 
    /**
@@ -246,12 +280,15 @@ public class RepositoryQuotaManager implements Startable
    {
       wsQuotaManagers.clear();
       globalQuotaManager.unregisterRepositoryQuotaManager(rName);
+
+      pushTask.halt();
+      rpcService.unregisterCommand(pushChangesLogTask);
    }
 
    /**
-    * @see BaseQuotaManager#accumulateChanges(long)
+    * @see BaseQuotaManager#accumulatePersistedChanges(long)
     */
-   protected void accumulateChanges(long delta)
+   protected void accumulatePersistedChanges(long delta)
    {
       long dataSize = 0;
       try
@@ -269,15 +306,15 @@ public class RepositoryQuotaManager implements Startable
       long newDataSize = Math.max(dataSize + delta, 0);
       quotaPersister.setRepositoryDataSize(rName, newDataSize);
 
-      globalQuotaManager.accumulateChanges(delta);
+      globalQuotaManager.accumulatePersistedChanges(delta);
    }
 
    /**
-    * @see BaseQuotaManager#validateAccumulateChanges(long)
+    * @see BaseQuotaManager#validatePendingChanges(long)
     */
-   protected void validateAccumulateChanges(long delta) throws ExceededQuotaLimitException
+   protected void validatePendingChanges(long delta) throws ExceededQuotaLimitException
    {
-      globalQuotaManager.validateAccumulateChanges(delta);
+      globalQuotaManager.validatePendingChanges(delta);
 
       try
       {
@@ -332,6 +369,80 @@ public class RepositoryQuotaManager implements Startable
       }
 
       return size;
+   }
+
+   // ============================================> pushing changes to coordinator
+
+   /**
+    * Initialize remote commands.
+    */
+   protected void initRemoteCommands()
+   {
+      pushChangesLogTask = new RemoteCommand()
+      {
+         /**
+          * {@inheritDoc}
+          */
+         public String getId()
+         {
+            return "RepositoryQuotaManager-" + rName + "-pushChangesLogTask";
+         }
+
+         /**
+          * {@inheritDoc}
+          */
+         public Serializable execute(Serializable[] args) throws Throwable
+         {
+            String workspaceName = (String)args[0];
+            ChangesItem changesItem = (ChangesItem)args[1];
+            
+            WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+            wqm.accumulatePersistedChanges(changesItem.workspaceDelta);
+            wqm.accumulatePersistedNodesChanges(changesItem.calculatedNodesDelta, changesItem.unknownNodesDelta);
+
+            return null;
+         }
+      };
+
+      rpcService.registerCommand(pushChangesLogTask);
+   }
+
+   /**
+    * Push changes to coordinator.
+    */
+   private class PushTask extends WorkerThread
+   {
+
+      /**
+       * PushTask constructor.
+       */
+      public PushTask(String name, long timeout)
+      {
+         super(name, timeout);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      protected void callPeriodically() throws Exception
+      {
+         for (Entry<String, WorkspaceQuotaManager> entry : wsQuotaManagers.entrySet())
+         {
+            String workspaceName = entry.getKey();
+            WorkspaceQuotaManager wqm = entry.getValue();
+
+            ChangesLog changesLog = wqm.getChangesLog();
+            ChangesItem totalChanges = wqm.new ChangesItem();
+
+            // lets merge all changes together 
+            for (ChangesItem particularChanges = changesLog.poll(); particularChanges != null;)
+            {
+               totalChanges.merge(particularChanges);
+            }
+
+            rpcService.executeCommandOnCoordinator(pushChangesLogTask, false, workspaceName, totalChanges);
+         }
+      }
    }
 
    private WorkspaceQuotaManager getWorkspaceQuotaManager(String workspaceName) throws QuotaManagerException
