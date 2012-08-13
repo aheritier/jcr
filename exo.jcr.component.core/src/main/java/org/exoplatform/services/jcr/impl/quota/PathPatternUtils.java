@@ -18,6 +18,8 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
+import org.exoplatform.services.jcr.impl.core.JCRPath;
+
 import java.util.regex.Pattern;
 
 /**
@@ -91,28 +93,33 @@ public class PathPatternUtils
    }
 
    /**
-    * Extract common ancestor.
+    * Returns common ancestor for paths represented by absolute path and pattern.
     */
    public static String extractCommonAncestor(String pattern, String absPath)
    {
-      if (acceptDescendant(pattern, absPath))
+      pattern = normalizePath(pattern);
+      absPath = normalizePath(absPath);
+
+      String[] patterEntries = pattern.split("/");
+      String[] pathEntries = absPath.split("/");
+
+      StringBuilder ancestor = new StringBuilder();
+      int count = Math.min(pathEntries.length, patterEntries.length);
+
+      for (int i = 1; i < count; i++)
       {
-         pattern = normalizePath(pattern);
-         absPath = normalizePath(absPath);
-
-         String[] entries = absPath.split("/");
-
-         StringBuilder ancestor = new StringBuilder();
-         for (int i = 1; i < pattern.split("/").length; i++)
+         if (acceptName(patterEntries[i], pathEntries[i]))
          {
             ancestor.append("/");
-            ancestor.append(entries[i]);
+            ancestor.append(pathEntries[i]);
          }
-
-         return ancestor.toString();
+         else
+         {
+            break;
+         }
       }
 
-      return null;
+      return ancestor.length() == 0 ? JCRPath.ROOT_PATH : ancestor.toString();
    }
 
    /**

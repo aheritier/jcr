@@ -42,6 +42,12 @@ public interface QuotaPersister
       throws UnknownQuotaLimitException;
 
    /**
+    * Indicates if quota by specific path or pattern should use asynchronous update or not. 
+    */
+   boolean isNodeQuotaOrGroupOfNodesQuotaAsync(String repositoryName, String workspaceName, String nodePath)
+      throws UnknownQuotaLimitException;
+
+   /**
     * @see QuotaManager#setNodeQuota(String, String, String, long, boolean)
     */
    void setNodeQuota(String repositoryName, String workspaceName, String nodePath, long quotaLimit, boolean asyncUpdate);
@@ -91,9 +97,10 @@ public interface QuotaPersister
    void removeNodeDataSize(String repositoryName, String workspaceName, String nodePath);
 
    /**
-    * Returns all paths of nodes with defined quota.
+    * Returns all paths of parent nodes (and node itself) for which quota is defined either directly or
+    * via pattern.
     */
-   Set<String> getAllQuotableParentNodes(String repositoryName, String workspaceName, String nodePath);
+   Set<String> getAllParentNodesWithQuota(String repositoryName, String workspaceName, String nodePath);
 
    /**
     * @see QuotaManager#getWorkspaceQuota(String, String)

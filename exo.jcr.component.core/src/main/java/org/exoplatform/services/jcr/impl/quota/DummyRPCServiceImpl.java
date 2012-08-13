@@ -28,6 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Dummy implementation. Executes all commands synchronously at same node 
+ * where were called. The main idea of this implementation to avoid
+ * overall checking if {@link RPCService} is null and devide logic.
+ * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: DummyRPCServiceImpl.java 34360 2009-07-22 23:58:59Z tolusha $
  */

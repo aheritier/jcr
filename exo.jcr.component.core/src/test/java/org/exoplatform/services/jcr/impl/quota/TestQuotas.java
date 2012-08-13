@@ -230,6 +230,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
       wsQuotaManager.setNodeQuota("/a/c", 1000, false);
 
       waitCalculationNodeDataSize(wsQuotaManager, "/a/b");
+      waitCalculationNodeDataSize(wsQuotaManager, "/a/c");
 
       assertTrue(wsQuotaManager.getNodeDataSize("/a/b") > 0);
 

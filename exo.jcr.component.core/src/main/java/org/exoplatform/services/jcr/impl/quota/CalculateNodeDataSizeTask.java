@@ -68,6 +68,8 @@ public class CalculateNodeDataSizeTask implements Runnable
       {
          long dataSize = quotaManager.getNodeDataSizeDirectly(nodePath);
          quotaPersister.setNodeDataSize(rName, wsName, nodePath, dataSize);
+
+         LOG.info(nodePath + " " + dataSize);
       }
       catch (QuotaManagerException e)
       {

@@ -120,6 +120,10 @@ public class TestPathPatternUtils extends TestCase
    public void testExtractCommonAncestor() throws Exception
    {
       assertEquals("/a/b", PathPatternUtils.extractCommonAncestor("/a/*", "/a/b/c"));
-      assertNull(PathPatternUtils.extractCommonAncestor("/a/*", "/b/c/d"));
+      assertEquals("/a/b", PathPatternUtils.extractCommonAncestor("/a/*", "/a/b"));
+      assertEquals("/a/b", PathPatternUtils.extractCommonAncestor("/a/b/*", "/a/b"));
+      assertEquals("/b", PathPatternUtils.extractCommonAncestor("/*", "/b/c/d"));
+      assertEquals("/", PathPatternUtils.extractCommonAncestor("/a/*", "/b/c/d"));
+      assertEquals("/", PathPatternUtils.extractCommonAncestor("/a", "/b"));
    }
 }

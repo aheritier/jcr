@@ -18,7 +18,6 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
-
 /**
  * Is occurred when entity data size is exceeded quota limit.
  * 

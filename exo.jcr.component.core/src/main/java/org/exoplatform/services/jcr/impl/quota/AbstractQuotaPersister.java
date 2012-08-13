@@ -106,6 +106,29 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
+   public boolean isNodeQuotaOrGroupOfNodesQuotaAsync(String repositoryName, String workspaceName, String nodePath)
+      throws UnknownQuotaLimitException
+   {
+      try
+      {
+         return isNodeQuotaAsync(repositoryName, workspaceName, nodePath);
+      }
+      catch (UnknownQuotaLimitException e)
+      {
+         String patternPath = getAcceptableGroupOfNodesQuota(repositoryName, workspaceName, nodePath);
+
+         if (patternPath != null)
+         {
+            return isGroupOfNodesQuotaAsync(repositoryName, workspaceName, patternPath);
+         }
+
+         throw new UnknownQuotaLimitException("Quota for " + nodePath + " is not defined");
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public String getAcceptableGroupOfNodesQuota(String repositoryName, String workspaceName, String nodePath)
    {
       Set<String> patterns = getAllGroupOfNodesQuota(repositoryName, workspaceName);
@@ -124,23 +147,23 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
-   public Set<String> getAllQuotableParentNodes(String repositoryName, String workspaceName, String nodePath)
+   public Set<String> getAllParentNodesWithQuota(String repositoryName, String workspaceName, String nodePath)
    {
       Set<String> quotableParents = new HashSet<String>();
 
-      for (String path : getAllNodeQuota(repositoryName, workspaceName))
+      for (String quoteablePath : getAllNodeQuota(repositoryName, workspaceName))
       {
-         if (PathPatternUtils.acceptDescendant(path, nodePath))
+         if (nodePath.startsWith(quoteablePath))
          {
-            quotableParents.add(path);
+            quotableParents.add(quoteablePath);
          }
       }
 
       for (String pattern : getAllGroupOfNodesQuota(repositoryName, workspaceName))
       {
-         String commonAncestor = PathPatternUtils.extractCommonAncestor(pattern, nodePath);
-         if (commonAncestor != null)
+         if (PathPatternUtils.acceptDescendant(pattern, nodePath))
          {
+            String commonAncestor = PathPatternUtils.extractCommonAncestor(pattern, nodePath);
             quotableParents.add(commonAncestor);
          }
       }
