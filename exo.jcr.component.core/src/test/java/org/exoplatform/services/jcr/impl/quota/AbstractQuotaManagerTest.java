@@ -62,20 +62,10 @@ public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
       super.tearDown();
    }
 
-   protected void waitCalculationNodeDataSize(WorkspaceQuotaManager wqm, String nodePath) throws Exception
+   protected void waitTasksTermination(WorkspaceQuotaManager wqm) throws Exception
    {
-      while (true)
-      {
-         try
-         {
-            wqm.getNodeDataSize(nodePath);
-            break;
-         }
-         catch (QuotaManagerException e)
-         {
-            Thread.sleep(1000);
-         }
-      }
+      wqm.suspend();
+      wqm.resume();
    }
 
    protected boolean quotaShouldNotExists(WorkspaceQuotaManager wqm, String nodePath) throws QuotaManagerException

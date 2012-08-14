@@ -92,6 +92,11 @@ public interface QuotaPersister
    void setNodeDataSize(String repositoryName, String workspaceName, String nodePath, long dataSize);
 
    /**
+    * Persists node data size only if only quota exists.
+    */
+   void setNodeDataSizeIfQuotaExists(String repositoryName, String workspaceName, String nodePath, long dataSize);
+
+   /**
     * Removes node data size.
     */
    void removeNodeDataSize(String repositoryName, String workspaceName, String nodePath);

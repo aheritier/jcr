@@ -166,7 +166,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
       
       wsQuotaManager.setNodeQuota("/a/b", 1000, false);
 
-      waitCalculationNodeDataSize(wsQuotaManager, "/a/b");
+      waitTasksTermination(wsQuotaManager);
       assertEquals(wsQuotaManager.getNodeDataSize("/a/b"), wsQuotaManager.getNodeDataSizeDirectly("/a/b"));
 
       root.getNode("a").remove();
@@ -189,7 +189,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
 
       wsQuotaManager.setNodeQuota("/a/b", 1000, false);
 
-      waitCalculationNodeDataSize(wsQuotaManager, "/a/b");
+      waitTasksTermination(wsQuotaManager);
       assertEquals(wsQuotaManager.getNodeDataSize("/a/b"), wsQuotaManager.getNodeDataSizeDirectly("/a/b"));
 
       session.move("/a/b", "/a/c");
@@ -229,8 +229,8 @@ public class TestQuotas extends AbstractQuotaManagerTest
       wsQuotaManager.setNodeQuota("/a/b", 1000, false);
       wsQuotaManager.setNodeQuota("/a/c", 1000, false);
 
-      waitCalculationNodeDataSize(wsQuotaManager, "/a/b");
-      waitCalculationNodeDataSize(wsQuotaManager, "/a/c");
+      waitTasksTermination(wsQuotaManager);
+      waitTasksTermination(wsQuotaManager);
 
       assertTrue(wsQuotaManager.getNodeDataSize("/a/b") > 0);
 
@@ -238,9 +238,17 @@ public class TestQuotas extends AbstractQuotaManagerTest
       root.getNode("a").getNode("c").addNode("d");
       root.save();
 
-      waitCalculationNodeDataSize(wsQuotaManager, "/a/c");
+      waitTasksTermination(wsQuotaManager);
 
-      assertEquals(wsQuotaManager.getNodeDataSize("/a/c"), wsQuotaManager.getNodeDataSizeDirectly("/a/c"));
+      try
+      {
+         assertEquals(wsQuotaManager.getNodeDataSize("/a/c"), wsQuotaManager.getNodeDataSizeDirectly("/a/c"));
+      }
+      catch (UnknownQuotaDataSizeException e)
+      {
+         // may happen
+      }
+
       assertTrue(dataSizeShouldNotExists(wsQuotaManager, "/a/b"));
 
       wsQuotaManager.removeNodeQuota("/a/b");
@@ -261,8 +269,8 @@ public class TestQuotas extends AbstractQuotaManagerTest
 
       wsQuotaManager.setNodeQuota("/a", 20000, false);
       wsQuotaManager.setNodeQuota("/a/b", 1000, false);
-      waitCalculationNodeDataSize(wsQuotaManager, "/a");
-      waitCalculationNodeDataSize(wsQuotaManager, "/a/b");
+      waitTasksTermination(wsQuotaManager);
+      waitTasksTermination(wsQuotaManager);
 
       assertTrue(wsQuotaManager.getNodeDataSize("/a") > 0);
       assertTrue(wsQuotaManager.getNodeDataSize("/a/b") > 0);
@@ -318,7 +326,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
       wsQuotaManager.setGroupOfNodesQuota("/*", 1000, false);
       wsQuotaManager.setNodeQuota("/b", 10000, false);
 
-      waitCalculationNodeDataSize(wsQuotaManager, "/b");
+      waitTasksTermination(wsQuotaManager);
       assertTrue(dataSizeShouldNotExists(wsQuotaManager, "/a"));
       assertTrue(wsQuotaManager.getNodeDataSize("/b") > 0);
 
@@ -326,7 +334,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
       testA.setProperty("prop1", "value1");
       root.save();
 
-      waitCalculationNodeDataSize(wsQuotaManager, "/a");
+      waitTasksTermination(wsQuotaManager);
       assertTrue(wsQuotaManager.getNodeDataSize("/a") > 0);
 
       // big changes OK for B

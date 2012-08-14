@@ -19,7 +19,7 @@
 package org.exoplatform.services.jcr.impl.quota;
 
 /**
- * QuotaManager provides methods for getting sizes of all eXo instances, getting/setting quotas and various settings.
+ * QuotaManager provides methods for getting sizes of all JCR instances, getting/setting quotas and various settings.
  * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: QuotaManager.java 34360 2009-07-22 23:58:59Z tolusha $

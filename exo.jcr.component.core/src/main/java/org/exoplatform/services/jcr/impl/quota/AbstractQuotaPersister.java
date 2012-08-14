@@ -45,6 +45,23 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
    /**
     * {@inheritDoc}
     */
+   public void setNodeDataSizeIfQuotaExists(String repositoryName, String workspaceName, String nodePath, long dataSize)
+   {
+      setNodeDataSize(repositoryName, workspaceName, nodePath, dataSize);
+
+      try
+      {
+         getNodeQuotaOrGroupOfNodesQuota(repositoryName, workspaceName, nodePath);
+      }
+      catch (UnknownQuotaLimitException e)
+      {
+         removeNodeDataSize(repositoryName, workspaceName, nodePath);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void removeNodeQuotaAndDataSize(String repositoryName, String workspaceName, String nodePath)
    {
       removeNodeQuota(repositoryName, workspaceName, nodePath);

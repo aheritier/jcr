@@ -72,6 +72,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 
 /**
@@ -465,7 +466,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          try
          {
             long dataSize = delta + quotaPersister.getNodeDataSize(rName, wsName, nodePath);
-            quotaPersister.setNodeDataSize(rName, wsName, nodePath, dataSize);
+            quotaPersister.setNodeDataSizeIfQuotaExists(rName, wsName, nodePath, dataSize);
          }
          catch (UnknownQuotaDataSizeException e)
          {
@@ -491,15 +492,12 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          JCRPath path = lFactory.parseRelPath(nodePath.substring(1)); // let ignore root entry '[]:1'
          for (QPathEntry entry : path.getInternalPath().getEntries())
          {
-            NodeData node1 = (NodeData)dataManager.getItemData(node, entry, ItemType.NODE);
+            node = (NodeData)dataManager.getItemData(node, entry, ItemType.NODE, false);
 
-            if (node1 == null) // may be already removed
+            if (node == null) // may be already removed
             {
-               LOG.info(entry.getAsString() + " not found");
-               return 0;
+               throw new ItemNotFoundException("Node " + nodePath + " not found in workspace");
             }
-
-            node = node1;
          }
 
          CalculateNodeDataSizeVisitor visitor = new CalculateNodeDataSizeVisitor(dataManager);
@@ -608,7 +606,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    public void stop()
    {
-      awaitTasksTermination();
+      executor.shutdownNow();
 
       try
       {
@@ -699,7 +697,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    public void suspend() throws SuspendException
    {
-      executor.shutdownNow();
+      awaitTasksTermination();
       isSuspended.set(true);
    }
 
