@@ -247,7 +247,7 @@ public class ScratchWorkspaceInitializer implements WorkspaceInitializer
 
          jcrSystem =
             TransientNodeData.createNodeData(root, Constants.JCR_SYSTEM, Constants.NT_UNSTRUCTURED, mixins,
-               Constants.SYSTEM_UUID);
+               Constants.SYSTEM_UUID, dataManager.getLastOrderNumber(root) + 1);
 
          AccessControlList acl = jcrSystem.getACL();
 
@@ -289,7 +289,7 @@ public class ScratchWorkspaceInitializer implements WorkspaceInitializer
       {
          jcrSystem =
             TransientNodeData.createNodeData(root, Constants.JCR_SYSTEM, Constants.NT_UNSTRUCTURED,
-               Constants.SYSTEM_UUID);
+               Constants.SYSTEM_UUID, dataManager.getLastOrderNumber(root) + 1);
 
          TransientPropertyData primaryType =
             TransientPropertyData.createPropertyData(jcrSystem, Constants.JCR_PRIMARYTYPE, PropertyType.NAME, false,
@@ -316,7 +316,7 @@ public class ScratchWorkspaceInitializer implements WorkspaceInitializer
 
       TransientNodeData versionStorageNodeData =
          TransientNodeData.createNodeData(jcrSystem, Constants.JCR_VERSIONSTORAGE, Constants.EXO_VERSIONSTORAGE,
-            Constants.VERSIONSTORAGE_UUID, acl);
+            Constants.VERSIONSTORAGE_UUID, acl, dataManager.getLastOrderNumber(jcrSystem) + 1);
 
       TransientPropertyData vsPrimaryType =
          TransientPropertyData.createPropertyData(versionStorageNodeData, Constants.JCR_PRIMARYTYPE, PropertyType.NAME,

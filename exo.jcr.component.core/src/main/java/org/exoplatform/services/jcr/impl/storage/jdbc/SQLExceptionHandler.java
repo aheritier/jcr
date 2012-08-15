@@ -24,6 +24,7 @@ import org.exoplatform.services.jcr.datamodel.ItemType;
 import org.exoplatform.services.jcr.datamodel.NodeData;
 import org.exoplatform.services.jcr.datamodel.QPathEntry;
 import org.exoplatform.services.jcr.impl.storage.JCRInvalidItemStateException;
+import org.exoplatform.services.jcr.impl.storage.JCRInvalidOrderNumException;
 import org.exoplatform.services.jcr.impl.storage.JCRItemExistsException;
 
 import java.io.IOException;
@@ -170,6 +171,10 @@ public class SQLExceptionHandler
             message.append("Referenceable property value already exists. Condition: property ID, order number. ")
                .append(itemInfo);
             throw new RepositoryException(message.toString(), e);
+         }
+         else if (umsg.indexOf(conn.JCR_IDX_ITEM_N_ORDER_NUM) >= 0)
+         {
+            throw new JCRInvalidOrderNumException(message.toString(), e);
          }
       }
 
@@ -398,6 +403,10 @@ public class SQLExceptionHandler
          {
             message.append("Item already exists. Condition: ID. ").append(itemInfo);
             throw new JCRInvalidItemStateException(message.toString(), item.getIdentifier(), ItemState.UPDATED, e);
+         }
+         else if (errMessage.toLowerCase().toUpperCase().indexOf(conn.JCR_IDX_ITEM_N_ORDER_NUM) >= 0)
+         {
+            throw new JCRInvalidOrderNumException(message.toString(), e);
          }
 
       // try detect integrity violation

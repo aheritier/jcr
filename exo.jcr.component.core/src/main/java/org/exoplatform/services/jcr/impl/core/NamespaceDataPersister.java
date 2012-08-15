@@ -99,17 +99,20 @@ public class NamespaceDataPersister implements ComponentPersister
             log.debug("Unable save namespace " + uri + "=" + prefix + " in to the storage. Storage not initialized");
          return;
       }
-      PlainChangesLog changesLog = new PlainChangesLogImpl();
+      PlainChangesLogImpl changesLog = new PlainChangesLogImpl();
       internallAdd(changesLog, prefix, uri);
 
       dataManager.save(new TransactionChangesLog(changesLog));
-
    }
 
-   private PlainChangesLog internallAdd(PlainChangesLog changesLog, String prefix, String uri)
+   private PlainChangesLog internallAdd(PlainChangesLogImpl changesLog, String prefix, String uri)
+      throws RepositoryException
    {
+      int orderNumber =
+         Math.max(dataManager.getLastOrderNumber(nsRoot), changesLog.getLastChildOrderNumber(nsRoot.getIdentifier())) + 1;
+
       TransientNodeData nsNode =
-         TransientNodeData.createNodeData(nsRoot, new InternalQName("", prefix), Constants.EXO_NAMESPACE);
+         TransientNodeData.createNodeData(nsRoot, new InternalQName("", prefix), Constants.EXO_NAMESPACE, orderNumber);
 
       TransientPropertyData primaryType =
          TransientPropertyData.createPropertyData(nsNode, Constants.JCR_PRIMARYTYPE, PropertyType.NAME, false,
@@ -143,7 +146,7 @@ public class NamespaceDataPersister implements ComponentPersister
          return;
       }
 
-      PlainChangesLog changesLog = new PlainChangesLogImpl();
+      PlainChangesLogImpl changesLog = new PlainChangesLogImpl();
       for (Map.Entry<String, String> entry : namespaceMap.entrySet())
       {
          String prefix = entry.getKey();
@@ -157,7 +160,6 @@ public class NamespaceDataPersister implements ComponentPersister
          }
       }
       dataManager.save(new TransactionChangesLog(changesLog));
-
    }
 
    public boolean isStorageFilled()
@@ -341,7 +343,8 @@ public class NamespaceDataPersister implements ComponentPersister
          InternalQName[] mixins = new InternalQName[]{Constants.EXO_OWNEABLE, Constants.EXO_PRIVILEGEABLE};
 
          exoNamespaces =
-            TransientNodeData.createNodeData(nsSystem, Constants.EXO_NAMESPACES, Constants.NT_UNSTRUCTURED, mixins);
+            TransientNodeData.createNodeData(nsSystem, Constants.EXO_NAMESPACES, Constants.NT_UNSTRUCTURED, mixins,
+               dataManager.getLastOrderNumber(nsSystem) + 1);
 
          AccessControlList acl = exoNamespaces.getACL();
 
@@ -382,7 +385,8 @@ public class NamespaceDataPersister implements ComponentPersister
       else
       {
          exoNamespaces =
-            TransientNodeData.createNodeData(nsSystem, Constants.EXO_NAMESPACES, Constants.NT_UNSTRUCTURED);
+            TransientNodeData.createNodeData(nsSystem, Constants.EXO_NAMESPACES, Constants.NT_UNSTRUCTURED,
+               dataManager.getLastOrderNumber(nsSystem) + 1);
 
          TransientPropertyData primaryType =
             TransientPropertyData.createPropertyData(exoNamespaces, Constants.JCR_PRIMARYTYPE, PropertyType.NAME,

@@ -144,10 +144,10 @@ public class DocumentViewImporter extends BaseXmlImporter
       }
       else
       {
+         int orderNum = Math.max(getNextChildOrderNum(getParent()), dataConsumer.getLastOrderNumber(getParent()) + 1);
          TransientNodeData nodeData =
             TransientNodeData.createNodeData(getParent(), Constants.JCR_XMLTEXT, Constants.NT_UNSTRUCTURED,
-               getNodeIndex(getParent(), Constants.JCR_XMLTEXT, null), getNextChildOrderNum(getParent()));
-
+               getNodeIndex(getParent(), Constants.JCR_XMLTEXT, null), orderNum);
          changesLog.add(new ItemState(nodeData, ItemState.ADDED, true, getAncestorToSave()));
          if (log.isDebugEnabled())
          {
@@ -491,8 +491,8 @@ public class DocumentViewImporter extends BaseXmlImporter
       }
       nodeData.setPrimaryTypeName(locationFactory.parseJCRName(propertiesMap.get(Constants.JCR_PRIMARYTYPE))
          .getInternalName());
-
-      nodeData.setOrderNumber(getNextChildOrderNum(getParent()));
+      int orderNum = Math.max(getNextChildOrderNum(getParent()), dataConsumer.getLastOrderNumber(getParent()) + 1);
+      nodeData.setOrderNumber(orderNum);
       nodeData.setMixinTypeNames(mixinNodeTypes.toArray(new InternalQName[mixinNodeTypes.size()]));
       nodeData.setMixReferenceable(nodeTypeDataManager.isNodeType(Constants.MIX_REFERENCEABLE, allNodeTypes));
       nodeData.setIdentifier(IdGenerator.generate());

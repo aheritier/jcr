@@ -20,6 +20,8 @@ import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.jcr.core.nodetype.NodeTypeDataManager;
 import org.exoplatform.services.jcr.dataflow.ItemState;
 import org.exoplatform.services.jcr.dataflow.PlainChangesLog;
+import org.exoplatform.services.jcr.dataflow.PlainChangesLogImpl;
+import org.exoplatform.services.jcr.dataflow.ChangesLogFacade;
 import org.exoplatform.services.jcr.datamodel.NodeData;
 import org.exoplatform.services.jcr.datamodel.QPath;
 import org.exoplatform.services.jcr.impl.Constants;
@@ -239,19 +241,22 @@ public class QueryImpl extends AbstractQueryImpl
       // validate as on parent child node
       parent.validateChildNode(qpath.getName(), Constants.NT_QUERY);
 
+      NodeData parentData = (NodeData)parent.getData();
       NodeData queryData =
-         TransientNodeData.createNodeData((NodeData)parent.getData(), qpath.getName(), Constants.NT_QUERY);
+         TransientNodeData.createNodeData(parentData, qpath.getName(), Constants.NT_QUERY, session
+            .getTransientNodesManager().getLastOrderNumber(parentData) + 1);
       NodeImpl queryNode =
          (NodeImpl)session.getTransientNodesManager().update(ItemState.createAddedState(queryData), false);
 
       NodeTypeDataManager ntmanager = session.getWorkspace().getNodeTypesHolder();
 
       ItemAutocreator itemAutocreator =
-         new ItemAutocreator(ntmanager, session.getValueFactory(), session.getTransientNodesManager(), false);
+         new ItemAutocreator(ntmanager, session.getValueFactory(), session.getTransientNodesManager(), false,
+            new ChangesLogFacade(new PlainChangesLogImpl()));
 
       PlainChangesLog changes =
-         itemAutocreator.makeAutoCreatedItems((NodeData)queryNode.getData(), Constants.NT_QUERY, session
-            .getTransientNodesManager(), session.getUserID());
+         itemAutocreator.makeAutoCreatedItems((NodeData)queryNode.getData(), Constants.NT_QUERY,
+            session.getTransientNodesManager(), session.getUserID());
 
       for (ItemState autoCreatedState : changes.getAllStates())
       {

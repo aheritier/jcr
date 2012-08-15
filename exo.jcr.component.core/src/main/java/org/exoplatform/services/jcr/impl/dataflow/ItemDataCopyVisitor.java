@@ -19,6 +19,7 @@
 package org.exoplatform.services.jcr.impl.dataflow;
 
 import org.exoplatform.services.jcr.core.nodetype.NodeTypeDataManager;
+import org.exoplatform.services.jcr.dataflow.ChangesLogFacade;
 import org.exoplatform.services.jcr.dataflow.ItemState;
 import org.exoplatform.services.jcr.dataflow.PlainChangesLogImpl;
 import org.exoplatform.services.jcr.datamodel.InternalQName;
@@ -84,7 +85,9 @@ public class ItemDataCopyVisitor extends DefaultItemDataCopyVisitor
          {
             // need create a new VH
             PlainChangesLogImpl changes = new PlainChangesLogImpl();
-            VersionHistoryDataHelper vh = new VersionHistoryDataHelper(curParent(), changes, dataManager, ntManager);
+            VersionHistoryDataHelper vh =
+               new VersionHistoryDataHelper(curParent(), changes, new ChangesLogFacade(itemAddStates),
+                  dataManager, ntManager);
             itemAddStates.addAll(changes.getAllStates());
          }
 

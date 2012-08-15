@@ -23,6 +23,7 @@ import org.exoplatform.services.jcr.core.nodetype.NodeDefinitionData;
 import org.exoplatform.services.jcr.core.nodetype.NodeTypeData;
 import org.exoplatform.services.jcr.core.nodetype.NodeTypeDataManager;
 import org.exoplatform.services.jcr.core.nodetype.PropertyDefinitionData;
+import org.exoplatform.services.jcr.dataflow.ChangesLogFacade;
 import org.exoplatform.services.jcr.dataflow.ItemDataConsumer;
 import org.exoplatform.services.jcr.dataflow.ItemState;
 import org.exoplatform.services.jcr.dataflow.PlainChangesLog;
@@ -71,21 +72,25 @@ public class ItemAutocreator
 
    private final boolean avoidCheckExistedChildItems;
 
+   private final ChangesLogFacade changesLogFacade;
+
    /**
     * @param nodeTypeDataManager
     */
    public ItemAutocreator(NodeTypeDataManager nodeTypeDataManager, ValueFactory valueFactory,
-      ItemDataConsumer dataConsumer, boolean avoidCheckExistedChildItems)
+      ItemDataConsumer dataConsumer, boolean avoidCheckExistedChildItems, ChangesLogFacade changesLogFacade)
    {
       super();
       this.nodeTypeDataManager = nodeTypeDataManager;
       this.valueFactory = valueFactory;
       this.dataConsumer = dataConsumer;
       this.avoidCheckExistedChildItems = avoidCheckExistedChildItems;
+      this.changesLogFacade = changesLogFacade;
    }
 
    public PlainChangesLog makeAutoCreatedItems(final NodeData parent, final InternalQName nodeTypeName,
-      final ItemDataConsumer targetDataManager, final String owner) throws RepositoryException
+      final ItemDataConsumer targetDataManager, final String owner)
+      throws RepositoryException
    {
       return makeAutoCreatedItems(parent, nodeTypeName, targetDataManager, owner, false);
    }
@@ -137,10 +142,10 @@ public class ItemAutocreator
                   ndef.getName(), 0), ItemType.NODE, false);
             if (pdata == null && !addedNodes.contains(ndef.getName()) || pdata != null && !pdata.isNode())
             {
-
                final TransientNodeData childNodeData =
                   TransientNodeData.createNodeData(parent, ndef.getName(), ndef.getDefaultPrimaryType(),
-                     IdGenerator.generate());
+                     IdGenerator.generate(), dataConsumer.getLastOrderNumber(parent) + 1);
+               //TODO
 
                if (!addedAutoCreatedNodes)
                {
@@ -223,8 +228,8 @@ public class ItemAutocreator
     */
    public PlainChangesLog makeMixVesionableChanges(final NodeData parent) throws RepositoryException
    {
-      PlainChangesLog changesLog = new PlainChangesLogImpl();
-      new VersionHistoryDataHelper(parent, changesLog, dataConsumer, nodeTypeDataManager);
+      PlainChangesLogImpl changesLog = new PlainChangesLogImpl();
+      new VersionHistoryDataHelper(parent, changesLog, changesLogFacade, dataConsumer, nodeTypeDataManager);
       return changesLog;
    }
 

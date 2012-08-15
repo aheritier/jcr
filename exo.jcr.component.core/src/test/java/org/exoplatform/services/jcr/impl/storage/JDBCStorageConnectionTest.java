@@ -85,7 +85,7 @@ public class JDBCStorageConnectionTest extends JcrImplBaseTest
 
       TransientNodeData troot =
          TransientNodeData.createNodeData(root, InternalQName.parse("[]jdbcStorageConnectionTest"),
-            Constants.NT_UNSTRUCTURED);
+            Constants.NT_UNSTRUCTURED, session.getTransientNodesManager().getLastOrderNumber(root) + 1);
 
       TransientPropertyData pt =
          TransientPropertyData.createPropertyData(troot, Constants.JCR_PRIMARYTYPE, PropertyType.NAME, false,

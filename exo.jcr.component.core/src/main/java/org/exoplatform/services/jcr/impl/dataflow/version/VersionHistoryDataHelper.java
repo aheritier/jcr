@@ -19,9 +19,10 @@
 package org.exoplatform.services.jcr.impl.dataflow.version;
 
 import org.exoplatform.services.jcr.core.nodetype.NodeTypeDataManager;
+import org.exoplatform.services.jcr.dataflow.ChangesLogFacade;
 import org.exoplatform.services.jcr.dataflow.ItemDataConsumer;
 import org.exoplatform.services.jcr.dataflow.ItemState;
-import org.exoplatform.services.jcr.dataflow.PlainChangesLog;
+import org.exoplatform.services.jcr.dataflow.PlainChangesLogImpl;
 import org.exoplatform.services.jcr.datamodel.Identifier;
 import org.exoplatform.services.jcr.datamodel.InternalQName;
 import org.exoplatform.services.jcr.datamodel.ItemType;
@@ -94,11 +95,12 @@ public class VersionHistoryDataHelper extends TransientNodeData
     * @param ntManager
     * @throws RepositoryException
     */
-   public VersionHistoryDataHelper(NodeData versionable, PlainChangesLog changes, ItemDataConsumer dataManager,
-      NodeTypeDataManager ntManager) throws RepositoryException
+   public VersionHistoryDataHelper(NodeData versionable, PlainChangesLogImpl changes,
+      ChangesLogFacade changesLogFacade, ItemDataConsumer dataManager, NodeTypeDataManager ntManager)
+      throws RepositoryException
    {
-
-      this(versionable, changes, dataManager, ntManager, IdGenerator.generate(), IdGenerator.generate());
+      this(versionable, changes, changesLogFacade, dataManager, ntManager, IdGenerator.generate(), IdGenerator
+         .generate());
    }
 
    /**
@@ -111,16 +113,16 @@ public class VersionHistoryDataHelper extends TransientNodeData
     * @param ntManager
     * @throws RepositoryException
     */
-   public VersionHistoryDataHelper(NodeData versionable, PlainChangesLog changes, ItemDataConsumer dataManager,
-      NodeTypeDataManager ntManager, String versionHistoryIdentifier, String baseVersionIdentifier)
-      throws RepositoryException
+   public VersionHistoryDataHelper(NodeData versionable, PlainChangesLogImpl changes,
+      ChangesLogFacade changesLogFacade, ItemDataConsumer dataManager, NodeTypeDataManager ntManager,
+      String versionHistoryIdentifier, String baseVersionIdentifier) throws RepositoryException
    {
       this.dataManager = dataManager;
       this.ntManager = ntManager;
       this.versionHistoryIdentifier = versionHistoryIdentifier;
       this.baseVersionIdentifier = baseVersionIdentifier;
 
-      TransientNodeData vh = init(versionable, changes);
+      TransientNodeData vh = init(versionable, changes, changesLogFacade);
 
       // TransientItemData
       this.parentIdentifier = vh.getParentIdentifier();
@@ -225,9 +227,9 @@ public class VersionHistoryDataHelper extends TransientNodeData
       return null;
    }
 
-   private TransientNodeData init(NodeData versionable, PlainChangesLog changes) throws RepositoryException
+   private TransientNodeData init(NodeData versionable, PlainChangesLogImpl changes, ChangesLogFacade changesLogFacade)
+      throws RepositoryException
    {
-
       // ----- VERSION STORAGE nodes -----
       // ----- version history -----
       NodeData rootItem = (NodeData)dataManager.getItemData(Constants.SYSTEM_UUID);
@@ -236,19 +238,25 @@ public class VersionHistoryDataHelper extends TransientNodeData
          (NodeData)dataManager.getItemData(rootItem, new QPathEntry(Constants.JCR_VERSIONSTORAGE, 1), ItemType.NODE); // Constants
       // Make versionStorageData transient
       if (!(versionStorageData instanceof TransientNodeData))
+      {
          versionStorageData =
-            new TransientNodeData(versionStorageData.getQPath(), versionStorageData.getIdentifier(), versionStorageData
-               .getPersistedVersion(), versionStorageData.getPrimaryTypeName(), versionStorageData.getMixinTypeNames(),
-               versionStorageData.getOrderNumber(), versionStorageData.getParentIdentifier(), versionStorageData
-                  .getACL());
+            new TransientNodeData(versionStorageData.getQPath(), versionStorageData.getIdentifier(),
+               versionStorageData.getPersistedVersion(), versionStorageData.getPrimaryTypeName(),
+               versionStorageData.getMixinTypeNames(), versionStorageData.getOrderNumber(),
+               versionStorageData.getParentIdentifier(), versionStorageData.getACL());
+      }
+
       // .
       // JCR_VERSION_STORAGE_PATH
-
       InternalQName vhName = new InternalQName(null, versionHistoryIdentifier);
 
+      int orderNum =
+         Math.max(changesLogFacade.getLastChildOrderNumber(versionStorageData.getIdentifier()), Math.max(
+            changes.getLastChildOrderNumber(versionStorageData.getIdentifier()),
+            dataManager.getLastOrderNumber(versionStorageData))) + 1;
       TransientNodeData versionHistory =
          TransientNodeData.createNodeData(versionStorageData, vhName, Constants.NT_VERSIONHISTORY,
-            versionHistoryIdentifier);
+            versionHistoryIdentifier, orderNum);
 
       // jcr:primaryType
       TransientPropertyData vhPrimaryType =
@@ -269,7 +277,7 @@ public class VersionHistoryDataHelper extends TransientNodeData
 
       // ------ jcr:versionLabels ------
       NodeData vhVersionLabels =
-         TransientNodeData.createNodeData(versionHistory, Constants.JCR_VERSIONLABELS, Constants.NT_VERSIONLABELS);
+         TransientNodeData.createNodeData(versionHistory, Constants.JCR_VERSIONLABELS, Constants.NT_VERSIONLABELS, 0);
 
       // jcr:primaryType
       TransientPropertyData vlPrimaryType =
@@ -279,7 +287,7 @@ public class VersionHistoryDataHelper extends TransientNodeData
       // ------ jcr:rootVersion ------
       NodeData rootVersionData =
          TransientNodeData.createNodeData(versionHistory, Constants.JCR_ROOTVERSION, Constants.NT_VERSION,
-            baseVersionIdentifier);
+            baseVersionIdentifier, 1);
 
       // jcr:primaryType
       TransientPropertyData rvPrimaryType =

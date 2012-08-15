@@ -96,7 +96,8 @@ public class TestItemDataChangesLog extends JcrImplBaseTest
 
       TransientNodeData d1 =
          TransientNodeData.createNodeData(data1, new InternalQName(null, "testSessionOperations"), new InternalQName(
-            Constants.NS_NT_URI, "unstructured"), "d1");
+            Constants.NS_NT_URI, "unstructured"), "d1",
+            session.getTransientNodesManager().getLastOrderNumber(data1) + 1);
 
       // test remove
       cLog.add(ItemState.createAddedState(data1));

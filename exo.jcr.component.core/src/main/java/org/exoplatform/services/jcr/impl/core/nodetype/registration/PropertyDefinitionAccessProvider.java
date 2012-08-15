@@ -22,7 +22,7 @@ import org.exoplatform.services.jcr.core.ExtendedPropertyType;
 import org.exoplatform.services.jcr.core.nodetype.PropertyDefinitionData;
 import org.exoplatform.services.jcr.dataflow.DataManager;
 import org.exoplatform.services.jcr.dataflow.ItemState;
-import org.exoplatform.services.jcr.dataflow.PlainChangesLog;
+import org.exoplatform.services.jcr.dataflow.PlainChangesLogImpl;
 import org.exoplatform.services.jcr.datamodel.InternalQName;
 import org.exoplatform.services.jcr.datamodel.NodeData;
 import org.exoplatform.services.jcr.impl.Constants;
@@ -72,12 +72,14 @@ public class PropertyDefinitionAccessProvider extends AbstractItemDefinitionAcce
       return null;
    }
 
-   public void write(PlainChangesLog changesLog, NodeData declaredNodeType,
-      PropertyDefinitionData propertyDefinitionData, int index)
+   public void write(PlainChangesLogImpl changesLog, NodeData declaredNodeType,
+      PropertyDefinitionData propertyDefinitionData, int index) throws RepositoryException
    {
       NodeData propertyDefinition =
          TransientNodeData.createNodeData(declaredNodeType, Constants.JCR_PROPERTYDEFINITION,
-            Constants.NT_PROPERTYDEFINITION, index);
+            Constants.NT_PROPERTYDEFINITION, index,
+            changesLog.getLastChildOrderNumber(declaredNodeType.getIdentifier()) + 1);
+
       changesLog.add(ItemState.createAddedState(propertyDefinition));
 
       writeItemDefinition(changesLog, propertyDefinition, propertyDefinitionData);

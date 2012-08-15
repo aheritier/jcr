@@ -63,7 +63,7 @@ public class TestLinkedWorkspaceStorageCacheMetrics extends JcrImplBaseTest
       {
          NodeData child =
             TransientNodeData.createNodeData(parent, InternalQName.parse("[]node " + i + " :1"),
-               Constants.NT_UNSTRUCTURED);
+               Constants.NT_UNSTRUCTURED, i);
          cache.put(child);
          childs.add(child);
       }
@@ -105,7 +105,7 @@ public class TestLinkedWorkspaceStorageCacheMetrics extends JcrImplBaseTest
       {
          NodeData child =
             TransientNodeData.createNodeData(parent, InternalQName.parse("[]node " + i + " :1"),
-               Constants.NT_UNSTRUCTURED);
+               Constants.NT_UNSTRUCTURED, i);
          cache.put(child);
          childs.add(child);
       }
@@ -143,17 +143,17 @@ public class TestLinkedWorkspaceStorageCacheMetrics extends JcrImplBaseTest
       {
          NodeData child =
             TransientNodeData.createNodeData(parent, InternalQName.parse("[]node " + i + " :1"),
-               Constants.NT_UNSTRUCTURED);
+               Constants.NT_UNSTRUCTURED, i);
          cache.put(child);
       }
 
       assertEquals("Wrong size", 200 * 2, cache.getSize());
-
+      int lastOrderNum = 200;
       for (int i = 0; i < 100; i++)
       {
          NodeData child =
             TransientNodeData.createNodeData(parent, InternalQName.parse("[]node A " + i + " :1"),
-               Constants.NT_UNSTRUCTURED);
+               Constants.NT_UNSTRUCTURED, lastOrderNum + i);
          cache.put(child);
       }
 

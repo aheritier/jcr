@@ -125,7 +125,7 @@ public class JCRNodeTypeDataPersister implements NodeTypeDataPersister
          return;
       }
 
-      PlainChangesLog changesLog = new PlainChangesLogImpl();
+      PlainChangesLogImpl changesLog = new PlainChangesLogImpl();
       definitionAccessProvider.write(changesLog, nodeTypeStorageRoot, nodeType);
       dataManager.save(new TransactionChangesLog(changesLog));
    }
@@ -163,7 +163,7 @@ public class JCRNodeTypeDataPersister implements NodeTypeDataPersister
 
          jcrNodetypes =
             TransientNodeData.createNodeData(nsSystem, Constants.JCR_NODETYPES, Constants.NT_UNSTRUCTURED, mixins,
-               Constants.NODETYPESROOT_UUID);
+               Constants.NODETYPESROOT_UUID, dataManager.getLastOrderNumber(nsSystem) + 1);
 
          AccessControlList acl = jcrNodetypes.getACL();
 
@@ -205,7 +205,7 @@ public class JCRNodeTypeDataPersister implements NodeTypeDataPersister
       {
          jcrNodetypes =
             TransientNodeData.createNodeData(nsSystem, Constants.JCR_NODETYPES, Constants.NT_UNSTRUCTURED,
-               Constants.NODETYPESROOT_UUID);
+               Constants.NODETYPESROOT_UUID, dataManager.getLastOrderNumber(nsSystem) + 1);
 
          TransientPropertyData primaryType =
             TransientPropertyData.createPropertyData(jcrNodetypes, Constants.JCR_PRIMARYTYPE, PropertyType.NAME, false,
@@ -259,7 +259,7 @@ public class JCRNodeTypeDataPersister implements NodeTypeDataPersister
          return;
       }
 
-      PlainChangesLog changesLog = new PlainChangesLogImpl();
+      PlainChangesLogImpl changesLog = new PlainChangesLogImpl();
       for (NodeTypeData nodeTypeData : nodeTypes)
       {
          definitionAccessProvider.write(changesLog, nodeTypeStorageRoot, nodeTypeData);
@@ -383,8 +383,7 @@ public class JCRNodeTypeDataPersister implements NodeTypeDataPersister
     */
    public void update(List<NodeTypeData> nodeTypes, UpdateNodeTypeObserver observer) throws RepositoryException
    {
-
-      PlainChangesLog changesLog = new PlainChangesLogImpl();
+      PlainChangesLogImpl changesLog = new PlainChangesLogImpl();
 
       for (NodeTypeData nodeTypeData : nodeTypes)
       {

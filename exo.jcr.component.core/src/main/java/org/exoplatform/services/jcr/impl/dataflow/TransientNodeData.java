@@ -127,16 +127,17 @@ public class TransientNodeData extends TransientItemData implements Comparable, 
     * @param primaryTypeName InternalQName
     * @param mixinTypeNames InteralnQName[]
     * @param identifier String
+    * @param orderNumber int
     * @return TransientNodeData
     */
    public static TransientNodeData createNodeData(NodeData parent, InternalQName name, InternalQName primaryTypeName,
-      InternalQName[] mixinTypeNames, String identifier)
+      InternalQName[] mixinTypeNames, String identifier, int orderNumber)
    {
       TransientNodeData nodeData = null;
       QPath path = QPath.makeChildPath(parent.getQPath(), name);
       nodeData =
-         new TransientNodeData(path, identifier, -1, primaryTypeName, mixinTypeNames, 0, parent.getIdentifier(), parent
-            .getACL());
+         new TransientNodeData(path, identifier, -1, primaryTypeName, mixinTypeNames, orderNumber,
+            parent.getIdentifier(), parent.getACL());
       return nodeData;
    }
 
@@ -146,15 +147,17 @@ public class TransientNodeData extends TransientItemData implements Comparable, 
     * @param parent NodeData
     * @param name  InternalQName
     * @param primaryTypeName InternalQName
+    * @param orderNumber int
     * @return TransientNodeData
     */
-   public static TransientNodeData createNodeData(NodeData parent, InternalQName name, InternalQName primaryTypeName)
+   public static TransientNodeData createNodeData(NodeData parent, InternalQName name, InternalQName primaryTypeName,
+      int orderNumber)
    {
       TransientNodeData nodeData = null;
       QPath path = QPath.makeChildPath(parent.getQPath(), name);
       nodeData =
-         new TransientNodeData(path, IdGenerator.generate(), -1, primaryTypeName, new InternalQName[0], 0, parent
-            .getIdentifier(), parent.getACL());
+         new TransientNodeData(path, IdGenerator.generate(), -1, primaryTypeName, new InternalQName[0], orderNumber,
+            parent.getIdentifier(), parent.getACL());
       return nodeData;
    }
 
@@ -165,36 +168,17 @@ public class TransientNodeData extends TransientItemData implements Comparable, 
     * @param name  InternalQName
     * @param primaryTypeName InternalQName
     * @param mixinTypesName InternalQName[]
+    * @param orderNumber int
     * @return
     */
    public static TransientNodeData createNodeData(NodeData parent, InternalQName name, InternalQName primaryTypeName,
-      InternalQName[] mixinTypesName)
+      InternalQName[] mixinTypesName, int orderNumber)
    {
       TransientNodeData nodeData = null;
       QPath path = QPath.makeChildPath(parent.getQPath(), name);
       nodeData =
-         new TransientNodeData(path, IdGenerator.generate(), -1, primaryTypeName, mixinTypesName, 0, parent
-            .getIdentifier(), parent.getACL());
-      return nodeData;
-   }
-
-   /**
-    * Factory method
-    * 
-    * @param parent NodeData
-    * @param name  InternalQName
-    * @param primaryTypeName InternalQName
-    * @param index int
-    * @return
-    */
-   public static TransientNodeData createNodeData(NodeData parent, InternalQName name, InternalQName primaryTypeName,
-      int index)
-   {
-      TransientNodeData nodeData = null;
-      QPath path = QPath.makeChildPath(parent.getQPath(), name, index);
-      nodeData =
-         new TransientNodeData(path, IdGenerator.generate(), -1, primaryTypeName, new InternalQName[0], 0, parent
-            .getIdentifier(), parent.getACL());
+         new TransientNodeData(path, IdGenerator.generate(), -1, primaryTypeName, mixinTypesName, orderNumber,
+            parent.getIdentifier(), parent.getACL());
       return nodeData;
    }
 
@@ -226,16 +210,17 @@ public class TransientNodeData extends TransientItemData implements Comparable, 
     * @param name  InternalQName
     * @param primaryTypeName InternalQName
     * @param identifier String
+    * @param orderNumber int
     * @return
     */
    public static TransientNodeData createNodeData(NodeData parent, InternalQName name, InternalQName primaryTypeName,
-      String identifier)
+      String identifier, int orderNumber)
    {
       TransientNodeData nodeData = null;
       QPath path = QPath.makeChildPath(parent.getQPath(), name);
       nodeData =
-         new TransientNodeData(path, identifier, -1, primaryTypeName, new InternalQName[0], 0, parent.getIdentifier(),
-            parent.getACL());
+         new TransientNodeData(path, identifier, -1, primaryTypeName, new InternalQName[0], orderNumber,
+            parent.getIdentifier(), parent.getACL());
       return nodeData;
    }
 
@@ -247,16 +232,17 @@ public class TransientNodeData extends TransientItemData implements Comparable, 
     * @param primaryTypeName InternalQName
     * @param identifier String
     * @param acl AccessControlList
+    * @param orderNumber int
     * @return
     */
    public static TransientNodeData createNodeData(NodeData parent, InternalQName name, InternalQName primaryTypeName,
-      String identifier, AccessControlList acl)
+      String identifier, AccessControlList acl, int orderNumber)
    {
       TransientNodeData nodeData = null;
       QPath path = QPath.makeChildPath(parent.getQPath(), name);
       nodeData =
-         new TransientNodeData(path, identifier, -1, primaryTypeName, new InternalQName[0], 0, parent.getIdentifier(),
-            acl);
+         new TransientNodeData(path, identifier, -1, primaryTypeName, new InternalQName[0], orderNumber,
+            parent.getIdentifier(), acl);
       return nodeData;
    }
 
@@ -269,15 +255,17 @@ public class TransientNodeData extends TransientItemData implements Comparable, 
     * @param mixinTypesName InternalQName[]
     * @param identifier String
     * @param acl AccessControlList
+    * @param orderNumber int
     * @return
     */
    public static TransientNodeData createNodeData(NodeData parent, InternalQName name, InternalQName primaryTypeName,
-      InternalQName[] mixinTypesName, String identifier, AccessControlList acl)
+      InternalQName[] mixinTypesName, String identifier, AccessControlList acl, int orderNumber)
    {
       TransientNodeData nodeData = null;
       QPath path = QPath.makeChildPath(parent.getQPath(), name);
       nodeData =
-         new TransientNodeData(path, identifier, -1, primaryTypeName, mixinTypesName, 0, parent.getIdentifier(), acl);
+         new TransientNodeData(path, identifier, -1, primaryTypeName, mixinTypesName, orderNumber,
+            parent.getIdentifier(), acl);
       return nodeData;
    }
 

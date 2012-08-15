@@ -42,6 +42,7 @@ import org.exoplatform.services.jcr.datamodel.NodeData;
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 /**
@@ -299,4 +300,33 @@ public class TestNodeOrder extends JcrImplBaseTest
       session.save();
    }
 
+   public void testOrderInDifferentSessions() throws Exception
+   {
+      Node rootNode = root.addNode("testNode");
+      session.save();
+
+      Session session2 = repository.login(credentials, rootNode.getSession().getWorkspace().getName());
+      Node rootNode2 = (Node)session2.getItem(rootNode.getPath());
+
+      rootNode.addNode("node1");
+      rootNode2.addNode("node2");
+
+      try
+      {
+         session.save();
+      }
+      catch (RepositoryException e)
+      {
+         fail("exception should not thrown");
+      }
+
+      try
+      {
+         session2.save();
+      }
+      catch (RepositoryException e)
+      {
+         fail("exception should not thrown");
+      }
+   }
 }

@@ -577,7 +577,7 @@ public class VersionHistoryImpl extends VersionStorageDescendantNode implements 
       // nt:version
       NodeData versionData =
          TransientNodeData.createNodeData(nodeData(), new InternalQName(null, nextVersionName()), Constants.NT_VERSION,
-            mixins, uuid, acl);
+            mixins, uuid, acl, dataManager.getLastOrderNumber(nodeData()) + 1);
       changesLog.add(ItemState.createAddedState(versionData));
 
       // jcr:primaryType
@@ -663,7 +663,8 @@ public class VersionHistoryImpl extends VersionStorageDescendantNode implements 
 
       // jcr:frozenNode
       NodeData frozenData =
-         TransientNodeData.createNodeData(versionData, Constants.JCR_FROZENNODE, Constants.NT_FROZENNODE);
+         TransientNodeData.createNodeData(versionData, Constants.JCR_FROZENNODE, Constants.NT_FROZENNODE,
+            dataManager.getLastOrderNumber(versionData) + 1);
       changesLog.add(ItemState.createAddedState(frozenData));
 
       propData =
@@ -691,7 +692,6 @@ public class VersionHistoryImpl extends VersionStorageDescendantNode implements 
       }
 
       versionableNodeData.accept(visitor);
-
    }
 
    public boolean isVersionBelongToThis(Version version) throws RepositoryException

@@ -111,12 +111,13 @@ public class TestSystemViewCollision extends AbstractCollisionTest
 
    public void testUuidBehaviourIMPORT_UUID_CREATE_NEW() throws Exception
    {
-
       PlainChangesLog changesLog = new PlainChangesLogImpl();
 
+      NodeData rootData = (NodeData)((NodeImpl)root).getData();
       TransientNodeData testNodeData =
-         TransientNodeData.createNodeData((NodeData)((NodeImpl)root).getData(), new InternalQName("",
-            "nodeWithPredefUuid"), Constants.NT_UNSTRUCTURED, "id_uuidNode1");
+         TransientNodeData.createNodeData(rootData, new InternalQName("", "nodeWithPredefUuid"),
+            Constants.NT_UNSTRUCTURED, "id_uuidNode1",
+            session.getTransientNodesManager().getLastOrderNumber(rootData) + 1);
       changesLog.add(ItemState.createAddedState(testNodeData));
       TransientPropertyData primaryType =
          TransientPropertyData.createPropertyData(testNodeData, Constants.JCR_PRIMARYTYPE, PropertyType.NAME, false,

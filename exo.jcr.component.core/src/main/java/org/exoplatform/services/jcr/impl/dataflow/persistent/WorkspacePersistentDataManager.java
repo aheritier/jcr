@@ -44,6 +44,7 @@ import org.exoplatform.services.jcr.impl.dataflow.AbstractValueData;
 import org.exoplatform.services.jcr.impl.dataflow.TransientValueData;
 import org.exoplatform.services.jcr.impl.dataflow.session.TransactionableResourceManager;
 import org.exoplatform.services.jcr.impl.dataflow.session.TransactionableResourceManagerListener;
+import org.exoplatform.services.jcr.impl.storage.JCRInvalidOrderNumException;
 import org.exoplatform.services.jcr.impl.storage.SystemDataContainerHolder;
 import org.exoplatform.services.jcr.storage.WorkspaceDataContainer;
 import org.exoplatform.services.jcr.storage.WorkspaceStorageConnection;
@@ -651,11 +652,41 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
 
                if (itemState.isAdded())
                {
-                  doAdd(data, conn, addedNodes);
+                  try
+                  {
+                     doAdd(data, conn, addedNodes);
+                  }
+                  catch (JCRInvalidOrderNumException e)
+                  {
+                     NodeData parentData = (NodeData)conn.getItemData(data.getParentIdentifier());
+                     if (parentData != null)
+                     {
+                        doAdd(createNodeData(data, conn, parentData), conn, addedNodes);
+                     }
+                     else
+                     {
+                        throw e;
+                     }
+                  }
                }
                else if (itemState.isUpdated())
                {
-                  doUpdate(data, conn);
+                  try
+                  {
+                     doUpdate(data, conn);
+                  }
+                  catch (JCRInvalidOrderNumException e)
+                  {
+                     NodeData parentData = (NodeData)conn.getItemData(data.getParentIdentifier());
+                     if (parentData != null)
+                     {
+                        doUpdate(createNodeData(data, conn, parentData), conn);
+                     }
+                     else
+                     {
+                        throw e;
+                     }
+                  }
                }
                else if (itemState.isDeleted())
                {
@@ -675,6 +706,25 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
          }
 
          return newLog;
+      }
+
+      /**
+       * @param data
+       * @param conn
+       * @param parentData
+       * @return
+       * @throws RepositoryException
+       */
+      private PersistedNodeData createNodeData(ItemData data, WorkspaceStorageConnection conn, NodeData parentData)
+         throws RepositoryException
+      {
+         NodeData oldData = (NodeData)data;
+         PersistedNodeData newNodeData =
+            new PersistedNodeData(oldData.getIdentifier(), oldData.getQPath(),
+               oldData.getParentIdentifier(), oldData.getPersistedVersion(),
+               conn.getLastOrderNumber(parentData) + 1, oldData.getPrimaryTypeName(),
+               oldData.getMixinTypeNames(), oldData.getACL());
+         return newNodeData;
       }
    }
 

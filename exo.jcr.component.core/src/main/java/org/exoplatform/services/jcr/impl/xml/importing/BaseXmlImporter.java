@@ -21,6 +21,7 @@ package org.exoplatform.services.jcr.impl.xml.importing;
 import org.exoplatform.services.jcr.access.AccessManager;
 import org.exoplatform.services.jcr.core.nodetype.NodeDefinitionData;
 import org.exoplatform.services.jcr.core.nodetype.NodeTypeDataManager;
+import org.exoplatform.services.jcr.dataflow.ChangesLogFacade;
 import org.exoplatform.services.jcr.dataflow.ItemDataConsumer;
 import org.exoplatform.services.jcr.dataflow.ItemState;
 import org.exoplatform.services.jcr.dataflow.PlainChangesLog;
@@ -345,9 +346,8 @@ public abstract class BaseXmlImporter implements ContentImporter
 
       PlainChangesLogImpl changes = new PlainChangesLogImpl();
       // using VH helper as for one new VH, all changes in changes log
-      new VersionHistoryDataHelper(nodeData, changes, dataConsumer, nodeTypeDataManager,
-         nodeData.getVersionHistoryIdentifier(), nodeData.getBaseVersionIdentifier());
-
+      new VersionHistoryDataHelper(nodeData, changes, new ChangesLogFacade(changesLog), dataConsumer,
+         nodeTypeDataManager, nodeData.getVersionHistoryIdentifier(), nodeData.getBaseVersionIdentifier());
       if (!newVersionHistory)
       {
          for (ItemState state : changes.getAllStates())
@@ -429,6 +429,10 @@ public abstract class BaseXmlImporter implements ContentImporter
          int nodeIndex = getNodeIndex(currentParentData, currentNodeInfo.getQName(), currentNodeInfo.getIdentifier());
          newPath = QPath.makeChildPath(currentParentData.getQPath(), currentNodeInfo.getQName(), nodeIndex);
          currentNodeInfo.setQPath(newPath);
+
+         int orderNum =
+            repository.getSystemSession().getTransientNodesManager().getLastOrderNumber(currentParentData) + 1;
+         currentNodeInfo.setOrderNumber(orderNum);
       }
 
       String oldIdentifer = currentNodeInfo.getIdentifier();
@@ -441,7 +445,6 @@ public abstract class BaseXmlImporter implements ContentImporter
             ((ImportItemData)data).setParentIdentifer(identifier);
             if (reloadSNS)
                ((ImportItemData)data).setQPath(QPath.makeChildPath(newPath, data.getQPath().getName()));
-
          }
 
       }

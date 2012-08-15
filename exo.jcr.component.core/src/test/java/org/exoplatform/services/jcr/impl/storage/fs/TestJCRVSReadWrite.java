@@ -200,7 +200,8 @@ public class TestJCRVSReadWrite extends JcrImplBaseTest
             SessionChangesLog changes = new SessionChangesLog(((NodeImpl)testRoot).getSession());
 
             TransientNodeData ntfile =
-               TransientNodeData.createNodeData(rootData, InternalQName.parse("[]blob" + i), Constants.NT_FILE);
+               TransientNodeData.createNodeData(rootData, InternalQName.parse("[]blob" + i), Constants.NT_FILE, session
+                  .getTransientNodesManager().getLastOrderNumber(rootData) + 1);
             changes.add(ItemState.createAddedState(ntfile));
 
             TransientPropertyData ntfilePrimaryType =
@@ -209,7 +210,8 @@ public class TestJCRVSReadWrite extends JcrImplBaseTest
             changes.add(ItemState.createAddedState(ntfilePrimaryType));
 
             TransientNodeData res =
-               TransientNodeData.createNodeData(ntfile, Constants.JCR_CONTENT, Constants.NT_UNSTRUCTURED);
+               TransientNodeData.createNodeData(ntfile, Constants.JCR_CONTENT, Constants.NT_UNSTRUCTURED,
+                  changes.getLastChildOrderNumber(ntfile.getIdentifier()) + 1);
             changes.add(ItemState.createAddedState(res));
 
             TransientPropertyData resPrimaryType =

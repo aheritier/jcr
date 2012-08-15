@@ -66,9 +66,13 @@ public class TestSessionDataManager extends JcrImplBaseTest
       modificationManager = session.getTransientNodesManager();
       NodeImpl root = (NodeImpl)session.getRootNode();
 
+      int orderNum =
+         Math.max(modificationManager.getLastOrderNumber(root.nodeData()), modificationManager.getChangesLog()
+            .getLastChildOrderNumber(root.nodeData().getIdentifier())) + 1;
       TransientNodeData data =
          TransientNodeData.createNodeData(root.nodeData(), new InternalQName(null, TEST_ROOT), new InternalQName(
-            Constants.NS_NT_URI, "unstructured"));
+            Constants.NS_NT_URI, "unstructured"), orderNum);
+
       testRoot = (NodeImpl)modificationManager.update(ItemState.createAddedState(data), false);
       TransientPropertyData prop =
          TransientPropertyData.createPropertyData(data, new InternalQName(Constants.NS_JCR_URI, "primaryType"),
@@ -92,9 +96,12 @@ public class TestSessionDataManager extends JcrImplBaseTest
 
       NodeData parent = (NodeData)testRoot.getData();
 
+      int orderNum =
+         Math.max(modificationManager.getLastOrderNumber(parent), modificationManager.getChangesLog()
+            .getLastChildOrderNumber(parent.getIdentifier())) + 1;
       TransientNodeData data =
          TransientNodeData.createNodeData(parent, new InternalQName(null, "testItemReferencePool1"), new InternalQName(
-            Constants.NS_NT_URI, "unstructured"));
+            Constants.NS_NT_URI, "unstructured"), orderNum);
 
       String uuid = data.getIdentifier();
 
@@ -105,11 +112,10 @@ public class TestSessionDataManager extends JcrImplBaseTest
       assertTrue(pool.contains(uuid));
       // return the same value
       assertEquals(node1, pool.get(node1.getData()));
-
       // add one more node
       data =
          TransientNodeData.createNodeData(parent, new InternalQName(null, "testItemReferencePool2"), new InternalQName(
-            Constants.NS_NT_URI, "unstructured"));
+            Constants.NS_NT_URI, "unstructured"), orderNum + 1);
 
       NodeImpl node2 = (NodeImpl)modificationManager.update(ItemState.createAddedState(data), true);
 
@@ -218,10 +224,12 @@ public class TestSessionDataManager extends JcrImplBaseTest
       assertEquals(0, changesLog.getAllStates().size());
 
       NodeData parent = (NodeData)testRoot.getData();
-
+      int orderNum =
+         Math.max(modificationManager.getLastOrderNumber(parent), modificationManager.getChangesLog()
+            .getLastChildOrderNumber(parent.getIdentifier())) + 1;
       TransientNodeData data =
          TransientNodeData.createNodeData(parent, new InternalQName(null, "testSessionChangesLogN1"),
-            new InternalQName(Constants.NS_NT_URI, "unstructured"));
+            new InternalQName(Constants.NS_NT_URI, "unstructured"), orderNum);
 
       NodeImpl node1 = (NodeImpl)modificationManager.update(ItemState.createAddedState(data), true);
       assertEquals(1, changesLog.getAllStates().size());
@@ -261,16 +269,17 @@ public class TestSessionDataManager extends JcrImplBaseTest
 
    public void testReadMethods() throws Exception
    {
-
       NodeData parent = (NodeData)testRoot.getData();
+      int orderNum =
+         Math.max(modificationManager.getLastOrderNumber(parent), modificationManager.getChangesLog()
+            .getLastChildOrderNumber(parent.getIdentifier())) + 1;
       TransientNodeData someData =
          TransientNodeData.createNodeData(parent, new InternalQName(null, "testReadMethodsN1"), new InternalQName(
-            Constants.NS_NT_URI, "unstructured"));
-
+            Constants.NS_NT_URI, "unstructured"), orderNum);
       // add one more node
       TransientNodeData data =
          TransientNodeData.createNodeData(parent, new InternalQName(null, "testReadMethodsN2"), new InternalQName(
-            Constants.NS_NT_URI, "unstructured"));
+            Constants.NS_NT_URI, "unstructured"), orderNum + 1);
       NodeImpl node2 = (NodeImpl)modificationManager.update(ItemState.createAddedState(data), true);
 
       // ... add property
@@ -306,11 +315,13 @@ public class TestSessionDataManager extends JcrImplBaseTest
 
    public void testCommitAndRefresh() throws Exception
    {
-
       NodeData parent = (NodeData)testRoot.getData();
+      int orderNum =
+         Math.max(modificationManager.getLastOrderNumber(parent), modificationManager.getChangesLog()
+            .getLastChildOrderNumber(parent.getIdentifier())) + 1;
       TransientNodeData data1 =
          TransientNodeData.createNodeData(parent, new InternalQName(null, "testCommitAndRefreshN1"), new InternalQName(
-            Constants.NS_NT_URI, "unstructured"));
+            Constants.NS_NT_URI, "unstructured"), orderNum);
       NodeImpl node1 = (NodeImpl)modificationManager.update(ItemState.createAddedState(data1), true);
       TransientPropertyData nt =
          TransientPropertyData.createPropertyData(data1, new InternalQName(Constants.NS_JCR_URI, "primaryType"),

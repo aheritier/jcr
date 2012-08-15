@@ -68,9 +68,10 @@ public class TestRollbackBigFiles extends JcrImplBaseTest
       JCRPath nodePath = session.getLocationFactory().parseRelPath("testNode");
       InternalQName primaryType = session.getLocationFactory().parseJCRName("nt:unstructured").getInternalName();
 
+      int lastOrderNum = session.getTransientNodesManager().getLastOrderNumber(parent) + 1;
       String id = IdGenerator.generate();
       TransientNodeData newNode =
-         new TransientNodeData(nodePath.getInternalPath(), id, -1, primaryType, new InternalQName[0], 0,
+         new TransientNodeData(nodePath.getInternalPath(), id, -1, primaryType, new InternalQName[0], lastOrderNum,
             ((NodeImpl)root).getInternalIdentifier(), ((NodeImpl)root).getACL());
 
       ItemState state = new ItemState(newNode, ItemState.ADDED, false, parent.getQPath());
@@ -92,7 +93,7 @@ public class TestRollbackBigFiles extends JcrImplBaseTest
       // crate broken node;
       nodePath = session.getLocationFactory().parseRelPath("testNodeBroken");
       newNode =
-         new TransientNodeData(nodePath.getInternalPath(), id, -1, primaryType, new InternalQName[0], 0,
+         new TransientNodeData(nodePath.getInternalPath(), id, -1, primaryType, new InternalQName[0], ++lastOrderNum,
             ((NodeImpl)root).getInternalIdentifier(), ((NodeImpl)root).getACL());
 
       list.add(new ItemState(newNode, ItemState.ADDED, false, parent.getQPath()));

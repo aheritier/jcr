@@ -193,6 +193,7 @@ public class SessionChangesLogTest extends JcrImplBaseTest
       NodeImpl testRoot = (NodeImpl)root.getNode("sessionLinkRoot");
 
       NodeData parent = (NodeData)testRoot.getData();
+      int lastOrderNum = session.getTransientNodesManager().getLastOrderNumber(parent);
 
       for (int i = 1; i <= 1000; i++)
       {
@@ -202,7 +203,8 @@ public class SessionChangesLogTest extends JcrImplBaseTest
 
          InternalQName qname = InternalQName.parse("[]node" + i);
 
-         TransientNodeData ndata = TransientNodeData.createNodeData(parent, qname, Constants.NT_UNSTRUCTURED);
+         TransientNodeData ndata =
+            TransientNodeData.createNodeData(parent, qname, Constants.NT_UNSTRUCTURED, lastOrderNum + i);
 
          // jcr:primaryType
          TransientPropertyData ndpt =

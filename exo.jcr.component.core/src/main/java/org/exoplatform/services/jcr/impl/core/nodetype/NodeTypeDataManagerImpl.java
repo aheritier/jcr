@@ -32,6 +32,7 @@ import org.exoplatform.services.jcr.dataflow.ItemDataConsumer;
 import org.exoplatform.services.jcr.dataflow.ItemState;
 import org.exoplatform.services.jcr.dataflow.PlainChangesLog;
 import org.exoplatform.services.jcr.dataflow.PlainChangesLogImpl;
+import org.exoplatform.services.jcr.dataflow.ChangesLogFacade;
 import org.exoplatform.services.jcr.datamodel.InternalQName;
 import org.exoplatform.services.jcr.datamodel.ItemData;
 import org.exoplatform.services.jcr.datamodel.ItemType;
@@ -716,7 +717,7 @@ public class NodeTypeDataManagerImpl implements NodeTypeDataManager, Startable
    public PlainChangesLog setPrimaryType(final NodeData nodeData, final InternalQName nodeTypeName)
       throws RepositoryException
    {
-      final PlainChangesLog changesLog = new PlainChangesLogImpl();
+      final PlainChangesLogImpl changesLog = new PlainChangesLogImpl();
 
       final NodeTypeData ancestorDefinition = getNodeType(nodeData.getPrimaryTypeName());
       final NodeTypeData recipientDefinition = getNodeType(nodeTypeName);
@@ -749,10 +750,10 @@ public class NodeTypeDataManagerImpl implements NodeTypeDataManager, Startable
       final boolean recipientsMixVersionable = isNodeType(Constants.MIX_VERSIONABLE, recipienAllNodeTypeNames);
       final boolean ancestorIsMixVersionable = isNodeType(Constants.MIX_VERSIONABLE, ancestorAllNodeTypeNames);
 
-      ItemAutocreator itemAutocreator = new ItemAutocreator(this, valueFactory, dataManager, false);
+      ItemAutocreator itemAutocreator =
+         new ItemAutocreator(this, valueFactory, dataManager, false, new ChangesLogFacade(changesLog));
       if (recipientsMixVersionable && !ancestorIsMixVersionable)
       {
-
          changesLog.addAll(itemAutocreator.makeMixVesionableChanges(nodeData).getAllStates());
       }
       else if (!recipientsMixVersionable && ancestorIsMixVersionable)
@@ -951,13 +952,14 @@ public class NodeTypeDataManagerImpl implements NodeTypeDataManager, Startable
       {
          throw new RepositoryException(recipientDefinition.getName() + ": can't reregister built-in node type.");
       }
-      final PlainChangesLog changesLog = new PlainChangesLogImpl();
+      final PlainChangesLogImpl changesLog = new PlainChangesLogImpl();
       final VolatileNodeTypeDataManager volatileNodeTypeDataManager = new VolatileNodeTypeDataManager(this);
 
       volatileNodeTypeDataManager.registerVolatileNodeTypes(volatileNodeTypes);
 
       ItemAutocreator itemAutocreator =
-         new ItemAutocreator(volatileNodeTypeDataManager, valueFactory, dataManager, false);
+         new ItemAutocreator(volatileNodeTypeDataManager, valueFactory, dataManager, false, new ChangesLogFacade(
+            changesLog));
 
       final Set<String> nodes = this.indexSearcherHolder.getNodesByNodeType(recipientDefinition.getName());
       // check add mix:versionable super

@@ -32,6 +32,7 @@ import org.exoplatform.services.jcr.core.nodetype.PropertyDefinitionDatas;
 import org.exoplatform.services.jcr.dataflow.ItemState;
 import org.exoplatform.services.jcr.dataflow.PlainChangesLog;
 import org.exoplatform.services.jcr.dataflow.PlainChangesLogImpl;
+import org.exoplatform.services.jcr.dataflow.ChangesLogFacade;
 import org.exoplatform.services.jcr.datamodel.Identifier;
 import org.exoplatform.services.jcr.datamodel.IllegalPathException;
 import org.exoplatform.services.jcr.datamodel.InternalQName;
@@ -663,7 +664,9 @@ public class NodeImpl extends ItemImpl implements ExtendedNode
       dataManager.update(state, false);
 
       // Should register jcr:mixinTypes and autocreated items if node is not added
-      ItemAutocreator itemAutocreator = new ItemAutocreator(ntmanager, valueFactory, dataManager, false);
+      ItemAutocreator itemAutocreator =
+         new ItemAutocreator(ntmanager, valueFactory, dataManager, false, new ChangesLogFacade(
+            dataManager.getChangesLog()));
 
       PlainChangesLog changes =
          itemAutocreator.makeAutoCreatedItems(nodeData(), type.getName(), dataManager, session.getUserID());
@@ -2649,32 +2652,32 @@ public class NodeImpl extends ItemImpl implements ExtendedNode
             + "i.e. is not a childs of same parent node");
       }
 
-      List<NodeData> siblings = new ArrayList<NodeData>(dataManager.getChildNodesData(nodeData()));
-      if (siblings.size() < 2)
+      List<NodeData> childNodes = new ArrayList<NodeData>(dataManager.getChildNodesData(nodeData()));
+      if (childNodes.size() < 2)
       {
-         throw new UnsupportedRepositoryOperationException("Nothing to order Count of child nodes " + siblings.size());
+         throw new UnsupportedRepositoryOperationException("Nothing to order Count of child nodes " + childNodes.size());
       }
 
-      Collections.sort(siblings, new NodeDataOrderComparator());
+      Collections.sort(childNodes, new NodeDataOrderComparator());
 
       // calculating source and destination position
-      int srcInd = -1, destInd = -1;
-      for (int i = 0; i < siblings.size(); i++)
+      int srcOrderNum = -1, destOderNum = -1;
+      for (int i = 0; i < childNodes.size(); i++)
       {
-         NodeData nodeData = siblings.get(i);
-         if (srcInd == -1)
+         NodeData nodeData = childNodes.get(i);
+         if (srcOrderNum == -1)
          {
             if (nodeData.getQPath().getName().equals(srcPath.getName()))
             {
-               srcInd = i;
+               srcOrderNum = i;
             }
          }
-         if (destPath != null && destInd == -1)
+         if (destPath != null && destOderNum == -1)
          {
             if (nodeData.getQPath().getName().equals(destPath.getName()))
             {
-               destInd = i;
-               if (srcInd != -1)
+               destOderNum = i;
+               if (srcOrderNum != -1)
                {
                   break;
                }
@@ -2682,7 +2685,7 @@ public class NodeImpl extends ItemImpl implements ExtendedNode
          }
          else
          {
-            if (srcInd != -1)
+            if (srcOrderNum != -1)
             {
                break;
             }
@@ -2690,9 +2693,9 @@ public class NodeImpl extends ItemImpl implements ExtendedNode
       }
 
       // check if resulting order would be different to current order
-      if (destInd == -1)
+      if (destOderNum == -1)
       {
-         if (srcInd == siblings.size() - 1)
+         if (srcOrderNum == childNodes.size() - 1)
          {
             // no change, we're done
             return;
@@ -2700,7 +2703,7 @@ public class NodeImpl extends ItemImpl implements ExtendedNode
       }
       else
       {
-         if ((destInd - srcInd) == 1)
+         if ((destOderNum - srcOrderNum) == 1)
          {
             // no change, we're done
             return;
@@ -2708,29 +2711,29 @@ public class NodeImpl extends ItemImpl implements ExtendedNode
       }
 
       // reorder list
-      if (destInd == -1)
+      if (destOderNum == -1)
       {
-         siblings.add(siblings.remove(srcInd));
+         childNodes.add(childNodes.remove(srcOrderNum));
       }
       else
       {
-         if (srcInd < destInd)
+         if (srcOrderNum < destOderNum)
          {
-            siblings.add(destInd, siblings.get(srcInd));
-            siblings.remove(srcInd);
+            childNodes.add(destOderNum, childNodes.get(srcOrderNum));
+            childNodes.remove(srcOrderNum);
          }
          else
          {
-            siblings.add(destInd, siblings.remove(srcInd));
+            childNodes.add(destOderNum, childNodes.remove(srcOrderNum));
          }
       }
 
       int sameNameIndex = 0;
       List<ItemState> changes = new ArrayList<ItemState>();
       ItemState deleteState = null;
-      for (int j = 0; j < siblings.size(); j++)
+      for (int j = 0; j < childNodes.size(); j++)
       {
-         NodeData sdata = siblings.get(j);
+         NodeData sdata = childNodes.get(j);
 
          // calculating same name index
          if (sdata.getQPath().getName().getAsString().equals(srcPath.getName().getAsString()))
@@ -2754,16 +2757,16 @@ public class NodeImpl extends ItemImpl implements ExtendedNode
                QPath.makeChildPath(newData.getQPath().makeParentPath(), newData.getQPath().getName(), sameNameIndex);
 
             newData =
-               new TransientNodeData(siblingPath, newData.getIdentifier(), newData.getPersistedVersion(), newData
-                  .getPrimaryTypeName(), newData.getMixinTypeNames(), j, newData.getParentIdentifier(), newData
-                  .getACL());
+               new TransientNodeData(siblingPath, newData.getIdentifier(), newData.getPersistedVersion(),
+                  newData.getPrimaryTypeName(), newData.getMixinTypeNames(), j, newData.getParentIdentifier(),
+                  newData.getACL());
          }
          else
          {
             newData =
                new TransientNodeData(newData.getQPath(), newData.getIdentifier(), newData.getPersistedVersion(),
-                  newData.getPrimaryTypeName(), newData.getMixinTypeNames(), j, newData.getParentIdentifier(), newData
-                     .getACL());
+                  newData.getPrimaryTypeName(), newData.getMixinTypeNames(), j, newData.getParentIdentifier(),
+                  newData.getACL());
          }
 
          /*
@@ -3063,7 +3066,9 @@ public class NodeImpl extends ItemImpl implements ExtendedNode
       NodeImpl node = (NodeImpl)dataManager.update(state, true);
 
       NodeTypeDataManager ntmanager = session.getWorkspace().getNodeTypesHolder();
-      ItemAutocreator itemAutocreator = new ItemAutocreator(ntmanager, valueFactory, dataManager, true);
+      ItemAutocreator itemAutocreator =
+         new ItemAutocreator(ntmanager, valueFactory, dataManager, true, new ChangesLogFacade(
+            dataManager.getChangesLog()));
 
       PlainChangesLog changes =
          itemAutocreator.makeAutoCreatedItems(node.nodeData(), primaryTypeName, dataManager, session.getUserID());

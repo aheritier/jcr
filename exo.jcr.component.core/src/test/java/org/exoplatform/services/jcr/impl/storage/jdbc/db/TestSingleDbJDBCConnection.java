@@ -53,7 +53,7 @@ public class TestSingleDbJDBCConnection extends JDBCConnectionTestBase
       try
       {
          Statement st = getJNDIConnection().createStatement();
-         st.executeUpdate("insert into JCR_SITEM values" + "('A','A','test1',20090525,'ws3',2,1233,1,10,5)");
+         st.executeUpdate("insert into JCR_SITEM values" + "('A','A','test1',20090525,'ws3',2,1233,2,10,5)");
          st.executeUpdate("insert into JCR_SITEM values" + "('B','A','test2',20090625,'ws3',1,1233,5,10,4)");
          st.executeUpdate("insert into JCR_SITEM values" + "('C','B','test3',20090825,'ws3',1,1233,5,10,2)");
          st.executeUpdate("insert into JCR_SITEM values" + "('ws3B','A','test4',2009525,'ws3',2,1233,1,10,5)");

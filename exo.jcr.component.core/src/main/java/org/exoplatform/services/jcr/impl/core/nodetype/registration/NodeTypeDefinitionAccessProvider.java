@@ -24,7 +24,7 @@ import org.exoplatform.services.jcr.core.nodetype.NodeTypeDataImpl;
 import org.exoplatform.services.jcr.core.nodetype.PropertyDefinitionData;
 import org.exoplatform.services.jcr.dataflow.DataManager;
 import org.exoplatform.services.jcr.dataflow.ItemState;
-import org.exoplatform.services.jcr.dataflow.PlainChangesLog;
+import org.exoplatform.services.jcr.dataflow.PlainChangesLogImpl;
 import org.exoplatform.services.jcr.datamodel.InternalQName;
 import org.exoplatform.services.jcr.datamodel.NodeData;
 import org.exoplatform.services.jcr.impl.Constants;
@@ -178,12 +178,15 @@ public class NodeTypeDefinitionAccessProvider extends AbstractItemDefinitionAcce
     * @throws RepositoryException 
     * @throws NodeTypeReadException 
     */
-   public void write(PlainChangesLog changesLog, NodeData nodeTypeStorageRoot, NodeTypeData nodeType)
+   public void write(PlainChangesLogImpl changesLog, NodeData nodeTypeStorageRoot, NodeTypeData nodeType)
       throws NodeTypeReadException, RepositoryException
    {
+      int orderNumber =
+         Math.max(dataManager.getLastOrderNumber(nodeTypeStorageRoot),
+            changesLog.getLastChildOrderNumber(nodeTypeStorageRoot.getIdentifier())) + 1;
 
       NodeData ntNode =
-         TransientNodeData.createNodeData(nodeTypeStorageRoot, nodeType.getName(), Constants.NT_NODETYPE);
+         TransientNodeData.createNodeData(nodeTypeStorageRoot, nodeType.getName(), Constants.NT_NODETYPE, orderNumber);
 
       changesLog.add(ItemState.createAddedState(ntNode));
 

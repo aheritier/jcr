@@ -231,10 +231,13 @@ public class BaseVersionImplTest extends JcrImplBaseTest
 
       NodeData wsRoot = (NodeData)((NodeImpl)session.getRootNode()).getData();
       testRoot =
-         TransientNodeData.createNodeData(wsRoot, new InternalQName(null, TEST_ROOT), Constants.NT_UNSTRUCTURED);
+         TransientNodeData.createNodeData(wsRoot, new InternalQName(null, TEST_ROOT), Constants.NT_UNSTRUCTURED,
+            session.getTransientNodesManager().getLastOrderNumber(wsRoot) + 1);
       initChanges.add(ItemState.createAddedState(testRoot));
 
-      frozenRoot = TransientNodeData.createNodeData(testRoot, frozenRootName, Constants.NT_UNSTRUCTURED);
+      frozenRoot =
+         TransientNodeData.createNodeData(testRoot, frozenRootName, Constants.NT_UNSTRUCTURED,
+            initChanges.getLastChildOrderNumber(testRoot.getIdentifier()) + 1);
       initChanges.add(ItemState.createAddedState(frozenRoot));
 
       // session.getTransientNodesManager().getTransactManager().save(changesLog);
@@ -244,9 +247,7 @@ public class BaseVersionImplTest extends JcrImplBaseTest
 
       visitor =
          new FrozenNodeInitializer(frozenRoot, session.getTransientNodesManager(), session.getWorkspace()
-            .getNodeTypesHolder(),
-
-         changesLog, session.getValueFactory());
+            .getNodeTypesHolder(), changesLog, session.getValueFactory());
    }
 
    public void tearDown() throws Exception
@@ -271,7 +272,8 @@ public class BaseVersionImplTest extends JcrImplBaseTest
 
       // target node
       versionable =
-         TransientNodeData.createNodeData(testRoot, nodeName1, Constants.NT_UNSTRUCTURED, mixVersionable, nodeUuid1);
+         TransientNodeData.createNodeData(testRoot, nodeName1, Constants.NT_UNSTRUCTURED, mixVersionable, nodeUuid1,
+            session.getTransientNodesManager().getLastOrderNumber(testRoot) + 1);
       versionableLog.add(ItemState.createAddedState(versionable));
 
       PropertyData vChildProperty1 =
@@ -281,7 +283,9 @@ public class BaseVersionImplTest extends JcrImplBaseTest
          TransientPropertyData.createPropertyData(versionable, propertyName2, 0, false, longDataSinglevalued);
       versionableLog.add(ItemState.createAddedState(vChildProperty2));
 
-      NodeData vChildNode1 = TransientNodeData.createNodeData(versionable, nodeName2, Constants.NT_UNSTRUCTURED);
+      NodeData vChildNode1 =
+         TransientNodeData.createNodeData(versionable, nodeName2, Constants.NT_UNSTRUCTURED,
+            versionableLog.getLastChildOrderNumber(versionable.getIdentifier()) + 1);
       versionableLog.add(ItemState.createAddedState(vChildNode1));
       PropertyData vChildNode1_property1 =
          TransientPropertyData.createPropertyData(vChildNode1, propertyName3, 0, false, stringDataSinglevalued);
@@ -290,13 +294,17 @@ public class BaseVersionImplTest extends JcrImplBaseTest
          TransientPropertyData.createPropertyData(vChildNode1, propertyName4, 0, false, binaryDataSinglevalued);
       versionableLog.add(ItemState.createAddedState(vChildNode1_property2));
 
-      NodeData vChildNode1_node3 = TransientNodeData.createNodeData(vChildNode1, nodeName3, Constants.NT_UNSTRUCTURED);
+      NodeData vChildNode1_node3 =
+         TransientNodeData.createNodeData(vChildNode1, nodeName3, Constants.NT_UNSTRUCTURED,
+            versionableLog.getLastChildOrderNumber(vChildNode1.getIdentifier()) + 1);
       versionableLog.add(ItemState.createAddedState(vChildNode1_node3));
       PropertyData vChildNode1_node3_property1 =
          TransientPropertyData.createPropertyData(vChildNode1_node3, propertyName5, 0, false, stringDataSinglevalued);
       versionableLog.add(ItemState.createAddedState(vChildNode1_node3_property1));
 
-      NodeData vChildNode1_node4 = TransientNodeData.createNodeData(vChildNode1, nodeName4, Constants.NT_UNSTRUCTURED);
+      NodeData vChildNode1_node4 =
+         TransientNodeData.createNodeData(vChildNode1, nodeName4, Constants.NT_UNSTRUCTURED,
+            versionableLog.getLastChildOrderNumber(vChildNode1.getIdentifier()) + 1);
       versionableLog.add(ItemState.createAddedState(vChildNode1_node4));
       PropertyData vChildNode1_node4_property1 =
          TransientPropertyData.createPropertyData(vChildNode1_node4, propertyName1, 0, false, stringDataMultivalued);
@@ -306,14 +314,16 @@ public class BaseVersionImplTest extends JcrImplBaseTest
       {
          case (TESTCASE_ONPARENT_ABORT) : {
             NodeData vChildNode1_node5 =
-               TransientNodeData.createNodeData(vChildNode1, nodeName5, NT_TEST_ONPARENT_ABORT);
+               TransientNodeData.createNodeData(vChildNode1, nodeName5, NT_TEST_ONPARENT_ABORT,
+                  versionableLog.getLastChildOrderNumber(vChildNode1.getIdentifier()) + 1);
             versionableLog.add(ItemState.createAddedState(vChildNode1_node5));
             PropertyData vChildNode1_node5_propertyAborted =
                TransientPropertyData.createPropertyData(vChildNode1_node5, PROPERTY_ABORTED, 0, false,
                   stringDataSinglevalued);
             versionableLog.add(ItemState.createAddedState(vChildNode1_node5_propertyAborted));
             NodeData vChildNode1_node5_nodeAborted =
-               TransientNodeData.createNodeData(vChildNode1_node5, NODE_ABOORTED, Constants.NT_UNSTRUCTURED);
+               TransientNodeData.createNodeData(vChildNode1_node5, NODE_ABOORTED, Constants.NT_UNSTRUCTURED,
+                  versionableLog.getLastChildOrderNumber(vChildNode1_node5.getIdentifier()) + 1);
             versionableLog.add(ItemState.createAddedState(vChildNode1_node5_nodeAborted));
             PropertyData vChildNode1_node5_node1_property2 =
                TransientPropertyData.createPropertyData(vChildNode1_node5_nodeAborted, propertyName2, 0, false,
@@ -324,14 +334,16 @@ public class BaseVersionImplTest extends JcrImplBaseTest
 
          case (TESTCASE_ONPARENT_IGNORE) : {
             NodeData vChildNode1_node5 =
-               TransientNodeData.createNodeData(vChildNode1, nodeName5, NT_TEST_ONPARENT_IGNORE);
+               TransientNodeData.createNodeData(vChildNode1, nodeName5, NT_TEST_ONPARENT_IGNORE,
+                  versionableLog.getLastChildOrderNumber(vChildNode1.getIdentifier()) + 1);
             versionableLog.add(ItemState.createAddedState(vChildNode1_node5));
             PropertyData vChildNode1_node5_propertyIgnored =
                TransientPropertyData.createPropertyData(vChildNode1_node5, PROPERTY_IGNORED, 0, false,
                   stringDataSinglevalued);
             versionableLog.add(ItemState.createAddedState(vChildNode1_node5_propertyIgnored));
             NodeData vChildNode1_node5_nodeIgnored =
-               TransientNodeData.createNodeData(vChildNode1_node5, NODE_IGNORED, Constants.NT_UNSTRUCTURED);
+               TransientNodeData.createNodeData(vChildNode1_node5, NODE_IGNORED, Constants.NT_UNSTRUCTURED,
+                  versionableLog.getLastChildOrderNumber(vChildNode1_node5.getIdentifier()) + 1);
             versionableLog.add(ItemState.createAddedState(vChildNode1_node5_nodeIgnored));
             PropertyData vChildNode1_node5_node1_property2 =
                TransientPropertyData.createPropertyData(vChildNode1_node5_nodeIgnored, propertyName2, 0, false,
@@ -342,7 +354,8 @@ public class BaseVersionImplTest extends JcrImplBaseTest
 
          case (TESTCASE_ONPARENT_VERSION) : {
             NodeData vChildNode1_node5 =
-               TransientNodeData.createNodeData(vChildNode1, nodeName5, NT_TEST_ONPARENT_VERSION);
+               TransientNodeData.createNodeData(vChildNode1, nodeName5, NT_TEST_ONPARENT_VERSION,
+                  versionableLog.getLastChildOrderNumber(vChildNode1.getIdentifier()) + 1);
             versionableLog.add(ItemState.createAddedState(vChildNode1_node5));
             PropertyData vChildNode1_node5_propertyVersioned =
                TransientPropertyData.createPropertyData(vChildNode1_node5, PROPERTY_VERSIONED, 0, false,
@@ -355,7 +368,7 @@ public class BaseVersionImplTest extends JcrImplBaseTest
 
             NodeData vChildNode1_node5_nodeVersioned =
                TransientNodeData.createNodeData(vChildNode1_node5, NODE_VERSIONED, Constants.NT_UNSTRUCTURED,
-                  mixVersionable);
+                  mixVersionable, session.getTransientNodesManager().getLastOrderNumber(vChildNode1_node5) + 1);
             versionableLog.add(ItemState.createAddedState(vChildNode1_node5_nodeVersioned));
             PropertyData vChildNode1_node5_node1_property2 =
                TransientPropertyData.createPropertyData(vChildNode1_node5_nodeVersioned, propertyName2, 0, false,

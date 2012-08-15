@@ -131,10 +131,11 @@ public class WorkspaceContentImporter extends SystemViewImporter
          }
          else
          {
+            int orderNum = Math.max(getNextChildOrderNum(parentData), dataConsumer.getLastOrderNumber(parentData) + 1);
             currentNodeName = locationFactory.parseJCRName(svName).getInternalName();
             nodeIndex = getNodeIndex(parentData, currentNodeName, null);
             newNodeData = new ImportNodeData(parentData, currentNodeName, nodeIndex);
-            newNodeData.setOrderNumber(getNextChildOrderNum(parentData));
+            newNodeData.setOrderNumber(orderNum);
             newNodeData.setIdentifier(svId);
             changesLog.add(new ItemState(newNodeData, ItemState.ADDED, true, parentData.getQPath()));
          }

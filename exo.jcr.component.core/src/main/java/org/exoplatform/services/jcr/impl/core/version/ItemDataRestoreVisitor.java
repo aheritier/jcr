@@ -271,12 +271,6 @@ public class ItemDataRestoreVisitor extends AbstractItemDataCopyVisitor
 
    };
 
-   ItemDataRestoreVisitor(NodeData context, InternalQName restoringName, NodeData history, SessionImpl userSession,
-      boolean removeExisting) throws RepositoryException
-   {
-      this(context, restoringName, history, userSession, removeExisting, null);
-   }
-
    ItemDataRestoreVisitor(NodeData context, InternalQName destName, NodeData history, SessionImpl userSession,
       boolean removeExisting, SessionChangesLog delegatedChanges) throws RepositoryException
    {

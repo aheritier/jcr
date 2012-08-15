@@ -21,7 +21,7 @@ package org.exoplatform.services.jcr.impl.core.nodetype.registration;
 import org.exoplatform.services.jcr.core.nodetype.NodeDefinitionData;
 import org.exoplatform.services.jcr.dataflow.DataManager;
 import org.exoplatform.services.jcr.dataflow.ItemState;
-import org.exoplatform.services.jcr.dataflow.PlainChangesLog;
+import org.exoplatform.services.jcr.dataflow.PlainChangesLogImpl;
 import org.exoplatform.services.jcr.datamodel.InternalQName;
 import org.exoplatform.services.jcr.datamodel.NodeData;
 import org.exoplatform.services.jcr.impl.Constants;
@@ -81,12 +81,11 @@ public class NodeDefinitionAccessProvider extends AbstractItemDefinitionAccessPr
          requiredPrimaryTypes, defaultPrimaryType, allowsSameNameSiblings);
    }
 
-   public void write(PlainChangesLog changesLog, NodeData ntNode, NodeDefinitionData nodeDefinitionData, int index)
+   public void write(PlainChangesLogImpl changesLog, NodeData ntNode, NodeDefinitionData nodeDefinitionData, int index)
    {
-
       NodeData childNodesDefinition =
          TransientNodeData.createNodeData(ntNode, Constants.JCR_CHILDNODEDEFINITION, Constants.NT_CHILDNODEDEFINITION,
-            index);
+            index, changesLog.getLastChildOrderNumber(ntNode.getIdentifier()) + 1);
 
       changesLog.add(ItemState.createAddedState(childNodesDefinition));
 

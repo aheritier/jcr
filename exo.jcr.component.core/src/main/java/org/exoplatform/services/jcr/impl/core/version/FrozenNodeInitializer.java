@@ -298,7 +298,7 @@ public class FrozenNodeInitializer extends AbstractItemDataCopyVisitor
          {
             frozenNode =
                TransientNodeData.createNodeData(currentNode(), qname, Constants.NT_VERSIONEDCHILD, node.getQPath()
-                  .getIndex());
+                  .getIndex(), dataManager.getLastOrderNumber(currentNode()) + 1);
 
             PropertyData pt =
                TransientPropertyData.createPropertyData(frozenNode, Constants.JCR_PRIMARYTYPE, PropertyType.NAME,
@@ -358,7 +358,7 @@ public class FrozenNodeInitializer extends AbstractItemDataCopyVisitor
          // of the current C in the workspace is preserved.
          frozenNode =
             TransientNodeData.createNodeData(currentNode(), qname, node.getPrimaryTypeName(), node.getQPath()
-               .getIndex());
+               .getIndex(), dataManager.getLastOrderNumber(currentNode()) + 1);
          contextNodes.push(null);
          changesLog.add(ItemState.createAddedState(frozenNode));
       }
@@ -372,7 +372,7 @@ public class FrozenNodeInitializer extends AbstractItemDataCopyVisitor
          // type
          frozenNode =
             TransientNodeData.createNodeData(currentNode(), qname, node.getPrimaryTypeName(), node.getQPath()
-               .getIndex());
+               .getIndex(), dataManager.getLastOrderNumber(currentNode()) + 1);
          contextNodes.push(null);
          changesLog.add(ItemState.createAddedState(frozenNode));
       }

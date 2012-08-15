@@ -222,7 +222,10 @@ public class SystemViewImporter extends BaseXmlImporter
          ImportNodeData newNodeData = new ImportNodeData(parentData, currentNodeName, nodeIndex);
          // preset of ACL
          newNodeData.setACL(parentData.getACL());
-         newNodeData.setOrderNumber(getNextChildOrderNum(parentData));
+         int orderNum =
+            Math.max(getNextChildOrderNum(parentData), repository.getSystemSession().getTransientNodesManager()
+               .getLastOrderNumber(parentData) + 1);
+         newNodeData.setOrderNumber(orderNum);
          newNodeData.setIdentifier(IdGenerator.generate());
 
          changesLog.add(new ItemState(newNodeData, ItemState.ADDED, true, getAncestorToSave()));
@@ -264,9 +267,7 @@ public class SystemViewImporter extends BaseXmlImporter
       else if (Constants.SV_VALUE_NAME.equals(elementName))
       {
          // sv:value element
-
          propertyInfo.getValues().add(new DecodedValue());
-
       }
       else if (Constants.SV_VERSION_HISTORY_NAME.equals(elementName))
       {
