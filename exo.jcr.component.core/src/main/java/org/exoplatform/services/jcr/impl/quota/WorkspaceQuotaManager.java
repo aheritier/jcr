@@ -23,6 +23,8 @@ import org.exoplatform.commons.utils.SecurityHelper;
 import org.exoplatform.management.annotations.Managed;
 import org.exoplatform.management.annotations.ManagedDescription;
 import org.exoplatform.management.annotations.ManagedName;
+import org.exoplatform.management.jmx.annotations.NameTemplate;
+import org.exoplatform.management.jmx.annotations.Property;
 import org.exoplatform.services.jcr.config.RepositoryEntry;
 import org.exoplatform.services.jcr.config.WorkspaceEntry;
 import org.exoplatform.services.jcr.core.WorkspaceContainerFacade;
@@ -76,9 +78,19 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 
 /**
+ * {@link WorkspaceQuotaManager} listens all changes performed in
+ * {@link WorkspacePersistentDataManager} and checks if some of them might
+ * exceed defined quota limit. If so, exception might be thrown or warning printing.
+ * Then all changes are devided into two part. First one should be applies synchronously
+ * and are passed to coordinator to apply instantly. Another one are put into changes
+ * log and to be passed to coordinator by timer. It is managed by 
+ * {@link RepositoryQuotaManager} 
+ * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: WorkspaceQuotaManager.java 34360 2009-07-22 23:58:59Z tolusha $
  */
+@Managed
+@NameTemplate(@Property(key = "service", value = "WorkspaceQuotaManager"))
 public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
 {
 
@@ -186,12 +198,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    protected RemoteCommand calculateNodeDataSizeTask;
 
    /**
-    * Remote command is obligated to calculate workspace data size directly asking
-    * {@link WorkspacePersistentDataManager}.
-    */
-   protected RemoteCommand calculateWorkspaceDataSizeTask;
-
-   /**
     * BaseWorkspaceQuotaManager constructor.
     */
    public WorkspaceQuotaManager(RepositoryImpl repository, RepositoryQuotaManager rQuotaManager,
@@ -224,8 +230,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    @Managed
    @ManagedDescription("Returns a node data size")
-   public long getNodeDataSize(@ManagedDescription("The absolute path to node") @ManagedName("nodePath") String nodePath)
-      throws QuotaManagerException
+   public long getNodeDataSize(@ManagedName("nodePath") String nodePath) throws QuotaManagerException
    {
       if (nodePath.equals(JCRPath.ROOT_PATH))
       {
@@ -240,7 +245,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    @Managed
    @ManagedDescription("Returns a node quota limit")
-   public long getNodeQuota(String nodePath) throws QuotaManagerException
+   public long getNodeQuota(@ManagedName("nodePath") String nodePath) throws QuotaManagerException
    {
       if (nodePath.equals(JCRPath.ROOT_PATH))
       {
@@ -255,7 +260,8 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    @Managed
    @ManagedDescription("Sets a node quota limit")
-   public void setNodeQuota(String nodePath, long quotaLimit, boolean asyncUpdate) throws QuotaManagerException
+   public void setNodeQuota(@ManagedName("nodePath") String nodePath, @ManagedName("quotaLimit") long quotaLimit,
+      @ManagedName("asyncUpdate") boolean asyncUpdate) throws QuotaManagerException
    {
       if (nodePath.equals(JCRPath.ROOT_PATH))
       {
@@ -283,7 +289,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          {
             quotaPersister.getNodeDataSize(rName, wsName, nodePath);
          }
-         catch (UnknownQuotaDataSizeException e)
+         catch (UnknownDataSizeException e)
          {
             executeCalculateNodeDataSizeTask(nodePath);
          }
@@ -295,7 +301,8 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    @Managed
    @ManagedDescription("Sets a quota limit for a bunch of nodes")
-   public void setGroupOfNodesQuota(String patternPath, long quotaLimit, boolean asyncUpdate)
+   public void setGroupOfNodesQuota(@ManagedName("patternPath") String patternPath,
+      @ManagedName("quotaLimit") long quotaLimit, @ManagedName("asyncUpdate") boolean asyncUpdate)
       throws QuotaManagerException
    {
       if (patternPath.equals(JCRPath.ROOT_PATH))
@@ -313,7 +320,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    @Managed
    @ManagedDescription("Removes a quota limit for a node")
-   public void removeNodeQuota(String nodePath) throws QuotaManagerException
+   public void removeNodeQuota(@ManagedName("nodePath") String nodePath) throws QuotaManagerException
    {
       if (nodePath.equals(JCRPath.ROOT_PATH))
       {
@@ -330,7 +337,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    @Managed
    @ManagedDescription("Removes a quota limit for a bunch of nodes")
-   public void removeGroupOfNodesQuota(String patternPath) throws QuotaManagerException
+   public void removeGroupOfNodesQuota(@ManagedName("patternPath") String patternPath) throws QuotaManagerException
    {
       if (patternPath.equals(JCRPath.ROOT_PATH))
       {
@@ -345,6 +352,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    /**
     * @see QuotaManager#setWorkspaceQuota(String, String, long)
     */
+   @Managed
    @ManagedDescription("Sets workspace quota limit")
    public void setWorkspaceQuota(long quotaLimit) throws QuotaManagerException
    {
@@ -354,6 +362,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    /**
     * @see QuotaManager#removeWorkspaceQuota(String, String, long)
     */
+   @Managed
    @ManagedDescription("Removes workspace quota limit")
    public void removeWorkspaceQuota() throws QuotaManagerException
    {
@@ -426,7 +435,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       {
          dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
       }
-      catch (UnknownQuotaDataSizeException e)
+      catch (UnknownDataSizeException e)
       {
          if (LOG.isTraceEnabled())
          {
@@ -468,7 +477,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
             long dataSize = delta + quotaPersister.getNodeDataSize(rName, wsName, nodePath);
             quotaPersister.setNodeDataSizeIfQuotaExists(rName, wsName, nodePath, dataSize);
          }
-         catch (UnknownQuotaDataSizeException e)
+         catch (UnknownDataSizeException e)
          {
             executeCalculateNodeDataSizeTask(nodePath);
          }
@@ -590,14 +599,26 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    {
       repositoryQuotaManager.registerWorkspaceQuotaManager(wsName, this);
 
+      boolean isCoordinator;
       try
       {
-         long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
-         repositoryQuotaManager.accumulatePersistedChanges(dataSize);
+         isCoordinator = rpcService.isCoordinator();
       }
-      catch (UnknownQuotaDataSizeException e)
+      catch (RPCException e)
       {
-         executeCalculateWorkspaceDataSizeTask();
+         throw new IllegalStateException(e.getMessage(), e);
+      }
+
+      if (isCoordinator)
+      {
+         try
+         {
+            quotaPersister.getWorkspaceDataSize(rName, wsName);
+         }
+         catch (UnknownDataSizeException e)
+         {
+            calculateWorkspaceDataSize();
+         }
       }
    }
 
@@ -608,19 +629,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    {
       executor.shutdownNow();
 
-      try
-      {
-         long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
-         repositoryQuotaManager.accumulatePersistedChanges(-dataSize);
-      }
-      catch (UnknownQuotaDataSizeException e)
-      {
-         if (LOG.isTraceEnabled())
-         {
-            LOG.trace(e.getMessage(), e);
-         }
-      }
-
       repositoryQuotaManager.unregisterWorkspaceQuotaManager(wsName);
 
       dataManager.removeItemPersistenceListener(validateChangesListener);
@@ -629,7 +637,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
 
       rpcService.unregisterCommand(pushChangesLogTask);
       rpcService.unregisterCommand(calculateNodeDataSizeTask);
-      rpcService.unregisterCommand(calculateWorkspaceDataSizeTask);
    }
 
    /**
@@ -789,40 +796,20 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          }
       };
 
-      calculateWorkspaceDataSizeTask = new RemoteCommand()
-      {
-         /**
-          * {@inheritDoc}
-          */
-         public String getId()
-         {
-            return "WorkspaceQuotaManager-" + uniqueName + "-calculateWorkspaceDataSizeTask";
-         }
-
-         /**
-          * Executes task {@link CalculateNodeDataSizeTask} if it is not in a list
-          * of current executing tasks. 
-          */
-         public Serializable execute(Serializable[] args) throws Throwable
-         {
-            Runnable quotaTask = new CalculateWorkspaceDataSizeTask(WorkspaceQuotaManager.this);
-            executor.execute(quotaTask);
-
-            return null;
-         }
-      };
-
       rpcService.registerCommand(pushChangesLogTask);
       rpcService.registerCommand(calculateNodeDataSizeTask);
-      rpcService.registerCommand(calculateWorkspaceDataSizeTask);
    }
 
    /**
     * Push changes to coordinator to apply.
     */
-   protected void pushChangesToCoordinator(ChangesItem changesItem) throws SecurityException, RPCException
+   protected void pushChangesToCoordinator(ChangesItem changesItem, boolean synchronous) throws SecurityException,
+      RPCException
    {
-      rpcService.executeCommandOnCoordinator(pushChangesLogTask, false, changesItem);
+      if (!changesItem.isEmpty())
+      {
+         rpcService.executeCommandOnCoordinator(pushChangesLogTask, synchronous, changesItem);
+      }
    }
 
    /**
@@ -845,21 +832,22 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * Execute task {@link CalculateWorkspaceDataSizeTask} on coordinator.
+    * Calculates and accumulates workspace data size.
     */
-   protected void executeCalculateWorkspaceDataSizeTask()
+   private void calculateWorkspaceDataSize()
    {
+      long dataSize;
       try
       {
-         rpcService.executeCommandOnCoordinator(calculateWorkspaceDataSizeTask, false);
+         dataSize = getWorkspaceDataSizeDirectly();
       }
-      catch (SecurityException e)
+      catch (QuotaManagerException e1)
       {
-         throw new IllegalStateException("Can't calculate node data size task", e.getCause());
+         throw new IllegalStateException("Can't calculate workspace data size", e1);
       }
-      catch (RPCException e)
-      {
-         throw new IllegalStateException("Can't calculate node data size task", e.getCause());
-      };
+
+      quotaPersister.setWorkspaceDataSize(rName, wsName, dataSize);
+      repositoryQuotaManager.accumulatePersistedChanges(dataSize);
    }
+
 }

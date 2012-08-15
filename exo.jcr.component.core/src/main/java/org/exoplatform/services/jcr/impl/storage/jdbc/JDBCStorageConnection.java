@@ -1563,7 +1563,7 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
 
                ValueIOChannel channel = containerConfig.valueStorageProvider.getChannel(storageDesc);
 
-               dataSize += channel.getValueSize(propertyId, orderNum);
+               dataSize += channel.getValueSize(getIdentifier(propertyId), orderNum);
             }
          }
          finally
@@ -1620,7 +1620,7 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
 
                ValueIOChannel channel = containerConfig.valueStorageProvider.getChannel(storageDesc);
 
-               dataSize += channel.getValueSize(propertyId, orderNum);
+               dataSize += channel.getValueSize(getIdentifier(propertyId), orderNum);
             }
          }
          finally

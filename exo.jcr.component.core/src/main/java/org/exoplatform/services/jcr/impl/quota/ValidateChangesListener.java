@@ -198,7 +198,7 @@ public class ValidateChangesListener implements MandatoryItemsPersistenceListene
                   + " data size exceeded quota limit");
             }
          }
-         catch (UnknownQuotaDataSizeException e)
+         catch (UnknownDataSizeException e)
          {
             return;
          }
@@ -236,7 +236,7 @@ public class ValidateChangesListener implements MandatoryItemsPersistenceListene
                continue;
             }
          }
-         catch (UnknownQuotaDataSizeException e)
+         catch (UnknownDataSizeException e)
          {
             continue;
          }

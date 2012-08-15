@@ -370,7 +370,8 @@
       <properties-param>
         <name>cache-configuration</name>
         <property name="jbosscache-cl-cache.jdbc.datasource" value="jdbcjcr"/>
-        <property name="jbosscache-configuration" value="jar:conf/portal/cluster/jbosscache-quota.xml" />
+        <property name="jbosscache-configuration" value="jar:/conf/portal/cluster/jbosscache-quota.xml" />
+        <property name="jgroups-configuration" value="jar:/conf/portal/cluster/udp-mux.xml" />
       </properties-param>
     </init-params>
   </component>

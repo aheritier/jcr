@@ -20,9 +20,13 @@ package org.exoplatform.services.jcr.impl.quota;
 
 import org.exoplatform.management.annotations.Managed;
 import org.exoplatform.management.annotations.ManagedDescription;
+import org.exoplatform.management.annotations.ManagedName;
 import org.exoplatform.management.jmx.annotations.NameTemplate;
 import org.exoplatform.management.jmx.annotations.Property;
 import org.exoplatform.services.jcr.config.RepositoryEntry;
+import org.exoplatform.services.jcr.core.ManageableRepository;
+import org.exoplatform.services.jcr.impl.core.RepositoryImpl;
+import org.exoplatform.services.jcr.impl.core.WorkspaceManagingListener;
 import org.exoplatform.services.jcr.impl.proccess.WorkerThread;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -37,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Managed
 @NameTemplate(@Property(key = "service", value = "RepositoryQuotaManager"))
-public class RepositoryQuotaManager implements Startable
+public class RepositoryQuotaManager implements Startable, WorkspaceManagingListener
 {
 
    /**
@@ -66,6 +70,11 @@ public class RepositoryQuotaManager implements Startable
    protected final QuotaPersister quotaPersister;
 
    /**
+    * {@link ManageableRepository} instance.
+    */
+   protected final RepositoryImpl repository;
+
+   /**
     * Task is obligated to push all changes to coordinator where they will
     * be accumulated.
     */
@@ -79,11 +88,12 @@ public class RepositoryQuotaManager implements Startable
    /**
     * RepositoryQuotaManagerImpl constructor.
     */
-   public RepositoryQuotaManager(BaseQuotaManager quotaManager, RepositoryEntry rEntry)
+   public RepositoryQuotaManager(RepositoryImpl repository, BaseQuotaManager quotaManager, RepositoryEntry rEntry)
    {
       this.rName = rEntry.getName();
       this.globalQuotaManager = quotaManager;
       this.quotaPersister = globalQuotaManager.quotaPersister;
+      this.repository = repository;
 
       this.pushTask = new PushTask("PushQuotaChangesTask-" + rName, DEFAULT_TIMEOUT);
       this.pushTask.start();
@@ -195,7 +205,7 @@ public class RepositoryQuotaManager implements Startable
     */
    @Managed
    @ManagedDescription("Sets repository quta limit")
-   public void setRepositoryQuota(long quotaLimit) throws QuotaManagerException
+   public void setRepositoryQuota(@ManagedName("quotaLimit") long quotaLimit) throws QuotaManagerException
    {
       quotaPersister.setRepositoryQuota(rName, quotaLimit);
    }
@@ -252,6 +262,7 @@ public class RepositoryQuotaManager implements Startable
    public void start()
    {
       globalQuotaManager.registerRepositoryQuotaManager(rName, this);
+      repository.addWorkspaceManagingListener(this);
    }
 
    /**
@@ -261,6 +272,7 @@ public class RepositoryQuotaManager implements Startable
    {
       wsQuotaManagers.clear();
       globalQuotaManager.unregisterRepositoryQuotaManager(rName);
+      repository.removeWorkspaceManagingListener(this);
 
       pushTask.halt();
    }
@@ -275,7 +287,7 @@ public class RepositoryQuotaManager implements Startable
       {
          dataSize = quotaPersister.getRepositoryDataSize(rName);
       }
-      catch (UnknownQuotaDataSizeException e)
+      catch (UnknownDataSizeException e)
       {
          if (LOG.isTraceEnabled())
          {
@@ -309,7 +321,7 @@ public class RepositoryQuotaManager implements Startable
                globalQuotaManager.behaveOnQuotaExceeded("Repository " + rName + " data size exceeded quota limit");
             }
          }
-         catch (UnknownQuotaDataSizeException e)
+         catch (UnknownDataSizeException e)
          {
             return;
          }
@@ -351,6 +363,25 @@ public class RepositoryQuotaManager implements Startable
       return size;
    }
 
+   /**
+    * {@inheritDoc} 
+    */
+   public void onWorkspaceRemove(String workspaceName)
+   {
+      long dataSize;
+
+      try
+      {
+         dataSize = quotaPersister.getWorkspaceDataSize(rName, workspaceName);
+      }
+      catch (UnknownDataSizeException e)
+      {
+         return;
+      }
+      
+      accumulatePersistedChanges(-dataSize);
+   }
+
    // ============================================> pushing changes to coordinator
 
    /**
@@ -374,8 +405,7 @@ public class RepositoryQuotaManager implements Startable
       {
          for (WorkspaceQuotaManager wqm : wsQuotaManagers.values())
          {
-            ChangesItem totalChanges = wqm.changesLog.merge();
-            wqm.pushChangesToCoordinator(totalChanges);
+            wqm.pushChangesToCoordinator(wqm.changesLog.merge(), false);
          }
       }
    }

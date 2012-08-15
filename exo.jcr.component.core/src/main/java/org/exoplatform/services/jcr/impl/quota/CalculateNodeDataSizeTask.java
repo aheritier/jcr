@@ -18,9 +18,12 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
+import org.exoplatform.commons.utils.SecurityHelper;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.Set;
 
 /**
@@ -66,12 +69,20 @@ public class CalculateNodeDataSizeTask implements Runnable
    {
       try
       {
-         long dataSize = quotaManager.getNodeDataSizeDirectly(nodePath);
-         quotaPersister.setNodeDataSizeIfQuotaExists(rName, wsName, nodePath, dataSize);
+         SecurityHelper.doPrivilegedExceptionAction(new PrivilegedExceptionAction<Void>()
+         {
+            public Void run() throws Exception
+            {
+               long dataSize = quotaManager.getNodeDataSizeDirectly(nodePath);
+               quotaPersister.setNodeDataSizeIfQuotaExists(rName, wsName, nodePath, dataSize);
+
+               return null;
+            }
+         });
       }
-      catch (QuotaManagerException e)
+      catch (PrivilegedActionException e)
       {
-         LOG.warn("Can't calculate node data size " + nodePath + " because: " + e.getMessage());
+         LOG.warn("Can't calculate node data size " + nodePath + " because: " + e.getCause().getMessage());
       }
       finally
       {

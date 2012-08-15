@@ -42,6 +42,13 @@ import java.util.Set;
 class ChangesItem implements Externalizable
 {
    /**
+    * ChangesItem constructor.
+    */
+   public ChangesItem()
+   {
+   }
+
+   /**
     * Contains calculated workspace data size changes of particular save. 
     */
    long workspaceDelta;
@@ -96,6 +103,14 @@ class ChangesItem implements Externalizable
    }
 
    /**
+    * Checks if there is any changes.
+    */
+   public boolean isEmpty()
+   {
+      return workspaceDelta == 0 && calculatedNodesDelta.isEmpty() && unknownNodesDelta.isEmpty();
+   }
+
+   /**
     * Leave in {@link ChangesItem} only changes should be apply asynchronously 
     * and return ones to apply instantly.
     */
@@ -112,9 +127,11 @@ class ChangesItem implements Externalizable
          {
             Long chanagedSize = calculatedNodesDelta.get(nodePath);
             syncChangesItem.calculatedNodesDelta.put(nodePath, chanagedSize);
+            syncChangesItem.workspaceDelta += chanagedSize;
 
             iter.remove();
-            asyncUpdate.remove(nodePath);
+            this.asyncUpdate.remove(nodePath);
+            this.workspaceDelta -= chanagedSize;
          }
       }
 

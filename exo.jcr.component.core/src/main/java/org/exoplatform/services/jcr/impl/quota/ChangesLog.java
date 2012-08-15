@@ -70,7 +70,7 @@ class ChangesLog extends ConcurrentLinkedQueue<ChangesItem>
    {
       ChangesItem totalChanges = new ChangesItem();
 
-      for (ChangesItem particularChanges = poll(); particularChanges != null;)
+      for (ChangesItem particularChanges = poll(); particularChanges != null; particularChanges = poll())
       {
          totalChanges.merge(particularChanges);
       }

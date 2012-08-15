@@ -173,7 +173,7 @@ public class WorkspaceQuotaRestore implements DataRestore
          long dataSize = wqm.quotaPersister.getWorkspaceDataSize(wqm.rName, wqm.wsName);
          wqm.repositoryQuotaManager.accumulatePersistedChanges(dataSize);
       }
-      catch (UnknownQuotaDataSizeException e)
+      catch (UnknownDataSizeException e)
       {
          if (LOG.isTraceEnabled())
          {
@@ -220,7 +220,7 @@ public class WorkspaceQuotaRestore implements DataRestore
          long dataSize = wqm.quotaPersister.getWorkspaceDataSize(wqm.rName, wqm.wsName);
          wqm.repositoryQuotaManager.accumulatePersistedChanges(-dataSize);
       }
-      catch (UnknownQuotaDataSizeException e)
+      catch (UnknownDataSizeException e)
       {
          if (LOG.isTraceEnabled())
          {

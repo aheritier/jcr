@@ -402,7 +402,6 @@ public class RepositoryServiceImpl implements RepositoryService, Startable
          {
             repo.internalRemoveWorkspace(wsEntry.getName());
          }
-         repconfig.getWorkspaceEntries().clear();
          final RepositoryContainer repositoryContainer = repositoryContainers.get(name);
          SecurityHelper.doPrivilegedAction(new PrivilegedAction<Void>()
          {

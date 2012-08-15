@@ -19,6 +19,7 @@
 package org.exoplatform.services.jcr.impl.quota;
 
 import org.exoplatform.services.jcr.JcrAPIBaseTest;
+import org.exoplatform.services.jcr.util.TesterConfigurationHelper;
 
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
@@ -34,6 +35,8 @@ public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
    protected RepositoryQuotaManager dbQuotaManager;
 
    protected QuotaManager quotaManager;
+
+   protected TesterConfigurationHelper helper = TesterConfigurationHelper.getInstance();
 
    /**
     * {@inheritDoc}
@@ -88,7 +91,7 @@ public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
          wqm.getNodeDataSize(nodePath);
          return false;
       }
-      catch (UnknownQuotaDataSizeException e)
+      catch (UnknownDataSizeException e)
       {
          return true;
       }

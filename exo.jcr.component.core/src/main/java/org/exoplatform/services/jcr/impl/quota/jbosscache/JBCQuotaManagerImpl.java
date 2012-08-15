@@ -28,6 +28,7 @@ import org.exoplatform.services.jcr.impl.quota.BaseQuotaManager;
 import org.exoplatform.services.jcr.impl.quota.QuotaManagerException;
 import org.exoplatform.services.jcr.impl.quota.QuotaPersister;
 import org.exoplatform.services.jcr.jbosscache.ExoJBossCacheFactory;
+import org.exoplatform.services.naming.InitialContextInitializer;
 import org.exoplatform.services.rpc.RPCService;
 import org.exoplatform.services.transaction.TransactionService;
 
@@ -99,18 +100,19 @@ public class JBCQuotaManagerImpl extends BaseQuotaManager
     * JBCQuotaManagerImpl constructor.
     */
    public JBCQuotaManagerImpl(InitParams initParams, RPCService rpcService, ConfigurationManager cfm,
-      TransactionService transactionService) throws RepositoryConfigurationException, QuotaManagerException
+      TransactionService transactionService, InitialContextInitializer contextInitializer)
+      throws RepositoryConfigurationException, QuotaManagerException
    {
-      super(initParams, rpcService, cfm, transactionService);
+      super(initParams, rpcService, cfm, transactionService, contextInitializer);
    }
 
    /**
     * JBCQuotaManagerImpl constructor.
     */
-   public JBCQuotaManagerImpl(InitParams initParams, ConfigurationManager cfm, TransactionService transactionService)
-      throws RepositoryConfigurationException, QuotaManagerException
+   public JBCQuotaManagerImpl(InitParams initParams, ConfigurationManager cfm, TransactionService transactionService,
+      InitialContextInitializer contextInitializer) throws RepositoryConfigurationException, QuotaManagerException
    {
-      this(initParams, null, cfm, transactionService);
+      this(initParams, null, cfm, transactionService, contextInitializer);
    }
 
    /**

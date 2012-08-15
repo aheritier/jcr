@@ -21,6 +21,7 @@ package org.exoplatform.services.jcr.impl.quota;
 import org.exoplatform.services.jcr.config.SimpleParameterEntry;
 import org.exoplatform.services.jcr.config.WorkspaceEntry;
 import org.exoplatform.services.jcr.core.ManageableRepository;
+import org.exoplatform.services.jcr.impl.RepositoryContainer;
 import org.exoplatform.services.jcr.impl.core.JCRPath;
 import org.exoplatform.services.jcr.impl.core.PropertyImpl;
 import org.exoplatform.services.jcr.impl.core.SessionImpl;
@@ -244,7 +245,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
       {
          assertEquals(wsQuotaManager.getNodeDataSize("/a/c"), wsQuotaManager.getNodeDataSizeDirectly("/a/c"));
       }
-      catch (UnknownQuotaDataSizeException e)
+      catch (UnknownDataSizeException e)
       {
          // may happen
       }
@@ -382,7 +383,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
 
       wsQuotaManager.setWorkspaceQuota(1000);
 
-      root.addNode("testNode");
+      root.addNode("testQuotaNode");
       try
       {
          root.save();
@@ -394,7 +395,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
 
       wsQuotaManager.setWorkspaceQuota(1000000);
 
-      root.addNode("testNode");
+      root.addNode("testQuotaNode");
       root.save();
 
       wsQuotaManager.removeWorkspaceQuota();
@@ -410,7 +411,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
 
       dbQuotaManager.setRepositoryQuota(1000);
 
-      root.addNode("testNode");
+      root.addNode("testQuotaNode");
       try
       {
          root.save();
@@ -422,7 +423,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
 
       dbQuotaManager.setRepositoryQuota(1000000);
 
-      root.addNode("testNode");
+      root.addNode("testQuotaNode");
       root.save();
 
       dbQuotaManager.removeRepositoryQuota();
@@ -438,7 +439,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
 
       quotaManager.setGlobalQuota(1000);
 
-      root.addNode("testNode");
+      root.addNode("testQuotaNode");
       try
       {
          root.save();
@@ -450,11 +451,42 @@ public class TestQuotas extends AbstractQuotaManagerTest
 
       quotaManager.setGlobalQuota(1000000);
 
-      root.addNode("testNode");
+      root.addNode("testQuotaNode");
       root.save();
 
       quotaManager.removeGlobalQuota();
       assertTrue(quotaManager.getGlobalDataSize() > 0);
    }
 
+   /**
+    * Checks that quota is decreased when workspace is removed but not
+    * when is just stopped. 
+    */
+   public void testQuotaWhenWorkspaceIsRemoved() throws Exception
+   {
+      ManageableRepository repository = helper.createRepository(container, DatabaseStructureType.MULTI, null);
+      WorkspaceEntry ws1Entry = helper.createWorkspaceEntry(DatabaseStructureType.MULTI, null);
+      WorkspaceEntry ws2Entry = helper.createWorkspaceEntry(DatabaseStructureType.MULTI, null);
+
+      helper.addWorkspace(repository, ws1Entry);
+      helper.addWorkspace(repository, ws2Entry);
+
+      WorkspaceQuotaManager ws1QuotaManager =
+         (WorkspaceQuotaManager)repository.getWorkspaceContainer(ws1Entry.getName()).getComponent(
+            WorkspaceQuotaManager.class);
+
+      long dataSize = quotaManager.getGlobalDataSize();
+      long ws1DataSize = ws1QuotaManager.getWorkspaceDataSize();
+
+      repository.removeWorkspace(ws1Entry.getName());
+      assertEquals(dataSize - ws1DataSize, quotaManager.getGlobalDataSize());
+
+      dataSize = quotaManager.getGlobalDataSize();
+
+      RepositoryContainer repoContainer =
+         (RepositoryContainer)container.getComponentInstance(repository.getConfiguration().getName());
+      repoContainer.stop();
+
+      assertEquals(dataSize, quotaManager.getGlobalDataSize());
+   }
 }

@@ -23,12 +23,14 @@ import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.ValueParam;
 import org.exoplatform.management.annotations.Managed;
 import org.exoplatform.management.annotations.ManagedDescription;
+import org.exoplatform.management.annotations.ManagedName;
 import org.exoplatform.management.jmx.annotations.NameTemplate;
 import org.exoplatform.management.jmx.annotations.Property;
 import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
 import org.exoplatform.services.jcr.impl.proccess.WorkerThread;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.naming.InitialContextInitializer;
 import org.exoplatform.services.rpc.RPCService;
 import org.exoplatform.services.transaction.TransactionService;
 import org.picocontainer.Startable;
@@ -114,9 +116,14 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
 
    /**
     * QuotaManager constructor.
+    * 
+    * @param contextInitializer
+    *          is added since BaseQuotaManager should start after InitialContextInitializer to have
+    *          binded datasource at startup
     */
    public BaseQuotaManager(InitParams initParams, RPCService rpcService, ConfigurationManager cfm,
-      TransactionService transactionService) throws RepositoryConfigurationException, QuotaManagerException
+      TransactionService transactionService, InitialContextInitializer contextInitializer)
+      throws RepositoryConfigurationException, QuotaManagerException
    {
       ValueParam param = initParams.getValueParam(EXCEEDED_QUOTA_BEHAVIOUR);
       this.exceededQuotaBehavior =
@@ -127,7 +134,7 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
 
       this.cfm = cfm;
       this.initParams = initParams;
-      this.rpcService = rpcService == null ? new DummyRPCServiceImpl() : rpcService;
+      this.rpcService = rpcService == null || testCase ? new DummyRPCServiceImpl() : rpcService;
       this.transactionService = transactionService;
       this.quotaPersister = initQuotaPersister();
    }
@@ -135,10 +142,11 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    /**
     * QuotaManager constructor.
     */
-   public BaseQuotaManager(InitParams initParams, ConfigurationManager cfm, TransactionService transactionService)
+   public BaseQuotaManager(InitParams initParams, ConfigurationManager cfm, TransactionService transactionService,
+      InitialContextInitializer contextInitializer)
       throws RepositoryConfigurationException, QuotaManagerException
    {
-      this(initParams, null, cfm, transactionService);
+      this(initParams, null, cfm, transactionService, contextInitializer);
    }
 
    /**
@@ -306,7 +314,7 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
     */
    @Managed
    @ManagedDescription("Returns global quota limit")
-   public void setGlobalQuota(long quotaLimit) throws QuotaManagerException
+   public void setGlobalQuota(@ManagedName("quotaLimit") long quotaLimit) throws QuotaManagerException
    {
       quotaPersister.setGlobalQuota(quotaLimit);
    }
@@ -377,7 +385,7 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
       {
          dataSize = quotaPersister.getGlobalDataSize();
       }
-      catch (UnknownQuotaDataSizeException e)
+      catch (UnknownDataSizeException e)
       {
          if (LOG.isTraceEnabled())
          {
@@ -411,7 +419,7 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
                behaveOnQuotaExceeded("Global data size exceeded quota limit");
             }
          }
-         catch (UnknownQuotaDataSizeException e)
+         catch (UnknownDataSizeException e)
          {
             return;
          }

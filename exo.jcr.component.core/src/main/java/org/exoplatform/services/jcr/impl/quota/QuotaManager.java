@@ -69,9 +69,7 @@ public interface QuotaManager
     * @param quotaLimit
     *          the maximum allowed node data size of this node
     * @param asyncUpdate
-    *          true means checking if node exceeds quota limit will be performed asynchronously, i.e. for some
-    *          period of time difference between new and old content size will be accumulated and only then send for
-    *          validation
+    *          true means updating node data size will be done asynchronously
     * @throws QuotaManagerException If an error occurs.
     */
    void setNodeQuota(String repositoryName, String workspaceName, String nodePath, long quotaLimit, boolean asyncUpdate)
@@ -103,9 +101,7 @@ public interface QuotaManager
     * @param quotaLimit
     *          the maximum allowed node data size of a node
     * @param asyncUpdate
-    *          true means checking if node exceeds quota limit will be performed asynchronously, i.e. for some
-    *          period of time difference between new and old content size will be accumulated and only then send for
-    *          validation
+    *          true means updating node data size will be done asynchronously 
     * @throws QuotaManagerException If an error occurs.
     */
    void setGroupOfNodesQuota(String repositoryName, String workspaceName, String patternPath, long quotaLimit,
@@ -182,7 +178,6 @@ public interface QuotaManager
     *          the repository name    
     * @param workspaceName
     *          the workspace name in repository
-    *          
     * @throws QuotaManagerException If an error occurs.
     */
    long getWorkspaceIndexSize(String repositoryName, String workspaceName) throws QuotaManagerException;

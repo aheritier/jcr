@@ -18,44 +18,27 @@
  */
 package org.exoplatform.services.jcr.impl.quota;
 
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
-
 /**
+ * Is occurred when there is no information about data size
+ * already used by specific entity.
+ * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: CalculateWorkspaceDataSizeTask.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: UnknownQuotaDataSizeException.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class CalculateWorkspaceDataSizeTask implements Runnable
+public class UnknownDataSizeException extends QuotaManagerException
 {
 
    /**
-    * Logger.
+    * Constructs a new exception with the specified detail message.  The
+    * cause is not initialized, and may subsequently be initialized by
+    * a call to {@link #initCause}.
+    *
+    * @param   message   the detail message. The detail message is saved for 
+    *          later retrieval by the {@link #getMessage()} method.
     */
-   private final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.CalculateWorkspaceDataSizeTask");
-
-   private final WorkspaceQuotaManager workspaceQuotaManager;
-
-   /**
-    * CalculateWorkspaceDataSizeTask constructor. 
-    */
-   public CalculateWorkspaceDataSizeTask(WorkspaceQuotaManager quotaManager)
+   public UnknownDataSizeException(String message)
    {
-      this.workspaceQuotaManager = quotaManager;
+      super(message);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   public void run()
-   {
-      try
-      {
-         long dataSize = workspaceQuotaManager.getWorkspaceDataSizeDirectly();
-         workspaceQuotaManager.accumulatePersistedChanges(dataSize);
-      }
-      catch (QuotaManagerException e)
-      {
-         LOG.error(e.getMessage(), e);
-      }
-   }
 }

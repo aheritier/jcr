@@ -265,7 +265,7 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
          long size = getWorkspaceDataSize(repositoryName, workspaceName);
          out.writeLong(size);
       }
-      catch (UnknownQuotaDataSizeException e)
+      catch (UnknownDataSizeException e)
       {
          if (LOG.isTraceEnabled())
          {
@@ -293,7 +293,7 @@ public abstract class AbstractQuotaPersister implements QuotaPersister
             out.writeString(nodePath);
             out.writeLong(size);
          }
-         catch (UnknownQuotaDataSizeException e)
+         catch (UnknownDataSizeException e)
          {
             throw new IOException("Node is tracked but data size is unknown.", e);
          }

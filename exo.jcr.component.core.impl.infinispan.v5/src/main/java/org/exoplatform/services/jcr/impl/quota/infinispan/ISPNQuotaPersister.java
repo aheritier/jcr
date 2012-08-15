@@ -23,7 +23,7 @@ import org.exoplatform.services.jcr.config.MappedParametrizedObjectEntry;
 import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
 import org.exoplatform.services.jcr.impl.backup.BackupException;
 import org.exoplatform.services.jcr.impl.quota.AbstractQuotaPersister;
-import org.exoplatform.services.jcr.impl.quota.UnknownQuotaDataSizeException;
+import org.exoplatform.services.jcr.impl.quota.UnknownDataSizeException;
 import org.exoplatform.services.jcr.impl.quota.UnknownQuotaLimitException;
 import org.exoplatform.services.jcr.infinispan.CacheKey;
 import org.exoplatform.services.jcr.infinispan.ISPNCacheFactory;
@@ -99,7 +99,7 @@ public class ISPNQuotaPersister extends AbstractQuotaPersister
     * {@inheritDoc}
     */
    public long getNodeDataSize(String repositoryName, String workspaceName, String nodePath)
-      throws UnknownQuotaDataSizeException
+      throws UnknownDataSizeException
    {
       String workspaceUniqueName = composeWorkspaceUniqueName(repositoryName, workspaceName);
       CacheKey key = new NodeDataSizeKey(workspaceUniqueName, nodePath);
@@ -176,7 +176,7 @@ public class ISPNQuotaPersister extends AbstractQuotaPersister
    /**
     * {@inheritDoc}
     */
-   public long getWorkspaceDataSize(String repositoryName, String workspaceName) throws UnknownQuotaDataSizeException
+   public long getWorkspaceDataSize(String repositoryName, String workspaceName) throws UnknownDataSizeException
    {
       String wsUniqueName = composeWorkspaceUniqueName(repositoryName, workspaceName);
       CacheKey key = new WorkspaceDataSizeKey(wsUniqueName);
@@ -214,7 +214,7 @@ public class ISPNQuotaPersister extends AbstractQuotaPersister
    /**
     * {@inheritDoc}
     */
-   public long getRepositoryDataSize(String repositoryName) throws UnknownQuotaDataSizeException
+   public long getRepositoryDataSize(String repositoryName) throws UnknownDataSizeException
    {
       CacheKey key = new RepositoryDataSizeKey(repositoryName);
       return getDataSize(key);
@@ -232,7 +232,7 @@ public class ISPNQuotaPersister extends AbstractQuotaPersister
    /**
     * {@inheritDoc}
     */
-   public long getGlobalDataSize() throws UnknownQuotaDataSizeException
+   public long getGlobalDataSize() throws UnknownDataSizeException
    {
       CacheKey key = new GlobalDataSizeKey();
       return getDataSize(key);
@@ -462,15 +462,15 @@ public class ISPNQuotaPersister extends AbstractQuotaPersister
    }
 
    /**
-    * Returns data size value otherwise throws {@link UnknownQuotaDataSizeException}.
+    * Returns data size value otherwise throws {@link UnknownDataSizeException}.
     */
-   private long getDataSize(CacheKey key) throws UnknownQuotaDataSizeException
+   private long getDataSize(CacheKey key) throws UnknownDataSizeException
    {
       Long size = (Long)cache.withFlags(Flag.FORCE_WRITE_LOCK).get(key);
 
       if (size == null)
       {
-         throw new UnknownQuotaDataSizeException("Data size is unknown");
+         throw new UnknownDataSizeException("Data size is unknown");
       }
 
       return size;

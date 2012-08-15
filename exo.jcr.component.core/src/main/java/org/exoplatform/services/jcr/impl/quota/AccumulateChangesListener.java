@@ -52,15 +52,15 @@ public class AccumulateChangesListener implements PersistenceRollbackListener, P
       ChangesItem changesItem = wqm.pendingChanges.get();
       try
       {
-         if (!wqm.testCase)
+         if (wqm.testCase)
          {
-            wqm.pushChangesToCoordinator(changesItem.extractSyncChanges());
-            wqm.changesLog.add(wqm.pendingChanges.get());
+            // apply changes instantly
+            wqm.pushChangesToCoordinator(changesItem, true);
          }
          else
          {
-            // apply changes instantly
-            wqm.pushChangesToCoordinator(changesItem);
+            wqm.pushChangesToCoordinator(changesItem.extractSyncChanges(), true);
+            wqm.changesLog.add(wqm.pendingChanges.get());
          }
       }
       catch (SecurityException e)

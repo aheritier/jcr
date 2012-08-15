@@ -84,7 +84,7 @@ public interface QuotaPersister
     * @see QuotaManager#getNodeDataSize(String, String, String)
     */
    long getNodeDataSize(String repositoryName, String workspaceName, String nodePath)
-      throws UnknownQuotaDataSizeException;
+      throws UnknownDataSizeException;
 
    /**
     * Persists node data size.
@@ -130,7 +130,7 @@ public interface QuotaPersister
    /**
     * @see QuotaManager#getWorkspaceDataSize(String, String)
     */
-   long getWorkspaceDataSize(String repositoryName, String workspaceName) throws UnknownQuotaDataSizeException;
+   long getWorkspaceDataSize(String repositoryName, String workspaceName) throws UnknownDataSizeException;
 
    /**
     * @see QuotaManager#getRepositoryQuota(String)
@@ -150,7 +150,7 @@ public interface QuotaPersister
    /**
     * @see QuotaManager#getRepositoryDataSize(String)
     */
-   long getRepositoryDataSize(String repositoryName) throws UnknownQuotaDataSizeException;
+   long getRepositoryDataSize(String repositoryName) throws UnknownDataSizeException;
 
    /**
     * Persists repository data size.
@@ -160,7 +160,7 @@ public interface QuotaPersister
    /**
     * @see QuotaManager#getGlobalDataSize()
     */
-   long getGlobalDataSize() throws UnknownQuotaDataSizeException;
+   long getGlobalDataSize() throws UnknownDataSizeException;
 
    /**
     * Persists global data size.

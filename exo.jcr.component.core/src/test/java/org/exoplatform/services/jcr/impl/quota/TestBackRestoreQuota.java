@@ -91,7 +91,7 @@ public class TestBackRestoreQuota extends AbstractQuotaManagerTest
          wsQuotaManager.getWorkspaceDataSize();
          fail("Data size should be unknown after clean");
       }
-      catch (UnknownQuotaDataSizeException e)
+      catch (UnknownDataSizeException e)
       {
       }
 

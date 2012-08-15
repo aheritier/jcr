@@ -22,7 +22,7 @@ import org.exoplatform.container.configuration.ConfigurationManager;
 import org.exoplatform.services.jcr.config.MappedParametrizedObjectEntry;
 import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
 import org.exoplatform.services.jcr.impl.quota.AbstractQuotaPersister;
-import org.exoplatform.services.jcr.impl.quota.UnknownQuotaDataSizeException;
+import org.exoplatform.services.jcr.impl.quota.UnknownDataSizeException;
 import org.exoplatform.services.jcr.impl.quota.UnknownQuotaLimitException;
 import org.exoplatform.services.jcr.jbosscache.ExoJBossCacheFactory;
 import org.exoplatform.services.jcr.jbosscache.ExoJBossCacheFactory.CacheType;
@@ -130,7 +130,7 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
     * {@inheritDoc}
     */
    public long getNodeDataSize(String repositoryName, String workspaceName, String nodePath)
-      throws UnknownQuotaDataSizeException
+      throws UnknownDataSizeException
    {
       nodePath = escaping(nodePath);
 
@@ -221,7 +221,7 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
    /**
     * {@inheritDoc}
     */
-   public long getWorkspaceDataSize(String repositoryName, String workspaceName) throws UnknownQuotaDataSizeException
+   public long getWorkspaceDataSize(String repositoryName, String workspaceName) throws UnknownDataSizeException
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName, workspaceName);
       return getDataSize(fqn);
@@ -230,7 +230,7 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
    /**
     * {@inheritDoc}
     */
-   public long getRepositoryDataSize(String repositoryName) throws UnknownQuotaDataSizeException
+   public long getRepositoryDataSize(String repositoryName) throws UnknownDataSizeException
    {
       Fqn<String> fqn = Fqn.fromRelativeElements(DATA_SIZE, repositoryName);
       return getDataSize(fqn);
@@ -299,7 +299,7 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
    /**
     * {@inheritDoc}
     */
-   public long getGlobalDataSize() throws UnknownQuotaDataSizeException
+   public long getGlobalDataSize() throws UnknownDataSizeException
    {
       return getDataSize(DATA_SIZE);
    }
@@ -457,16 +457,16 @@ public class JBCQuotaPersister extends AbstractQuotaPersister
    }
 
    /**
-    * Returns data size value otherwise throws {@link UnknownQuotaDataSizeException}.
+    * Returns data size value otherwise throws {@link UnknownDataSizeException}.
     */
-   private long getDataSize(Fqn<String> fqn) throws UnknownQuotaDataSizeException
+   private long getDataSize(Fqn<String> fqn) throws UnknownDataSizeException
    {
       cache.getInvocationContext().getOptionOverrides().setForceWriteLock(true);
       Long size = (Long)cache.get(fqn, SIZE);
 
       if (size == null)
       {
-         throw new UnknownQuotaDataSizeException("Data size is unknown");
+         throw new UnknownDataSizeException("Data size is unknown");
       }
 
       return size;
