@@ -124,6 +124,10 @@ public class TestBackRestoreQuota extends AbstractQuotaManagerTest
 
       wsQuotaManager.resume();
       assertFalse(wsQuotaManager.isSuspended());
+
+      wsQuotaManager.removeGroupOfNodesQuota("/testRoot/*");
+      wsQuotaManager.removeNodeQuota("/testRoot/test1");
+      wsQuotaManager.removeNodeQuota("/testRoot/test2");
    }
 
 }

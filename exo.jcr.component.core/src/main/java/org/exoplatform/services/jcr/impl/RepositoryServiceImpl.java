@@ -398,10 +398,13 @@ public class RepositoryServiceImpl implements RepositoryService, Startable
       {
          RepositoryEntry repconfig = config.getRepositoryConfiguration(name);
          RepositoryImpl repo = (RepositoryImpl)getRepository(name);
-         for (WorkspaceEntry wsEntry : repconfig.getWorkspaceEntries())
+
+         List<WorkspaceEntry> workspaces = new ArrayList<WorkspaceEntry>(repconfig.getWorkspaceEntries());
+         for (WorkspaceEntry entry : workspaces)
          {
-            repo.internalRemoveWorkspace(wsEntry.getName());
+            repo.internalRemoveWorkspace(entry.getName());
          }
+
          final RepositoryContainer repositoryContainer = repositoryContainers.get(name);
          SecurityHelper.doPrivilegedAction(new PrivilegedAction<Void>()
          {
