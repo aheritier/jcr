@@ -304,6 +304,13 @@ public class TestQuotas extends AbstractQuotaManagerTest
       testB.setProperty("prop1", new FileInputStream(createBLOBTempFile(5)));
       root.save();
 
+      wsQuotaManager.setNodeQuota("/a/b", 10, false);
+
+      // should be possible to add content less then exists
+      testB.getProperty("prop1").remove();
+      testB.setProperty("prop2", "text");
+      root.save();
+
       wsQuotaManager.removeNodeQuota("/a");
       wsQuotaManager.removeNodeQuota("/a/b");
       assertTrue(quotaShouldNotExists(wsQuotaManager, "/a"));
@@ -398,6 +405,12 @@ public class TestQuotas extends AbstractQuotaManagerTest
       root.addNode("testQuotaNode");
       root.save();
 
+      wsQuotaManager.setWorkspaceQuota(1000);
+
+      // should possible to remove 
+      root.getNode("testQuotaNode").remove();
+      root.save();
+
       wsQuotaManager.removeWorkspaceQuota();
       assertTrue(wsQuotaManager.getWorkspaceDataSize() > 0);
    }
@@ -426,6 +439,12 @@ public class TestQuotas extends AbstractQuotaManagerTest
       root.addNode("testQuotaNode");
       root.save();
 
+      dbQuotaManager.setRepositoryQuota(1000);
+
+      // should possible to remove 
+      root.getNode("testQuotaNode").remove();
+      root.save();
+
       dbQuotaManager.removeRepositoryQuota();
       assertTrue(dbQuotaManager.getRepositoryDataSize() > 0);
    }
@@ -452,6 +471,12 @@ public class TestQuotas extends AbstractQuotaManagerTest
       quotaManager.setGlobalQuota(1000000);
 
       root.addNode("testQuotaNode");
+      root.save();
+
+      quotaManager.setGlobalQuota(1000);
+
+      // should possible to remove 
+      root.getNode("testQuotaNode").remove();
       root.save();
 
       quotaManager.removeGlobalQuota();

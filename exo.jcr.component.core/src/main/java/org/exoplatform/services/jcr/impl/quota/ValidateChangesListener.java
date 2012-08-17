@@ -181,31 +181,34 @@ public class ValidateChangesListener implements MandatoryItemsPersistenceListene
     */
    private void validatePendingChanges(long delta) throws ExceededQuotaLimitException
    {
-      delta += wqm.changesLog.getWorkspaceDelta();
-
-      wqm.repositoryQuotaManager.validatePendingChanges(delta);
-      try
+      if (delta > 0)
       {
-         long quotaLimit = wqm.quotaPersister.getWorkspaceQuota(wqm.rName, wqm.wsName);
+         delta += wqm.changesLog.getWorkspaceDelta();
 
+         wqm.repositoryQuotaManager.validatePendingChanges(delta);
          try
          {
-            long dataSize = wqm.quotaPersister.getWorkspaceDataSize(wqm.rName, wqm.wsName);
+            long quotaLimit = wqm.quotaPersister.getWorkspaceQuota(wqm.rName, wqm.wsName);
 
-            if (dataSize + delta > quotaLimit)
+            try
             {
-               wqm.repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Workspace " + wqm.uniqueName
-                  + " data size exceeded quota limit");
+               long dataSize = wqm.quotaPersister.getWorkspaceDataSize(wqm.rName, wqm.wsName);
+
+               if (dataSize + delta > quotaLimit)
+               {
+                  wqm.repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Workspace " + wqm.uniqueName
+                     + " data size exceeded quota limit");
+               }
+            }
+            catch (UnknownDataSizeException e)
+            {
+               return;
             }
          }
-         catch (UnknownDataSizeException e)
+         catch (UnknownQuotaLimitException e)
          {
             return;
          }
-      }
-      catch (UnknownQuotaLimitException e)
-      {
-         return;
       }
    }
 
@@ -219,26 +222,29 @@ public class ValidateChangesListener implements MandatoryItemsPersistenceListene
          String nodePath = entry.getKey();
          Long delta = entry.getValue() + wqm.changesLog.getNodeDelta(nodePath);
 
-         try
+         if (delta > 0)
          {
-            long dataSize = wqm.quotaPersister.getNodeDataSize(wqm.rName, wqm.wsName, nodePath);
             try
             {
-               long quotaLimit = wqm.quotaPersister.getNodeQuotaOrGroupOfNodesQuota(wqm.rName, wqm.wsName, nodePath);
-               if (dataSize + delta > quotaLimit)
+               long dataSize = wqm.quotaPersister.getNodeDataSize(wqm.rName, wqm.wsName, nodePath);
+               try
                {
-                  wqm.repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Node " + nodePath
-                     + " data size exceeded quota limit");
+                  long quotaLimit = wqm.quotaPersister.getNodeQuotaOrGroupOfNodesQuota(wqm.rName, wqm.wsName, nodePath);
+                  if (dataSize + delta > quotaLimit)
+                  {
+                     wqm.repositoryQuotaManager.globalQuotaManager.behaveOnQuotaExceeded("Node " + nodePath
+                        + " data size exceeded quota limit");
+                  }
+               }
+               catch (UnknownQuotaLimitException e)
+               {
+                  continue;
                }
             }
-            catch (UnknownQuotaLimitException e)
+            catch (UnknownDataSizeException e)
             {
                continue;
             }
-         }
-         catch (UnknownDataSizeException e)
-         {
-            continue;
          }
       }
    }
