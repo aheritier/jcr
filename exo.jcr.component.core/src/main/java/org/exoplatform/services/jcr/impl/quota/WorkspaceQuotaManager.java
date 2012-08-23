@@ -181,12 +181,12 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
 
       initRemoteCommands();
 
-      changesListener = new ChangesListener(this);
-      dataManager.addItemPersistenceListener(changesListener);
-
       this.context =
          new WorkspaceQuotaContext(wsName, rName, uniqueName, dataManager, lFactory, executor, quotaPersister,
             rpcService, runNodesTasks, rQuotaManager.globalQuotaManager.exceededQuotaBehavior);
+
+      changesListener = new ChangesListener(this);
+      dataManager.addItemPersistenceListener(changesListener);
    }
 
    /**

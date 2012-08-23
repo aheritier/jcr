@@ -96,4 +96,68 @@ public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
          return true;
       }
    }
+
+   protected void assertNodeDataSize(WorkspaceQuotaManager wqm, String nodePath) throws Exception
+   {
+      long expectedSize = session.itemExists(nodePath) ? wqm.getNodeDataSizeDirectly(nodePath) : 0;
+
+      long startTime = System.currentTimeMillis();
+      long maxTime = 60 * 1000;
+
+      while (true)
+      {
+         try
+         {
+            long measuredSize = wqm.getNodeDataSize(nodePath);
+            if (expectedSize == measuredSize)
+            {
+               return;
+            }
+         }
+         catch (QuotaManagerException e)
+         {
+         }
+         
+         Thread.sleep(100);
+
+         if (System.currentTimeMillis() - startTime > maxTime)
+         {
+            break;
+         }
+      }
+
+      fail();
+   }
+
+   protected void assertWorkspaceSize(WorkspaceQuotaManager wqm) throws Exception
+   {
+      long expectedSize = wqm.getWorkspaceDataSizeDirectly();
+
+      long startTime = System.currentTimeMillis();
+      long maxTime = 60 * 1000;
+
+      while (true)
+      {
+         try
+         {
+            long measuredSize = wqm.getWorkspaceDataSize();
+            if (expectedSize == measuredSize)
+            {
+               return;
+            }
+         }
+         catch (QuotaManagerException e)
+         {
+         }
+
+         Thread.sleep(100);
+
+         if (System.currentTimeMillis() - startTime > maxTime)
+         {
+            break;
+         }
+      }
+
+      fail();
+   }
 }
