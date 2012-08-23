@@ -283,9 +283,9 @@ public class ISPNQuotaPersister extends AbstractQuotaPersister
 
       for (Serializable cacheKey : cache.keySet())
       {
-         if (cacheKey instanceof WorkspaceBaseKey)
+         if (cacheKey instanceof WorkspaceBasedKey)
          {
-            if (workspaceUniqueName.equals(((WorkspaceBaseKey)cacheKey).getWorkspaceUniqueName()))
+            if (workspaceUniqueName.equals(((WorkspaceBasedKey)cacheKey).getWorkspaceUniqueName()))
             {
                cache.remove(cacheKey);
             }
@@ -353,9 +353,9 @@ public class ISPNQuotaPersister extends AbstractQuotaPersister
       {
          if (cacheKey instanceof NodeQuotaKey)
          {
-            if (workspaceUniqueName.equals(((WorkspaceBaseKey)cacheKey).getWorkspaceUniqueName()))
+            if (workspaceUniqueName.equals(((WorkspaceBasedKey)cacheKey).getWorkspaceUniqueName()))
             {
-               pathes.add(((PathBaseKey)cacheKey).getPath());
+               pathes.add(((PathBasedKey)cacheKey).getPath());
             }
          }
       }
@@ -375,9 +375,9 @@ public class ISPNQuotaPersister extends AbstractQuotaPersister
       {
          if (cacheKey instanceof GroupOfNodesQuotaKey)
          {
-            if (workspaceUniqueName.equals(((WorkspaceBaseKey)cacheKey).getWorkspaceUniqueName()))
+            if (workspaceUniqueName.equals(((WorkspaceBasedKey)cacheKey).getWorkspaceUniqueName()))
             {
-               pathes.add(((PathBaseKey)cacheKey).getPath());
+               pathes.add(((PathBasedKey)cacheKey).getPath());
             }
          }
       }
@@ -397,9 +397,9 @@ public class ISPNQuotaPersister extends AbstractQuotaPersister
       {
          if (cacheKey instanceof NodeDataSizeKey)
          {
-            if (workspaceUniqueName.equals(((WorkspaceBaseKey)cacheKey).getWorkspaceUniqueName()))
+            if (workspaceUniqueName.equals(((WorkspaceBasedKey)cacheKey).getWorkspaceUniqueName()))
             {
-               pathes.add(((PathBaseKey)cacheKey).getPath());
+               pathes.add(((PathBasedKey)cacheKey).getPath());
             }
          }
       }

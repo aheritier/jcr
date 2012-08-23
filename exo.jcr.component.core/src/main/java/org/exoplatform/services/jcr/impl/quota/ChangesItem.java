@@ -33,7 +33,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * Wraps information of  changed data size of particular save. First is put into pending changes
+ * Wraps information of changed data size of particular save. First, is put into pending changes
  * and after save is performed being moved into changes log. 
  * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
@@ -51,49 +51,117 @@ class ChangesItem implements Externalizable
    /**
     * Contains calculated workspace data size changes of particular save. 
     */
-   long workspaceDelta;
+   private long workspaceChangedSize;
 
    /**
-    * Contains calculated nodes data size changes of particular save.
+    * Contains calculated node data size changes of particular save.
     * Represents {@link Map} with absolute node path as key and changed node 
-    * data size of all its descendants as value respectively.
+    * data size as value respectively.
     */
-   Map<String, Long> calculatedNodesDelta = new HashMap<String, Long>();
+   private Map<String, Long> calculatedChangedNodesSize = new HashMap<String, Long>();
 
    /**
-    * Set absolute paths of nodes for which changes were made but changed size is unknown. Most
+    * Set of absolute nodes paths for which changes were made but changed size is unknown. Most
     * famous case when {@link WorkspaceDataContainer#TRIGGER_EVENTS_FOR_DESCENDENTS_ON_RENAME} is 
     * set to false and move operation is performed.
     */
-   Set<String> unknownNodesDelta = new HashSet<String>();
+   private Set<String> unknownChangedNodesSize = new HashSet<String>();
 
    /**
-    * Collects node paths for which data size updating
-    * is performing asynchronously.
+    * Collects node paths for which data size updating must be performed asynchronously.
     */
-   Set<String> asyncUpdate = new HashSet<String>();
+   private Set<String> asyncUpdate = new HashSet<String>();
+
+   /**
+    * Getter for {@link #workspaceChangedSize}.
+    */
+   public long getWorkspaceChangedSize()
+   {
+      return workspaceChangedSize;
+   }
+
+   /**
+    * Updates {@link #workspaceChangedSize}.
+    */
+   public void updateWorkspaceChangedSize(long delta)
+   {
+      workspaceChangedSize += delta;
+   }
+
+   /**
+    * Returns node data changed size if exists or zero otherwise.
+    */
+   public long getNodeChangedSize(String nodePath)
+   {
+      Long delta = calculatedChangedNodesSize.get(nodePath);
+      return delta == null ? 0 : delta;
+   }
+
+   /**
+    * Getter for {@link #calculatedChangedNodesSize}.
+    */
+   public Map<String, Long> getAllNodesCalculatedChangedSize()
+   {
+      return calculatedChangedNodesSize;
+   }
+
+   /**
+    * Getter for {@link #unknownChangedNodesSize}.
+    */
+   public Set<String> getAllNodesUnknownChangedSize()
+   {
+      return unknownChangedNodesSize;
+   }
+
+   /**
+    * Updates {@link #calculatedChangedNodesSize} for particular
+    * node path.
+    */
+   public void updateNodeChangedSize(String nodePath, long delta)
+   {
+      Long oldDelta = calculatedChangedNodesSize.get(nodePath);
+      Long newDelta = delta + (oldDelta != null ? oldDelta : 0);
+
+      calculatedChangedNodesSize.put(nodePath, newDelta);
+   }
+
+   /**
+    * Adds new node absolute path for {@link #unknownChangedNodesSize} collection.
+    */
+   public void addPathWithUnknownChangedSize(String nodePath)
+   {
+      unknownChangedNodesSize.add(nodePath);
+   }
+
+   /**
+    * Adds new node absolute path for {@link #asyncUpdate} collection.
+    */
+   public void addPathWithAsyncUpdate(String nodePath)
+   {
+      asyncUpdate.add(nodePath);
+   }
 
    /**
     * Merges current changes with new one.
     */
    public void merge(ChangesItem changesItem)
    {
-      workspaceDelta += changesItem.workspaceDelta;
+      workspaceChangedSize += changesItem.getWorkspaceChangedSize();
 
-      for (Entry<String, Long> changesEntry : changesItem.calculatedNodesDelta.entrySet())
+      for (Entry<String, Long> changesEntry : changesItem.calculatedChangedNodesSize.entrySet())
       {
          String nodePath = changesEntry.getKey();
          Long currentDelta = changesEntry.getValue();
 
-         Long oldDelta = calculatedNodesDelta.get(nodePath);
+         Long oldDelta = calculatedChangedNodesSize.get(nodePath);
          Long newDelta = currentDelta + (oldDelta == null ? 0 : oldDelta);
 
-         calculatedNodesDelta.put(nodePath, newDelta);
+         calculatedChangedNodesSize.put(nodePath, newDelta);
       }
 
-      for (String path : changesItem.unknownNodesDelta)
+      for (String path : changesItem.unknownChangedNodesSize)
       {
-         unknownNodesDelta.add(path);
+         unknownChangedNodesSize.add(path);
       }
 
       for (String path : changesItem.asyncUpdate)
@@ -107,31 +175,32 @@ class ChangesItem implements Externalizable
     */
    public boolean isEmpty()
    {
-      return workspaceDelta == 0 && calculatedNodesDelta.isEmpty() && unknownNodesDelta.isEmpty();
+      return workspaceChangedSize == 0 && calculatedChangedNodesSize.isEmpty() && unknownChangedNodesSize.isEmpty();
    }
 
    /**
-    * Leave in {@link ChangesItem} only changes should be apply asynchronously 
+    * Leave in {@link ChangesItem} only changes being apply asynchronously 
     * and return ones to apply instantly.
     */
    public ChangesItem extractSyncChanges()
    {
       ChangesItem syncChangesItem = new ChangesItem();
 
-      Iterator<String> iter = calculatedNodesDelta.keySet().iterator();
+      Iterator<String> iter = calculatedChangedNodesSize.keySet().iterator();
       while (iter.hasNext() && !asyncUpdate.isEmpty())
       {
          String nodePath = iter.next();
          
          if (!asyncUpdate.contains(nodePath))
          {
-            Long chanagedSize = calculatedNodesDelta.get(nodePath);
-            syncChangesItem.calculatedNodesDelta.put(nodePath, chanagedSize);
-            syncChangesItem.workspaceDelta += chanagedSize;
+            Long chanagedSize = calculatedChangedNodesSize.get(nodePath);
+            syncChangesItem.calculatedChangedNodesSize.put(nodePath, chanagedSize);
+            syncChangesItem.workspaceChangedSize += chanagedSize;
+
+            this.asyncUpdate.remove(nodePath);
+            this.workspaceChangedSize -= chanagedSize;
 
             iter.remove();
-            this.asyncUpdate.remove(nodePath);
-            this.workspaceDelta -= chanagedSize;
          }
       }
 
@@ -143,17 +212,17 @@ class ChangesItem implements Externalizable
     */
    public void writeExternal(ObjectOutput out) throws IOException
    {
-      out.writeLong(workspaceDelta);
+      out.writeLong(workspaceChangedSize);
 
-      out.writeInt(calculatedNodesDelta.size());
-      for (Entry<String, Long> entry : calculatedNodesDelta.entrySet())
+      out.writeInt(calculatedChangedNodesSize.size());
+      for (Entry<String, Long> entry : calculatedChangedNodesSize.entrySet())
       {
          writeString(out, entry.getKey());
          out.writeLong(entry.getValue());
       }
 
-      out.writeInt(unknownNodesDelta.size());
-      for (String path : unknownNodesDelta)
+      out.writeInt(unknownChangedNodesSize.size());
+      for (String path : unknownChangedNodesSize)
       {
          writeString(out, path);
       }
@@ -177,24 +246,24 @@ class ChangesItem implements Externalizable
     */
    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
    {
-      this.workspaceDelta = in.readLong();
+      this.workspaceChangedSize = in.readLong();
 
       int size = in.readInt();
-      this.calculatedNodesDelta = new HashMap<String, Long>(size);
+      this.calculatedChangedNodesSize = new HashMap<String, Long>(size);
       for (int i = 0; i < size; i++)
       {
          String nodePath = readString(in);
          Long delta = in.readLong();
 
-         calculatedNodesDelta.put(nodePath, delta);
+         calculatedChangedNodesSize.put(nodePath, delta);
       }
 
       size = in.readInt();
-      this.unknownNodesDelta = new HashSet<String>(size);
+      this.unknownChangedNodesSize = new HashSet<String>(size);
       for (int i = 0; i < size; i++)
       {
          String nodePath = readString(in);
-         unknownNodesDelta.add(nodePath);
+         unknownChangedNodesSize.add(nodePath);
       }
 
       size = in.readInt();

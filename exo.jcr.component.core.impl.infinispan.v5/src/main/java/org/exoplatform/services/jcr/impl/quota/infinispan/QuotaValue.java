@@ -24,7 +24,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /**
- * Wraps quota limit value and asynchonize update value into 
+ * Wraps quota limit value and asynchronize update value into 
  * one common class.
  * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
@@ -44,9 +44,9 @@ public class QuotaValue implements Externalizable
    }
 
    /**
-    * QuotaValue constuctor.
+    * QuotaValue constructor.
     */
-   QuotaValue(long quotaLimit, boolean asyncUpdate)
+   public QuotaValue(long quotaLimit, boolean asyncUpdate)
    {
       this.quotaLimit = quotaLimit;
       this.asyncUpdate = asyncUpdate;

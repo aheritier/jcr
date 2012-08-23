@@ -19,8 +19,7 @@
 package org.exoplatform.services.jcr.impl.quota;
 
 /**
- * Is occurred when there is no information about which quota limit
- * is set for specific entity.
+ * Occurs when there is no information about quota limit stored in {@link QuotaPersister}
  * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: UnsetQuotaLimitException.java 34360 2009-07-22 23:58:59Z tolusha $

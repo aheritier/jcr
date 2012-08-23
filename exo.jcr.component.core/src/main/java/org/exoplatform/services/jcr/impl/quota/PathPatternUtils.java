@@ -54,8 +54,8 @@ public class PathPatternUtils
    }
 
    /**
-    * Returns <code>true</code> if a specified path matches by pattern
-    * and has the same depth.
+    * Returns <code>true</code> if a specified path is matched by pattern
+    * and has the same depth in term of JCR path.
     * 
     * @param pattern
     *          pattern for node path
@@ -72,8 +72,8 @@ public class PathPatternUtils
    }
 
    /**
-    * Returns <code>true</code> if a specified path matches by pattern
-    * and has not less elements.
+    * Returns <code>true</code> if a specified path or any descendant path
+    * is matched by pattern.
     * 
     * @param pattern
     *          pattern for node path
@@ -86,7 +86,7 @@ public class PathPatternUtils
       absPath = normalizePath(absPath);
       pattern = adopt2JavaPattern(pattern);
 
-      // allows any children after
+      // allows any descendants after
       pattern += "(/.+)?";
 
       return absPath.matches(pattern);

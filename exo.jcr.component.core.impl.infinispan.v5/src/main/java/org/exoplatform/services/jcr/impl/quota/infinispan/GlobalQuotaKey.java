@@ -24,11 +24,13 @@ package org.exoplatform.services.jcr.impl.quota.infinispan;
  */
 public class GlobalQuotaKey extends QuotaKey
 {
+   private static final String ID = "global-quota-limit-key";
+
    /**
     * GlobalQuotaKey constructor.
     */
    public GlobalQuotaKey()
    {
-      super(null, "jcr");
+      super(null, ID);
    }
 }

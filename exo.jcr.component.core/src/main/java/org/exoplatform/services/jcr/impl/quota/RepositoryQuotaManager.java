@@ -76,7 +76,7 @@ public class RepositoryQuotaManager implements Startable, WorkspaceManagingListe
 
    /**
     * Task is obligated to push all changes to coordinator where they will
-    * be accumulated.
+    * be persisted.
     */
    protected final PushTask pushTask;
 
@@ -97,6 +97,9 @@ public class RepositoryQuotaManager implements Startable, WorkspaceManagingListe
 
       this.pushTask = new PushTask("PushQuotaChangesTask-" + rName, DEFAULT_TIMEOUT);
       this.pushTask.start();
+
+      globalQuotaManager.registerRepositoryQuotaManager(rName, this);
+      this.repository.addWorkspaceManagingListener(this);
    }
 
    /**
@@ -261,8 +264,6 @@ public class RepositoryQuotaManager implements Startable, WorkspaceManagingListe
     */
    public void start()
    {
-      globalQuotaManager.registerRepositoryQuotaManager(rName, this);
-      repository.addWorkspaceManagingListener(this);
    }
 
    /**
@@ -275,61 +276,6 @@ public class RepositoryQuotaManager implements Startable, WorkspaceManagingListe
       repository.removeWorkspaceManagingListener(this);
 
       pushTask.halt();
-   }
-
-   /**
-    * @see BaseQuotaManager#accumulatePersistedChanges(long)
-    */
-   protected void accumulatePersistedChanges(long delta)
-   {
-      long dataSize = 0;
-      try
-      {
-         dataSize = quotaPersister.getRepositoryDataSize(rName);
-      }
-      catch (UnknownDataSizeException e)
-      {
-         if (LOG.isTraceEnabled())
-         {
-            LOG.trace(e.getMessage(), e);
-         }
-      }
-
-      long newDataSize = Math.max(dataSize + delta, 0);
-      quotaPersister.setRepositoryDataSize(rName, newDataSize);
-
-      globalQuotaManager.accumulatePersistedChanges(delta);
-   }
-
-   /**
-    * @see BaseQuotaManager#validatePendingChanges(long)
-    */
-   protected void validatePendingChanges(long delta) throws ExceededQuotaLimitException
-   {
-      globalQuotaManager.validatePendingChanges(delta);
-
-      try
-      {
-         long quotaLimit = quotaPersister.getRepositoryQuota(rName);
-
-         try
-         {
-            long dataSize = quotaPersister.getRepositoryDataSize(rName);
-
-            if (dataSize + delta > quotaLimit)
-            {
-               globalQuotaManager.behaveOnQuotaExceeded("Repository " + rName + " data size exceeded quota limit");
-            }
-         }
-         catch (UnknownDataSizeException e)
-         {
-            return;
-         }
-      }
-      catch (UnknownQuotaLimitException e)
-      {
-         return;
-      }
    }
 
    /**
@@ -379,7 +325,15 @@ public class RepositoryQuotaManager implements Startable, WorkspaceManagingListe
          return;
       }
       
-      accumulatePersistedChanges(-dataSize);
+      ChangesItem changesItem = new ChangesItem();
+      changesItem.updateWorkspaceChangedSize(-dataSize);
+      
+      WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+
+      Runnable task = new ApplyPersistedChangesTask(wqm, changesItem);
+      task.run();
+
+      quotaPersister.setWorkspaceDataSize(rName, workspaceName, dataSize); // workaround
    }
 
    // ============================================> pushing changes to coordinator
@@ -405,17 +359,17 @@ public class RepositoryQuotaManager implements Startable, WorkspaceManagingListe
       {
          for (WorkspaceQuotaManager wqm : wsQuotaManagers.values())
          {
-            wqm.pushChangesToCoordinator(wqm.changesLog.merge(), false);
+            wqm.pushAllChangesToCoordinator();
          }
       }
    }
 
-   private WorkspaceQuotaManager getWorkspaceQuotaManager(String workspaceName) throws QuotaManagerException
+   private WorkspaceQuotaManager getWorkspaceQuotaManager(String workspaceName) throws IllegalStateException
    {
       WorkspaceQuotaManager wqm = wsQuotaManagers.get(workspaceName);
       if (wqm == null)
       {
-         throw new QuotaManagerException("Workspace " + workspaceName + " is not registered in " + rName);
+         throw new IllegalStateException("Workspace " + workspaceName + " is not registered in " + rName);
       }
 
       return wqm;

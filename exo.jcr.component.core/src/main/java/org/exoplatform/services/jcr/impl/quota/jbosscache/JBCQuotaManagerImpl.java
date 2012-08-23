@@ -143,7 +143,9 @@ public class JBCQuotaManagerImpl extends BaseQuotaManager
 
       putDefaultValues(qmEntry);
       putConfiguredValues(initParams, qmEntry);
-      putAppropriateColumnTypesValues(qmEntry);
+
+      ExoJBossCacheFactory.configureJDBCCacheLoader(qmEntry, JBOSSCACHE_JDBC_CL_DATASOURCE,
+         JBOSSCACHE_JDBC_CL_NODE_COLUMN_TYPE, JBOSSCACHE_JDBC_CL_FQN_COLUMN_TYPE);
 
       return qmEntry;
    }
@@ -167,19 +169,12 @@ public class JBCQuotaManagerImpl extends BaseQuotaManager
    private void putConfiguredValues(InitParams initParams, MappedParametrizedObjectEntry qmEntry)
    {
       PropertiesParam props = initParams.getPropertiesParam(BaseQuotaManager.CACHE_CONFIGURATION_PROPERTIES_PARAM);
+
       for (Iterator<Property> iter = props.getPropertyIterator(); iter.hasNext();)
       {
          Property prop = iter.next();
          qmEntry.putParameterValue(prop.getName(), prop.getValue());
       }
-   }
-
-   private void putAppropriateColumnTypesValues(MappedParametrizedObjectEntry qmEntry)
-      throws RepositoryException
-   {
-      // configure cache loader parameters with correct DB data-types
-      ExoJBossCacheFactory.configureJDBCCacheLoader(qmEntry, JBOSSCACHE_JDBC_CL_DATASOURCE,
-         JBOSSCACHE_JDBC_CL_NODE_COLUMN_TYPE, JBOSSCACHE_JDBC_CL_FQN_COLUMN_TYPE);
    }
 
    private class QuotaManagerEntry extends MappedParametrizedObjectEntry

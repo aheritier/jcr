@@ -18,7 +18,6 @@
  */
 package org.exoplatform.services.jcr.impl.quota.infinispan;
 
-
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: RepositoryQuotaKey.java 34360 2009-07-22 23:58:59Z tolusha $

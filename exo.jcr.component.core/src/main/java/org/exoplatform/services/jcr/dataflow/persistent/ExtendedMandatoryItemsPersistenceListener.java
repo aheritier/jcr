@@ -20,12 +20,17 @@ package org.exoplatform.services.jcr.dataflow.persistent;
 
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: PersistenceCommitListener.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: ExtendedMandatoryItemsPersistenceListener.java Aug 22, 2012 tolusha $
  */
-public interface PersistenceCommitListener
+public interface ExtendedMandatoryItemsPersistenceListener extends MandatoryItemsPersistenceListener
 {
    /**
-    * Will be called when at persistence layer commit is invoked.
+    * Will be called when rollback is invoked at persistence layer.
+    */
+   void onRollback();
+
+   /**
+    * Will be called when commit is invoked at persistence layer .
     */
    void onCommit();
 }

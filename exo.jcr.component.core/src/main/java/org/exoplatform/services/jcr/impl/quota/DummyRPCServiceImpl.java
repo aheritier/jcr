@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Dummy implementation. Executes all commands synchronously at same node 
- * where were called. The main idea of this implementation to avoid
- * overall checking if {@link RPCService} is null and devide logic.
+ * Dummy implementation. Executes all commands synchronously and locally.
+ * The main idea to have such kind of implementation is in avoiding
+ * devided logic with and without existence {@link RPCService} instance.
  * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: DummyRPCServiceImpl.java 34360 2009-07-22 23:58:59Z tolusha $

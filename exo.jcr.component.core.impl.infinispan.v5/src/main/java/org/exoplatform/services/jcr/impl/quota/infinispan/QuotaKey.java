@@ -21,7 +21,7 @@ package org.exoplatform.services.jcr.impl.quota.infinispan;
 import org.exoplatform.services.jcr.infinispan.CacheKey;
 
 /**
- * Is used to mark all key related to quota cache.
+ * Common class is used to mark all keys related to quota cache.
  * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: QuotaKey.java 34360 2009-07-22 23:58:59Z tolusha $

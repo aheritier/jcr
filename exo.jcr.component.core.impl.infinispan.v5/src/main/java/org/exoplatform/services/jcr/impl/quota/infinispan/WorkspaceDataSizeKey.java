@@ -18,12 +18,11 @@
  */
 package org.exoplatform.services.jcr.impl.quota.infinispan;
 
-
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: WorkspaceQuotaKey.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class WorkspaceDataSizeKey extends WorkspaceBaseKey
+public class WorkspaceDataSizeKey extends WorkspaceBasedKey
 {
    /**
     * Default constructor for serialization.
@@ -38,7 +37,7 @@ public class WorkspaceDataSizeKey extends WorkspaceBaseKey
     * 
     * @param wsUniqueName
     *          unique name of workspace in global JCR instance, might
-    *          contains repository name as well as workspace
+    *          contains repository name as well as workspace name
     */
    WorkspaceDataSizeKey(String wsUniqueName)
    {

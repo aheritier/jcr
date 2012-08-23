@@ -42,7 +42,7 @@ public interface QuotaPersister
       throws UnknownQuotaLimitException;
 
    /**
-    * Indicates if quota by specific path or pattern should use asynchronous update or not. 
+    * Indicates if quota by specific path or by pattern should use asynchronous update. 
     */
    boolean isNodeQuotaOrGroupOfNodesQuotaAsync(String repositoryName, String workspaceName, String nodePath)
       throws UnknownQuotaLimitException;
@@ -238,7 +238,7 @@ public interface QuotaPersister
    Set<String> getAllGroupOfNodesQuota(String repositoryName, String workspaceName);
 
    /**
-    * Returns all tracked nodes, which mean node data size is known.
+    * Returns all tracked nodes, which means node data size is known.
     */
    Set<String> getAllTrackedNodes(String repositoryName, String workspaceName);
 }

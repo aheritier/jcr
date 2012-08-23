@@ -24,11 +24,13 @@ package org.exoplatform.services.jcr.impl.quota.infinispan;
  */
 public class GlobalDataSizeKey extends QuotaKey
 {
+   private static final String ID = "global-data-size-key";
+   
    /**
     * GlobalDataSizeKey constructor.
     */
    public GlobalDataSizeKey()
    {
-      super(null, "jcr");
+      super(null, ID);
    }
 }

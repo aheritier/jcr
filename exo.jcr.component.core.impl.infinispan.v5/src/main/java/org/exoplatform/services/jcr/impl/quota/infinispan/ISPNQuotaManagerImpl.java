@@ -146,7 +146,10 @@ public class ISPNQuotaManagerImpl extends BaseQuotaManager
 
       putDefaultValues(qmEntry);
       putConfiguredValues(initParams, qmEntry);
-      putAppropriateColumnTypesValues(qmEntry);
+
+      ISPNCacheFactory.configureJDBCCacheLoader(qmEntry, INFINISPAN_JDBC_CL_DATASOURCE,
+         INFINISPAN_JDBC_CL_DATA_COLUMN_TYPE, INFINISPAN_JDBC_CL_ID_COLUMN_TYPE,
+         INFINISPAN_JDBC_CL_TIMESTAMP_COLUMN_TYPE);
 
       return qmEntry;
    }
@@ -177,14 +180,6 @@ public class ISPNQuotaManagerImpl extends BaseQuotaManager
          Property prop = iter.next();
          qmEntry.putParameterValue(prop.getName(), prop.getValue());
       }
-   }
-
-   private void putAppropriateColumnTypesValues(MappedParametrizedObjectEntry qmEntry) throws RepositoryException
-   {
-      // configure cache loader parameters with correct DB data-types
-      ISPNCacheFactory.configureJDBCCacheLoader(qmEntry, INFINISPAN_JDBC_CL_DATASOURCE,
-         INFINISPAN_JDBC_CL_DATA_COLUMN_TYPE, INFINISPAN_JDBC_CL_ID_COLUMN_TYPE,
-         INFINISPAN_JDBC_CL_TIMESTAMP_COLUMN_TYPE);
    }
 
    private class QuotaManagerEntry extends MappedParametrizedObjectEntry

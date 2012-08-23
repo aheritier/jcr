@@ -54,14 +54,35 @@ public class WorkspaceQuotaRestore implements DataRestore
     */
    protected static final String BACKUP_FILE_NAME = "quota";
 
+   /**
+    * File where temporary data are stored will be restored at rollback.
+    */
    private final File tempFile;
 
+   /**
+    * File where backuped data are stored.
+    */
    private final File backupFile;
 
    /**
     * {@link WorkspaceQuotaManager} instance.
     */
    private final WorkspaceQuotaManager wqm;
+
+   /**
+    * Workspace name.
+    */
+   private final String wsName;
+
+   /**
+    * Repository name.
+    */
+   private final String rName;
+
+   /**
+    * {@link QuotaPersister}
+    */
+   private final QuotaPersister quotaPersister;
 
    /**
     * WorkspaceQuotaRestore constructor.
@@ -81,6 +102,10 @@ public class WorkspaceQuotaRestore implements DataRestore
 
       File tempDir = new File(PrivilegedSystemHelper.getProperty("java.io.tmpdir"));
       this.tempFile = new File(tempDir, "temp.dump");
+
+      this.wsName = wqm.getContext().wsName;
+      this.rName = wqm.getContext().rName;
+      this.quotaPersister = wqm.getContext().quotaPersister;
    }
 
    /**
@@ -147,7 +172,7 @@ public class WorkspaceQuotaRestore implements DataRestore
       try
       {
          in = new ZipObjectReader(new ZipInputStream(new FileInputStream(backupFile)));
-         wqm.quotaPersister.restoreWorkspaceData(wqm.rName, wqm.wsName, in);
+         quotaPersister.restoreWorkspaceData(rName, wsName, in);
       }
       catch (IOException e)
       {
@@ -168,10 +193,26 @@ public class WorkspaceQuotaRestore implements DataRestore
          }
       }
 
+      repairDataSize();
+   }
+
+   /**
+    * After workspace data size being restored, need also to update
+    * repository and global data size on respective value.
+    */
+   private void repairDataSize()
+   {
       try
       {
-         long dataSize = wqm.quotaPersister.getWorkspaceDataSize(wqm.rName, wqm.wsName);
-         wqm.repositoryQuotaManager.accumulatePersistedChanges(dataSize);
+         long dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
+
+         ChangesItem changesItem = new ChangesItem();
+         changesItem.updateWorkspaceChangedSize(dataSize);
+
+         quotaPersister.setWorkspaceDataSize(rName, wsName, 0); // workaround
+
+         Runnable task = new ApplyPersistedChangesTask(wqm, changesItem);
+         task.run();
       }
       catch (UnknownDataSizeException e)
       {
@@ -191,7 +232,7 @@ public class WorkspaceQuotaRestore implements DataRestore
       try
       {
          out = new ZipObjectWriter(PrivilegedFileHelper.zipOutputStream(backupFile));
-         wqm.quotaPersister.backupWorkspaceData(wqm.rName, wqm.wsName, out);
+         quotaPersister.backupWorkspaceData(rName, wsName, out);
       }
       catch (IOException e)
       {
@@ -213,12 +254,20 @@ public class WorkspaceQuotaRestore implements DataRestore
       }
    }
 
+   /**
+    * Clean workspace data. Also decrease repository and global data size.
+    */
    protected void doClean() throws BackupException
    {
       try
       {
-         long dataSize = wqm.quotaPersister.getWorkspaceDataSize(wqm.rName, wqm.wsName);
-         wqm.repositoryQuotaManager.accumulatePersistedChanges(-dataSize);
+         long dataSize = wqm.quotaPersister.getWorkspaceDataSize(rName, wsName);
+
+         ChangesItem changesItem = new ChangesItem();
+         changesItem.updateWorkspaceChangedSize(-dataSize);
+
+         Runnable task = new ApplyPersistedChangesTask(wqm, changesItem);
+         task.run();
       }
       catch (UnknownDataSizeException e)
       {
@@ -228,7 +277,7 @@ public class WorkspaceQuotaRestore implements DataRestore
          }
       }
 
-      wqm.quotaPersister.clearWorkspaceData(wqm.rName, wqm.wsName);
+      quotaPersister.clearWorkspaceData(wqm.rName, wqm.wsName);
    }
 }
 

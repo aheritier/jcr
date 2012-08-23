@@ -30,9 +30,7 @@ import org.exoplatform.services.jcr.config.WorkspaceEntry;
 import org.exoplatform.services.jcr.core.WorkspaceContainerFacade;
 import org.exoplatform.services.jcr.dataflow.ItemDataConsumer;
 import org.exoplatform.services.jcr.dataflow.ItemDataTraversingVisitor;
-import org.exoplatform.services.jcr.dataflow.persistent.MandatoryItemsPersistenceListener;
-import org.exoplatform.services.jcr.dataflow.persistent.PersistenceCommitListener;
-import org.exoplatform.services.jcr.dataflow.persistent.PersistenceRollbackListener;
+import org.exoplatform.services.jcr.dataflow.persistent.ExtendedMandatoryItemsPersistenceListener;
 import org.exoplatform.services.jcr.datamodel.ItemType;
 import org.exoplatform.services.jcr.datamodel.NodeData;
 import org.exoplatform.services.jcr.datamodel.PropertyData;
@@ -51,8 +49,6 @@ import org.exoplatform.services.jcr.impl.core.RepositoryImpl;
 import org.exoplatform.services.jcr.impl.core.query.SearchManager;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspacePersistentDataManager;
 import org.exoplatform.services.jcr.impl.util.io.DirectoryHelper;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rpc.RPCException;
 import org.exoplatform.services.rpc.RPCService;
 import org.exoplatform.services.rpc.RemoteCommand;
@@ -65,13 +61,7 @@ import java.lang.reflect.Method;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jcr.ItemNotFoundException;
@@ -81,10 +71,9 @@ import javax.jcr.RepositoryException;
  * {@link WorkspaceQuotaManager} listens all changes performed in
  * {@link WorkspacePersistentDataManager} and checks if some of them might
  * exceed defined quota limit. If so, exception might be thrown or warning printing.
- * Then all changes are devided into two part. First one should be applies synchronously
- * and are passed to coordinator to apply instantly. Another one are put into changes
- * log and to be passed to coordinator by timer. It is managed by 
- * {@link RepositoryQuotaManager} 
+ * Then all changes are devided into two part. First one should be applied synchronously.
+ * Another ones are put into changes log and to be passed to coordinator by timer. 
+ * It is managed by {@link RepositoryQuotaManager} 
  * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: WorkspaceQuotaManager.java 34360 2009-07-22 23:58:59Z tolusha $
@@ -93,11 +82,6 @@ import javax.jcr.RepositoryException;
 @NameTemplate(@Property(key = "service", value = "WorkspaceQuotaManager"))
 public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
 {
-
-   /**
-    * Logger.
-    */
-   protected final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.WorkspaceQuotaManager");
 
    /**
     * Workspace name.
@@ -137,7 +121,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    /**
     * Executor service per workspace to be able to suspend all tasks devoted current workspace..
     */
-   protected ExecutorService executor;
+   protected final QuotaExecutorService executor;
 
    /**
     * {@link QuotaPersister}
@@ -150,52 +134,31 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    protected final RPCService rpcService;
 
    /**
-    * {@link MandatoryItemsPersistenceListener} implementation.
+    * {@link ExtendedMandatoryItemsPersistenceListener} implementations.
     */
-   protected final ValidateChangesListener validateChangesListener;
-
-   /**
-    * {@link PersistenceRollbackListener} and {@link PersistenceCommitListener} implementations.
-    */
-   protected final AccumulateChangesListener accumulateChangesListener;
+   protected final ChangesListener changesListener;
 
    /**
     * Indicates if component suspended or not.
     */
-   protected AtomicBoolean isSuspended = new AtomicBoolean();
+   protected final AtomicBoolean isSuspended = new AtomicBoolean();
 
    /**
     * Contains node paths for which {@link CalculateNodeDataSizeTask} currently is run. 
     * Does't allow execution several tasks over common path.
     */
-   protected Set<String> runNodesTasks = new ConcurrentHashSet<String>();
-
-   /**
-    * Pending changes of current save. If save failed changes will be removed, otherwise
-    * is moved into changes log to be pushed to coordinator by timer.
-    */
-   protected ThreadLocal<ChangesItem> pendingChanges = new ThreadLocal<ChangesItem>();
-
-   /**
-    * Accumulates changes of every save.  
-    */
-   protected ChangesLog changesLog = new ChangesLog();
-
-   /**
-    * @see BaseQuotaManager#testCase.
-    */
-   protected final boolean testCase;
-
-   /**
-    * Remote command is obligated to push changes log to coordinator.
-    */
-   protected RemoteCommand pushChangesLogTask;
+   protected final Set<String> runNodesTasks = new ConcurrentHashSet<String>();
 
    /**
     * Remote command is obligated to calculate node data size directly asking
     * {@link WorkspacePersistentDataManager}.
     */
    protected RemoteCommand calculateNodeDataSizeTask;
+
+   /**
+    * Context;
+    */
+   protected final WorkspaceQuotaContext context;
 
    /**
     * BaseWorkspaceQuotaManager constructor.
@@ -212,17 +175,18 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       this.repositoryQuotaManager = rQuotaManager;
       this.quotaPersister = rQuotaManager.globalQuotaManager.quotaPersister;
       this.rpcService = rQuotaManager.globalQuotaManager.rpcService;
-      this.testCase = rQuotaManager.globalQuotaManager.testCase;
+      this.executor = new QuotaExecutorService(uniqueName);
 
-      initExecutorService();
+      repositoryQuotaManager.registerWorkspaceQuotaManager(wsName, this);
+
       initRemoteCommands();
 
-      validateChangesListener = new ValidateChangesListener(this);
-      accumulateChangesListener = new AccumulateChangesListener(this);
+      changesListener = new ChangesListener(this);
+      dataManager.addItemPersistenceListener(changesListener);
 
-      dataManager.addPersistenceRollbackListener(accumulateChangesListener);
-      dataManager.addPersistenceCommitListener(accumulateChangesListener);
-      dataManager.addItemPersistenceListener(validateChangesListener);
+      this.context =
+         new WorkspaceQuotaContext(wsName, rName, uniqueName, dataManager, lFactory, executor, quotaPersister,
+            rpcService, runNodesTasks, rQuotaManager.globalQuotaManager.exceededQuotaBehavior);
    }
 
    /**
@@ -426,66 +390,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * @see BaseQuotaManager#accumulatePersistedChanges(long)
-    */
-   protected void accumulatePersistedChanges(long delta) throws QuotaManagerException
-   {
-      long dataSize = 0;
-      try
-      {
-         dataSize = quotaPersister.getWorkspaceDataSize(rName, wsName);
-      }
-      catch (UnknownDataSizeException e)
-      {
-         if (LOG.isTraceEnabled())
-         {
-            LOG.trace(e.getMessage(), e);
-         }
-      }
-
-      long newDataSize = Math.max(dataSize + delta, 0);
-      quotaPersister.setWorkspaceDataSize(rName, wsName, newDataSize);
-
-      repositoryQuotaManager.accumulatePersistedChanges(delta);
-   }
-
-   /**
-    * @see WorkspaceQuotaManager#accumulateChanges(long)
-    */
-   protected void accumulatePersistedNodesChanges(Map<String, Long> nodesDelta, Set<String> unknownNodesDelta)
-      throws QuotaManagerException
-   {
-      Set<String> trackedNodes = quotaPersister.getAllTrackedNodes(rName, wsName);
-      for (String nodePath : unknownNodesDelta)
-      {
-         for (String trackedPath : trackedNodes)
-         {
-            if (trackedPath.startsWith(nodePath))
-            {
-               quotaPersister.removeNodeDataSize(rName, wsName, trackedPath);
-            }
-         }
-      }
-
-      for (Entry<String, Long> entry : nodesDelta.entrySet())
-      {
-         String nodePath = entry.getKey();
-         Long delta = entry.getValue();
-
-         try
-         {
-            long dataSize = delta + quotaPersister.getNodeDataSize(rName, wsName, nodePath);
-            quotaPersister.setNodeDataSizeIfQuotaExists(rName, wsName, nodePath, dataSize);
-         }
-         catch (UnknownDataSizeException e)
-         {
-            executeCalculateNodeDataSizeTask(nodePath);
-         }
-      }
-   }
-
-   /**
-    * Calculates node data size by asking directly respective {@link WorkspacePersistentDataManager}. 
+    * Calculates node data size by asking directly respective {@link WorkspacePersistentDataManager}.
     */
    public long getNodeDataSizeDirectly(String nodePath) throws QuotaManagerException
    {
@@ -597,8 +502,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    public void start()
    {
-      repositoryQuotaManager.registerWorkspaceQuotaManager(wsName, this);
-
       boolean isCoordinator;
       try
       {
@@ -631,42 +534,18 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
 
       repositoryQuotaManager.unregisterWorkspaceQuotaManager(wsName);
 
-      dataManager.removeItemPersistenceListener(validateChangesListener);
-      dataManager.removePersistenceCommitListener(accumulateChangesListener);
-      dataManager.removePersistenceRollbackListener(accumulateChangesListener);
+      changesListener.destroy();
+      dataManager.removeItemPersistenceListener(changesListener);
 
-      rpcService.unregisterCommand(pushChangesLogTask);
       rpcService.unregisterCommand(calculateNodeDataSizeTask);
    }
 
    /**
-    * Initialize executor service
+    * Getter for {@link #context}.
     */
-   protected void initExecutorService()
+   protected WorkspaceQuotaContext getContext()
    {
-      this.executor = Executors.newFixedThreadPool(1, new ThreadFactory()
-      {
-         public Thread newThread(Runnable arg0)
-         {
-            return new Thread(arg0, "QuotaManagerThread " + uniqueName);
-         }
-      });
-   }
-
-   /**
-    * Awaits until all tasks will be done.
-    */
-   protected void awaitTasksTermination()
-   {
-      executor.shutdown();
-      try
-      {
-         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-      }
-      catch (InterruptedException e)
-      {
-         LOG.warn("Termination has been interrupted");
-      }
+      return context;
    }
 
    // ======================================> Backup & Suspend
@@ -704,7 +583,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    public void suspend() throws SuspendException
    {
-      awaitTasksTermination();
+      executor.suspend();
       isSuspended.set(true);
    }
 
@@ -713,7 +592,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    public void resume() throws ResumeException
    {
-      initExecutorService();
+      executor.resume();
       isSuspended.set(false);
    }
 
@@ -738,30 +617,35 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
     */
    protected void initRemoteCommands()
    {
-      pushChangesLogTask = new RemoteCommand()
+      initCalculateNodeDataSizeTask();
+      rpcService.registerCommand(calculateNodeDataSizeTask);
+   }
+
+   /**
+    * 
+    * @throws QuotaManagerException
+    */
+   protected void pushAllChangesToCoordinator() throws QuotaManagerException
+   {
+      try
       {
-         /**
-          * {@inheritDoc}
-          */
-         public String getId()
-         {
-            return "WorkspaceQuotaManager-" + uniqueName + "-pushChangesLogTask";
-         }
+         changesListener.pushAllChangesToCoordinator();
+      }
+      catch (SecurityException e)
+      {
+         throw new QuotaManagerException("Can't push changes to coordinator", e);
+      }
+      catch (RPCException e)
+      {
+         throw new QuotaManagerException("Can't push changes to coordinator", e);
+      }
+   }
 
-         /**
-          * Accumulates persisted changes.
-          */
-         public Serializable execute(Serializable[] args) throws Throwable
-         {
-            ChangesItem changesItem = (ChangesItem)args[0];
-
-            accumulatePersistedChanges(changesItem.workspaceDelta);
-            accumulatePersistedNodesChanges(changesItem.calculatedNodesDelta, changesItem.unknownNodesDelta);
-
-            return null;
-         }
-      };
-
+   /**
+    * Initialize remote command {@link #calculateNodeDataSizeTask}
+    */
+   private void initCalculateNodeDataSizeTask()
+   {
       calculateNodeDataSizeTask = new RemoteCommand()
       {
          /**
@@ -786,7 +670,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
                {
                   if (!runNodesTasks.contains(nodePath))
                   {
-                     Runnable task = new CalculateNodeDataSizeTask(WorkspaceQuotaManager.this, nodePath, runNodesTasks);
+                     Runnable task = new CalculateNodeDataSizeTask(WorkspaceQuotaManager.this, nodePath);
                      executor.execute(task);
                   }
                }
@@ -795,21 +679,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
             return null;
          }
       };
-
-      rpcService.registerCommand(pushChangesLogTask);
-      rpcService.registerCommand(calculateNodeDataSizeTask);
-   }
-
-   /**
-    * Push changes to coordinator to apply.
-    */
-   protected void pushChangesToCoordinator(ChangesItem changesItem, boolean synchronous) throws SecurityException,
-      RPCException
-   {
-      if (!changesItem.isEmpty())
-      {
-         rpcService.executeCommandOnCoordinator(pushChangesLogTask, synchronous, changesItem);
-      }
    }
 
    /**
@@ -846,8 +715,10 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
          throw new IllegalStateException("Can't calculate workspace data size", e1);
       }
 
-      quotaPersister.setWorkspaceDataSize(rName, wsName, dataSize);
-      repositoryQuotaManager.accumulatePersistedChanges(dataSize);
-   }
+      ChangesItem changesItem = new ChangesItem();
+      changesItem.updateWorkspaceChangedSize(dataSize);
 
+      Runnable task = new ApplyPersistedChangesTask(this, changesItem);
+      task.run();
+   }
 }

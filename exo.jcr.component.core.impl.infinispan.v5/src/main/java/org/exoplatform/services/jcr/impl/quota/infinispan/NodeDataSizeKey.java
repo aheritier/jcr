@@ -22,7 +22,7 @@ package org.exoplatform.services.jcr.impl.quota.infinispan;
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: NodeQuotaKey.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public class NodeDataSizeKey extends PathBaseKey
+public class NodeDataSizeKey extends PathBasedKey
 {
    /**
     * Constructor for serialization.
@@ -37,7 +37,7 @@ public class NodeDataSizeKey extends PathBaseKey
     * 
     * @param wsUniqueName
     *          unique name of workspace in global JCR instance, might
-    *          contains repository name as well as workspace
+    *          contains repository name as well as workspace name
     * @param nodePath
     *          absolute path to the node         
     */

@@ -25,10 +25,12 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /**
+ * Common class for all keys contained path element.
+ * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
- * @version $Id: PathBaseKey.java 34360 2009-07-22 23:58:59Z tolusha $
+ * @version $Id: PathBasedKey.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public abstract class PathBaseKey extends WorkspaceBaseKey
+public abstract class PathBasedKey extends WorkspaceBasedKey
 {
    /**
     * Workspace unique name.
@@ -38,7 +40,7 @@ public abstract class PathBaseKey extends WorkspaceBaseKey
    /**
     * Constructor for serialization.
     */
-   public PathBaseKey()
+   public PathBasedKey()
    {
       super();
    }
@@ -49,7 +51,7 @@ public abstract class PathBaseKey extends WorkspaceBaseKey
     * @param path
     *          absolute path to a node or pattern path
     */
-   public PathBaseKey(String workspaceUniqueName, String path)
+   public PathBasedKey(String workspaceUniqueName, String path)
    {
       super(workspaceUniqueName, new StringBuilder(workspaceUniqueName).append('/').append(path).toString());
       this.path = path;

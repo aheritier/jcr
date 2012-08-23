@@ -19,7 +19,7 @@
 package org.exoplatform.services.jcr.impl.quota;
 
 /**
- * Is occurred when entity data size is exceeded quota limit.
+ * May occur when entity data size is exceeding quota limit. 
  * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: ExceededQuotaLimitException.java 34360 2009-07-22 23:58:59Z tolusha $

@@ -27,7 +27,6 @@ import org.exoplatform.management.annotations.ManagedName;
 import org.exoplatform.management.jmx.annotations.NameTemplate;
 import org.exoplatform.management.jmx.annotations.Property;
 import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
-import org.exoplatform.services.jcr.impl.proccess.WorkerThread;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.naming.InitialContextInitializer;
@@ -53,14 +52,14 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    protected static final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.BaseQuotaManager");
 
    /**
-    * Cache configuration properties.
+    * Name of cache configuration properties parameter.
     */
    public static final String CACHE_CONFIGURATION_PROPERTIES_PARAM = "cache-configuration";
 
    /**
-    * Exceeded quota behavior value parameter.
+    * Name of exceeded quota behavior value parameter.
     */
-   public static final String EXCEEDED_QUOTA_BEHAVIOUR = "exceeded-quota-behaviour";
+   public static final String EXCEEDED_QUOTA_BEHAVIOUR_PARAM = "exceeded-quota-behaviour";
 
    /**
     * All {@link WorkspaceQuotaManager} belonging to repository.
@@ -103,38 +102,24 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    protected final TransactionService transactionService;
 
    /**
-    * For test purposes. Indicate to have some different behavior instead of
-    * standard. For example, to apply all changes into cache instantly
-    * instead of using {@link WorkerThread} etc. 
-    */
-   protected final boolean testCase;
-
-   /**
-    * Value parameter name.
-    */
-   public static final String TEST_CASE = "test-case";
-
-   /**
     * QuotaManager constructor.
     * 
     * @param contextInitializer
-    *          is added since BaseQuotaManager should start after InitialContextInitializer to have
+    *          is added since BaseQuotaManager should be started after InitialContextInitializer to have
     *          binded datasource at startup
     */
    public BaseQuotaManager(InitParams initParams, RPCService rpcService, ConfigurationManager cfm,
       TransactionService transactionService, InitialContextInitializer contextInitializer)
       throws RepositoryConfigurationException, QuotaManagerException
    {
-      ValueParam param = initParams.getValueParam(EXCEEDED_QUOTA_BEHAVIOUR);
+      ValueParam param = initParams.getValueParam(EXCEEDED_QUOTA_BEHAVIOUR_PARAM);
       this.exceededQuotaBehavior =
          param == null ? ExceededQuotaBehavior.WARNING : ExceededQuotaBehavior.valueOf(param.getValue().toUpperCase());
       
-      param = initParams.getValueParam(TEST_CASE);;
-      this.testCase = param == null ? false : Boolean.parseBoolean(param.getValue());
 
       this.cfm = cfm;
       this.initParams = initParams;
-      this.rpcService = rpcService == null || testCase ? new DummyRPCServiceImpl() : rpcService;
+      this.rpcService = rpcService == null ? new DummyRPCServiceImpl() : rpcService;
       this.transactionService = transactionService;
       this.quotaPersister = initQuotaPersister();
    }
@@ -372,65 +357,6 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    }
 
    /**
-    * Accumulate changed data size. Can be either positive
-    * or negative.
-    * 
-    * @param delta
-    *          the size on which entity was changed
-    */
-   protected void accumulatePersistedChanges(long delta)
-   {
-      long dataSize = 0;
-      try
-      {
-         dataSize = quotaPersister.getGlobalDataSize();
-      }
-      catch (UnknownDataSizeException e)
-      {
-         if (LOG.isTraceEnabled())
-         {
-            LOG.trace(e.getMessage(), e);
-         }
-      }
-
-      long newDataSize = Math.max(dataSize + delta, 0);
-      quotaPersister.setGlobalDataSize(newDataSize);
-   }
-
-   /**
-    * Checks if entity can accept new changes. It is not possible when 
-    * current behavior is {@link ExceededQuotaBehavior#EXCEPTION} and 
-    * new data size with will exceeds quota limit.
-    * 
-    * @throws ExceededQuotaLimitException if new data size will exceeds quota limit 
-    */
-   protected void validatePendingChanges(long delta) throws ExceededQuotaLimitException
-   {
-      try
-      {
-         long quotaLimit = quotaPersister.getGlobalQuota();
-
-         try
-         {
-            long dataSize = quotaPersister.getGlobalDataSize();
-
-            if (dataSize + delta > quotaLimit)
-            {
-               behaveOnQuotaExceeded("Global data size exceeded quota limit");
-            }
-         }
-         catch (UnknownDataSizeException e)
-         {
-            return;
-         }
-      }
-      catch (UnknownQuotaLimitException e)
-      {
-         return;
-      }
-   }
-
-   /**
     * Registers {@link RepositoryQuotaManager} by name. To delegate repository based operation
     * to appropriate level. 
     */
@@ -468,38 +394,20 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
       return size;
    }
 
-   private RepositoryQuotaManager getRepositoryQuotaManager(String repositoryName) throws QuotaManagerException
+   /**
+    * Returns registered {@link RepositoryQuotaManager} or throws exception.
+    */
+   private RepositoryQuotaManager getRepositoryQuotaManager(String repositoryName) throws IllegalStateException
    {
       RepositoryQuotaManager rqm = rQuotaManagers.get(repositoryName);
       if (rqm == null)
       {
-         throw new QuotaManagerException("Repository " + repositoryName + " is not registered");
+         throw new IllegalStateException("Repository " + repositoryName + " is not registered");
       }
 
       return rqm;
    }
 
-   /**
-    * What to do if data size exceeded quota limit. Throwing exception or logging only.
-    * Depends on preconfigured parameter.
-    * 
-    * @param message
-    *          the detail message for exception or log operation
-    * @throws ExceededQuotaLimitException
-    *          if current behavior is {@link ExceededQuotaBehavior#EXCEPTION}           
-    */
-   protected void behaveOnQuotaExceeded(String message) throws ExceededQuotaLimitException
-   {
-      switch (exceededQuotaBehavior)
-      {
-         case EXCEPTION :
-            throw new ExceededQuotaLimitException(message);
-
-         case WARNING :
-            LOG.warn(message);
-            break;
-      }
-   }
 
    /**
     * Initialize persister.

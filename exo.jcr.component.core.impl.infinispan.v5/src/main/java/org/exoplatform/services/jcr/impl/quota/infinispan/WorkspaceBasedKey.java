@@ -25,10 +25,12 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /**
+ * Common class for all workspace based keys.
+ * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: WorkspaceBaseKey.java 34360 2009-07-22 23:58:59Z tolusha $
  */
-public abstract class WorkspaceBaseKey extends QuotaKey
+public abstract class WorkspaceBasedKey extends QuotaKey
 {
    /**
     * Workspace unique name.
@@ -38,7 +40,7 @@ public abstract class WorkspaceBaseKey extends QuotaKey
    /**
     * Constructor for serialization.
     */
-   public WorkspaceBaseKey()
+   public WorkspaceBasedKey()
    {
       super();
    }
@@ -48,9 +50,9 @@ public abstract class WorkspaceBaseKey extends QuotaKey
     * 
     * @param wsUniqueName
     *          unique name of workspace in global JCR instance, might
-    *          contains repository name as well as workspace
+    *          contains repository name as well as workspace name
     */
-   public WorkspaceBaseKey(String workspaceUniqueName, String id)
+   public WorkspaceBasedKey(String workspaceUniqueName, String id)
    {
       super(null, id);
       this.workspaceUniqueName = workspaceUniqueName;

@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * Accumulates changes of saves during whole period. Time from time
- * all changes are pushed to coordinator.
+ * Accumulates changes from every saves during whole period. From time to time
+ * all changes are pushed to coordinator to persist.
  * 
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: ChangesLog.java 34360 2009-07-22 23:58:59Z tolusha $ 
@@ -31,42 +31,44 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 class ChangesLog extends ConcurrentLinkedQueue<ChangesItem>
 {
    /**
-    * Returns total workspace changed size.
+    * Returns workspace changed size accumulated during
+    * some period.
     */
-   public long getWorkspaceDelta()
+   public long getWorkspaceChangedSize()
    {
       long wsDelta = 0;
 
       Iterator<ChangesItem> changes = iterator();
       while (changes.hasNext())
       {
-         wsDelta += changes.next().workspaceDelta;
+         wsDelta += changes.next().getWorkspaceChangedSize();
       }
 
       return wsDelta;
    }
 
    /**
-    * Return total changed size for particular node.
+    * Return changed size for particular node accumulated during
+    * some period.
     */
-   public long getNodeDelta(String nodePath)
+   public long getNodeChangedSize(String nodePath)
    {
       long nodeDelta = 0;
 
       Iterator<ChangesItem> changes = iterator();
       while (changes.hasNext())
       {
-         nodeDelta += changes.next().calculatedNodesDelta.get(nodePath);
+         nodeDelta += changes.next().getNodeChangedSize(nodePath);
       }
 
       return nodeDelta;
    }
 
    /**
-    * Merges all current existed changes into one single {@link ChangesItem} and return it.
+    * Merges all current existed changes into one single {@link ChangesItem} and return them.
     * Don't care if after merge new entries will come.
     */
-   public ChangesItem merge()
+   public ChangesItem pollAndMergeAll()
    {
       ChangesItem totalChanges = new ChangesItem();
 

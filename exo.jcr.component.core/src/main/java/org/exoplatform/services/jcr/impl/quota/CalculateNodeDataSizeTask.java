@@ -37,29 +37,48 @@ public class CalculateNodeDataSizeTask implements Runnable
     */
    private final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.CalculateNodeDataSizeTask");
 
-   private final WorkspaceQuotaManager quotaManager;
+   /**
+    * {@link WorkspaceQuotaManager} instance.
+    */
+   private final WorkspaceQuotaManager wqm;
 
-   private final QuotaPersister quotaPersister;
-
-   private final String rName;
-
-   private final String wsName;
-
+   /**
+    * The node path to calculate data size for.
+    */
    private final String nodePath;
 
-   private final Set<String> runNodesTasks;
+   /**
+    * Workspace name.
+    */
+   public final String wsName;
+
+   /**
+    * Repository name.
+    */
+   public final String rName;
+
+   /**
+    * {@link QuotaPersister}
+    */
+   public final QuotaPersister quotaPersister;
+
+   /**
+    * @see WorkspaceQuotaContext#runNodesTasks
+    */
+   public final Set<String> runNodesTasks;
 
    /**
     * CalculateNodeDataSizeTask constructor.
     */
-   public CalculateNodeDataSizeTask(WorkspaceQuotaManager quotaManager, String nodePath, Set<String> runNodesTasks)
+   public CalculateNodeDataSizeTask(WorkspaceQuotaManager wqm, String nodePath)
    {
-      this.quotaManager = quotaManager;
+      this.wqm = wqm;
       this.nodePath = nodePath;
-      this.quotaPersister = quotaManager.quotaPersister;
-      this.rName = quotaManager.rName;
-      this.wsName = quotaManager.wsName;
-      this.runNodesTasks = runNodesTasks;
+
+      this.wsName = wqm.getContext().wsName;
+      this.rName = wqm.getContext().rName;
+      this.quotaPersister = wqm.getContext().quotaPersister;
+      this.runNodesTasks = wqm.getContext().runNodesTasks;
    }
 
    /**
@@ -73,7 +92,7 @@ public class CalculateNodeDataSizeTask implements Runnable
          {
             public Void run() throws Exception
             {
-               long dataSize = quotaManager.getNodeDataSizeDirectly(nodePath);
+               long dataSize = wqm.getNodeDataSizeDirectly(nodePath);
                quotaPersister.setNodeDataSizeIfQuotaExists(rName, wsName, nodePath, dataSize);
 
                return null;
