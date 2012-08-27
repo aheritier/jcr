@@ -162,10 +162,11 @@ public class TestQuotas extends AbstractQuotaManagerTest
    {
       assertTrue(dataSizeShouldNotExists(wsQuotaManager, "/a/b"));
 
+      wsQuotaManager.setNodeQuota("/a/b", 1000, false);
+
       root.addNode("a").addNode("b");
       root.save();
       
-      wsQuotaManager.setNodeQuota("/a/b", 1000, false);
       assertNodeDataSize(wsQuotaManager, "/a/b");
 
       root.getNode("a").remove();
@@ -183,10 +184,11 @@ public class TestQuotas extends AbstractQuotaManagerTest
    {
       assertTrue(dataSizeShouldNotExists(wsQuotaManager, "/a/b"));
 
+      wsQuotaManager.setNodeQuota("/a/b", 1000, false);
+
       root.addNode("a").addNode("b");
       root.save();
 
-      wsQuotaManager.setNodeQuota("/a/b", 1000, false);
       assertNodeDataSize(wsQuotaManager, "/a/b");
 
       session.move("/a/b", "/a/c");
@@ -220,33 +222,20 @@ public class TestQuotas extends AbstractQuotaManagerTest
       assertTrue(dataSizeShouldNotExists(wsQuotaManager, "/a/b"));
       assertTrue(dataSizeShouldNotExists(wsQuotaManager, "/a/c"));
 
-      root.addNode("a").addNode("b");
-      root.save();
-
       wsQuotaManager.setNodeQuota("/a/b", 1000, false);
       wsQuotaManager.setNodeQuota("/a/c", 1000, false);
 
-      waitTasksTermination(wsQuotaManager);
-      waitTasksTermination(wsQuotaManager);
+      root.addNode("a").addNode("b");
+      root.save();
 
-      assertTrue(wsQuotaManager.getNodeDataSize("/a/b") > 0);
+      assertNodeDataSize(wsQuotaManager, "/a/b", session);
 
       session.move("/a/b", "/a/c");
       root.getNode("a").getNode("c").addNode("d");
       root.save();
 
-      waitTasksTermination(wsQuotaManager);
-
-      try
-      {
-         assertEquals(wsQuotaManager.getNodeDataSize("/a/c"), wsQuotaManager.getNodeDataSizeDirectly("/a/c"));
-      }
-      catch (UnknownDataSizeException e)
-      {
-         // may happen
-      }
-
-      assertTrue(dataSizeShouldNotExists(wsQuotaManager, "/a/b"));
+      assertNodeDataSize(wsQuotaManager, "/a/b", session);
+      assertNodeDataSize(wsQuotaManager, "/a/c", session);
 
       wsQuotaManager.removeNodeQuota("/a/b");
       wsQuotaManager.removeNodeQuota("/a/c");
@@ -257,15 +246,18 @@ public class TestQuotas extends AbstractQuotaManagerTest
     */
    public void testSetNodeQuota() throws Exception
    {
-      Node testA = root.addNode("a");
-      Node testB = testA.addNode("b");
-      root.save();
+      assertTrue(dataSizeShouldNotExists(wsQuotaManager, "/a/b"));
+      assertTrue(dataSizeShouldNotExists(wsQuotaManager, "/a"));
 
       assertTrue(quotaShouldNotExists(wsQuotaManager, "/a"));
       assertTrue(quotaShouldNotExists(wsQuotaManager, "/a/b"));
 
       wsQuotaManager.setNodeQuota("/a", 20000, false);
       wsQuotaManager.setNodeQuota("/a/b", 1000, false);
+
+      Node testA = root.addNode("a");
+      Node testB = testA.addNode("b");
+      root.save();
 
       assertNodeDataSize(wsQuotaManager, "/a/b");
       assertNodeDataSize(wsQuotaManager, "/a");
@@ -318,17 +310,19 @@ public class TestQuotas extends AbstractQuotaManagerTest
     */
    public void testSetGroupOfNodeQuota() throws Exception
    {
-      Node testA = root.addNode("a");
-      Node testB = root.addNode("b");
-      root.save();
-
       assertTrue(quotaShouldNotExists(wsQuotaManager, "/a"));
       assertTrue(quotaShouldNotExists(wsQuotaManager, "/b"));
+
+      assertTrue(dataSizeShouldNotExists(wsQuotaManager, "/a"));
+      assertTrue(dataSizeShouldNotExists(wsQuotaManager, "/b"));
 
       wsQuotaManager.setGroupOfNodesQuota("/*", 1000, false);
       wsQuotaManager.setNodeQuota("/b", 10000, false);
 
-      assertTrue(dataSizeShouldNotExists(wsQuotaManager, "/a"));
+      Node testA = root.addNode("a");
+      Node testB = root.addNode("b");
+      root.save();
+
       assertNodeDataSize(wsQuotaManager, "/b");
 
       // small changes
@@ -380,10 +374,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
    {
       assertWorkspaceSize(wsQuotaManager);
 
-      root.addNode("fakeQuotaNode");
-      root.save();
-
-      wsQuotaManager.setWorkspaceQuota(10);
+      wsQuotaManager.setWorkspaceQuota(1000);
 
       root.addNode("testQuotaNode");
       try
@@ -422,10 +413,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
 
       assertTrue(dbQuotaManager.getRepositoryDataSize() > 0);
 
-      root.addNode("fakeQuotaNode");
-      root.save();
-
-      dbQuotaManager.setRepositoryQuota(10);
+      dbQuotaManager.setRepositoryQuota(1000);
 
       root.addNode("testQuotaNode");
       try
@@ -463,10 +451,7 @@ public class TestQuotas extends AbstractQuotaManagerTest
 
       assertTrue(quotaManager.getGlobalDataSize() > 0);
 
-      root.addNode("fakeQuotaNode");
-      root.save();
-
-      quotaManager.setGlobalQuota(10);
+      quotaManager.setGlobalQuota(1000);
 
       root.addNode("testQuotaNode");
       try
@@ -514,6 +499,8 @@ public class TestQuotas extends AbstractQuotaManagerTest
 
       long dataSize = quotaManager.getGlobalDataSize();
       long ws1DataSize = ws1QuotaManager.getWorkspaceDataSize();
+
+      assertWorkspaceSize(ws1QuotaManager);
 
       repository.removeWorkspace(ws1Entry.getName());
       assertEquals(dataSize - ws1DataSize, quotaManager.getGlobalDataSize());

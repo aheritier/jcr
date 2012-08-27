@@ -31,9 +31,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.zip.ZipInputStream;
 
 /**
  * {@link DataRestore} implementation for quota.
@@ -162,7 +160,7 @@ public class WorkspaceQuotaRestore implements DataRestore
     */
    protected void doRestore(File backupFile) throws BackupException
    {
-      if (!backupFile.exists())
+      if (!PrivilegedFileHelper.exists(backupFile))
       {
          LOG.warn("Nothing to restore for quotas");
          return;
@@ -171,7 +169,7 @@ public class WorkspaceQuotaRestore implements DataRestore
       ZipObjectReader in = null;
       try
       {
-         in = new ZipObjectReader(new ZipInputStream(new FileInputStream(backupFile)));
+         in = new ZipObjectReader(PrivilegedFileHelper.zipInputStream(backupFile));
          quotaPersister.restoreWorkspaceData(rName, wsName, in);
       }
       catch (IOException e)
@@ -211,7 +209,7 @@ public class WorkspaceQuotaRestore implements DataRestore
 
          quotaPersister.setWorkspaceDataSize(rName, wsName, 0); // workaround
 
-         Runnable task = new ApplyPersistedChangesTask(wqm, changesItem);
+         Runnable task = new ApplyPersistedChangesTask(wqm.getContext(), changesItem);
          task.run();
       }
       catch (UnknownDataSizeException e)
@@ -266,7 +264,7 @@ public class WorkspaceQuotaRestore implements DataRestore
          ChangesItem changesItem = new ChangesItem();
          changesItem.updateWorkspaceChangedSize(-dataSize);
 
-         Runnable task = new ApplyPersistedChangesTask(wqm, changesItem);
+         Runnable task = new ApplyPersistedChangesTask(wqm.getContext(), changesItem);
          task.run();
       }
       catch (UnknownDataSizeException e)

@@ -21,6 +21,8 @@ package org.exoplatform.services.jcr.impl.quota;
 import org.exoplatform.services.jcr.JcrAPIBaseTest;
 import org.exoplatform.services.jcr.util.TesterConfigurationHelper;
 
+import javax.jcr.Session;
+
 /**
  * @author <a href="abazko@exoplatform.com">Anatoliy Bazko</a>
  * @version $Id: AbstractQuotaManagerTest.java 34360 2009-07-22 23:58:59Z tolusha $
@@ -34,7 +36,7 @@ public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
 
    protected RepositoryQuotaManager dbQuotaManager;
 
-   protected QuotaManager quotaManager;
+   protected BaseQuotaManager quotaManager;
 
    protected TesterConfigurationHelper helper = TesterConfigurationHelper.getInstance();
 
@@ -45,7 +47,7 @@ public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
    {
       super.setUp();
 
-      quotaManager = (QuotaManager)repository.getWorkspaceContainer("ws").getComponent(QuotaManager.class);
+      quotaManager = (BaseQuotaManager)repository.getWorkspaceContainer("ws").getComponent(QuotaManager.class);
 
       dbQuotaManager =
          (RepositoryQuotaManager)repository.getWorkspaceContainer("ws").getComponent(RepositoryQuotaManager.class);
@@ -99,6 +101,11 @@ public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
 
    protected void assertNodeDataSize(WorkspaceQuotaManager wqm, String nodePath) throws Exception
    {
+      assertNodeDataSize(wqm, nodePath, session);
+   }
+
+   protected void assertNodeDataSize(WorkspaceQuotaManager wqm, String nodePath, Session session) throws Exception
+   {
       long expectedSize = session.itemExists(nodePath) ? wqm.getNodeDataSizeDirectly(nodePath) : 0;
 
       long startTime = System.currentTimeMillis();
@@ -114,10 +121,17 @@ public abstract class AbstractQuotaManagerTest extends JcrAPIBaseTest
                return;
             }
          }
+         catch (UnknownDataSizeException e)
+         {
+            if (expectedSize == 0)
+            {
+               return;
+            }
+         }
          catch (QuotaManagerException e)
          {
          }
-         
+
          Thread.sleep(100);
 
          if (System.currentTimeMillis() - startTime > maxTime)

@@ -59,17 +59,17 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
    protected final AtomicBoolean isSuspended = new AtomicBoolean();
 
    /**
+    * Workspace unique name.
+    */
+   protected final String uniqueName;
+
+   /**
     * QuotaExecutorService constructor.
     */
-   public QuotaExecutorService(final String uniqueName)
+   public QuotaExecutorService(String uniqueName)
    {
-      delegated = Executors.newFixedThreadPool(1, new ThreadFactory()
-      {
-         public Thread newThread(Runnable arg0)
-         {
-            return new Thread(arg0, "QuotaManagerThread " + uniqueName);
-         }
-      });
+      this.uniqueName = uniqueName;
+      initExecutorService();
    }
 
    /**
@@ -90,7 +90,7 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
     */
    public void shutdown()
    {
-      delegated.shutdown();
+      throw new UnsupportedOperationException("Method is not supported");
    }
 
    /**
@@ -106,7 +106,7 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
     */
    public boolean isShutdown()
    {
-      return delegated.isShutdown();
+      throw new UnsupportedOperationException("Method is not supported");
    }
 
    /**
@@ -114,7 +114,7 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
     */
    public boolean isTerminated()
    {
-      return delegated.isTerminated();
+      throw new UnsupportedOperationException("Method is not supported");
    }
 
    /**
@@ -122,7 +122,7 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
     */
    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException
    {
-      return delegated.awaitTermination(timeout, unit);
+      throw new UnsupportedOperationException("Method is not supported");
    }
 
    /**
@@ -130,7 +130,7 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
     */
    public <T> Future<T> submit(Callable<T> task)
    {
-      return delegated.submit(task);
+      throw new UnsupportedOperationException("Method is not supported");
    }
 
    /**
@@ -138,7 +138,7 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
     */
    public <T> Future<T> submit(Runnable task, T result)
    {
-      return delegated.submit(task, result);
+      throw new UnsupportedOperationException("Method is not supported");
    }
 
    /**
@@ -146,7 +146,7 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
     */
    public Future<?> submit(Runnable task)
    {
-      return delegated.submit(task);
+      throw new UnsupportedOperationException("Method is not supported");
    }
 
    /**
@@ -154,7 +154,7 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
     */
    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException
    {
-      return delegated.invokeAll(tasks);
+      throw new UnsupportedOperationException("Method is not supported");
    }
 
    /**
@@ -163,7 +163,7 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
       throws InterruptedException
    {
-      return delegated.invokeAll(tasks, timeout, unit);
+      throw new UnsupportedOperationException("Method is not supported");
    }
 
    /**
@@ -171,7 +171,7 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
     */
    public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException
    {
-      return delegated.invokeAny(tasks);
+      throw new UnsupportedOperationException("Method is not supported");
    }
 
    /**
@@ -180,7 +180,7 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
    public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
       throws InterruptedException, ExecutionException, TimeoutException
    {
-      return delegated.invokeAny(tasks, timeout, unit);
+      throw new UnsupportedOperationException("Method is not supported");
    }
 
    /**
@@ -197,6 +197,7 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
     */
    public void resume() throws ResumeException
    {
+      initExecutorService();
       isSuspended.set(false);
    }
 
@@ -230,5 +231,16 @@ public class QuotaExecutorService implements ExecutorService, Suspendable
       {
          LOG.warn("Termination has been interrupted");
       }
+   }
+
+   protected void initExecutorService()
+   {
+      delegated = Executors.newFixedThreadPool(1, new ThreadFactory()
+      {
+         public Thread newThread(Runnable arg0)
+         {
+            return new Thread(arg0, "QuotaManagerThread " + uniqueName);
+         }
+      });
    }
 }

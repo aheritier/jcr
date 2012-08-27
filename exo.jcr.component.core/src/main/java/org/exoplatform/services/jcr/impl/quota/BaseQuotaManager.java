@@ -31,7 +31,6 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.naming.InitialContextInitializer;
 import org.exoplatform.services.rpc.RPCService;
-import org.exoplatform.services.transaction.TransactionService;
 import org.picocontainer.Startable;
 
 import java.util.Map;
@@ -97,11 +96,6 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
    protected final ConfigurationManager cfm;
 
    /**
-    * Transaction service.
-    */
-   protected final TransactionService transactionService;
-
-   /**
     * QuotaManager constructor.
     * 
     * @param contextInitializer
@@ -109,8 +103,7 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
     *          binded datasource at startup
     */
    public BaseQuotaManager(InitParams initParams, RPCService rpcService, ConfigurationManager cfm,
-      TransactionService transactionService, InitialContextInitializer contextInitializer)
-      throws RepositoryConfigurationException, QuotaManagerException
+      InitialContextInitializer contextInitializer) throws RepositoryConfigurationException, QuotaManagerException
    {
       ValueParam param = initParams.getValueParam(EXCEEDED_QUOTA_BEHAVIOUR_PARAM);
       this.exceededQuotaBehavior =
@@ -120,18 +113,16 @@ public abstract class BaseQuotaManager implements QuotaManager, Startable
       this.cfm = cfm;
       this.initParams = initParams;
       this.rpcService = rpcService == null ? new DummyRPCServiceImpl() : rpcService;
-      this.transactionService = transactionService;
       this.quotaPersister = initQuotaPersister();
    }
 
    /**
     * QuotaManager constructor.
     */
-   public BaseQuotaManager(InitParams initParams, ConfigurationManager cfm, TransactionService transactionService,
-      InitialContextInitializer contextInitializer)
+   public BaseQuotaManager(InitParams initParams, ConfigurationManager cfm, InitialContextInitializer contextInitializer)
       throws RepositoryConfigurationException, QuotaManagerException
    {
-      this(initParams, null, cfm, transactionService, contextInitializer);
+      this(initParams, null, cfm, contextInitializer);
    }
 
    /**

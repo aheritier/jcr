@@ -37,20 +37,22 @@ public class TestBackRestoreQuota extends AbstractQuotaManagerTest
     */
    public void testBackupRestoreClean() throws Exception
    {
+      assertWorkspaceSize(wsQuotaManager);
+
       File tempDir = new File("target/temp");
 
       Node testRoot = root.addNode("testRoot");
-
-      testRoot.addNode("test1").addNode("content");
-      testRoot.addNode("test2").addNode("content").addNode("content");
-      root.save();
 
       wsQuotaManager.setNodeQuota("/testRoot/test1", 1000, false);
       wsQuotaManager.setNodeQuota("/testRoot/test2", 1000, false);
       wsQuotaManager.setGroupOfNodesQuota("/testRoot/*", 2000, true);
 
-      wsQuotaManager.suspend(); // waits until all tasks are done
-      wsQuotaManager.resume();
+      testRoot.addNode("test1").addNode("content");
+      testRoot.addNode("test2").addNode("content").addNode("content");
+      root.save();
+
+      assertNodeDataSize(wsQuotaManager, "/testRoot/test1");
+      assertNodeDataSize(wsQuotaManager, "/testRoot/test2");
 
       wsQuotaManager.removeNodeQuota("/testRoot/test2");
 

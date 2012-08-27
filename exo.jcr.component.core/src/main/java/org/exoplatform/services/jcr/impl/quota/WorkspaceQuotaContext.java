@@ -23,7 +23,6 @@ import org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspacePersistent
 import org.exoplatform.services.jcr.impl.quota.BaseQuotaManager.ExceededQuotaBehavior;
 import org.exoplatform.services.rpc.RPCService;
 
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -76,12 +75,6 @@ public class WorkspaceQuotaContext
    public final RPCService rpcService;
 
    /**
-    * Contains node paths for which {@link CalculateNodeDataSizeTask} currently is run. 
-    * Does't allow execution several tasks over common path.
-    */
-   public final Set<String> runNodesTasks;
-
-   /**
     * @see ExceededQuotaBehavior
     */
    public final ExceededQuotaBehavior exceededQuotaBehavior;
@@ -91,7 +84,7 @@ public class WorkspaceQuotaContext
     */
    WorkspaceQuotaContext(String wsName, String rName, String uniqueName, WorkspacePersistentDataManager dataManager,
       LocationFactory lFactory, ExecutorService executor, QuotaPersister quotaPersister, RPCService rpcService,
-      Set<String> runNodesTasks, ExceededQuotaBehavior exceededQuotaBehavior)
+      ExceededQuotaBehavior exceededQuotaBehavior)
    {
       this.wsName = wsName;
       this.rName = rName;
@@ -101,7 +94,6 @@ public class WorkspaceQuotaContext
       this.executor = executor;
       this.quotaPersister = quotaPersister;
       this.rpcService = rpcService;
-      this.runNodesTasks = runNodesTasks;
       this.exceededQuotaBehavior = exceededQuotaBehavior;
    }
 }

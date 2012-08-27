@@ -28,14 +28,7 @@ import org.exoplatform.management.jmx.annotations.Property;
 import org.exoplatform.services.jcr.config.RepositoryEntry;
 import org.exoplatform.services.jcr.config.WorkspaceEntry;
 import org.exoplatform.services.jcr.core.WorkspaceContainerFacade;
-import org.exoplatform.services.jcr.dataflow.ItemDataConsumer;
-import org.exoplatform.services.jcr.dataflow.ItemDataTraversingVisitor;
 import org.exoplatform.services.jcr.dataflow.persistent.ExtendedMandatoryItemsPersistenceListener;
-import org.exoplatform.services.jcr.datamodel.ItemType;
-import org.exoplatform.services.jcr.datamodel.NodeData;
-import org.exoplatform.services.jcr.datamodel.PropertyData;
-import org.exoplatform.services.jcr.datamodel.QPathEntry;
-import org.exoplatform.services.jcr.impl.Constants;
 import org.exoplatform.services.jcr.impl.backup.BackupException;
 import org.exoplatform.services.jcr.impl.backup.Backupable;
 import org.exoplatform.services.jcr.impl.backup.DataRestore;
@@ -44,27 +37,21 @@ import org.exoplatform.services.jcr.impl.backup.SuspendException;
 import org.exoplatform.services.jcr.impl.backup.Suspendable;
 import org.exoplatform.services.jcr.impl.backup.rdbms.DataRestoreContext;
 import org.exoplatform.services.jcr.impl.core.JCRPath;
-import org.exoplatform.services.jcr.impl.core.LocationFactory;
 import org.exoplatform.services.jcr.impl.core.RepositoryImpl;
 import org.exoplatform.services.jcr.impl.core.query.SearchManager;
 import org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspacePersistentDataManager;
 import org.exoplatform.services.jcr.impl.util.io.DirectoryHelper;
 import org.exoplatform.services.rpc.RPCException;
 import org.exoplatform.services.rpc.RPCService;
-import org.exoplatform.services.rpc.RemoteCommand;
-import org.jboss.cache.util.concurrent.ConcurrentHashSet;
 import org.picocontainer.Startable;
 
 import java.io.File;
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 
 /**
@@ -109,11 +96,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    protected final WorkspacePersistentDataManager dataManager;
 
    /**
-    * {@link LocationFactory} instance.
-    */
-   protected final LocationFactory lFactory;
-
-   /**
     * Quota manager of repository level.
     */
    protected final RepositoryQuotaManager repositoryQuotaManager;
@@ -144,21 +126,14 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    protected final AtomicBoolean isSuspended = new AtomicBoolean();
 
    /**
-    * Contains node paths for which {@link CalculateNodeDataSizeTask} currently is run. 
-    * Does't allow execution several tasks over common path.
-    */
-   protected final Set<String> runNodesTasks = new ConcurrentHashSet<String>();
-
-   /**
-    * Remote command is obligated to calculate node data size directly asking
-    * {@link WorkspacePersistentDataManager}.
-    */
-   protected RemoteCommand calculateNodeDataSizeTask;
-
-   /**
     * Context;
     */
    protected final WorkspaceQuotaContext context;
+
+   /**
+    * Helps calculate node data size.
+    */
+   protected final CalculateNodeDataSizeTool calculateNodeDataSizeTool;
 
    /**
     * BaseWorkspaceQuotaManager constructor.
@@ -171,7 +146,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       this.uniqueName = "/" + rName + "/" + wsName;
       this.wsContainer = repository.getWorkspaceContainer(wsName);
       this.dataManager = dataManager;
-      this.lFactory = repository.getLocationFactory();
       this.repositoryQuotaManager = rQuotaManager;
       this.quotaPersister = rQuotaManager.globalQuotaManager.quotaPersister;
       this.rpcService = rQuotaManager.globalQuotaManager.rpcService;
@@ -179,13 +153,12 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
 
       repositoryQuotaManager.registerWorkspaceQuotaManager(wsName, this);
 
-      initRemoteCommands();
-
       this.context =
-         new WorkspaceQuotaContext(wsName, rName, uniqueName, dataManager, lFactory, executor, quotaPersister,
-            rpcService, runNodesTasks, rQuotaManager.globalQuotaManager.exceededQuotaBehavior);
+         new WorkspaceQuotaContext(wsName, rName, uniqueName, dataManager, repository.getLocationFactory(), executor,
+            quotaPersister, rpcService, rQuotaManager.globalQuotaManager.exceededQuotaBehavior);
 
       changesListener = new ChangesListener(this);
+      calculateNodeDataSizeTool = new CalculateNodeDataSizeTool(context);
       dataManager.addItemPersistenceListener(changesListener);
    }
 
@@ -233,30 +206,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       }
       else
       {
-         try
-         {
-            quotaPersister.getNodeQuotaOrGroupOfNodesQuota(rName, wsName, nodePath);
-         }
-         catch (UnknownQuotaLimitException e)
-         {
-            // have deal with setting new quota limit value
-            quotaPersister.setNodeQuota(rName, wsName, nodePath, quotaLimit, asyncUpdate);
-            executeCalculateNodeDataSizeTask(nodePath);
-
-            return;
-         }
-
-         // have deal with changing quota limit value
          quotaPersister.setNodeQuota(rName, wsName, nodePath, quotaLimit, asyncUpdate);
-
-         try
-         {
-            quotaPersister.getNodeDataSize(rName, wsName, nodePath);
-         }
-         catch (UnknownDataSizeException e)
-         {
-            executeCalculateNodeDataSizeTask(nodePath);
-         }
       }
    }
 
@@ -396,33 +346,10 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    {
       if (nodePath.equals(JCRPath.ROOT_PATH))
       {
-         return getWorkspaceDataSize();
+         return getWorkspaceDataSizeDirectly();
       }
 
-      try
-      {
-         NodeData node = (NodeData)dataManager.getItemData(Constants.ROOT_UUID);
-
-         JCRPath path = lFactory.parseRelPath(nodePath.substring(1)); // let ignore root entry '[]:1'
-         for (QPathEntry entry : path.getInternalPath().getEntries())
-         {
-            node = (NodeData)dataManager.getItemData(node, entry, ItemType.NODE, false);
-
-            if (node == null) // may be already removed
-            {
-               throw new ItemNotFoundException("Node " + nodePath + " not found in workspace");
-            }
-         }
-
-         CalculateNodeDataSizeVisitor visitor = new CalculateNodeDataSizeVisitor(dataManager);
-         node.accept(visitor);
-
-         return visitor.getSize();
-      }
-      catch (RepositoryException e)
-      {
-         throw new QuotaManagerException(e.getMessage(), e);
-      }
+      return calculateNodeDataSizeTool.getNodeDataSizeDirectly(nodePath);
    }
 
    /**
@@ -437,63 +364,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       catch (RepositoryException e)
       {
          throw new QuotaManagerException(e.getMessage(), e);
-      }
-   }
-
-   /**
-    * Traverse over all children nodes and calculate its size.
-    */
-   private class CalculateNodeDataSizeVisitor extends ItemDataTraversingVisitor
-   {
-
-      /**
-       * Node data size.
-       */
-      private long size;
-
-      /**
-       * CalculateNodeDataSizeVisitor constructor.
-       */
-      public CalculateNodeDataSizeVisitor(ItemDataConsumer dataManager)
-      {
-         super(dataManager);
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      protected void entering(PropertyData property, int level) throws RepositoryException
-      {
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      protected void entering(NodeData node, int level) throws RepositoryException
-      {
-         size += ((WorkspacePersistentDataManager)dataManager).getNodeDataSize(node.getIdentifier());
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      protected void leaving(PropertyData property, int level) throws RepositoryException
-      {
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      protected void leaving(NodeData node, int level) throws RepositoryException
-      {
-      }
-
-      /**
-       * Returns calculated node data size.
-       */
-      public long getSize()
-      {
-         return size;
       }
    }
 
@@ -536,8 +406,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
 
       changesListener.destroy();
       dataManager.removeItemPersistenceListener(changesListener);
-
-      rpcService.unregisterCommand(calculateNodeDataSizeTask);
    }
 
    /**
@@ -613,15 +481,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
    }
 
    /**
-    * Initialize remote commands.
-    */
-   protected void initRemoteCommands()
-   {
-      initCalculateNodeDataSizeTask();
-      rpcService.registerCommand(calculateNodeDataSizeTask);
-   }
-
-   /**
     * 
     * @throws QuotaManagerException
     */
@@ -638,65 +497,6 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       catch (RPCException e)
       {
          throw new QuotaManagerException("Can't push changes to coordinator", e);
-      }
-   }
-
-   /**
-    * Initialize remote command {@link #calculateNodeDataSizeTask}
-    */
-   private void initCalculateNodeDataSizeTask()
-   {
-      calculateNodeDataSizeTask = new RemoteCommand()
-      {
-         /**
-          * {@inheritDoc}
-          */
-         public String getId()
-         {
-            return "WorkspaceQuotaManager-" + uniqueName + "-calculateNodeDataSizeTask";
-         }
-
-         /**
-          * Executes task {@link CalculateNodeDataSizeTask} if it is not in a list
-          * of current executing tasks. 
-          */
-         public Serializable execute(Serializable[] args) throws Throwable
-         {
-            String nodePath = (String)args[0];
-
-            if (!runNodesTasks.contains(nodePath))
-            {
-               synchronized (runNodesTasks)
-               {
-                  if (!runNodesTasks.contains(nodePath))
-                  {
-                     Runnable task = new CalculateNodeDataSizeTask(WorkspaceQuotaManager.this, nodePath);
-                     executor.execute(task);
-                  }
-               }
-            }
-
-            return null;
-         }
-      };
-   }
-
-   /**
-    * Execute task {@link CalculateNodeDataSizeTask} on coordinator.
-    */
-   protected void executeCalculateNodeDataSizeTask(String nodePath) throws QuotaManagerException
-   {
-      try
-      {
-         rpcService.executeCommandOnCoordinator(calculateNodeDataSizeTask, false, nodePath);
-      }
-      catch (SecurityException e)
-      {
-         throw new QuotaManagerException("Can't calculate node data size task", e.getCause());
-      }
-      catch (RPCException e)
-      {
-         throw new QuotaManagerException("Can't calculate node data size task", e.getCause());
       }
    }
 
@@ -718,7 +518,7 @@ public class WorkspaceQuotaManager implements Startable, Backupable, Suspendable
       ChangesItem changesItem = new ChangesItem();
       changesItem.updateWorkspaceChangedSize(dataSize);
 
-      Runnable task = new ApplyPersistedChangesTask(this, changesItem);
+      Runnable task = new ApplyPersistedChangesTask(context, changesItem);
       task.run();
    }
 }

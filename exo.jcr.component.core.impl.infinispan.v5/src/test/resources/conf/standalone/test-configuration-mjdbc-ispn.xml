@@ -175,10 +175,6 @@
         <name>exceeded-quota-behaviour</name>
         <value>exception</value>
       </value-param>
-      <value-param>
-        <name>test-case</name>
-        <value>true</value>
-      </value-param>
       <properties-param>
         <name>cache-configuration</name>
         <description>infinispan-configuration</description>
@@ -274,7 +270,7 @@
           <property name="url" value="${jdbcjcr.url:jdbc:hsqldb:file:target/temp/data/portal;hsqldb.tx=mvcc}"/>
           <property name="username" value="${jdbcjcr.username:sa}"/>
           <property name="password" value="${jdbcjcr.password:}"/>
-          <property name="maxActive" value="20" />
+          <property name="maxActive" value="25" />
         </properties-param>
       </init-params>
     </component-plugin>

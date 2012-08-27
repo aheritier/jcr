@@ -24,7 +24,6 @@ import org.exoplatform.services.log.Log;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Is supposed to be executed on coordinator only.
@@ -41,47 +40,47 @@ public class ApplyPersistedChangesTask implements Runnable
    protected final Log LOG = ExoLogger.getLogger("exo.jcr.component.core.ApplyPersistedChangesTask");
 
    /**
-    * {@link WorkspaceQuotaManager} instance.
-    */
-   protected final WorkspaceQuotaManager wqm;
-
-   /**
     * The changes to be applied.
     */
    protected final ChangesItem changesItem;
 
    /**
-    * Executor service per workspace to be able to suspend all tasks devoted current workspace..
-    */
-   public final ExecutorService executor;
-
-   /**
     * Workspace name.
     */
-   public final String wsName;
+   protected final String wsName;
 
    /**
     * Repository name.
     */
-   public final String rName;
+   protected final String rName;
 
    /**
     * {@link QuotaPersister}
     */
-   public final QuotaPersister quotaPersister;
+   protected final QuotaPersister quotaPersister;
+
+   /**
+    * {@link WorkspaceQuotaContext} instance.
+    */
+   protected final WorkspaceQuotaContext context;
+
+   /**
+    * Helps to calculate node data size.
+    */
+   protected final CalculateNodeDataSizeTool calculateNodeDataSizeTool;
 
    /**
     * ApplyPersistedChangesTask constructor.
     */
-   ApplyPersistedChangesTask(WorkspaceQuotaManager wqm, ChangesItem changesItem)
+   ApplyPersistedChangesTask(WorkspaceQuotaContext context, ChangesItem changesItem)
    {
-      this.wqm = wqm;
       this.changesItem = changesItem;
+      this.context = context;
 
-      this.wsName = wqm.getContext().wsName;
-      this.rName = wqm.getContext().rName;
-      this.quotaPersister = wqm.getContext().quotaPersister;
-      this.executor = wqm.getContext().executor;
+      this.wsName = context.wsName;
+      this.rName = context.rName;
+      this.quotaPersister = context.quotaPersister;
+      this.calculateNodeDataSizeTool = new CalculateNodeDataSizeTool(context);
    }
 
    /**
@@ -146,7 +145,7 @@ public class ApplyPersistedChangesTask implements Runnable
          }
          catch (UnknownDataSizeException e)
          {
-            wqm.executeCalculateNodeDataSizeTask(nodePath);
+            calculateNodeDataSizeTool.getAndSetNodeDataSize(nodePath);
          }
       }
    }

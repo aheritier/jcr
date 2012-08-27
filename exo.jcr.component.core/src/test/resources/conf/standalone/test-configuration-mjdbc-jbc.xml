@@ -194,10 +194,6 @@
         <name>exceeded-quota-behaviour</name>
         <value>exception</value>
       </value-param>
-      <value-param>
-        <name>test-case</name>
-        <value>true</value>
-      </value-param>
       <properties-param>
         <name>cache-configuration</name>
         <description>jbosscache-configuration</description>

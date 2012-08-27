@@ -328,9 +328,10 @@ public class RepositoryQuotaManager implements Startable, WorkspaceManagingListe
       ChangesItem changesItem = new ChangesItem();
       changesItem.updateWorkspaceChangedSize(-dataSize);
       
-      WorkspaceQuotaManager wqm = getWorkspaceQuotaManager(workspaceName);
+      WorkspaceQuotaContext context =
+         new WorkspaceQuotaContext(workspaceName, rName, null, null, null, null, quotaPersister, null, null);
 
-      Runnable task = new ApplyPersistedChangesTask(wqm, changesItem);
+      Runnable task = new ApplyPersistedChangesTask(context, changesItem);
       task.run();
 
       quotaPersister.setWorkspaceDataSize(rName, workspaceName, dataSize); // workaround

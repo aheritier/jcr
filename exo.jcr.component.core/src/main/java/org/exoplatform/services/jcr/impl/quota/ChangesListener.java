@@ -508,7 +508,7 @@ public class ChangesListener implements ExtendedMandatoryItemsPersistenceListene
          {
             ChangesItem changesItem = (ChangesItem)args[0];
 
-            Runnable task = new ApplyPersistedChangesTask(wqm, changesItem);
+            Runnable task = new ApplyPersistedChangesTask(wqm.getContext(), changesItem);
             executor.execute(task);
 
             return null;

@@ -30,7 +30,6 @@ import org.exoplatform.services.jcr.impl.quota.QuotaPersister;
 import org.exoplatform.services.jcr.infinispan.ISPNCacheFactory;
 import org.exoplatform.services.naming.InitialContextInitializer;
 import org.exoplatform.services.rpc.RPCService;
-import org.exoplatform.services.transaction.TransactionService;
 
 import java.util.Iterator;
 
@@ -103,19 +102,18 @@ public class ISPNQuotaManagerImpl extends BaseQuotaManager
     * ISPNQuotaManager constructor.
     */
    public ISPNQuotaManagerImpl(InitParams initParams, RPCService rpcService, ConfigurationManager cfm,
-      TransactionService transactionService, InitialContextInitializer contextInitializer)
-      throws RepositoryConfigurationException, QuotaManagerException
+      InitialContextInitializer contextInitializer) throws RepositoryConfigurationException, QuotaManagerException
    {
-      super(initParams, rpcService, cfm, transactionService, contextInitializer);
+      super(initParams, rpcService, cfm, contextInitializer);
    }
 
    /**
     * ISPNQuotaManager constructor.
     */
-   public ISPNQuotaManagerImpl(InitParams initParams, ConfigurationManager cfm, TransactionService transactionService,
+   public ISPNQuotaManagerImpl(InitParams initParams, ConfigurationManager cfm,
       InitialContextInitializer contextInitializer) throws RepositoryConfigurationException, QuotaManagerException
    {
-      this(initParams, null, cfm, transactionService, contextInitializer);
+      this(initParams, null, cfm, contextInitializer);
    }
 
    /**
