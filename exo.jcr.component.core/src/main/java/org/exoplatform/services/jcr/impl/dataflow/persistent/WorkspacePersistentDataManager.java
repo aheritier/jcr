@@ -25,8 +25,8 @@ import org.exoplatform.services.jcr.dataflow.PersistentDataManager;
 import org.exoplatform.services.jcr.dataflow.PlainChangesLog;
 import org.exoplatform.services.jcr.dataflow.PlainChangesLogImpl;
 import org.exoplatform.services.jcr.dataflow.TransactionChangesLog;
+import org.exoplatform.services.jcr.dataflow.persistent.ExtendedMandatoryItemsPersistenceListener;
 import org.exoplatform.services.jcr.dataflow.persistent.ItemsPersistenceListener;
-import org.exoplatform.services.jcr.dataflow.persistent.ItemsPersistenceListenerFilter;
 import org.exoplatform.services.jcr.dataflow.persistent.MandatoryItemsPersistenceListener;
 import org.exoplatform.services.jcr.dataflow.persistent.PersistedItemData;
 import org.exoplatform.services.jcr.dataflow.persistent.PersistedNodeData;
@@ -103,9 +103,9 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
    protected final List<MandatoryItemsPersistenceListener> mandatoryListeners;
 
    /**
-    * Persistent level listeners filters.
+    * Mandatory persistent level listeners.
     */
-   protected final List<ItemsPersistenceListenerFilter> listenerFilters;
+   protected final List<ExtendedMandatoryItemsPersistenceListener> extendedMandatoryListeners;
 
    /**
     * The resource manager
@@ -180,7 +180,8 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
                   RemovableItemSate removableCheckedState = iterator.next();
                   ItemState checkedState = removableCheckedState.getState();
                   // if UUIDs or paths are the same 
-                  if (checkedState.getData().getIdentifier().equals(lastState.getData().getIdentifier()))
+                  if (checkedState.getData().getIdentifier().equals(lastState.getData().getIdentifier())
+                     && checkedState.getData().getQPath().equals(lastState.getData().getQPath()))
                   {
                      // remove updated state, because delete, add or update state 
                      if ((checkedState.isAdded() || checkedState.isUpdated()) && lastState.isDeleted())
@@ -294,7 +295,8 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
 
       this.listeners = new ArrayList<ItemsPersistenceListener>();
       this.mandatoryListeners = new ArrayList<MandatoryItemsPersistenceListener>();
-      this.listenerFilters = new ArrayList<ItemsPersistenceListenerFilter>();
+      this.extendedMandatoryListeners = new ArrayList<ExtendedMandatoryItemsPersistenceListener>();
+
       this.txResourceManager = txResourceManager;
       this.transactionManager = transactionManager;
    }
@@ -486,6 +488,8 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
          {
             systemConnection.commit();
          }
+
+         notifyCommit();
       }
 
       protected void prepare() throws IllegalStateException, RepositoryException
@@ -512,10 +516,13 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
          {
             thisConnection.rollback();
          }
+
          if (systemConnection != null && !systemConnection.equals(thisConnection) && systemConnection.isOpened())
          {
             systemConnection.rollback();
          }
+
+         notifyRollback();
       }
 
       protected WorkspaceStorageConnection getSystemConnection() throws RepositoryException
@@ -573,6 +580,8 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
             ItemState prevState = iter.next();
             ItemData newData;
 
+            ChangedSizeHandler sizeHandler = initChangedSizeHandler(newLog, prevState);
+
             if (prevState.getData() instanceof PersistedItemData)
             {
                // use existing if persisted 
@@ -619,21 +628,21 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
                      newData =
                         new PersistedPropertyData(prevData.getIdentifier(), prevData.getQPath(),
                            prevData.getParentIdentifier(), prevData.getPersistedVersion() + 1, prevData.getType(),
-                           prevData.isMultiValued(), values);
+                           prevData.isMultiValued(), values, new DelegatedPersistedSize(sizeHandler));
                   }
                   else
                   {
                      newData =
                         new PersistedPropertyData(prevData.getIdentifier(), prevData.getQPath(),
                            prevData.getParentIdentifier(), prevData.getPersistedVersion() + 1, prevData.getType(),
-                           prevData.isMultiValued(), null);
+                           prevData.isMultiValued(), null, new DelegatedPersistedSize(sizeHandler));
                   }
                }
             }
 
             ItemState itemState =
                new ItemState(newData, prevState.getState(), prevState.isEventFire(), prevState.getAncestorToSave(),
-                  prevState.isInternallyCreated(), prevState.isPersisted(), prevState.getOldPath());
+                  prevState.isInternallyCreated(), prevState.isPersisted(), prevState.getOldPath(), sizeHandler);
 
             newLog.add(itemState);
 
@@ -659,15 +668,15 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
 
                if (itemState.isAdded())
                {
-                  doAdd(data, conn, addedNodes);
+                  doAdd(data, conn, addedNodes, sizeHandler);
                }
                else if (itemState.isUpdated())
                {
-                  doUpdate(data, conn);
+                  doUpdate(data, conn, sizeHandler);
                }
                else if (itemState.isDeleted())
                {
-                  doDelete(data, conn);
+                  doDelete(data, conn, sizeHandler);
                }
                else if (itemState.isRenamed())
                {
@@ -683,6 +692,43 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
          }
 
          return newLog;
+      }
+
+      /**
+       * Initialize appropriate {@link ChangedSizeHandler} instance. Should not exists for Node. If
+       * current state already exists one it'll be returned as is. Special logic is implemented
+       * for none persisted states by trying to find in new changes log the last related state and refer
+       * on it. Otherwise {@link SimpleChangedSizeHandler} will be returned.
+       */
+      private ChangedSizeHandler initChangedSizeHandler(PlainChangesLogImpl newLog, ItemState state)
+      {
+         if (state.getData().isNode())
+         {
+            return null;
+         }
+         else if (state.getChangedSizeHandler() != null)
+         {
+            return state.getChangedSizeHandler();
+         }
+         else if (!state.isPersisted() && (state.isDeleted() || state.isRenamed()))
+         {
+            List<ItemState> states = newLog.getAllStates();
+
+            for (int i = states.size() - 1; i >= 0; i--)
+            {
+               ItemState newState = states.get(i);
+               if (newState.getData().getIdentifier().equals(state.getData().getIdentifier()))
+               {
+                  return new OppositeChangedSizeHandler(newState.getChangedSizeHandler());
+               }
+            }
+
+            throw new IllegalStateException("Can't find appropriate ChangedSizeHandler");
+         }
+         else
+         {
+            return new SimpleChangedSizeHandler();
+         }
       }
    }
 
@@ -941,12 +987,13 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
     * @param item
     *          to delete
     * @param con
+    * @param sizeHandler
     * @throws RepositoryException
     * @throws InvalidItemStateException
     *           if the item is already deleted
     */
-   protected void doDelete(final ItemData item, final WorkspaceStorageConnection con) throws RepositoryException,
-      InvalidItemStateException
+   protected void doDelete(final ItemData item, final WorkspaceStorageConnection con, ChangedSizeHandler sizeHandler)
+      throws RepositoryException, InvalidItemStateException
    {
 
       if (item.isNode())
@@ -955,7 +1002,7 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
       }
       else
       {
-         con.delete((PropertyData)item);
+         con.delete((PropertyData)item, sizeHandler);
       }
    }
 
@@ -966,12 +1013,13 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
     *          to update
     * @param con
     *          connection
+    * @param sizeHandler
     * @throws RepositoryException
     * @throws InvalidItemStateException
     *           if the item not found
     */
-   protected void doUpdate(final ItemData item, final WorkspaceStorageConnection con) throws RepositoryException,
-      InvalidItemStateException
+   protected void doUpdate(final ItemData item, final WorkspaceStorageConnection con, ChangedSizeHandler sizeHandler)
+      throws RepositoryException, InvalidItemStateException
    {
 
       if (item.isNode())
@@ -980,7 +1028,7 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
       }
       else
       {
-         con.update((PropertyData)item);
+         con.update((PropertyData)item, sizeHandler);
       }
    }
 
@@ -991,14 +1039,15 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
     *          to add
     * @param con
     *          connection
+    * @param sizeHandler
+    *          accumulates size changing
     * @throws RepositoryException
     * @throws InvalidItemStateException
     *           if the item is already added
     */
-   protected void doAdd(final ItemData item, final WorkspaceStorageConnection con, final Set<QPath> addedNodes)
-      throws RepositoryException, InvalidItemStateException
+   protected void doAdd(final ItemData item, final WorkspaceStorageConnection con, final Set<QPath> addedNodes,
+      ChangedSizeHandler sizeHandler) throws RepositoryException, InvalidItemStateException
    {
-
       if (item.isNode())
       {
          final NodeData node = (NodeData)item;
@@ -1010,7 +1059,7 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
       }
       else
       {
-         con.add((PropertyData)item);
+         con.add((PropertyData)item, sizeHandler);
       }
    }
 
@@ -1020,6 +1069,7 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
     * @param item
     * @param con
     * @param addedNodes
+    * @param delegated
     * @throws RepositoryException
     * @throws InvalidItemStateException
     */
@@ -1048,13 +1098,15 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
    // ---------------------------------------------
 
    /**
-    * Adds listener to the list.
-    * 
-    * @param listener
+    * {@inheritDoc}
     */
    public void addItemPersistenceListener(ItemsPersistenceListener listener)
    {
-      if (listener instanceof MandatoryItemsPersistenceListener)
+      if (listener instanceof ExtendedMandatoryItemsPersistenceListener)
+      {
+         extendedMandatoryListeners.add((ExtendedMandatoryItemsPersistenceListener)listener);
+      }
+      else if (listener instanceof MandatoryItemsPersistenceListener)
       {
          mandatoryListeners.add((MandatoryItemsPersistenceListener)listener);
       }
@@ -1068,9 +1120,16 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
       }
    }
 
+   /**
+    * {@inheritDoc}
+    */
    public void removeItemPersistenceListener(ItemsPersistenceListener listener)
    {
-      if (listener instanceof MandatoryItemsPersistenceListener)
+      if (listener instanceof ExtendedMandatoryItemsPersistenceListener)
+      {
+         extendedMandatoryListeners.remove(listener);
+      }
+      else if (listener instanceof MandatoryItemsPersistenceListener)
       {
          mandatoryListeners.remove(listener);
       }
@@ -1083,43 +1142,6 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
       {
          LOG.debug("Workspace '" + this.dataContainer.getName() + "' listener unregistered: " + listener);
       }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void addItemPersistenceListenerFilter(ItemsPersistenceListenerFilter filter)
-   {
-      this.listenerFilters.add(filter);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void removeItemPersistenceListenerFilter(ItemsPersistenceListenerFilter filter)
-   {
-      this.listenerFilters.remove(filter);
-   }
-
-   /**
-    * Check if the listener can be accepted. If at least one filter doesn't accept the listener it
-    * returns false, true otherwise.
-    * 
-    * @param listener
-    *          ItemsPersistenceListener
-    * @return boolean, true if accepted, false otherwise.
-    */
-   protected boolean isListenerAccepted(ItemsPersistenceListener listener)
-   {
-      for (ItemsPersistenceListenerFilter f : listenerFilters)
-      {
-         if (!f.accept(listener))
-         {
-            return false;
-         }
-      }
-
-      return true;
    }
 
    /**
@@ -1140,12 +1162,43 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
          }
       }
 
+      for (ExtendedMandatoryItemsPersistenceListener mlistener : extendedMandatoryListeners)
+      {
+         if (mlistener.isTXAware() == isListenerTXAware)
+         {
+            mlistener.onSaveItems(changesLog);
+         }
+      }
+
       for (ItemsPersistenceListener listener : listeners)
       {
-         if (listener.isTXAware() == isListenerTXAware && isListenerAccepted(listener))
+         if (listener.isTXAware() == isListenerTXAware)
          {
             listener.onSaveItems(changesLog);
          }
+      }
+
+   }
+
+   /**
+    * Notify listeners when changes is committed.
+    */
+   protected void notifyCommit()
+   {
+      for (ExtendedMandatoryItemsPersistenceListener listener : extendedMandatoryListeners)
+      {
+         listener.onCommit();
+      }
+   }
+
+   /**
+    * Notify listeners when changes is rollbacked.
+    */
+   protected void notifyRollback()
+   {
+      for (ExtendedMandatoryItemsPersistenceListener listener : extendedMandatoryListeners)
+      {
+         listener.onRollback();
       }
    }
 
@@ -1188,6 +1241,48 @@ public abstract class WorkspacePersistentDataManager implements PersistentDataMa
       try
       {
          return con.hasItemData(parentData, name, itemType);
+      }
+      finally
+      {
+         con.close();
+      }
+   }
+
+   /**
+    * Returns workspace data size. See for details
+    * {@link WorkspaceQuotaManagerImpl#getWorkspaceDataSize()}.
+    *
+    * @throws RepositoryException
+    *          if any exception is occurred
+    */
+   public long getWorkspaceDataSize() throws RepositoryException
+   {
+      final WorkspaceStorageConnection con = dataContainer.openConnection();
+      try
+      {
+         return con.getWorkspaceDataSize();
+      }
+      finally
+      {
+         con.close();
+      }
+   }
+
+   /**
+    * Returns node data size. See for details
+    * {@link WorkspaceQuotaManagerImpl#getNodeDataSize(String)}.
+    *
+    * @param nodeIdentifier
+    *          node identifier which size need to calculate
+    * @throws RepositoryException
+    *          if any exception is occurred
+    */
+   public long getNodeDataSize(String nodeIdentifier) throws RepositoryException
+   {
+      final WorkspaceStorageConnection con = dataContainer.openConnection();
+      try
+      {
+         return con.getNodeDataSize(nodeIdentifier);
       }
       finally
       {
