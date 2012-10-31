@@ -33,6 +33,10 @@
       </listitem>
 
       <listitem>
+        <para>MySQL Cluster (NDB engine)</para>
+      </listitem>
+
+      <listitem>
         <para>PostgresSQL 8.2.4 JDBC4 Driver, Version 8.2-507</para>
       </listitem>
 
@@ -126,6 +130,19 @@
 
       <td>jcr-sjdbc.mysql-myisam-utf8.sql</td>
     </tr>
+    
+    <tr>
+      <td>MySQL DB with NDB engine</td>
+
+      <td>jcr-sjdbc.mysql-ndb.sql</td>
+    </tr>
+
+
+    <tr>
+      <td>MySQL DB with NDB engine and utf-8</td>
+
+      <td>jcr-sjdbc.mysql-ndb-utf8.sql</td>
+    </tr>
 
     <tr>
       <td>PostgresSQL</td>
@@ -195,6 +212,19 @@
       <td>MySQL DB with MyISAM and utf-8*</td>
 
       <td>jcr-mjdbc.mysql-myisam-utf8.sql</td>
+    </tr>
+    
+    <tr>
+      <td>MySQL DB with NDB engine</td>
+
+      <td>jcr-mjdbc.mysql-ndb.sql</td>
+    </tr>
+
+
+    <tr>
+      <td>MySQL DB with NDB engine and utf-8</td>
+
+      <td>jcr-mjdbc.mysql-ndb-utf8.sql</td>
     </tr>
 
     <tr>
