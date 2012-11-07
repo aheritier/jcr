@@ -158,8 +158,6 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
 
    protected PreparedStatement findMaxPropertyVersions;
 
-   protected PreparedStatement insertItem;
-
    protected PreparedStatement insertNode;
 
    protected PreparedStatement insertProperty;
@@ -168,19 +166,11 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
 
    protected PreparedStatement insertValue;
 
-   protected PreparedStatement updateItem;
-
-   protected PreparedStatement updateItemPath;
-
    protected PreparedStatement updateNode;
 
    protected PreparedStatement updateProperty;
 
    protected PreparedStatement deleteItem;
-
-   protected PreparedStatement deleteNode;
-
-   protected PreparedStatement deleteProperty;
 
    protected PreparedStatement deleteReference;
 
@@ -486,8 +476,6 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
 
    /**
     * Close all statements.
-    * 
-    * @throws SQLException
     */
    protected void closeStatements()
    {
@@ -567,12 +555,7 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
          {
             findMaxPropertyVersions.close();
          }
-
-         if (insertItem != null)
-         {
-            insertItem.close();
-         }
-
+         
          if (insertNode != null)
          {
             insertNode.close();
@@ -593,16 +576,6 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
             insertValue.close();
          }
 
-         if (updateItem != null)
-         {
-            updateItem.close();
-         }
-
-         if (updateItemPath != null)
-         {
-            updateItemPath.close();
-         }
-
          if (updateNode != null)
          {
             updateNode.close();
@@ -616,16 +589,6 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
          if (deleteItem != null)
          {
             deleteItem.close();
-         }
-
-         if (deleteNode != null)
-         {
-            deleteNode.close();
-         }
-
-         if (deleteProperty != null)
-         {
-            deleteProperty.close();
          }
 
          if (deleteReference != null)
@@ -687,7 +650,7 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
    /**
     * {@inheritDoc}
     */
-   public final void prepare() throws IllegalStateException, RepositoryException
+   public void prepare() throws IllegalStateException, RepositoryException
    {
       try
       {
@@ -2521,11 +2484,11 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
     *           i/O error
     * @throws SQLException
     *           if database error occurs
-    * @throws ValueStorageNotFoundException
-    *           if no such storage found with Value storageId
+    * @throws RepositoryException 
+    * @throws InvalidItemStateException 
     */
    private void deleteValues(String cid, PropertyData pdata, boolean update, ChangedSizeHandler sizeHandler)
-      throws IOException, SQLException, ValueStorageNotFoundException
+      throws IOException, SQLException, RepositoryException, InvalidItemStateException
    {
       Set<String> storages = new HashSet<String>();
 
@@ -2963,9 +2926,11 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
       }
    };
 
-   protected abstract int addNodeRecord(NodeData data) throws SQLException;
+   protected abstract int addNodeRecord(NodeData data) throws SQLException, InvalidItemStateException,
+      RepositoryException;
 
-   protected abstract int addPropertyRecord(PropertyData prop) throws SQLException;
+   protected abstract int addPropertyRecord(PropertyData prop) throws SQLException, InvalidItemStateException,
+      RepositoryException;
 
    protected abstract ResultSet findItemByIdentifier(String identifier) throws SQLException;
 
@@ -2986,34 +2951,41 @@ public abstract class JDBCStorageConnection extends DBConstants implements Works
    protected abstract ResultSet findChildNodesByParentIdentifier(String parentCid, int fromOrderNum, int toOrderNum)
       throws SQLException;
 
-   protected abstract int addReference(PropertyData data) throws SQLException, IOException;
+   protected abstract int addReference(PropertyData data) throws SQLException, IOException, InvalidItemStateException,
+      RepositoryException;
 
-   protected abstract int renameNode(NodeData data) throws SQLException;
+   protected abstract int renameNode(NodeData data) throws SQLException, InvalidItemStateException, RepositoryException;
 
-   protected abstract int deleteReference(String propertyIdentifier) throws SQLException;
+   protected abstract int deleteReference(String propertyIdentifier) throws SQLException, InvalidItemStateException,
+      RepositoryException;
 
    /**
     * Deletes [http://www.jcp.org/jcr/1.0]lockOwner and [http://www.jcp.org/jcr/1.0]lockIsDeep
     * properties directly from DB.
+    * @throws RepositoryException 
+    * @throws InvalidItemStateException 
     */
-   protected abstract void deleteLockProperties() throws SQLException;
+   protected abstract void deleteLockProperties() throws SQLException, InvalidItemStateException, RepositoryException;
 
    protected abstract ResultSet findReferences(String nodeIdentifier) throws SQLException;
 
-   protected abstract int deleteItemByIdentifier(String identifier) throws SQLException;
+   protected abstract int deleteItemByIdentifier(String identifier) throws SQLException, InvalidItemStateException,
+      RepositoryException;
 
    protected abstract int updateNodeByIdentifier(int version, int index, int orderNumb, String identifier)
-      throws SQLException;
+      throws SQLException, InvalidItemStateException, RepositoryException;
 
-   protected abstract int updatePropertyByIdentifier(int version, int type, String identifier) throws SQLException;
+   protected abstract int updatePropertyByIdentifier(int version, int type, String identifier) throws SQLException,
+      InvalidItemStateException, RepositoryException;
 
    protected abstract ResultSet findNodesCount() throws SQLException;
 
    // -------- values processing ------------
    protected abstract int addValueData(String cid, int orderNumber, InputStream stream, int streamLength,
-      String storageId) throws SQLException;
+      String storageId) throws SQLException, InvalidItemStateException, RepositoryException;
 
-   protected abstract int deleteValueData(String cid) throws SQLException;
+   protected abstract int deleteValueData(String cid) throws SQLException, InvalidItemStateException,
+      RepositoryException;
 
    protected abstract ResultSet findValuesByPropertyId(String cid) throws SQLException;
 

@@ -37,6 +37,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.RepositoryException;
 
 /**
@@ -205,7 +206,9 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
          "select length(DATA), I.P_TYPE, V.STORAGE_DESC from " + JCR_ITEM + " I, " + JCR_VALUE
             + " V where I.ID = ? and V.PROPERTY_ID = I.ID";
       DELETE_VALUE_BY_ORDER_NUM = "delete from " + JCR_VALUE + " where PROPERTY_ID=? and ORDER_NUM >= ?";
+      DELETE_REFERENCE_BY_ORDER_NUM = "delete from " + JCR_REF + " where PROPERTY_ID=? and ORDER_NUM >= ?";
       UPDATE_VALUE = "update " + JCR_VALUE + " set DATA=?, STORAGE_DESC=? where PROPERTY_ID=? and ORDER_NUM=?";
+      UPDATE_REFERENCE = "update " + JCR_REF + " set NODE_ID=? where PROPERTY_ID=? and ORDER_NUM=?";
 
       FIND_NODES_BY_PARENTID_LAZILY_CQ =
          "select I.*, P.NAME AS PROP_NAME, V.ORDER_NUM, V.DATA from " + JCR_ITEM + " I, " + JCR_ITEM + " P, "
@@ -244,7 +247,7 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
     * {@inheritDoc}
     */
    @Override
-   protected int addNodeRecord(NodeData data) throws SQLException
+   protected int addNodeRecord(NodeData data) throws SQLException, InvalidItemStateException, RepositoryException
    {
       if (insertNode == null)
       {
@@ -262,14 +265,16 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
       insertNode.setInt(4, data.getPersistedVersion());
       insertNode.setInt(5, data.getQPath().getIndex());
       insertNode.setInt(6, data.getOrderNumber());
-      return insertNode.executeUpdate();
+
+      return executeUpdate(insertNode, TYPE_INSERT_NODE);
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   protected int addPropertyRecord(PropertyData data) throws SQLException
+   protected int addPropertyRecord(PropertyData data) throws SQLException, InvalidItemStateException,
+      RepositoryException
    {
       if (insertProperty == null)
       {
@@ -288,23 +293,16 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
       insertProperty.setInt(6, data.getType());
       insertProperty.setBoolean(7, data.isMultiValued());
 
-      return insertProperty.executeUpdate();
+      return executeUpdate(insertProperty, TYPE_INSERT_PROPERTY);
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   protected int addReference(PropertyData data) throws SQLException, IOException
+   protected int addReference(PropertyData data) throws SQLException, IOException, InvalidItemStateException,
+      RepositoryException
    {
-      if (insertReference == null)
-      {
-         insertReference = dbConnection.prepareStatement(INSERT_REF);
-      }
-      else
-      {
-         insertReference.clearParameters();
-      }
 
       if (data.getQPath().getAsString().indexOf("versionableUuid") > 0)
       {
@@ -326,20 +324,84 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
             throw new IOException(e.getMessage(), e);
          }
 
-         insertReference.setString(1, refNodeIdentifier);
-         insertReference.setString(2, data.getIdentifier());
-         insertReference.setInt(3, i);
-         added += insertReference.executeUpdate();
+         added += addReference(data.getIdentifier(), i, refNodeIdentifier);
+      }
+      return added;
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected int deleteReferenceByOrderNum(String id, int orderNum) throws SQLException, InvalidItemStateException,
+      RepositoryException
+   {
+      if (deleteReferenceByOrderNum == null)
+      {
+         deleteReferenceByOrderNum = dbConnection.prepareStatement(DELETE_REFERENCE_BY_ORDER_NUM);
+      }
+      else
+      {
+         deleteReferenceByOrderNum.clearParameters();
       }
 
-      return added;
+      deleteReferenceByOrderNum.setString(1, id);
+      deleteReferenceByOrderNum.setInt(2, orderNum);
+
+      return executeUpdate(deleteReferenceByOrderNum, TYPE_DELETE_REFERENCE_BY_ORDER_NUM);
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   protected int deleteReference(String propertyIdentifier) throws SQLException
+   protected int addReference(String cid, int i, String refNodeIdentifier) throws SQLException,
+      InvalidItemStateException, RepositoryException
+   {
+      if (insertReference == null)
+      {
+         insertReference = dbConnection.prepareStatement(INSERT_REF);
+      }
+      else
+      {
+         insertReference.clearParameters();
+      }
+      insertReference.setString(1, refNodeIdentifier);
+      insertReference.setString(2, cid);
+      insertReference.setInt(3, i);
+
+      return executeUpdate(insertReference, TYPE_INSERT_REFERENCE);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected int updateReference(String cid, int i, String refNodeIdentifier) throws SQLException,
+      InvalidItemStateException, RepositoryException
+   {
+      if (updateReference == null)
+      {
+         updateReference = dbConnection.prepareStatement(UPDATE_REFERENCE);
+      }
+      else
+      {
+         updateReference.clearParameters();
+      }
+
+      updateReference.setString(1, refNodeIdentifier);
+      updateReference.setString(2, cid);
+      updateReference.setInt(3, i);
+
+      return executeUpdate(updateReference, TYPE_UPDATE_REFERENCE);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected int deleteReference(String propertyIdentifier) throws SQLException, InvalidItemStateException,
+      RepositoryException
    {
       if (deleteReference == null)
       {
@@ -351,14 +413,16 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
       }
 
       deleteReference.setString(1, propertyIdentifier);
-      return deleteReference.executeUpdate();
+
+      return executeUpdate(deleteReference, TYPE_DELETE_REFERENCE);
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   protected int deleteItemByIdentifier(String identifier) throws SQLException
+   protected int deleteItemByIdentifier(String identifier) throws SQLException, InvalidItemStateException,
+      RepositoryException
    {
       if (deleteItem == null)
       {
@@ -370,14 +434,16 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
       }
 
       deleteItem.setString(1, identifier);
-      return deleteItem.executeUpdate();
+
+      return executeUpdate(deleteItem, TYPE_DELETE_ITEM);
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   protected int updateNodeByIdentifier(int version, int index, int orderNumb, String identifier) throws SQLException
+   protected int updateNodeByIdentifier(int version, int index, int orderNumb, String identifier) throws SQLException,
+      InvalidItemStateException, RepositoryException
    {
       if (updateNode == null)
       {
@@ -392,14 +458,16 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
       updateNode.setInt(2, index);
       updateNode.setInt(3, orderNumb);
       updateNode.setString(4, identifier);
-      return updateNode.executeUpdate();
+
+      return executeUpdate(updateNode, TYPE_UPDATE_NODE);
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   protected int updatePropertyByIdentifier(int version, int type, String identifier) throws SQLException
+   protected int updatePropertyByIdentifier(int version, int type, String identifier) throws SQLException,
+      InvalidItemStateException, RepositoryException
    {
       if (updateProperty == null)
       {
@@ -413,7 +481,8 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
       updateProperty.setInt(1, version);
       updateProperty.setInt(2, type);
       updateProperty.setString(3, identifier);
-      return updateProperty.executeUpdate();
+
+      return executeUpdate(updateProperty, TYPE_UPDATE_PROPERTY);
    }
 
    /**
@@ -694,7 +763,7 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
     */
    @Override
    protected int addValueData(String cid, int orderNumber, InputStream stream, int streamLength, String storageDesc)
-      throws SQLException
+      throws SQLException, InvalidItemStateException, RepositoryException
    {
       if (insertValue == null)
       {
@@ -719,14 +788,15 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
 
       insertValue.setInt(2, orderNumber);
       insertValue.setString(3, cid);
-      return insertValue.executeUpdate();
+
+      return executeUpdate(insertValue, TYPE_INSERT_VALUE);
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   protected int deleteValueData(String cid) throws SQLException
+   protected int deleteValueData(String cid) throws SQLException, InvalidItemStateException, RepositoryException
    {
       if (deleteValue == null)
       {
@@ -738,7 +808,8 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
       }
 
       deleteValue.setString(1, cid);
-      return deleteValue.executeUpdate();
+
+      return executeUpdate(deleteValue, TYPE_DELETE_VALUE);
    }
 
    /**
@@ -764,7 +835,7 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
     * {@inheritDoc}
     */
    @Override
-   protected int renameNode(NodeData data) throws SQLException
+   protected int renameNode(NodeData data) throws SQLException, InvalidItemStateException, RepositoryException
    {
       if (renameNode == null)
       {
@@ -782,7 +853,8 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
       renameNode.setInt(4, data.getQPath().getIndex());
       renameNode.setInt(5, data.getOrderNumber());
       renameNode.setString(6, data.getIdentifier());
-      return renameNode.executeUpdate();
+
+      return executeUpdate(renameNode, TYPE_RENAME_NODE);
    }
 
    /**
@@ -843,7 +915,8 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
       return findItemQPathByIdentifierCQ.executeQuery();
    }
 
-   protected int deleteValueDataByOrderNum(String id, int orderNum) throws SQLException
+   protected int deleteValueDataByOrderNum(String id, int orderNum) throws SQLException, InvalidItemStateException,
+      RepositoryException
    {
       if (deleteValueDataByOrderNum == null)
       {
@@ -856,7 +929,8 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
 
       deleteValueDataByOrderNum.setString(1, id);
       deleteValueDataByOrderNum.setInt(2, orderNum);
-      return deleteValueDataByOrderNum.executeUpdate();
+
+      return executeUpdate(deleteValueDataByOrderNum, TYPE_DELETE_VALUE_BY_ORDER_NUM);
    }
 
    protected ResultSet findPropertyById(String id) throws SQLException
@@ -875,7 +949,7 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
    }
 
    protected int updateValueData(String cid, int orderNumber, InputStream stream, int streamLength, String storageDesc)
-      throws SQLException
+      throws SQLException, InvalidItemStateException, RepositoryException
    {
 
       if (updateValue == null)
@@ -901,7 +975,8 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
 
       updateValue.setString(3, cid);
       updateValue.setInt(4, orderNumber);
-      return updateValue.executeUpdate();
+
+      return executeUpdate(updateValue, TYPE_UPDATE_VALUE);
    }
 
    /**
@@ -1016,8 +1091,9 @@ public class MultiDbJDBCConnection extends CQJDBCStorageConnection
    /**
     * {@inheritDoc}
     */
-   protected void deleteLockProperties() throws SQLException
+   protected void deleteLockProperties() throws SQLException, InvalidItemStateException, RepositoryException
    {
+      addChange(TYPE_DELETE_LOCK);
       PreparedStatement removeValuesStatement = null;
       PreparedStatement removeItemsStatement = null;
 
