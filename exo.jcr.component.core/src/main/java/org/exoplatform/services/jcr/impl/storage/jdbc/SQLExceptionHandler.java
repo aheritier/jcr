@@ -225,6 +225,15 @@ public class SQLExceptionHandler
                throw new JCRInvalidItemStateException(message.toString(), item.getIdentifier(), ItemState.ADDED, e);
             }
 
+            // MySQL 5.1 violation with batching update
+            if (e.getClass().getName().indexOf("BatchUpdateException") >= 0
+               && errMessage.indexOf(item.getIdentifier()) >= 0)
+            {
+               // it's JCR_PK_ITEM violation 
+               message.append("Item already exists. Condition: ID. ").append(itemInfo);
+               throw new JCRInvalidItemStateException(message.toString(), item.getIdentifier(), ItemState.ADDED, e);
+            }
+
             // DB2 violation
             if (e.getClass().getName().indexOf("SqlIntegrityConstraintViolationException") >= 0
                && errMessage.indexOf("SQLCODE=-803") >= 0)
