@@ -1,0 +1,55 @@
+<section id="JCR.eXoJCRconfiguration.CacheConfiguration">
+    <title>Cache</title>
+
+    <para><emphasis role="bold">enabled</emphasis>: If workspace cache is
+    enabled or not.</para>
+
+    <para><emphasis role="bold">class</emphasis>: Cache implementation class,
+    optional from 1.9. Default value is.
+    org.exoplatform.services.jcr.impl.dataflow.persistent.LinkedWorkspaceStorageCacheImpl.</para>
+
+    <para>Cache can be configured to use concrete implementation of
+    WorkspaceStorageCache interface. JCR core has two implementation to
+    use:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>LinkedWorkspaceStorageCacheImpl - default, with configurable
+        read behavior and statistic.</para>
+      </listitem>
+
+      <listitem>
+        <para>WorkspaceStorageCacheImpl - pre 1.9, still can be used.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para><emphasis role="bold">properties</emphasis>: The list of properties
+    (name-value pairs) for Workspace cache.</para>
+
+    <para><emphasis role="bold">max-size</emphasis>: Cache maximum size
+    (maxSize prior to v.1.9).</para>
+
+    <para><emphasis role="bold">live-time</emphasis>: Cached item live time
+    (liveTime prior to v.1.9).</para>
+
+    <para>From 1.9 LinkedWorkspaceStorageCacheImpl supports additional
+    optional parameters.</para>
+
+    <para><emphasis role="bold">statistic-period</emphasis>: Period (time
+    format) of cache statistic thread execution, 5 minutes by default.</para>
+
+    <para><emphasis role="bold">statistic-log</emphasis>: If true cache
+    statistic will be printed to default logger (log.info), false by default
+    or not.</para>
+
+    <para><emphasis role="bold">statistic-clean</emphasis>: If true cache
+    statistic will be cleaned after was gathered, false by default or
+    not.</para>
+
+    <para><emphasis role="bold">cleaner-period</emphasis>: Period of the
+    eldest items remover execution, 20 minutes by default.</para>
+
+    <para><emphasis role="bold">blocking-users-count</emphasis>: Number of
+    concurrent users allowed to read cache storage, 0 - unlimited by
+    default.</para>
+  </section>

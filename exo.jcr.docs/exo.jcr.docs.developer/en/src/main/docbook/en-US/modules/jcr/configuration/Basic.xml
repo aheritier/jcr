@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<section id="JCRref.Configuration.BasicConfiguration">
+  <title>Basic configuration</title>  
+    <para>Like other eXo services, eXo JCR can be configured and used in the
+    portal or embedded mode (as a service embedded in eXo Portal) and in
+    standalone mode.</para>
+
+    <para>In Embedded mode, JCR services are registered in the Portal
+    container and the second option is to use a Standalone container. The main
+    difference between these container types is that the first one is intended
+    to be used in a Portal (Web) environment, while the second one can be used
+    standalone (see the comprehensive page <link
+    linkend="Kernel.ServiceConfigurationforBeginners">Service Configuration
+    for Beginners</link> for more details).</para>
+
+    <para>The following setup procedure is used to obtain a Standalone
+    configuration (see more in <link
+    linkend="Kernel.ContainerConfiguration">Container
+    configuration</link>):<itemizedlist>
+        <listitem>
+          <para>Configuration that is set explicitly using
+          StandaloneContainer.addConfigurationURL(String url) or
+          StandaloneContainer.addConfigurationPath(String path) before
+          getInstance()</para>
+        </listitem>
+
+        <listitem>
+          <para>Configuration from $base:directory/exo-configuration.xml or
+          $base:directory/conf/exo-configuration.xml file. Where
+          $base:directory is either AS's home directory in case of J2EE AS
+          environment or just the current directory in case of a standalone
+          application.</para>
+        </listitem>
+
+        <listitem>
+          <para>/conf/exo-configuration.xml in the current classloader (e.g.
+          war, ear archive)</para>
+        </listitem>
+
+        <listitem>
+          <para>Configuration from
+          $service_jar_file/conf/portal/configuration.xml. WARNING: Don't rely
+          on some concrete jar's configuration if you have more than one jar
+          containing conf/portal/configuration.xml file. In this case choosing
+          a configuration is unpredictable.</para>
+        </listitem>
+      </itemizedlist></para>
+
+    <para>JCR service configuration looks like:</para>
+
+    <programlisting language="xml">&lt;component&gt;
+  &lt;key&gt;org.exoplatform.services.jcr.RepositoryService&lt;/key&gt;
+  &lt;type&gt;org.exoplatform.services.jcr.impl.RepositoryServiceImpl&lt;/type&gt;
+&lt;/component&gt;
+&lt;component&gt;
+  &lt;key&gt;org.exoplatform.services.jcr.config.RepositoryServiceConfiguration&lt;/key&gt;
+  &lt;type&gt;org.exoplatform.services.jcr.impl.config.RepositoryServiceConfigurationImpl&lt;/type&gt;
+  &lt;init-params&gt;
+    &lt;value-param&gt;
+      &lt;name&gt;conf-path&lt;/name&gt;
+      &lt;description&gt;JCR repositories configuration file&lt;/description&gt;
+      &lt;value&gt;jar:/conf/standalone/exo-jcr-config.xml&lt;/value&gt;
+    &lt;/value-param&gt;
+    &lt;value-param&gt;
+      &lt;name&gt;max-backup-files&lt;/name&gt;
+      &lt;value&gt;5&lt;/value&gt;
+    &lt;/value-param&gt;
+    &lt;properties-param&gt;
+      &lt;name&gt;working-conf&lt;/name&gt;
+      &lt;description&gt;working-conf&lt;/description&gt;
+      &lt;property name="source-name" value="jdbcjcr" /&gt;
+      &lt;property name="dialect" value="hsqldb" /&gt;
+      &lt;property name="persister-class-name" value="org.exoplatform.services.jcr.impl.config.JDBCConfigurationPersister" /&gt;
+    &lt;/properties-param&gt;
+  &lt;/init-params&gt;
+&lt;/component&gt;</programlisting>
+
+    <para><emphasis role="bold">conf-path</emphasis> : a path to a RepositoryService JCR Configuration.</para>
+
+    <para><emphasis role="bold">max-backup-files</emphasis> : max number of backup files. This option lets you specify the number of stored backups. 
+    Number of backups can't exceed this value. File which will exceed the limit will replace the oldest file.</para>
+
+    <para><emphasis role="bold">working-conf</emphasis>: optional; <link linkend="JCR.ConfigurationPersister">JCR configuration persister</link> configuration. If there isn't a working-conf, the persister will be disabled.</para>  
+
+<para>JCR Core implementation contains a persister which stores the
+    repository configuration in the relational database using JDBC calls -
+    <classname>org.exoplatform.services.jcr.impl.config.JDBCConfigurationPersister</classname>.</para>
+
+    <para>The implementation will crate and use table JCR_CONFIG in the
+    provided database.</para>
+
+    <para>But the developer can implement his own persister for his particular
+    usecase.</para>
+
+<xi:include href="Basic/exo-jcr-configuration.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> 
+<xi:include href="Basic/configuration-persister.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+<xi:include href="Basic/jdbc-data-container-config.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />       
+</section>

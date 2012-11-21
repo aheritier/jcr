@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+        "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="chap_JCRRefGuide_DeveloperReference">
+  <title>Developer Reference</title>
+	<abstract>
+		<para>This chapter provides developers with the reference knowledge for using and developing eXo JCR via two main topics:</para>
+		<itemizedlist>
+			<listitem>
+				<para><link linkend="JCR.DeveloperReference.Basic">Basic</link></para>
+				<para>Issues around how to use JCR, NodeType, Namespace, Searching Repository Content, and Fulltext Search. </para>
+			</listitem>
+			<listitem>
+				<para><link linkend="JCR.DeveloperReference.Advanced">Advanced</link></para>
+				<para>Details of advanced usages in eXo JCR, including Extensions, Workspace Data Container, Binary Values Processing, and Link Producer Service.</para>
+			</listitem>
+		</itemizedlist>
+	</abstract>
+
+  <xi:include href="DeveloperReference/Developer-Reference-introduction.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="DeveloperReference/basic.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="DeveloperReference/advanced.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+</chapter>

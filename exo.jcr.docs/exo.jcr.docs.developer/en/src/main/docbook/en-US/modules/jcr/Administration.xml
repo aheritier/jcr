@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter xml:id="chapter-Administration">
+  <title>Administration</title>
+<abstract>
+  <para>This chapter is divided into 4 administration groups, including:</para>
+	<itemizedlist>
+		<listitem>
+			<para><link linkend="chapter-Administration-Connectors">Connectors</link></para>
+			<para>Details of WebDAV, FTP and JCA Resource Adapter, including configuration, parameters and examples.</para>
+		</listitem>
+		<listitem>
+			<para><link linkend="chapter-Administration-Database">Database</link></para>
+			<para>Issues related to the database administration, including multi-language support and DBCleanService; and instructions on how to host several JCR instances on the same database instance.</para>
+		</listitem>
+		<listitem>
+			<para><link linkend="chapter-Administration-Tools">Tools</link></para>
+			<para>Necessary information about Session Leak Detector, Consistency Checker, and Statistics.</para>
+		</listitem>
+		<listitem>
+			<para><link linkend="chapter-Administration-PerformanceTuning">Performance Tuning</link></para>
+			<para>Instructions on JBoss AS Tuning, JCR Cache Tuning, Clustering, JVM parameters, and Force Query Hints.</para>
+		</listitem>
+	</itemizedlist>
+</abstract>
+  <xi:include href="Administration/General_information.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Administration/Connectors.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Administration/Database.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Administration/Tools.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Administration/PerformanceTuning/performance-tuning-guide.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  
+</chapter>

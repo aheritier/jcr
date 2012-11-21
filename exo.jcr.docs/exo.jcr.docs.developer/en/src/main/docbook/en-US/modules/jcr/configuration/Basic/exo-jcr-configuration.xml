@@ -1,0 +1,77 @@
+<section id="JCR.eXoJCRconfiguration.JCRConfiguration">
+    <title>JCR Configuration</title>
+
+    <para>The Configuration is defined in an XML file (see DTD below).</para>
+    <programlisting language="xml">&lt;!ELEMENT repository-service (repositories)&gt;
+&lt;!ATTLIST repository-service default-repository NMTOKEN #REQUIRED&gt;
+&lt;!ELEMENT repositories (repository)&gt;
+&lt;!ELEMENT repository (security-domain,access-control,session-max-age,authentication-policy,workspaces)&gt;
+&lt;!ATTLIST repository
+  default-workspace NMTOKEN #REQUIRED
+  name NMTOKEN #REQUIRED
+  system-workspace NMTOKEN #REQUIRED
+&gt;
+&lt;!ELEMENT security-domain (#PCDATA)&gt;
+&lt;!ELEMENT access-control (#PCDATA)&gt;
+&lt;!ELEMENT session-max-age (#PCDATA)&gt;
+&lt;!ELEMENT authentication-policy (#PCDATA)&gt;
+&lt;!ELEMENT workspaces (workspace+)&gt;
+&lt;!ELEMENT workspace (container,initializer,cache,query-handler)&gt;
+&lt;!ATTLIST workspace name NMTOKEN #REQUIRED&gt;
+&lt;!ELEMENT container (properties,value-storages)&gt;
+&lt;!ATTLIST container class NMTOKEN #REQUIRED&gt;
+&lt;!ELEMENT value-storages (value-storage+)&gt;
+&lt;!ELEMENT value-storage (properties,filters)&gt;
+&lt;!ATTLIST value-storage class NMTOKEN #REQUIRED&gt;
+&lt;!ELEMENT filters (filter+)&gt;
+&lt;!ELEMENT filter EMPTY&gt;
+&lt;!ATTLIST filter property-type NMTOKEN #REQUIRED&gt;
+&lt;!ELEMENT initializer (properties)&gt;
+&lt;!ATTLIST initializer class NMTOKEN #REQUIRED&gt;
+&lt;!ELEMENT cache (properties)&gt;
+&lt;!ATTLIST cache 
+  enabled NMTOKEN #REQUIRED
+  class NMTOKEN #REQUIRED
+&gt;
+&lt;!ELEMENT query-handler (properties)&gt;
+&lt;!ATTLIST query-handler class NMTOKEN #REQUIRED&gt;
+&lt;!ELEMENT access-manager (properties)&gt;
+&lt;!ATTLIST access-manager class NMTOKEN #REQUIRED&gt;
+&lt;!ELEMENT lock-manager (time-out,persister)&gt;
+&lt;!ELEMENT time-out (#PCDATA)&gt;
+&lt;!ELEMENT persister (properties)&gt;
+&lt;!ELEMENT properties (property+)&gt;
+&lt;!ELEMENT property EMPTY&gt;
+</programlisting>
+
+    <para>
+      JCR Service can use multiple <emphasis role="bold">Repositories</emphasis> and each repository can have multiple
+    <emphasis role="bold">Workspaces</emphasis>.
+    </para>
+    <para>
+    From v.1.9 JCR, repositories configuration parameters support human-readable formats of values. They are all case-insensitive:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>Numbers formats: K,KB - kilobytes, M,MB - megabytes, G,GB -
+        gigabytes, T,TB - terabytes. Examples: 100.5 - digit 100.5, 200k - 200
+        Kbytes, 4m - 4 Mbytes, 1.4G - 1.4 Gbytes, 10T - 10 Tbytes</para>
+      </listitem>
+    </itemizedlist>
+    <itemizedlist>
+      <listitem>
+        <para>Time format endings: ms - milliseconds, m - minutes, h - hours,
+        d - days, w - weeks, if no ending - seconds. Examples: 500ms - 500
+        milliseconds, 20 - 20 seconds, 30m - 30 minutes, 12h - 12 hours, 5d -
+        5 days, 4w - 4 weeks.</para>
+      </listitem>
+    </itemizedlist>
+
+<xi:include href="JCRConfiguration/Repository.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+<xi:include href="JCRConfiguration/Workspace.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> 
+<xi:include href="JCRConfiguration/Value_storage.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> 
+<xi:include href="JCRConfiguration/Initializer.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> 
+<xi:include href="JCRConfiguration/Cache.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> 
+<xi:include href="JCRConfiguration/QueryHandler.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+<xi:include href="JCRConfiguration/LockManager.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> 
+</section>

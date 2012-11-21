@@ -1,0 +1,12 @@
+<section id="JCR.eXoJCRconfiguration.QueryHandlerConfiguration">
+    <title>Query Handler</title>
+
+    <para><emphasis role="bold">class</emphasis>: A Query Handler class
+    name.</para>
+
+    <para><emphasis role="bold">properties</emphasis>: The list of properties
+    (name-value pairs) for a Query Handler (indexDir).</para>
+
+    <para>Properties and advanced features described in <link
+    linkend="JCR.SearchConfiguration">Search Configuration</link>.</para>
+</section>

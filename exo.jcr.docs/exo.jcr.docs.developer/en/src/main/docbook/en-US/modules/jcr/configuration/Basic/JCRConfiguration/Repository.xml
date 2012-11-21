@@ -1,0 +1,65 @@
+<section id="JCR.eXoJCRconfiguration.Repository">
+    <title>Repository</title>
+    
+  <para id="JCR.eXoJCRconfiguration.RepositoryServiceConfiguration">
+    <citetitle>
+      <emphasis role="bold">Repository service configuration (JCR repositories configuration)</emphasis>
+    </citetitle>
+  </para>  
+
+    <para>Service configuration may be placed in
+    jar:/conf/standalone/exo-jcr-config.xml for standalone mode. For portal
+    mode, it is located in the portal web application
+    portal/WEB-INF/conf/jcr/repository-configuration.xml.</para>
+
+    <para><emphasis role="bold">default-repository</emphasis>: The name of a
+    default repository (one returned by
+    RepositoryService.getRepository()).</para>
+
+    <para><emphasis role="bold">repositories</emphasis>: The list of
+    repositories.</para>
+  
+
+    <para id="JCR.eXoJCRconfiguration.RepositoryConfiguration">
+      <citetitle><emphasis role="bold">Repository configuration</emphasis></citetitle>
+    </para> 
+
+    <para><emphasis role="bold">name</emphasis>: The name of a
+    repository.</para>
+
+    <para><emphasis role="bold">default-workspace</emphasis>: The name of a
+    workspace obtained using Session's login() or login(Credentials) methods
+    (ones without an explicit workspace name).</para>
+
+    <para><emphasis role="bold">system-workspace</emphasis>: The name of
+    workspace where <emphasis role="bold">/jcr:system</emphasis> node is
+    placed.</para>
+
+    <para><emphasis role="bold">security-domain</emphasis>: The name of a
+    security domain for JAAS authentication.</para>
+
+    <para><emphasis role="bold">access-control</emphasis>: The name of an
+    access control policy. There can be 3 types: optional - ACL is created
+    on-demand(default), disable - no access control, mandatory - an ACL is
+    created for each added node(not supported yet).</para>
+
+    <para><emphasis role="bold">authentication-policy</emphasis>: The name of
+    an authentication policy class.</para>
+
+    <para><emphasis role="bold">workspaces</emphasis>: The list of
+    workspaces.</para>
+
+    <para><emphasis role="bold">session-max-age</emphasis>: The time after
+    which an idle session will be removed (called logout). If session-max-age
+    is not set up, idle session will never be removed.</para>
+
+    <para id="JCR.eXoJCRconfiguration.LockRemoverMaxThreads"><emphasis
+    role="bold">lock-remover-max-threads</emphasis>: Number of threads that
+    can serve LockRemover tasks. Default value is 1. Repository may have many
+    workspaces, each workspace have own LockManager. JCR supports Locks with
+    defined lifetime. Such a lock must be removed is it become expired. That
+    is what LockRemovers does. But LockRemovers is not an independent
+    timer-threads, its a task that executed each 30 seconds. Such a task is
+    served by ThreadPoolExecutor which may use different number of
+    threads.</para>
+  </section>

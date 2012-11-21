@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCRref.Introduction.JCRArchitecture.">
+<section id="JCR.CompatibilityLevels">
 
   <title>Compatibility Levels</title>
 
     <para>The Java Content Repository specification JSR-170 has been split
     into two compliance levels as well as a set of optional features.</para>
     <para>Level 1 defines a read-only repository.</para>
-    <para>Level 2 defines methods for writing content and bidirectional interaction with the repository.</para>
+    <para>Level 2 defines methods for writing
+    content and bidirectional interaction with the repository.</para>
 
     <para>eXo JCR supports JSR-170 level 1 and level 2 and all optional
     features. The recent JSR-283 is not yet supported.</para>
 
-  <para id="JCR.CompatibilityLevels.Level1">
-    <citetitle>
-      <emphasis role="bold">Level 1</emphasis>
-    </citetitle>  
-  </para>  
+  <citetitle>
+    <para xml:id="JCR.CompatibilityLevels.Level1"><emphasis role="bold">Level 1</emphasis></para>
+  </citetitle>
+
     <para>Level 1 includes read-only functionality for very simple
     repositories. It is useful to port an existing data repository and convert
     it to a more advanced form step by step. JCR uses a well-known Session
@@ -94,12 +94,9 @@
       </imageobject>
     </mediaobject>
 
-
-  <para id="JCR.CompatibilityLevels.Level2">
-    <citetitle>
-      <emphasis role="bold">Level 2</emphasis>
-    </citetitle>
-  </para>  
+  <citetitle>
+    <para xml:id="JCR.CompatibilityLevels.Level2"><emphasis role="bold">Level 2</emphasis></para>
+  </citetitle>
 
     <para>JCR level 2 includes reading/ writing content functionality,
     importing other sources and managing content definition and structuring
@@ -148,13 +145,10 @@
         <imagedata fileref="images/concepts/level_2.gif" />
       </imageobject>
     </mediaobject>
-
-  <para id="JCR.CompatibilityLevels.OptionalFeatures">
-    <citetitle>
-      <emphasis role="bold">Optional features</emphasis>
-    </citetitle>  
-  </para>  
-
+  
+  <citetitle>
+    <para xml:id="JCR.CompatibilityLevels.OptionalFeatures"><emphasis role="bold">Optional features</emphasis></para>
+  </citetitle>
     <para>On the top of Level 1 or Level 2, a number of optional features are
     defined for a more advanced repository functionality. This includes
     functions such as Versioning, (JTA) Transactions, Query using SQL,
@@ -166,4 +160,4 @@
         <imagedata fileref="images/concepts/optional.gif" />
       </imageobject>
     </mediaobject>
-  </section>
+</section>

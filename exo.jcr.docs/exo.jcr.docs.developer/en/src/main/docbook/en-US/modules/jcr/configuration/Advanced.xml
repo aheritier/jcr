@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+ <section id="JCRref.Configuration.AdvancedConfiguration">
+        <title>Advanced configuration</title>
+            <!-- 2.2.1 Search configuration -->
+            <xi:include href="Advanced/search-configuration.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+            <!-- 2.2.2 LockManager configuration -->
+            <xi:include href="Advanced/lock-manager-config.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+            <!-- 2.2.3 QueryHandler configuration -->
+            <xi:include href="Advanced/query-handler-config.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+            <!-- 2.2.4 Configuring eXo JCR in cluster -->
+            <xi:include href="Advanced/cluster-config.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+            <!-- 2.2.5 RepositoryCreationService -->
+            <xi:include href="Advanced/repository-creation-service.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+            <!-- 2.2.6 TransactionService -->
+            <xi:include href="Advanced/transaction-service.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+            <!-- 2.2.7. External Value Storages -->
+            <xi:include href="Advanced/external-value-storages.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+    </section>

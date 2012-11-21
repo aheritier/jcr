@@ -1,0 +1,754 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<section id="JCR.FAQ.JCR">
+  <title>JCR</title>
+<highlights>
+    <itemizedlist>
+  <listitem>
+  <para><emphasis role="bold"><link linkend="JCR.FAQ.JCR.Core">JCR core</link></emphasis></para>
+  </listitem>
+  <listitem>
+  <para><emphasis role="bold"><link linkend="JCR.FAQ.JCR.Extensions">JCR Extensions</link></emphasis></para>
+  </listitem>
+  </itemizedlist>
+</highlights>
+
+  <section id="JCR.FAQ.JCR.Core">
+    <title>JCR core</title>
+
+    <para xml:id="JCR.FAQ.JCR.Core.Session.getNodeByUUIDOrSession.getItem">
+      <citetitle>
+        <emphasis role="bold">Is it better to use Session.getNodeByUUID or
+          Session.getItem?
+        </emphasis>
+      </citetitle>
+    </para>
+
+      <para>Session.getNodeByUUID() about 2.5 times faster of
+        Session.getItem(String) and only 25% faster of Node.getNode(String).
+        See the daily tests results for such comparisons, e.g.
+      </para>
+
+      <para>
+        <ulink
+                url="http://tests.exoplatform.org/JCR/1.12.2-GA/rev.2442/daily-performance-testing-results/jcr.core./index.html">
+          http://tests.exoplatform.org/JCR/1.12.2-GA/rev.2442/daily-performance-testing-results/jcr.core./index.html
+        </ulink>
+      </para>
+
+    <para xml:id="JCR.FAQ.JCR.Core.UsegetNodeByUUID">
+      <citetitle>
+        <emphasis role="bold">Does it make sense to have all the node referencable to use
+          getNodeByUUID all the time?
+        </emphasis>
+      </citetitle>
+    </para>
+
+      <para>Until it's applicable for a business logic it can be. But take
+        in account the paths are human readable and lets you think in
+        hierarchy. If it's important a location based approach is
+        preferable.
+      </para>
+
+
+    <para xml:id="JCR.FAQ.JCR.Core.CheckIfItemExistsBeforeGettingValue">
+      <citetitle>
+        <emphasis role="bold">What should I use to check if an Item exists before getting the
+          Value?
+        </emphasis>
+      </citetitle>
+    </para>
+
+
+      <para>Use Session.itemExists(String absPath), Node.hasNode(String
+        relPath) or Property.hasProperty(String name). It's also is possible
+        to check Node.hasNodes() and Node.hasProprties().
+      </para>
+
+    <para xml:id="JCR.FAQ.JCR.Core.HowToUseObservationProperly">
+      <citetitle>
+        <emphasis role="bold">How to use Observation properly?
+        </emphasis>
+      </citetitle>
+    </para>
+
+      <para>JCR Observation's a way to listen on persistence changes of a
+        Repository. It provides several options to configure the listener for
+        an interesting only changes. To use properly, it's important to
+        understand concept of events filtering for a registered EventListener
+        (8.3.3 Observation Manager). An often confusing part, it's the
+        <emphasis role="bold">absPath</emphasis>, it's an associated parent of
+        a location you want to observe events on. I.e. it's a parent of child
+        node(s) or this parent property(ies); if
+        <emphasis
+                role="bold">isDeep
+        </emphasis>
+        is true then you'll get events of all
+        the subtree of child nodes also. The same actual for
+        <emphasis
+                role="bold">uuid
+        </emphasis>
+        and
+        <emphasis
+                role="bold">nodeTypeName
+        </emphasis>
+        parameters of
+        ObservationManager.addEventListener() method.
+      </para>
+
+    <para xml:id="JCR.FAQ.JCR.Core.UseQueriesToAccessDataByJCRAPI">
+      <citetitle>
+        <emphasis role="bold">Is it better to use queries that to access the data by the JCR
+          API?
+        </emphasis>
+      </citetitle>
+    </para>
+
+
+      <para>No, direct access to items via JCR API is more efficient. Search
+        will consume additional resources for index querying and only then
+        return the items.
+      </para>
+
+   <para xml:id="JCR.FAQ.JCR.Core.WhatDefaultQueryOrdering">
+      <citetitle>
+        <emphasis role="bold">JCR.FAQ.JCR.Core.WhatDefaultQueryOrdering</emphasis>
+      </citetitle>
+    </para>
+
+      <para>By default (if query do not contains any ordering statements)
+        result nodes is sorted by document order.
+      </para>
+
+    <para xml:id="JCR.FAQ.JCR.Core.OrderingByjcr:path_ItemNameSupported">
+      <citetitle>
+        <emphasis role="bold">Is ordering by jcr:path or Item name supported?</emphasis>
+      </citetitle>
+    </para>
+
+
+      <para>No, it does not supported. There is two ways to ordering
+        results, when path may be used as criteria:
+      </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Order by property with value type NAME or PATH (jcr supports
+            it).
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>Order by jcr:path - sort by exact path of node (jcr do not
+            supports it).
+          </para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Order by jcr:path</para>
+
+      <para>If no order specification is supplied in the query statement,
+        implementations may support document order on the result nodes (see
+        6.6.4.2 Document Order). And it is sorted by order number.
+      </para>
+
+      <para>By default, (if query do not contains any ordering statements)
+        result nodes is sorted by document order.
+      </para>
+
+      <programlisting>SELECT * FROM nt:unstructured WHERE jcr:path LIKE 'testRoot/%'</programlisting>
+
+      <para>For specified jcr:path ordering there is different proceeding in
+        XPath and SQL:
+      </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>SQL no matter ascending or descending - query returns result
+            nodes in random order: {code}SELECT * FROM nt:unstructured WHERE
+            jcr:path LIKE 'testRoot/%' ORDER BY jcr:path{code}
+          </para>
+        </listitem>
+      </itemizedlist>
+
+      <itemizedlist>
+        <listitem>
+          <para>XPath - jcr:path order construction is ignored (so result is
+            not sorted according path); {code}/testRoot/*
+            <ulink
+                    url="@jcr:primaryType='nt:unstructured'">@jcr:primaryType='nt:unstructured'
+            </ulink>
+            order by jcr:path{code}
+          </para>
+        </listitem>
+      </itemizedlist>
+
+    <para xml:id="JCR.FAQ.JCR.Core.eXoJCRIndexerUsesContentEncoding">
+      <citetitle>
+        <emphasis role="bold">How eXo JCR indexer uses content encoding?</emphasis>
+      </citetitle>
+    </para>
+
+
+      <para>1. Indexer uses jcr:encoding property of nt:resource node (used
+        as jcr:content child node of nt:file) 2. if no jcr:encoding property
+        set the Document Service will use the one configured in the service
+        (defaultEncoding) 3. if nothing is configured a JVM, the default
+        encoding will be used
+      </para>
+
+    <para xml:id="JCR.FAQ.JCR.Core.WhichDatabaseServerBetterForeXoJCR">
+      <citetitle>
+        <emphasis role="bold">Which database server is better for eXo JCR?</emphasis>
+      </citetitle>
+    </para>
+
+      <para>If the question is a performance, it's difficult question, as
+        each database can be configured to be more (and more) faster for each
+        special case. MySQL with MyISAM engine will be faster. But MySQL has
+        limitations for indexes for multilingual columns (Item names
+        actually). So, with long Item names (larger ofOracle or PostgreSQL
+        also are good for performance. DB2 and MSSQL are slower in default
+        configurations. Default configuration of Sybase leader of slowness.
+        But in this question, take the database server maintenance in account.
+        MySQL and PostgreSQL are simple in installation and can work even on
+        limited hardware. Oracle, DB2, MSSQL or Sybase need more efforts. The
+        same actual for maintenance during the work. Note for Sybase:
+        "check-sns-new-connection" data container configuration parameter
+        should be set to "true". For testing purpose, embedded database such
+        as HSQLDB is the best choice. Apache Derby and H2 also supported. But
+        H2 surprisingly needs "beta" feature enabled - MVCC=TRUE in JDBC
+        url.
+      </para>
+
+    <para xml:id="JCR.FAQ.JCR.Core.HowToSetUpeXoJCRForMutilingialContentOnMySQL">
+      <citetitle>
+        <emphasis role="bold">How to setup eXo JCR for mutilingial content on MySQL?</emphasis>
+      </citetitle>
+    </para>
+
+
+      <para>To allow multiple character sets to be sent from the client, the
+        UTF-8 encoding should be used, either by configuring utf8 as the
+        default server character set, or by configuring the JDBC driver to use
+        UTF-8 through the characterEncoding property. MySQL database should be
+        created in single-byte encoding, e.g. "latin1":
+      </para>
+
+      <programlisting>CREATE DATABASE db1 CHARACTER SET latin1 COLLATE latin1_general_cs;</programlisting>
+
+      <para>eXo JCR application (e.g. GateIn) should use JCR dialect
+        "MySQL-UTF8".
+      </para>
+
+      <para>In other words: MySQL database default encoding and JCR dialect
+        cannot be UTF8 both. Use single-byte encoding (e.g. "latin1") for
+        database and "mysql-utf8" dialect for eXo JCR.
+      </para>
+
+      <para>Notice: "MySQL-UTF8" dialect cannot be auto-detected, it should
+        be set explicitly in configuration.
+      </para>
+
+    <para xml:id="JCR.FAQ.JCR.Core.LimitationMySQLAffectingOneXoJCRFeatures">
+      <citetitle>
+        <emphasis role="bold">Does MySQL have limitation affecting on eXo JCR
+          features?
+        </emphasis>
+      </citetitle>
+    </para>
+
+      <para>Index's key length of JCR_SITEM (JCR_MITEM) table for mysql-utf8
+        dialect is reduced to 765 bytes (or 255 chars).
+      </para>
+
+
+    <para xml:id="JCR.FAQ.JCR.Core.SybaseDatabaseNeedSpecialOptionsIneXoJCRconfiguration">
+      <citetitle>
+        <emphasis role="bold">Does use of Sybase database need special options in eXo JCR
+        configuration?
+        </emphasis>
+      </citetitle>
+    </para>
+
+
+      <para>To enable JCR working properly with Sybase, a property
+        'check-sns-new-connection' with 'false' value is required for each
+        workspace data container:
+      </para>
+
+      <programlisting language="xml">&lt;container
+        class="org.exoplatform.services.jcr.impl.storage.jdbc.optimisation.CQJDBCWorkspaceDataContainer"&gt;
+        &lt;properties&gt;
+        &lt;property name="source-name" value="jdbcjcr" /&gt;
+        &lt;property name="dialect" value="auto" /&gt;
+        &lt;property name="multi-db" value="true" /&gt;
+        &lt;property name="update-storage" value="false" /&gt;
+        &lt;property name="max-buffer-size" value="200k" /&gt;
+        &lt;property name="swap-directory" value="target/temp/swap/ws" /&gt;
+        &lt;property name="swap-directory" value="target/temp/swap/ws" /&gt;
+        &lt;property name="check-sns-new-connection" value="false" /&gt;
+        &lt;/properties&gt;</programlisting>
+
+    <para xml:id="JCR.FAQ.JCR.Core.AvoidMemoryLeaks">
+      <citetitle>
+        <emphasis role="bold">How to open and close a session properly to avoid memory
+          leaks?
+        </emphasis>
+      </citetitle>
+    </para>
+
+
+      <programlisting language="java">Session session = repository.login(credentials);
+        try
+        {
+        // here your code
+        }
+        finally
+        {
+        session.logout();
+        }
+      </programlisting>
+
+    <para xml:id="JCR.FAQ.JCR.Core.UseSessionAfterLogingOut">
+      <citetitle>
+        <emphasis role="bold">Can I use Session after logging out?</emphasis>
+      </citetitle>
+    </para>
+
+      <para>No. Any instance of Session or Node (acquired through session)
+        shouldn't be used after logging out anymore. At least, it is highly
+        recommended not to use.
+      </para>
+
+    <para xml:id="JCR.FAQ.JCR.Core.HowToConfigureJcrForCluster">
+      <citetitle>
+        <emphasis role="bold">How to configure jcr for cluster?</emphasis>
+      </citetitle>
+    </para>
+
+      <para>So we have configured JCR in standalone mode and want to
+        reconfigure it for clustered environment. First of all, let's check
+        whether all requirements are satisfied:
+      </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Dedicated RDBMS anyone like MySQL, Postges, Oracle and, etc
+            but just not HSSQL;
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>Shared storage. The simplest thing is to use shared FS like
+            NFS or SMB mounted in operation system, but they are rather slow.
+            The best thing is to use SAN (Storage Area Network);
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>Fast network between JCR nodes.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>So now, need to configure Container a bit. Check
+        exo-configuration.xml to be sure that you are using JBossTS
+        Transaction Service and JBossCache Transaction Manager, as shown
+        below.
+      </para>
+
+      <programlisting language="xml">&lt;component&gt;
+        &lt;key&gt;org.jboss.cache.transaction.TransactionManagerLookup&lt;/key&gt;
+        &lt;type&gt;org.jboss.cache.GenericTransactionManagerLookup&lt;/type&gt;
+        &lt;/component&gt;
+
+        &lt;component&gt;
+        &lt;key&gt;org.exoplatform.services.transaction.TransactionService&lt;/key&gt;
+        &lt;type&gt;org.exoplatform.services.transaction.jbosscache.JBossTransactionsService&lt;/type&gt;
+        &lt;init-params&gt;
+        &lt;value-param&gt;
+        &lt;name&gt;timeout&lt;/name&gt;
+        &lt;value&gt;300&lt;/value&gt;
+        &lt;/value-param&gt;
+        &lt;/init-params&gt;
+        &lt;/component&gt;</programlisting>
+
+      <para>Next stage is actually the JCR configuration. We need JBossCache
+        configuration templates for : data-cache, indexer-cache and
+        lock-manager-cache. Later they will be used to configure JCR's core
+        components. There are pre-bundled templates in EAR or JAR in
+        conf/standalone/cluster. They can be used as is or re-written if
+        needed. And now, re-configure a bit each workspace. Actually, a few
+        parameters need changing, e.g. &lt;cache&gt;, &lt;query-handler&gt;
+        and &lt;lock-manager&gt;.
+      </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>&lt;cache&gt; configuration should look like this:</para>
+
+          <programlisting language="xml">&lt;cache enabled="true"
+            class="org.exoplatform.services.jcr.impl.dataflow.persistent.jbosscache.JBossCacheWorkspaceStorageCache"&gt;
+            &lt;properties&gt;
+            &lt;property name="jbosscache-configuration" value="test-jbosscache-data.xml" /&gt;
+            &lt;property name="jgroups-configuration" value="udp-mux.xml" /&gt;
+            &lt;property name="jgroups-multiplexer-stack" value="false" /&gt;
+            &lt;property name="jbosscache-cluster-name" value="JCR-cluster-data" /&gt;
+            &lt;property name="jbosscache-shareable" value="true"/&gt;
+            &lt;/properties&gt;
+            &lt;/cache&gt;</programlisting>
+
+          <itemizedlist>
+            <listitem>
+              <para>"jbosscache-configuration" is the path to configuration
+                template;
+              </para>
+            </listitem>
+
+            <listitem>
+              <para>"jgroups-configuration" is path to JGroups configuration
+                that should not be anymore jgroups' stack definitions but a
+                normal jgroups configuration format with the shared transport
+                configured by simply setting the jgroups property
+                singleton_name to a unique name (it must remain unique from
+                one portal container to another). This file is also
+                pre-bundled with templates and is recommended for use;
+              </para>
+            </listitem>
+
+            <listitem>
+              <para>"jgroups-multiplexer-stack" set to "false" in order to
+                disable the multiplexer stack as now it is recommended to use
+                the JGroups' shared transport instead.
+              </para>
+            </listitem>
+
+            <listitem>
+              <para>"jbosscache-cluster-name" is the name of cluster group.
+                It should be different for each workspace and each workspace
+                component. I.e.:
+                &lt;repository_name&gt;-&lt;ws_name&gt;-&lt;component(cache\|lock\|index)&gt;</para>
+            </listitem>
+
+            <listitem>
+              <para>"jbosscache-shareable" set "true" in order to share the
+                same JBoss Cache instance between several workspaces.
+              </para>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+      </itemizedlist>
+
+      <itemizedlist>
+        <listitem>
+          <para>&lt;query-handler&gt; configuration</para>
+
+          <itemizedlist>
+            <listitem>
+              <para>You must replace or add in &lt;query-handler&gt; block
+                the "changesfilter-class" parameter equals with:
+              </para>
+
+              <programlisting language="xml">&lt;property name="changesfilter-class"
+                value="org.exoplatform.services.jcr.impl.core.query.jbosscache.JBossCacheIndexChangesFilter"/&gt;</programlisting>
+            </listitem>
+
+            <listitem>
+              <para>add JBossCache-oriented configuration:</para>
+
+              <programlisting language="xml">&lt;property name="jbosscache-configuration"
+                value="test-jbosscache-indexer.xml" /&gt;
+                &lt;property name="jgroups-configuration" value="udp-mux.xml" /&gt;
+                &lt;property name="jgroups-multiplexer-stack" value="false" /&gt;
+                &lt;property name="jbosscache-cluster-name" value="JCR-cluster-indexer" /&gt;
+                &lt;property name="jbosscache-shareable" value="true"/&gt;
+                &lt;property name="max-volatile-time" value="60" /&gt;</programlisting>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+      </itemizedlist>
+
+      <para>Those properties have the same meaning and restrictions as in
+        the previous block. The last property "max-volatile-time" is not
+        mandatory but recommended. This notifies that the latest changes in
+        index will be visible for each cluster node not later than in
+        60s.
+      </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>&lt;lock-manager&gt; configuration</para>
+
+          <para>Maybe this is the hardest element to configure, because we
+            have to define access to DB where locks will be stored. Replace
+            exsiting lock-manager configuration with shown below.
+          </para>
+
+          <programlisting language="xml">
+            &lt;lock-manager class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.CacheableLockManagerImpl"&gt;
+            &lt;properties&gt;
+            &lt;property name="time-out" value="15m" /&gt;
+            &lt;property name="jbosscache-configuration" value="test-jbosscache-lock.xml" /&gt;
+            &lt;property name="jgroups-configuration" value="udp-mux.xml" /&gt;
+            &lt;property name="jgroups-multiplexer-stack" value="false" /&gt;
+            &lt;property name="jbosscache-cluster-name" value="JCR-cluster-locks" /&gt;
+            &lt;property name="jbosscache-cl-cache.jdbc.table.name" value="jcrlocks" /&gt;
+            &lt;property name="jbosscache-cl-cache.jdbc.table.create" value="true" /&gt;
+            &lt;property name="jbosscache-cl-cache.jdbc.table.drop" value="false" /&gt;
+            &lt;property name="jbosscache-cl-cache.jdbc.table.primarykey" value="jcrlocks_pk" /&gt;
+            &lt;property name="jbosscache-cl-cache.jdbc.fqn.column" value="fqn" /&gt;
+            &lt;property name="jbosscache-cl-cache.jdbc.node.column" value="node" /&gt;
+            &lt;property name="jbosscache-cl-cache.jdbc.parent.column" value="parent" /&gt;
+            &lt;property name="jbosscache-cl-cache.jdbc.datasource" value="jdbcjcr" /&gt;
+            &lt;property name="jbosscache-shareable" value="true"/&gt;
+            &lt;/properties&gt;
+            &lt;/lock-manager&gt;
+
+          </programlisting>
+
+          <para>First few properties are the same as in the previous
+            components, but here you can see some strange
+            "jbosscache-cl-cache.jdbc.*" properties. They define access
+            parameters for database where lock are persisted.
+          </para>
+
+          <itemizedlist>
+            <listitem>
+              <para>"jbosscache-cl-cache.jdbc.table.create" - whether to
+                create it or not. Usually "true";
+              </para>
+            </listitem>
+
+            <listitem>
+              <para>"jbosscache-cl-cache.jdbc.table.drop" - whether to drop
+                on a start or not. Use "false";
+              </para>
+            </listitem>
+
+            <listitem>
+              <para>"jbosscache-cl-cache.jdbc.table.primarykey" - the name
+                of column with pk;
+              </para>
+            </listitem>
+
+            <listitem>
+              <para>"jbosscache-cl-cache.jdbc.fqn.column" - the name of one
+                more column. If you are not sure how to use, follow the
+                example above (if much interested, please refer to JBossCache
+                JDBCCacheLoader documentation)
+              </para>
+            </listitem>
+
+            <listitem>
+              <para>"jbosscache-cl-cache.jdbc.node.column" - the name of one
+                more column. If you are not sure how to use, follow the
+                example above (if much interested, please refer to JBossCache
+                JDBCCacheLoader documentation)
+              </para>
+            </listitem>
+
+            <listitem>
+              <para>"jbosscache-cl-cache.jdbc.parent.column" - name of one
+                more column. If you are not sure how to use, follow the
+                example above if you are not sure (if much interested, please
+                refer to JBossCache JDBCCacheLoader documentation)
+              </para>
+            </listitem>
+
+            <listitem>
+              <para>"jbosscache-cl-cache.jdbc.datasource" - name of
+                configured in Container datasource, where you want to store
+                locks. The best idea is to use the same as for
+                workspace.
+              </para>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+      </itemizedlist>
+
+      <para>That's all. JCR is ready for running in a cluster.</para>
+
+
+    <para xml:id="JCR.FAQ.JCR.Core.HowToUseLuceneSpellchecker">
+      <citetitle>
+        <emphasis role="bold">How to use lucene spellchecker?</emphasis>
+      </citetitle>
+    </para>
+
+      <para>There is few steps:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Enable lucene spellchecker in jcr QueryHandler
+            configuration:
+          </para>
+
+          <programlisting language="xml">&lt;query-handler
+            class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
+            &lt;properties&gt;
+            ...
+            &lt;property name="spellchecker-class"
+            value="org.exoplatform.services.jcr.impl.core.query.lucene.spell.LuceneSpellChecker$FiveSecondsRefreshInterval"
+            /&gt;
+            ...
+            &lt;/properties&gt;
+            &lt;/query-handler&gt;</programlisting>
+        </listitem>
+      </itemizedlist>
+
+      <itemizedlist>
+        <listitem>
+          <para>Execute query with rep:spellcheck function and word that is
+            checked:
+          </para>
+
+          <programlisting language="java">Query query = qm.createQuery("select rep:spellcheck() from nt:base where " +
+            "jcr:path = '/' and spellcheck('word that is checked')", Query.SQL);
+            RowIterator rows = query.execute().getRows();
+          </programlisting>
+        </listitem>
+      </itemizedlist>
+
+      <itemizedlist>
+        <listitem>
+          <para>Fetch a result:</para>
+
+          <programlisting language="java">Row r = rows.nextRow();
+            Value v = r.getValue("rep:spellcheck()");
+          </programlisting>
+        </listitem>
+      </itemizedlist>
+
+      <para>If there is no any results, that means there is no suggestion,
+        so word is correct or spellcheckers dictionary do not contain any
+        words like the checked word.
+      </para>
+
+    <para xml:id="JCR.FAQ.JCR.Core.AffectSpellcheckerResults">
+      <citetitle>
+        <emphasis role="bold">How can I affect to spellchecker results?</emphasis>
+      </citetitle>
+    </para>
+
+      <para>There is two parameters in jcr QueryHandler
+        configuration:
+      </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Minimal distance between checked word and proposed
+            suggestion;
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>Search for more popular suggestions;</para>
+
+          <programlisting language="xml">&lt;query-handler
+            class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
+            &lt;properties&gt;
+            ...
+            &lt;property name="spellchecker-class"
+            value="org.exoplatform.services.jcr.impl.core.query.lucene.spell.LuceneSpellChecker$FiveSecondsRefreshInterval"
+            /&gt;
+            &lt;property name="spellchecker-more-popular" value="false" /&gt;
+            &lt;property name="spellchecker-min-distance" value="0.55" /&gt;
+            ...
+            &lt;/properties&gt;
+            &lt;/query-handler&gt;</programlisting>
+        </listitem>
+      </itemizedlist>
+
+      <para>Minimal distance is counted as Levenshtein distance between
+        checked word and spellchecker suggestion.
+      </para>
+
+      <para>MorePopular paramter affects in next way: If "morePopular"
+        disabled:
+      </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>If the proposed word exists in the directory - no suggestion
+            given;
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>If the proposed word doesn't exist in the directory -
+            propose the closed word;
+          </para>
+        </listitem>
+      </itemizedlist>
+
+      <para>If "morePopular" enabled:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>No matter word exists or not, checker will propose the
+            closed word that is more popular than the checked word.
+          </para>
+        </listitem>
+      </itemizedlist>
+     </section>
+
+  <section id="JCR.FAQ.JCR.Extensions">
+    <title>JCR extensions</title>
+
+    <para xml:id="JCR.FAQ.JCR.Extensions.HowToRestoreRepository">
+      <citetitle>
+        <emphasis role="bold">How to restore repository to existing repository?</emphasis>
+      </citetitle>
+    </para>
+
+
+      <orderedlist>
+        <listitem>
+          <para>Remove existing repository, use:</para>
+
+          <programlisting language="java">RepositoryService.removeRepository(String repositoryName)</programlisting>
+        </listitem>
+
+        <listitem>
+          <para>Restore repository, use</para>
+
+          <programlisting language="java">BackupManager.restore(RepositoryBackupChainLog log, RepositoryEntry
+            repositoryEntry, boolean asynchronous)
+          </programlisting>
+        </listitem>
+      </orderedlist>
+
+    <para xml:id="JCR.FAQ.JCR.Extensions.HowToRestoreWorkspace">
+      <citetitle>
+        <emphasis role="bold">How to restore workspace to existing worksapce?</emphasis>
+      </citetitle>
+    </para>
+
+      <orderedlist>
+        <listitem>
+          <para>Remove existing workspace, use:</para>
+
+          <programlisting language="java">ManageableRepository.removeWorkspace(String workspaceName)</programlisting>
+        </listitem>
+
+        <listitem>
+          <para>Restore workspace, use:</para>
+
+          <programlisting language="java">BackupManager.restore(BackupChainLog log, String repositoryName,
+            WorkspaceEntry workspaceEntry, boolean asynchronous)
+          </programlisting>
+        </listitem>
+      </orderedlist>
+
+    <para xml:id="JCR.FAQ.JCR.Extensions.JCRSupportHotBackup">
+      <citetitle>
+        <emphasis role="bold">Does JCR support hot backup?</emphasis>
+      </citetitle>
+    </para>
+
+    <para>Yes, JCR is support hot backup. Will use
+      org.exoplatform.services.jcr.ext.backup.BackupManager.
+    </para>
+    </section>
+  </section>

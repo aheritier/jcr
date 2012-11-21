@@ -1,0 +1,19 @@
+<section id="JCR.ConfigurationPersister.ValueStoragePlugin">
+      <title>Value Storage Plugin for Data Container</title>    
+    <note>
+      <para>The value-storage element is optional. If you don't include it,
+      the values will be stored as BLOBs inside the database.</para>
+    </note>
+
+    <para><emphasis role="bold">value-storage</emphasis>: Optional value
+    Storage plugin definition.</para>
+
+    <para><emphasis role="bold">class</emphasis>: A value storage plugin class
+    name (attribute).</para>
+
+    <para><emphasis role="bold">properties</emphasis>: The list of properties
+    (name-value pairs) for a concrete Value Storage plugin.</para>
+
+    <para><emphasis role="bold">filters</emphasis>: The list of filters
+    defining conditions when this plugin is applicable.</para>
+</section>

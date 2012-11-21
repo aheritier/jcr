@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<section id="JCR.SearchConfiguration">
+  <title>Search Configuration</title>
+  <para>Search is an important function in eXo JCR, so it is very necessary for you to know how to configure the eXo JCR Search tool.</para>
+
+<!-- 2.2.1.1 XML configuration & parameter -->
+  <xi:include href="SearchConfiguration/XMlConfigurationandParameter.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+<!-- 2.2.1.2 Global search index -->
+  <xi:include href="SearchConfiguration/GlobalSearch.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+<!-- 2.2.1.3 Indexing tuning -->
+<xi:include href="SearchConfiguration/IndexingAdjustments.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+</section>

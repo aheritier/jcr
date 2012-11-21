@@ -1,0 +1,376 @@
+<section id="JCR.SearchConfiguration.Indexing_Adjustments">
+    <title>Indexing tuning</title>
+
+    <para id="JCR.SearchConfiguration.Indexing_Adjustments.IndexingConfiguration">
+      <citetitle><emphasis role="bold">Information of Indexing configuration</emphasis></citetitle>
+    </para>
+      <para>Starting with version 1.9, the default search index implementation
+      in JCR allows you to control which properties of a node are indexed. You
+      also can define different analyzers for different nodes.</para>
+
+      <para>The configuration parameter is called indexingConfiguration and
+      per default is not set. This means all properties of a node are
+      indexed.</para>
+
+      <para>If you wish to configure the indexing behavior, you need to add a
+      parameter to the query-handler element in your configuration
+      file.</para>
+
+      <programlisting language="xml">&lt;property name="indexing-configuration-path" value="/indexing_configuration.xml"/&gt;</programlisting>
+
+	  <para>Index configuration path can indicate any file located
+	  on the file system, in the jar or war files.</para>
+
+	  <para>Please note that you have to declare the <phrase>namespace
+      prefixes</phrase> in the configuration element that you are using
+      throughout the XML file!</para>
+
+    <!-- 2.2.1.3.1 Indexing rules -->
+    <section id="JCR.SearchConfiguration.Indexing_Adjustments.Indexing_Rules">
+      <title>Indexing rules</title>
+      <!-- Mode Scope limit -->
+      <para id="JCR.SearchConfiguration.Indexing_Adjustments.Indexing_Rules.Node_Scope_Limit">
+        <citetitle><emphasis role="bold">Node Scope Limit</emphasis></citetitle>
+      </para>
+        <para>To optimize the index size, you can limit the node scope so that
+        <phrase>only certain properties</phrase> of a node type are
+        indexed.</para>
+
+        <para>With the below configuration, only properties named Text are
+        indexed for nodes of type nt:unstructured. This configuration also
+        applies to all nodes whose type extends from nt:unstructured.</para>
+
+        <programlisting language="xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE configuration SYSTEM "http://www.exoplatform.org/dtd/indexing-configuration-1.0.dtd"&gt;
+&lt;configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0"&gt;
+  &lt;index-rule nodeType="nt:unstructured"&gt;
+    &lt;property&gt;Text&lt;/property&gt;
+  &lt;/index-rule&gt;
+&lt;/configuration&gt;</programlisting>
+
+      <!-- Indexing Boost Value -->
+      <para id="JCR.SearchConfiguration.Indexing_Adjustments.Indexing_Rules.Indexing_Boost_Value">
+        <citetitle><emphasis role="bold">Indexing Boost Value</emphasis></citetitle>
+      </para>
+        <para>It is also possible to configure a <phrase>boost value</phrase>
+        for the nodes that match the index rule. The default boost value is
+        1.0. Higher boost values (a reasonable range is 1.0 - 5.0) will yield
+        a higher score value and appear as more relevant.</para>
+
+        <programlisting language="xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE configuration SYSTEM "http://www.exoplatform.org/dtd/indexing-configuration-1.0.dtd"&gt;
+&lt;configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0"&gt;
+  &lt;index-rule nodeType="nt:unstructured"
+              boost="2.0"&gt;
+    &lt;property&gt;Text&lt;/property&gt;
+  &lt;/index-rule&gt;
+&lt;/configuration&gt;</programlisting>
+
+        <para>If you do not wish to boost the complete node but only certain
+        properties, you can also provide a boost value for the listed
+        properties:</para>
+        
+        <programlisting language="xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE configuration SYSTEM "http://www.exoplatform.org/dtd/indexing-configuration-1.0.dtd"&gt;
+&lt;configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0"&gt;
+  &lt;index-rule nodeType="nt:unstructured"&gt;
+    &lt;property boost="3.0"&gt;Title&lt;/property&gt;
+    &lt;property boost="1.5"&gt;Text&lt;/property&gt;
+  &lt;/index-rule&gt;
+&lt;/configuration&gt;
+</programlisting>
+
+      <!-- Conditional Index Rules -->
+      <para id="JCR.SearchConfiguration.Indexing_Adjustments.Indexing_Rules.Conditional_Index_Rules">
+        <citetitle><emphasis role="bold">Conditional Index Rules</emphasis></citetitle>
+      </para>
+        <para>You may also add a <phrase>condition</phrase> to the index rule
+        and have multiple rules with the same nodeType. The first index rule
+        that matches will apply and all remain ones are
+        ignored:</para>
+        
+        <programlisting language="xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE configuration SYSTEM "http://www.exoplatform.org/dtd/indexing-configuration-1.0.dtd"&gt;
+&lt;configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0"&gt;
+  &lt;index-rule nodeType="nt:unstructured"
+              boost="2.0"
+              condition="@priority = 'high'"&gt;
+    &lt;property&gt;Text&lt;/property&gt;
+  &lt;/index-rule&gt;
+  &lt;index-rule nodeType="nt:unstructured"&gt;
+    &lt;property&gt;Text&lt;/property&gt;
+  &lt;/index-rule&gt;
+&lt;/configuration&gt;
+</programlisting>
+
+        <para>In the above example, the first rule only applies if the
+        nt:unstructured node has a priority property with a value 'high'. The
+        condition syntax supports only the equals operator and a string
+        literal.</para>
+
+        <para>You may also refer properties in the condition that are not on
+        the current node:</para>
+        
+        <programlisting language="xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE configuration SYSTEM "http://www.exoplatform.org/dtd/indexing-configuration-1.0.dtd"&gt;
+&lt;configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0"&gt;
+  &lt;index-rule nodeType="nt:unstructured"
+              boost="2.0"
+              condition="ancestor::*/@priority = 'high'"&gt;
+    &lt;property&gt;Text&lt;/property&gt;
+  &lt;/index-rule&gt;
+  &lt;index-rule nodeType="nt:unstructured"
+              boost="0.5"
+              condition="parent::foo/@priority = 'low'"&gt;
+    &lt;property&gt;Text&lt;/property&gt;
+  &lt;/index-rule&gt;
+  &lt;index-rule nodeType="nt:unstructured"
+              boost="1.5"
+              condition="bar/@priority = 'medium'"&gt;
+    &lt;property&gt;Text&lt;/property&gt;
+  &lt;/index-rule&gt;
+  &lt;index-rule nodeType="nt:unstructured"&gt;
+    &lt;property&gt;Text&lt;/property&gt;
+  &lt;/index-rule&gt;
+&lt;/configuration&gt;
+</programlisting>
+
+        <para>The indexing configuration also allows you to specify the type
+        of a node in the condition. Please note however that the type match
+        must be exact. It does not consider sub types of the specified node
+        type.</para>
+
+        <programlisting language="xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE configuration SYSTEM "http://www.exoplatform.org/dtd/indexing-configuration-1.0.dtd"&gt;
+&lt;configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0"&gt;
+  &lt;index-rule nodeType="nt:unstructured"
+              boost="2.0"
+              condition="element(*, nt:unstructured)/@priority = 'high'"&gt;
+    &lt;property&gt;Text&lt;/property&gt;
+  &lt;/index-rule&gt;
+&lt;/configuration&gt;</programlisting>
+
+      <!-- Exclusion from the Node Scope Index -->
+      <para id="JCR.SearchConfiguration.Indexing_Adjustments.Indexing_Rules.Exclusion_Node_Scope_Index">
+        <citetitle>Exclusion from the Node Scope Index</citetitle>
+      </para>
+        <para>Per default all configured properties are fulltext indexed if
+        they are of type STRING and included in the node scope index. A node
+        scope search finds normally all nodes of an index. That is, the select
+        jcr:contains(., 'foo') returns all nodes that have a string property
+        containing the word 'foo'. You can exclude explicitly a property from
+        the node scope index:</para>
+        
+        <programlisting language="xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE configuration SYSTEM "http://www.exoplatform.org/dtd/indexing-configuration-1.0.dtd"&gt;
+&lt;configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0"&gt;
+  &lt;index-rule nodeType="nt:unstructured"&gt;
+    &lt;property nodeScopeIndex="false"&gt;Text&lt;/property&gt;
+  &lt;/index-rule&gt;
+&lt;/configuration&gt;
+</programlisting>
+      </section>
+
+    <!-- 2.2.1.3.2. Indexing Aggregates -->
+
+    <section id="JCR.SearchConfiguration.Indexing_Adjustments.IndexingAggregates">
+      <title>Indexing Aggregates</title>
+
+      <para>Sometimes it is useful to include the contents of descendant nodes
+      into a single node to easier search on content that is scattered across
+      multiple nodes.</para>
+
+      <para>JCR allows you to define indexed aggregates, basing on relative
+      path patterns and primary node types.</para>
+
+      <para>The following example creates an indexed aggregate on nt:file that
+      includes the content of the jcr:content node:</para>
+      
+      <programlisting language="xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE configuration SYSTEM "http://www.exoplatform.org/dtd/indexing-configuration-1.0.dtd"&gt;
+&lt;configuration xmlns:jcr="http://www.jcp.org/jcr/1.0"
+               xmlns:nt="http://www.jcp.org/jcr/nt/1.0"&gt;
+  &lt;aggregate primaryType="nt:file"&gt;
+    &lt;include&gt;jcr:content&lt;/include&gt;
+  &lt;/aggregate&gt;
+&lt;/configuration&gt;
+</programlisting>
+
+      <para>You can also restrict the included nodes to a certain
+      type:</para>
+      
+      <programlisting language="xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE configuration SYSTEM "http://www.exoplatform.org/dtd/indexing-configuration-1.0.dtd"&gt;
+&lt;configuration xmlns:jcr="http://www.jcp.org/jcr/1.0"
+               xmlns:nt="http://www.jcp.org/jcr/nt/1.0"&gt;
+  &lt;aggregate primaryType="nt:file"&gt;
+    &lt;include primaryType="nt:resource"&gt;jcr:content&lt;/include&gt;
+  &lt;/aggregate&gt;
+&lt;/configuration&gt;</programlisting>
+
+      <para>You may also use the * to match all child nodes:</para>
+
+      
+      <programlisting language="xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE configuration SYSTEM "http://www.exoplatform.org/dtd/indexing-configuration-1.0.dtd"&gt;
+&lt;configuration xmlns:jcr="http://www.jcp.org/jcr/1.0"
+               xmlns:nt="http://www.jcp.org/jcr/nt/1.0"&gt;
+  &lt;aggregate primaryType="nt:file"&gt;http://wiki.exoplatform.com/xwiki/bin/edit/JCR/Search+Configuration
+    &lt;include primaryType="nt:resource"&gt;*&lt;/include&gt;
+  &lt;/aggregate&gt;
+&lt;/configuration&gt;</programlisting>
+
+      <para>If you wish to include nodes up to a certain depth below the
+      current node, you can add multiple include elements. E.g. the nt:file
+      node may contain a complete XML document under
+      jcr:content:</para>
+      
+      <programlisting language="xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE configuration SYSTEM "http://www.exoplatform.org/dtd/indexing-configuration-1.0.dtd"&gt;
+&lt;configuration xmlns:jcr="http://www.jcp.org/jcr/1.0"
+               xmlns:nt="http://www.jcp.org/jcr/nt/1.0"&gt;
+  &lt;aggregate primaryType="nt:file"&gt;
+    &lt;include&gt;*&lt;/include&gt;
+    &lt;include&gt;*/*&lt;/include&gt;
+    &lt;include&gt;*/*/*&lt;/include&gt;
+  &lt;/aggregate&gt;
+&lt;/configuration&gt;
+</programlisting>
+    </section>
+    <!-- 2.2.1.3.3 Property-Level Analyzers -->
+    <section id="JCR.SearchConfiguration.Indexing_Adjustments.Property_Level_Analyzers">
+      <title>Property-Level Analyzers</title>
+      <!-- example -->
+      <para id="JCR.SearchConfiguration.Indexing_Adjustments.Property_Level_Analyzers.Example">
+        <citetitle>Example</citetitle>
+      </para>  
+
+        <para>In this configuration section, you define how a property has to
+        be analyzed. If there is an analyzer configuration for a property,
+        this analyzer is used for indexing and searching of this property. For
+        example:</para>
+        
+        <programlisting language="xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE configuration SYSTEM "http://www.exoplatform.org/dtd/indexing-configuration-1.0.dtd"&gt;
+&lt;configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0"&gt;
+  &lt;analyzers&gt; 
+        &lt;analyzer class="org.apache.lucene.analysis.KeywordAnalyzer"&gt;
+            &lt;property&gt;mytext&lt;/property&gt;
+        &lt;/analyzer&gt;
+        &lt;analyzer class="org.apache.lucene.analysis.WhitespaceAnalyzer"&gt;
+            &lt;property&gt;mytext2&lt;/property&gt;
+        &lt;/analyzer&gt;
+  &lt;/analyzers&gt; 
+&lt;/configuration&gt;</programlisting>
+
+        <para>The configuration above means that the property "mytext" for the
+        entire workspace is indexed (and searched) with the Lucene
+        KeywordAnalyzer, and property "mytext2" with the WhitespaceAnalyzer.
+        Using different analyzers for different languages is particularly
+        useful.</para>
+
+        <para>The WhitespaceAnalyzer tokenizes a property, the KeywordAnalyzer
+        takes the property as a whole.</para>
+        <!-- Characteristics of Node Scope Searches -->
+      <para id="JCR.SearchConfiguration.Indexing_Adjustments.Property_Level_Analyzers.Characteristics_Node_Scope_Searches">
+        <citetitle><emphasis role="bold">Characteristics of Node Scope Searches</emphasis></citetitle>
+      </para>
+        <para>When using analyzers, you may encounter an unexpected behavior
+        when searching within a property compared to searching within a node
+        scope. The reason is that the node scope always uses the global
+        analyzer.</para>
+
+        <para>Let's suppose that the property "mytext" contains the text :
+        "testing my analyzers" and that you haven't configured any analyzers
+        for the property "mytext" (and not changed the default analyzer in
+        SearchIndex).</para>
+
+        <para>If your query is for example:</para>
+        
+        <programlisting>xpath = "//*[jcr:contains(mytext,'analyzer')]"
+        </programlisting>
+
+        <para>This xpath does not return a hit in the node with the property
+        above and default analyzers.</para>
+
+        <para>Also a search on the node scope</para>
+        
+        <programlisting>xpath = "//*[jcr:contains(.,'analyzer')]"</programlisting>
+        
+        <para>won't give a hit. Realize that you can only set specific analyzers 
+        on a node property, and that the node scope indexing/analyzing is always 
+        done with the globally defined analyzer in the SearchIndex element.</para>
+
+        <para>Now, if you change the analyzer used to index the "mytext"
+        property above to</para>
+        
+        <programlisting language="xml">&lt;analyzer class="org.apache.lucene.analysis.Analyzer.GermanAnalyzer"&gt;
+     &lt;property&gt;mytext&lt;/property&gt;
+&lt;/analyzer&gt;
+</programlisting>
+
+        <para>and you do the same search again, then for 
+        <programlisting>xpath = "//*[jcr:contains(mytext,'analyzer')]"</programlisting>you
+        would get a hit because of the word stemming (analyzers -
+        analyzer).</para>
+
+        <para>The other search,</para>
+        
+        <programlisting>xpath = "//*[jcr:contains(.,'analyzer')]"
+        </programlisting>
+        
+        <para>still would not give a result, since the node scope is indexed 
+        with the global analyzer, which in this case does not take into 
+        account any word stemming.</para>
+
+        <para>In conclusion, be aware that when using analyzers for specific
+        properties, you might find a hit in a property for some search text,
+        and you do not find a hit with the same search text in the node scope
+        of the property!</para>
+
+        <note>
+          <para>Both index rules and index aggregates influence how content is
+          indexed in JCR. If you change the configuration, the existing
+          content is not automatically re-indexed according to the new rules.
+          You, therefore, have to manually re-index the content when you
+          change the configuration!</para>
+        </note>
+      </section>
+    <!-- 2.2.1.3.4 Advanced features -->
+    <section id="JCR.SearchConfiguration.Indexing_Adjustments.Advanced_Features">
+      <title>Advanced features</title>
+
+      <para>eXo JCR supports some advanced features, which are not specified
+      in JSR 170:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Get a text excerpt with <emphasis role="bold">highlighted
+          words</emphasis> that matches the query: <link
+          linkend="JCR.SearchingRepositoryContent.Highlighting">ExcerptProvider</link>.</para>
+        </listitem>
+
+        <listitem>
+          <para>Search a term and its <emphasis
+          role="bold">synonyms</emphasis>: <link
+          linkend="JCR.SearchingRepositoryContent.SynonimProvider">SynonymSearch</link></para>
+        </listitem>
+
+        <listitem>
+          <para>Search <emphasis role="bold">similar</emphasis> nodes: <link
+          linkend="JCR.SearchingRepositoryContent.Similarity">SimilaritySearch</link></para>
+        </listitem>
+
+        <listitem>
+          <para>Check <emphasis role="bold">spelling</emphasis> of a full text
+          query statement: <link
+          linkend="JCR.SearchingRepositoryContent.SpellChecker">SpellChecker</link></para>
+        </listitem>
+
+        <listitem>
+          <para>Define index <emphasis role="bold">aggregates and
+          rules</emphasis>: IndexingConfiguration.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>

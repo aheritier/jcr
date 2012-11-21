@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+        "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<section id="JCR.SearchingRepositoryContent.QueryLifecycle">
+  <title>Query Lifecycle</title>
+
+  <para xml:id="JCR.SearchingRepositoryContent.QueryLifecycle.QueryCreationAndExecution">
+    <citetitle>
+      <emphasis role="bold">Create and Execute a query</emphasis>
+    </citetitle>
+  </para>
+  <para>
+    <emphasis role="bold">SQL</emphasis>
+  </para>
+
+  <programlisting language="java">// get QueryManager
+    QueryManager queryManager = workspace.getQueryManager(); 
+    // make SQL query
+    Query query = queryManager.createQuery("SELECT * FROM nt:base ", Query.SQL);
+    // execute query
+    QueryResult result = query.execute();
+  </programlisting>
+
+  <para>
+    <emphasis role="bold">XPath</emphasis>
+  </para>
+
+  <programlisting language="java">// get QueryManager
+    QueryManager queryManager = workspace.getQueryManager();
+    // make XPath query
+    Query query = queryManager.createQuery("//element(*,nt:base)", Query.XPATH);
+    // execute query
+    QueryResult result = query.execute();
+  </programlisting>
+
+
+  <para xml:id="JCR.SearchingRepositoryContent.QueryLifecycle.QueryResultProcessing">
+    <citetitle>
+      <emphasis role="bold">Query Result Processing</emphasis>
+    </citetitle>
+  </para>
+  <programlisting language="java">// fetch query result
+    QueryResult result = query.execute();
+  </programlisting>
+
+  <para>Now we can get result in an iterator of nodes:</para>
+
+  <programlisting language="java">NodeIterator it = result.getNodes();</programlisting>
+
+  <para>or we get the result in a table:</para>
+
+  <programlisting language="java">// get column names
+    String[] columnNames = result.getColumnNames();
+    // get column rows
+    RowIterator rowIterator = result.getRows();
+    while(rowIterator.hasNext()){
+    // get next row
+    Row row = rowIterator.nextRow();
+    // get all values of row
+    Value[] values = row.getValues();
+    }
+  </programlisting>
+
+
+  <para xml:id="JCR.SearchingRepositoryContent.QueryLifecycle.Scoring">
+    <citetitle>
+      <emphasis role="bold">Scoring</emphasis>
+    </citetitle>
+  </para>
+
+  <para>The result returns a score for each row in the result set. The
+    score contains a value that indicates a rating of how well the result
+    node matches the query. A high value means a better matching than a low
+    value. This score can be used for ordering the result.
+  </para>
+
+  <para>eXo JCR Scoring is a mapping of Lucene scoring. For a more
+    in-depth understanding, please study<ulink
+            url="http://lucene.apache.org/java/2_4_1/scoring.html">Lucene
+      documentation</ulink>.
+  </para>
+
+  <para>jcr:score counted in next way - (lucene score)*1000f.</para>
+
+  <para>Score may be increased for specified nodes, see
+    <link
+            linkend="JCR.IndexBoostRule">Index Boost Value
+    </link>
+  </para>
+
+  <para>Also, see an example
+    <link linkend="JCR.OrderByScore">Order by
+      Score
+    </link>
+  </para>
+</section>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+        "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<section id="JCR.SearchingRepositoryContent.IndexingRulesAndAdditionalFeatures">
+    <title>Indexing rules and additional features</title>
+
+  <xi:include href="higlight.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="index-boost-value.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="node-scope-index.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="regexp-indexing-rule.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="synonim-provider.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="spell-checker.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="find-similar-nodes.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+</section>

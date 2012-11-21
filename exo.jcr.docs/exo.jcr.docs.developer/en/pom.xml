@@ -37,7 +37,7 @@
    </properties>
 
    <build>
-      <finalName>${project.parent.artifactId}_${translation}-${version}</finalName>
+      <finalName>${project.parent.artifactId}_${translation}-${project.version}</finalName>
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>

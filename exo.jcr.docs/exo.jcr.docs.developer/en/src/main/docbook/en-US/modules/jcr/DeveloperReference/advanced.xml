@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+        "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<section id="JCR.DeveloperReference.Advanced">
+  <title>Advanced</title>
+    <highlights>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <emphasis role="bold"><link linkend="JCR.DeveloperReference.Advanced.Extensions">Extensions</link></emphasis>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <emphasis role="bold"><link linkend="JCR.DeveloperReference.Advanced.WorkspaceDataContainer">Workspace Data Container</link></emphasis>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <emphasis role="bold"><link linkend="JCR.BinaryValuesProcessing">Binary Values Processing</link></emphasis>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <emphasis role="bold"><link linkend="JCR.SearchingRepositoryContent">Searching Repository Content</link></emphasis>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <emphasis role="bold"><link linkend="JCR.LinkProducerService">Link Producer Service</link></emphasis>
+        </para>
+      </listitem>
+    </itemizedlist>
+  </highlights>
+
+
+  <xi:include href="advanced/extensions.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="advanced/workspace-data-container.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="advanced/binary-values-processing.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="advanced/link-producer.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+</section>

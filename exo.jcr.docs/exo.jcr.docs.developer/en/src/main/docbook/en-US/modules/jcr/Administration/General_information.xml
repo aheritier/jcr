@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+
+<para>
+<note xml:id="JCR.JDBCDataContainerConfig.GeneralRecommendationsForDatabaseConfiguration">
+	<para>Note that JCR requires at least READ_COMMITED isolation
+	level and other RDBMS configurations can cause some side-effects and
+	issues. So, make sure proper isolation level is configured on
+	database server side.</para>
+</note>
+
+<citetitle>
+	<para xml:id="JCR.JDBCDataContainerConfig.GeneralRecommendationsForDatabaseConfiguration.DB2Configuration"><emphasis role="bold">DB2 configuration</emphasis></para>
+</citetitle>
+	<itemizedlist>
+		<listitem>
+		<para>RDBMS reindexing feature use queries based on LIMIT and OFFSET
+          clauses which are not enabled by default. However, you can ensure
+          they are enabled by executing the following <programlisting>$ db2set DB2_COMPATIBILITY_VECTOR=MYS
+$ db2stop
+$ db2start</programlisting></para>
+		</listitem>
+		<listitem>
+			<para>Statistics is collected <ulink
+          url="http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/c0011762.htm">automatically</ulink>
+          starting from DB2 Version 9, however it is needed to launch
+          statistics collection manually during the very first start,
+          otherwise it could be very long. You need to run '<ulink
+          url="http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/r0001980.htm">RUNSTATS</ulink>'
+          command</para>
+
+          <programlisting>RUNSTATS ON TABLE &lt;scheme&gt;.&lt;table&gt; WITH DISTRIBUTION AND INDEXES ALL</programlisting>
+
+          <para>for JCR_SITEM (or JCR_MITEM) and JCR_SVALUE (or JCR_MVALUE)
+          tables.</para>
+		</listitem>
+	</itemizedlist>
+<citetitle>
+	<para xml:id="JCR.JDBCDataContainerConfig.GeneralRecommendationsForDatabaseConfiguration.MySQLConfiguration"><emphasis role="bold">MySQL configuration</emphasis></para>
+</citetitle>
+	<itemizedlist>
+		<listitem>
+			<para>To prevent any consistency issues please ensure that InnoDB is
+			  configured as default MySQL engine (instead of MyISAM by default)
+			  before launching your application for the very first time otherwise
+			  when the application will create the tables MyISAM will be used as
+			  MySQL engine which is a non transactional engine that doesn't not
+			  support integrity constraints so even if later you swicth to InnoDB
+			  using an alter table all the integrity constraints would be missing
+			  as they would have been removed at table creation table by
+			  MyISAM.</para>
+		</listitem>
+		<listitem>
+          <para>MyISAM is not supported due to its lack of transaction support
+          and integrity check, so use it only if you don't expect any support
+          and if performances in read accesses are more important than the
+          consistency in your use-case. Therefore the dialects mysql-myisam
+          and mysql-myisam-utf8 are only dedicated to the community.</para>
+		</listitem>
+		<listitem>
+          <para>MySQL relies on collected statistics for keeping track of data
+          distribution in tables and for optimizing join statements, but you
+          can manually call '<ulink
+          url="http://dev.mysql.com/doc/refman/5.0/en/analyze-table.html">ANALYZE</ulink>'
+          to update statistics if needed. For example</para>
+          <programlisting>ANALYZE TABLE JCR_SITEM, JCR_SVALUE</programlisting>
+		</listitem>
+	</itemizedlist>
+<citetitle>
+	<para xml:id="JCR.JDBCDataContainerConfig.GeneralRecommendationsForDatabaseConfiguration.PostgreSQLConfiguration"><emphasis role="bold">PostgreSQL configuration</emphasis></para>
+</citetitle>
+	<itemizedlist>
+		<listitem>
+			<para>Be aware, when using RDBMS for reindexing need to set
+          "enable_seqscan" to "off" or "default_statistics_target" at least
+          "50"</para>
+		</listitem>
+		<listitem>
+          <para>Though PostgreSQL server performs query optimization
+          automatically, you can manualy call '<ulink
+          url="http://www.postgresql.org/docs/8.1/static/sql-analyze.html">ANALYZE</ulink>'
+          command to collect statistics which can influence the performance.
+          For example</para>
+
+          <programlisting>ANALYZE JCR_SITEM
+ANALYZE JCR_SVALUE</programlisting>
+		</listitem>
+	</itemizedlist>
+<citetitle>
+	<para xml:id="JCR.JDBCDataContainerConfig.GeneralRecommendationsForDatabaseConfiguration.MSSQLConfiguration"><emphasis role="bold">MS SQL configuration</emphasis></para>
+</citetitle>
+	<itemizedlist>
+		<listitem>
+			<para>One more mandatory JCR requirement for underlying databases is
+          a case sensitive collation. Microsoft SQL Server both 2005 and 2008
+          customers must configure their server with collation corresponding
+          to personal needs and requirements, but obligatorily case sensitive.
+          For more information please refer to Microsoft SQL Server
+          documentation page "Selecting a SQL Server Collation" <ulink
+          url="http://msdn.microsoft.com/en-us/library/ms144250.aspx">here.</ulink></para>
+		</listitem>
+		<listitem>
+          <para>MS SQL DB server's optimizer automatically processes queries
+          to increase performance. Optimization is based on statistical data
+          which is collected automatically, but you can manually call <ulink
+          url="http://en.wikipedia.org/wiki/Transact-SQL">Transact-SQL</ulink>
+          command '<ulink
+          url="http://msdn.microsoft.com/en-us/library/ms187348.aspx">UPDATE
+          STATISTICS</ulink>' which in very few situations may increase
+          performance. For example</para>
+
+          <programlisting>UPDATE STATISTICS JCR_SITEM
+UPDATE STATISTICS JCR_SVALUE</programlisting>
+		</listitem>
+	</itemizedlist>
+<citetitle>
+	<para xml:id="JCR.JDBCDataContainerConfig.GeneralRecommendationsForDatabaseConfiguration.SybaseConfiguration"><emphasis role="bold">Sybase configuration</emphasis></para>
+</citetitle>
+	<itemizedlist>
+		<listitem>
+			<para>Sybase DB Server optimizer automatically processes queries to
+          increase performance. Optimization is based on statistical data
+          which is collected automatically, but you can manually call <ulink
+          url="http://en.wikipedia.org/wiki/Transact-SQL">Transact-SQL</ulink>
+          command '<ulink
+          url="http://manuals.sybase.com/onlinebooks/group-as/asg1250e/sqlug/@Generic__BookTextView/37166;pt=37125">update
+          statistics</ulink>' which in very few situations may increase
+          performance. For example</para>
+
+          <programlisting>update statistics JCR_SITEM
+update statistics JCR_SVALUE</programlisting>
+		</listitem>
+	</itemizedlist>
+<citetitle>
+	<para xml:id="JCR.JDBCDataContainerConfig.GeneralRecommendationsForDatabaseConfiguration.OracleConfiguration"><emphasis role="bold">Oracle configuration</emphasis></para>
+</citetitle>
+	<itemizedlist>
+		<listitem>
+		 <para>Oracle DB automatically collects statistics to optimize
+          performance of queries, but you can manually call '<ulink
+          url="http://docs.oracle.com/cd/B13789_01/server.101/b10759/statements_4005.htm">ANALYZE</ulink>'
+          command to start collecting statistics immediately which may improve
+          performance. For example</para>
+
+          <programlisting>ANALYZE INDEX JCR_PK_SITEM COMPUTE STATISTICS
+ANALYZE INDEX JCR_IDX_SITEM_PARENT_FK COMPUTE STATISTICS
+ANALYZE INDEX JCR_IDX_SITEM_PARENT COMPUTE STATISTICS
+ANALYZE INDEX JCR_IDX_SITEM_PARENT_NAME COMPUTE STATISTICS
+ANALYZE INDEX JCR_IDX_SITEM_PARENT_ID COMPUTE STATISTICS
+ANALYZE INDEX JCR_PK_SVALUE COMPUTE STATISTICS
+ANALYZE INDEX JCR_IDX_SVALUE_PROPERTY COMPUTE STATISTICS
+ANALYZE INDEX JCR_PK_SREF COMPUTE STATISTICS
+ANALYZE INDEX JCR_IDX_SREF_PROPERTY COMPUTE STATISTICS
+ANALYZE INDEX JCR_PK_SCONTAINER COMPUTE STATISTICS</programlisting>
+		</listitem>
+	</itemizedlist>
+</para>

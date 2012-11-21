@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<section xml:id="chapter-Administration-Database">
+  <title>Database</title>
+
+  <xi:include href="Database/multilanguage-support.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Database/db-cleaner-service.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Database/multi-db-schema-support.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+</section>

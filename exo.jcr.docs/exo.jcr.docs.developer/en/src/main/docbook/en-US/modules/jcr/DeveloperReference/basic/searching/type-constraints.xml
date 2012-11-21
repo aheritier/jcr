@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+        "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<section id="JCR.SearchingRepositoryContent.TypeConstraints">
+  <title>Type Constraints</title>
+
+  <xi:include href="find-all-nodes.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="find-nodes-by-primary-type.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="find-nodes-by-mixin-type.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</section>

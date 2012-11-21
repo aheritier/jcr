@@ -1,0 +1,20 @@
+<section id="JCR.eXoJCRconfiguration.LockManagerConfiguration">
+    <title>Lock Manager</title>
+
+    <para><emphasis role="bold">time-out</emphasis>: Time after which the
+    unused global lock will be removed.</para>
+
+    <para><emphasis role="bold">persister</emphasis>: A class for storing lock
+    information for future use. For example, remove lock after jcr
+    restart.</para>
+
+    <para><emphasis role="bold">path</emphasis>: A lock folder. Each workspace
+    has its own one.</para>
+
+    <note>
+      <para>Also see <link
+      linkend="JCR.eXoJCRconfiguration.LockRemoverMaxThreads"><emphasis
+      role="bold">lock-remover-max-threads</emphasis></link> repository
+      configuration parameter.</para>
+    </note>
+</section>

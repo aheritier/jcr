@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+        "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+
+<section id="JCR.SearchingRepositoryContent.QueryUsecases">
+  <title>Query Usecases</title>
+
+  <xi:include href="query-result-settings.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="type-constraints.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="property-constraints.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="path-constraint.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="ordering-specifying.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="fulltext-search.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="indexing-rules-and-features.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</section>
