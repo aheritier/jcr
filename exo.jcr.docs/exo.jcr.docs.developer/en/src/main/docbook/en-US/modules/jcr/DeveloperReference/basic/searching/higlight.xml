@@ -4,10 +4,10 @@
 <section id="JCR.SearchResultHighlighting">
   <title>Search Result Highlighting</title>
 
-  <para>It's also called excerption (see Excerpt configuration in <link
-  linkend="JCR.SearchConfiguration">Search Configuration</link> and in <link
-  linkend="JCR.SearchingRepositoryContent.Highlighting">Searching
-  Repository</link> article).</para>
+  <para>It is also called "Excerpt" (see Excerpt configuration in the <link
+  linkend="JCR.SearchConfiguration">Search Configuration</link> section and in the <link
+  linkend="JCR.UseFulltextSearch.Highlighting">Searching
+  Repository</link>).</para>
 
   <para>The goal of this query is to find words "eXo" and "implementation"
   with fulltext search and high-light this words in result value.</para>
@@ -77,18 +77,23 @@
       <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">SQL</emphasis>
+      </para>
 
-    <para><emphasis role="bold">SQL</emphasis></para>
-
-    <programlisting language="java">// make SQL query
+      <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
 // create query
 String sqlStatement = "SELECT rep:excerpt() FROM nt:unstructured WHERE CONTAINS(*, 'eXo implementation')";
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
-    <para><emphasis role="bold">XPath</emphasis></para>
+    </listitem>
+    <listitem>
+      <para>
+        <emphasis role="bold">XPath</emphasis></para>
 
     <programlisting language="java">// make XPath query
 QueryManager queryManager = workspace.getQueryManager();
@@ -97,7 +102,8 @@ String xpathStatement = "//element(*,nt:unstructured)[jcr:contains(., 'eXo imple
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+    </listitem>
+  </itemizedlist>
   <para xml:id="JCR.SearchResultHighlighting.FetchingResult">
     <citetitle>
       <emphasis role="bold">Fetching result</emphasis>
@@ -145,7 +151,7 @@ while (rit.hasNext())
       </tgroup>
     </table>
 
-    <para>As you see, words "eXo" and "implamentation" is highlighted.</para>
+    <para>As you see, words "eXo" and "implementation" is highlighted.</para>
 
     <para>Also, we can get exactly "rep:excerpt" value:</para>
 

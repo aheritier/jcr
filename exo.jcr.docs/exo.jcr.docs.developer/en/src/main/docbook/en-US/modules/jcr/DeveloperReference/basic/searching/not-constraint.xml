@@ -4,8 +4,8 @@
 <section id="JCR.NOTConstraint">
   <title>NOT Constraint</title>
 
-  <para>Find all nodes with a mixin type 'mix:title' and where the property
-  'jcr:title' does NOT start with a 'P' symbol</para>
+  <para>Find all nodes with a 'mix:title' mixin type and where the 'jcr:title' property
+  does NOT start with a 'P' symbol</para>
 
   <para xml:id="JCR.NOTConstraint.RepositoryStructure">
     <citetitle>
@@ -45,7 +45,8 @@
       <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
-
+    <itemizedlist>
+            <listitem>
     <para><emphasis role="bold">SQL</emphasis></para>
 
     <programlisting language="java">// make SQL query
@@ -55,7 +56,8 @@ String sqlStatement = "SELECT * FROM mix:title WHERE NOT jcr:title LIKE 'P%'";
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+    </listitem>
+  <listitem>
     <para><emphasis role="bold">XPath</emphasis></para>
 
     <programlisting language="java">// make XPath query
@@ -65,10 +67,12 @@ String xpathStatement = "//element(*,mix:title)[not(jcr:like(@jcr:title, 'P%'))]
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
+  </listitem>
+  </itemizedlist>
 
   <para xml:id="JCR.NOTConstraint.FetchingResult">
     <citetitle>
-      <emphasis role="bold">Fetching the result</emphasis>
+      <emphasis role="bold">Fetching result</emphasis>
     </citetitle>
   </para>
 
@@ -94,7 +98,7 @@ while (rit.hasNext())
    Value[] values = row.getValues();
 }</programlisting>
 
-    <para>Table content is <table>
+    <para>Table content is: <table>
         <title>Table content</title>
 
         <tgroup cols="4">

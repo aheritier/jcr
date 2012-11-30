@@ -4,7 +4,8 @@
 
 <book lang="en" xml:id="JCRFoundationsGuide">
   <bookinfo>
-    <title>Reference Guide / eXo Foundations</title> 
+    <title>Reference Guide / eXo Foundations</title>
+   	<xi:include href="foundations/intro.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />  
   </bookinfo>
    <xi:include href="foundations/kernel.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="foundations/core.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />

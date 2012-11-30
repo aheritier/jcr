@@ -1,12 +1,21 @@
-<section id="JCR.eXoJCRconfiguration.QueryHandlerConfiguration">
+<!-- 2.1.1.6 Query handler -->
+<section id="JCR.eXoJCRconfiguration.QueryHandlerConfiguration" role="NotInToc">
     <title>Query Handler</title>
-
-    <para><emphasis role="bold">class</emphasis>: A Query Handler class
-    name.</para>
-
-    <para><emphasis role="bold">properties</emphasis>: The list of properties
-    (name-value pairs) for a Query Handler (indexDir).</para>
-
-    <para>Properties and advanced features described in <link
-    linkend="JCR.SearchConfiguration">Search Configuration</link>.</para>
+    	<itemizedlist>
+    		<listitem>
+			    <para><emphasis role="bold">class</emphasis>: A Query Handler class
+			    name.</para>
+		    </listitem>
+		    <listitem>
+			    <para><emphasis role="bold">properties</emphasis>: The list of properties
+			    (name-value pairs) for a Query Handler (indexDir).</para>
+		    </listitem>
+		    <listitem>
+			    <para>Properties and advanced features described in <link
+			    linkend="JCR.SearchConfiguration">Search Configuration</link>.</para>
+		    </listitem>
+	    </itemizedlist>
+	<note>
+		<para>See <link linkend="JCR.QueryHandlerConfiguration">QueryHandler configuration</link> for advanced configuration of QueryHandler.</para>
+	</note>
 </section>

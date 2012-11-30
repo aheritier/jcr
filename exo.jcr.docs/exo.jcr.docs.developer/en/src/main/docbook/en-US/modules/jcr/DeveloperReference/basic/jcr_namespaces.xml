@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
         "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.Namespaces">
+<section id="JCR.Namespaces" role="NotInToc">
   <title>Namespaces</title>
-  <para>Support of node types and namespaces is required by the
-    <ulink
-            url="http://www.jcp.org/en/jsr/detail?id=170">JSR-170
-    </ulink>
-    (Java
-    Specification Request)
-    specification.
+  <para>Support of namespaces is required by the <ulink url="http://www.jcp.org/en/jsr/detail?id=170">JSR-170</ulink> specification.
   </para>
 
   <para id="JCR.Namespaces.NamespacesDefinition">
@@ -17,57 +11,59 @@
       <emphasis role="bold">Namespaces definition</emphasis>
     </citetitle>
   </para>
-  <para>Default namespaces are registered by repository at the start-up
-    time
-  </para>
+  <para>Default namespaces are registered by repository at the start-up time.</para>
 
   <para>Your custom service can extend a set of namespaces with some
     application specific ones, declaring it in service's configuration file
     thanks to eXo component plugin mechanism, described as follows:
   </para>
 
-  <programlisting language="xml">      &lt;component-plugin&gt;
+<programlisting language="xml">&lt;component-plugin&gt;
     &lt;name&gt;add.namespaces&lt;/name&gt;
     &lt;set-method&gt;addPlugin&lt;/set-method&gt;
     &lt;type&gt;org.exoplatform.services.jcr.impl.AddNamespacesPlugin&lt;/type&gt;
     &lt;init-params&gt;
-    &lt;properties-param&gt;
-    &lt;name&gt;namespaces&lt;/name&gt;
-    &lt;property name="test" value="http://www.test.org/test"/&gt;
-    &lt;/properties-param&gt;
+		&lt;properties-param&gt;
+			&lt;name&gt;namespaces&lt;/name&gt;
+			&lt;property name="test" value="http://www.test.org/test"/&gt;
+		&lt;/properties-param&gt;
     &lt;/init-params&gt;
-    &lt;/component-plugin&gt;</programlisting>
+&lt;/component-plugin&gt;</programlisting>
 
   <para xml:id="JCR.Namespaces.NamespacesAltering">
   <citetitle>
-    <emphasis role="bold">Namespaces Altering</emphasis>
+    <emphasis role="bold">Namespaces altering</emphasis>
   </citetitle>
   </para>
   <para>Since version 1.11, eXo JCR implementation supports namespaces altering.</para>
 
-  <para xml:id="JCR.Namespacealtering.AddingNewNamespace">
-    <emphasis role="bold">Add a new namespace</emphasis>
-    <programlisting language="java">ExtendedNamespaceRegistry namespaceRegistry = (ExtendedNamespaceRegistry)
-      workspace.getNamespaceRegistry();
-      namespaceRegistry.registerNamespace(&quot;newMapping&quot;, &quot;http://dumb.uri/jcr&quot;);
-    </programlisting>
-  </para>
+  <itemizedlist>
+    <listitem>
+      <para xml:id="JCR.Namespacealtering.AddingNewNamespace">
+        <emphasis role="bold">Add a new namespace</emphasis>
+      </para>
+<programlisting language="java">ExtendedNamespaceRegistry namespaceRegistry = (ExtendedNamespaceRegistry)
+	workspace.getNamespaceRegistry();
+	namespaceRegistry.registerNamespace(&quot;newMapping&quot;, &quot;http://dumb.uri/jcr&quot;);</programlisting>
+    </listitem>
+    <listitem>
 
-  <para xml:id="JCR.Namespacealtering.ChangingExistingNamespace">
-    <emphasis role="bold">Change an existing namespace</emphasis>
-    <programlisting language="java">ExtendedNamespaceRegistry namespaceRegistry = (ExtendedNamespaceRegistry)
-      workspace.getNamespaceRegistry();
-      namespaceRegistry.registerNamespace(&quot;newMapping&quot;, &quot;http://dumb.uri/jcr&quot;);
-      namespaceRegistry.registerNamespace(&quot;newMapping2&quot;, &quot;http://dumb.uri/jcr&quot;);
-    </programlisting>
-  </para>
-
-  <para xml:id="JCR.Namespacealtering.RemovingExistingNamespace">
-    <emphasis role="bold">Remove an existing namespace</emphasis>
-    <programlisting language="java">ExtendedNamespaceRegistry namespaceRegistry = (ExtendedNamespaceRegistry)
-      workspace.getNamespaceRegistry();
-      namespaceRegistry.registerNamespace(&quot;newMapping&quot;, &quot;http://dumb.uri/jcr&quot;);
-      namespaceRegistry.unregisterNamespace(&quot;newMapping&quot;);
-    </programlisting>
-  </para>
+      <para xml:id="JCR.Namespacealtering.ChangingExistingNamespace">
+        <emphasis role="bold">Change an existing namespace</emphasis>
+      </para>
+<programlisting language="java">ExtendedNamespaceRegistry namespaceRegistry = (ExtendedNamespaceRegistry)
+	workspace.getNamespaceRegistry();
+	namespaceRegistry.registerNamespace(&quot;newMapping&quot;, &quot;http://dumb.uri/jcr&quot;);
+	namespaceRegistry.registerNamespace(&quot;newMapping2&quot;, &quot;http://dumb.uri/jcr&quot;); </programlisting>
+    </listitem>
+    <listitem>
+      <para xml:id="JCR.Namespacealtering.RemovingExistingNamespace">
+        <emphasis role="bold">Remove an existing namespace</emphasis>
+      </para>
+<programlisting language="java">ExtendedNamespaceRegistry namespaceRegistry = (ExtendedNamespaceRegistry)
+	workspace.getNamespaceRegistry();
+	namespaceRegistry.registerNamespace(&quot;newMapping&quot;, &quot;http://dumb.uri/jcr&quot;);
+	namespaceRegistry.unregisterNamespace(&quot;newMapping&quot;);</programlisting>
+    </listitem>
+  </itemizedlist>
 </section>

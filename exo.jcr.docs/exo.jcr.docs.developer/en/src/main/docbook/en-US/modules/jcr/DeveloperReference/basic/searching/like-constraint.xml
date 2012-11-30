@@ -4,8 +4,8 @@
 <section id="JCR.LIKEConstraint">
   <title>LIKE Constraint</title>
 
-  <para>Find all nodes with mixin type 'mix:title' and where the property
-  'jcr:title' starts with 'P'.</para>
+  <para>Find all nodes with the 'mix:title' mixin type and where the 'jcr:title' property
+  starts with 'P'.</para>
 
   <note>
     <para>See also the article about "<link linkend="JCR.NOTConstraint">Find
@@ -50,17 +50,21 @@
     </citetitle>
   </para>
 
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">SQL</emphasis>
+      </para>
 
-  <para><emphasis role="bold">SQL</emphasis></para>
-
-    <programlisting language="java">// make SQL query
+      <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
 // create query
 String sqlStatement = "SELECT * FROM mix:title WHERE jcr:title LIKE 'P%'";
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+    </listitem>
+  <listitem>
     <para><emphasis role="bold">XPath</emphasis></para>
 
     <programlisting language="java">// make XPath query
@@ -70,6 +74,8 @@ String xpathStatement = "//element(*,mix:title)[jcr:like(@jcr:title, 'P%')]";
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
+     </listitem>
+  </itemizedlist>
 
   <para xml:id="JCR.LIKEConstraint.FetchingResult">
     <citetitle>
@@ -99,7 +105,7 @@ while (rit.hasNext())
    Value[] values = row.getValues();
 }</programlisting>
 
-    <para>The table content is <table>
+    <para>The table content is: <table>
         <title>Table content</title>
 
         <tgroup cols="4">

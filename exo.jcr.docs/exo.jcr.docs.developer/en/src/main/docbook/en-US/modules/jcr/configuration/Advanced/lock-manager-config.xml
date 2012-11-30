@@ -2,10 +2,9 @@
 <!-- This document was created with Syntext Serna Free. -->
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.LockManagerConfiguration">
-  <title>LockManager configuration</title>
-    <para>What LockManager does?</para>
-
+<!-- 2.2.2 LockManager Configuration -->
+<section id="JCR.LockManagerConfiguration" role="NotInToc">
+  <title>LockManager configuration</title>    
     <para>In general, LockManager stores Lock objects, so it can give a Lock
     object or can release it.</para>
 
@@ -62,9 +61,9 @@
    &lt;property name="time-out" value="10m" /&gt;
    ...
 &lt;/properties&gt;</programlisting>
-
-    <section id="JCR.LockManagerConfiguration.CacheableLockManagerImpl.Configuration">
-      <title>Configuration</title>
+  <itemizedlist>
+    <listitem id="JCR.LockManagerConfiguration.CacheableLockManagerImpl.Configuration">
+      <para><emphasis role="bold">Configuration:</emphasis></para>
 
       <para>Replication requirements are the same for Cache.</para>
 
@@ -72,34 +71,34 @@
       linkend="JCR.ClusterConfig.JCRExternalConfig">here</link>.</para>
 
       <para>Common tips:</para>
+      <tip>
+        <itemizedlist>
+          <listitem>
+            <para><parameter>clusterName</parameter> ("jbosscache-cluster-name")
+            must be unique;</para>
+          </listitem>
 
-      <itemizedlist>
-        <listitem>
-          <para><parameter>clusterName</parameter> ("jbosscache-cluster-name")
-          must be unique;</para>
-        </listitem>
+          <listitem>
+            <para><parameter>cache.jdbc.table.name</parameter> must be unique
+            per datasource;</para>
+          </listitem>
 
-        <listitem>
-          <para><parameter>cache.jdbc.table.name</parameter> must be unique
-          per datasource;</para>
-        </listitem>
-
-        <listitem>
-          <para><parameter>cache.jdbc.fqn.type</parameter> and
-          cache.jdbc.node.type must be configured according to your
-          database;</para>
-        </listitem>
-      </itemizedlist>
-
+          <listitem>
+            <para><parameter>cache.jdbc.fqn.type</parameter> and
+            cache.jdbc.node.type must be configured according to your
+            database;</para>
+          </listitem>
+        </itemizedlist>
+      </tip>
       <para>There are a few ways to configure CacheableLockManagerImpl, and
       all of them configure JBoss-cache and JDBCCacheLoader.</para>
 
       <para>See <ulink
       url="http://community.jboss.org/wiki/JBossCacheJDBCCacheLoader">http://community.jboss.org/wiki/JBossCacheJDBCCacheLoader</ulink></para>
-    </section>
+    </listitem>
 
-    <section id="JCR.LockManagerConfiguration.CacheableLockManagerImpl.SimpleJbossCacheConfiguration">
-      <title>Simple JbossCache Configuration</title>
+    <listitem id="JCR.LockManagerConfiguration.CacheableLockManagerImpl.SimpleJbossCacheConfiguration">
+      <para><emphasis role="bold">Simple JbossCache Configuration:</emphasis></para>
 
       <para>The first one is putting JbossCache configuraion file path to
       CacheableLockManagerImpl.</para>
@@ -121,124 +120,121 @@
      &lt;property name="jbosscache-configuration" value="conf/standalone/cluster/test-jbosscache-lock-config.xml" /&gt;
    &lt;/properties&gt;
 &lt;/lock-manager&gt;</programlisting>
+        <itemizedlist>
+          <listitem>
+            <para><filename>test-jbosscache-lock-config.xml</filename></para>
 
-      <para><filename>test-jbosscache-lock-config.xml</filename></para>
+<programlisting language="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt; &lt;jbosscache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:jboss:jbosscache-core:config:3.2"&gt;
 
-      <programlisting language="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;jbosscache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:jboss:jbosscache-core:config:3.2"&gt;
+     &lt;locking useLockStriping="false" concurrencyLevel="500" lockParentForChildInsertRemove="false" lockAcquisitionTimeout="20000" /&gt;
 
- &lt;locking useLockStriping="false" concurrencyLevel="500" lockParentForChildInsertRemove="false" lockAcquisitionTimeout="20000" /&gt;
+     &lt;clustering mode="replication" clusterName="JBoss-Cache-Lock-Cluster_Name"&gt;
+      &lt;stateRetrieval timeout="20000" fetchInMemoryState="false" /&gt;
+      &lt;sync /&gt;
+     &lt;/clustering&gt;
 
- &lt;clustering mode="replication" clusterName="JBoss-Cache-Lock-Cluster_Name"&gt;
-  &lt;stateRetrieval timeout="20000" fetchInMemoryState="false" /&gt;
-  &lt;sync /&gt;
- &lt;/clustering&gt;
+     &lt;loaders passivation="false" shared="true"&gt;
+      &lt;preload&gt;
+       &lt;node fqn="/" /&gt;
+      &lt;/preload&gt;
+      &lt;loader class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.JDBCCacheLoader" async="false" fetchPersistentState="false" ignoreModifications="false" purgeOnStartup="false"&gt;
+       &lt;properties&gt;
+        cache.jdbc.table.name=jcrlocks_ws
+        cache.jdbc.table.create=true
+        cache.jdbc.table.drop=false
+        cache.jdbc.table.primarykey=jcrlocks_ws_pk
+        cache.jdbc.fqn.column=fqn
+        cache.jdbc.fqn.type=VARCHAR(512)
+        cache.jdbc.node.column=node
+        cache.jdbc.node.type=&lt;BLOB&gt;  
+        cache.jdbc.parent.column=parent
+        cache.jdbc.datasource=jdbcjcr
+       &lt;/properties&gt;
+      &lt;/loader&gt;
 
- &lt;loaders passivation="false" shared="true"&gt;
-  &lt;preload&gt;
-   &lt;node fqn="/" /&gt;
-  &lt;/preload&gt;
-  &lt;loader class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.JDBCCacheLoader" async="false" fetchPersistentState="false" ignoreModifications="false" purgeOnStartup="false"&gt;
-   &lt;properties&gt;
-    cache.jdbc.table.name=jcrlocks_ws
-    cache.jdbc.table.create=true
-    cache.jdbc.table.drop=false
-    cache.jdbc.table.primarykey=jcrlocks_ws_pk
-    cache.jdbc.fqn.column=fqn
-    cache.jdbc.fqn.type=VARCHAR(512)
-    cache.jdbc.node.column=node
-    cache.jdbc.node.type=&lt;BLOB&gt;  
-    cache.jdbc.parent.column=parent
-    cache.jdbc.datasource=jdbcjcr
-   &lt;/properties&gt;
-  &lt;/loader&gt;
+     &lt;/loaders&gt;
 
- &lt;/loaders&gt;
+    &lt;/jbosscache&gt;</programlisting>
+          <para>Configuration requirements:</para>
 
-&lt;/jbosscache&gt;
-</programlisting>
+        <itemizedlist>
+          <listitem>
+            <para><parameter>&lt;clustering mode="replication" clusterName="JBoss-Cache-Lock-Cluster_Name"&gt;</parameter>: The cluster name
+            must be unique.</para>
+          </listitem>
 
-      <para>Configuration requirements:</para>
+          <listitem>
+            <para><parameter>cache.jdbc.table.name</parameter> must be unique
+            per datasource.</para>
+          </listitem>
 
-      <itemizedlist>
-        <listitem>
-          <para>&lt;clustering mode="replication"
-          clusterName="JBoss-Cache-Lock-Cluster_Name"&gt; - the cluster name
-          must be unique;</para>
-        </listitem>
+          <listitem>
+            <para><parameter>cache.jdbc.node.type</parameter> and
+            <parameter>cache.jdbc.fqn.type</parameter> must be configured
+            according to your database.</para>
 
-        <listitem>
-          <para><parameter>cache.jdbc.table.name</parameter> must be unique
-          per datasource;</para>
-        </listitem>
-
-        <listitem>
-          <para><parameter>cache.jdbc.node.type</parameter> and
-          <parameter>cache.jdbc.fqn.type</parameter> must be configured
-          according to your database.</para>
-
-          <note>
-            <para>To prevent any consistency issue regarding the lock data
-            please ensure that your cache loader is
-            <emphasis>org.exoplatform.services.jcr.impl.core.lock.jbosscache.JDBCCacheLoader</emphasis>
-            and that your database engine is transactional.</para>
-          </note>
+            <note>
+              <para>To prevent any consistency issue regarding the lock data, ensure that your cache loader is
+              <parameter>org.exoplatform.services.jcr.impl.core.lock.jbosscache.JDBCCacheLoader</parameter>
+              and that your database engine is transactional.</para>
+            </note>
+            </listitem>
+            </itemizedlist>
         </listitem>
       </itemizedlist>
-    </section>
-
-    <section id="JCR.LockManagerConfiguration.CacheableLockManagerImpl.TemplateJBossCacheConfiguration">
-      <title>Template JBossCache Configuration</title>
+    </listitem>
+    <listitem id="JCR.LockManagerConfiguration.CacheableLockManagerImpl.TemplateJBossCacheConfiguration">
+      <para><emphasis role="bold">Template JBossCache Configuration</emphasis></para>
 
       <para>The second one is using the template JBoss-cache configuration for
       all LockManagers.</para>
 
-      <para><citetitle>Lock template configuration</citetitle></para>
+      <para>Lock template configuration:</para>
+        <itemizedlist>
+          <listitem>
+            <para><filename>test-jbosscache-lock.xml</filename></para>
 
-      <para><filename>test-jbosscache-lock.xml</filename></para>
-
-      <programlisting language="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<programlisting language="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;jbosscache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:jboss:jbosscache-core:config:3.1"&gt;
 
-   &lt;locking useLockStriping="false" concurrencyLevel="500" lockParentForChildInsertRemove="false"
-      lockAcquisitionTimeout="20000" /&gt;
+	&lt;locking useLockStriping="false" concurrencyLevel="500" lockParentForChildInsertRemove="false" lockAcquisitionTimeout="20000" /&gt;
 
-   &lt;clustering mode="replication" clusterName="${jbosscache-cluster-name}"&gt;
-      &lt;stateRetrieval timeout="20000" fetchInMemoryState="false" /&gt;
-      &lt;sync /&gt;
-   &lt;/clustering&gt;
+	&lt;clustering mode="replication" clusterName="${jbosscache-cluster-name}"&gt;
+		&lt;stateRetrieval timeout="20000" fetchInMemoryState="false" /&gt;
+		&lt;sync /&gt;
+	&lt;/clustering&gt;
 
-   &lt;loaders passivation="false" shared="true"&gt;
-      &lt;!-- All the data of the JCR locks needs to be loaded at startup --&gt;
-      &lt;preload&gt;
-         &lt;node fqn="/" /&gt;
-      &lt;/preload&gt;  
-      &lt;!--
-      For another cache-loader class you should use another template with
-      cache-loader specific parameters
-      -&gt;
-      &lt;loader class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.JDBCCacheLoader" async="false" fetchPersistentState="false"
-         ignoreModifications="false" purgeOnStartup="false"&gt;
-         &lt;properties&gt;
-            cache.jdbc.table.name=${jbosscache-cl-cache.jdbc.table.name}
-            cache.jdbc.table.create=${jbosscache-cl-cache.jdbc.table.create}
-            cache.jdbc.table.drop=${jbosscache-cl-cache.jdbc.table.drop}
-            cache.jdbc.table.primarykey=${jbosscache-cl-cache.jdbc.table.primarykey}
-            cache.jdbc.fqn.column=${jbosscache-cl-cache.jdbc.fqn.column}
-            cache.jdbc.fqn.type=${jbosscache-cl-cache.jdbc.fqn.type}
-            cache.jdbc.node.column=${jbosscache-cl-cache.jdbc.node.column}
-            cache.jdbc.node.type=${jbosscache-cl-cache.jdbc.node.type}
-            cache.jdbc.parent.column=${jbosscache-cl-cache.jdbc.parent.column}
-            cache.jdbc.datasource=${jbosscache-cl-cache.jdbc.datasource}
-         &lt;/properties&gt;
-      &lt;/loader&gt;
-   &lt;/loaders&gt;
+	&lt;loaders passivation="false" shared="true"&gt;
+	&lt;!-- All the data of the JCR locks needs to be loaded at startup --&gt;
+		&lt;preload&gt;
+		   &lt;node fqn="/" /&gt;
+		&lt;/preload&gt;  
+		&lt;!--
+		For another cache-loader class you should use another template with
+		cache-loader specific parameters
+		-&gt;
+		&lt;loader class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.JDBCCacheLoader" async="false" fetchPersistentState="false"
+		   ignoreModifications="false" purgeOnStartup="false"&gt;
+		   &lt;properties&gt;
+			  cache.jdbc.table.name=${jbosscache-cl-cache.jdbc.table.name}
+			  cache.jdbc.table.create=${jbosscache-cl-cache.jdbc.table.create}
+			  cache.jdbc.table.drop=${jbosscache-cl-cache.jdbc.table.drop}
+			  cache.jdbc.table.primarykey=${jbosscache-cl-cache.jdbc.table.primarykey}
+			  cache.jdbc.fqn.column=${jbosscache-cl-cache.jdbc.fqn.column}
+			  cache.jdbc.fqn.type=${jbosscache-cl-cache.jdbc.fqn.type}
+			  cache.jdbc.node.column=${jbosscache-cl-cache.jdbc.node.column}
+			  cache.jdbc.node.type=${jbosscache-cl-cache.jdbc.node.type}
+			  cache.jdbc.parent.column=${jbosscache-cl-cache.jdbc.parent.column}
+			  cache.jdbc.datasource=${jbosscache-cl-cache.jdbc.datasource}
+		   &lt;/properties&gt;
+		&lt;/loader&gt;
+	&lt;/loaders&gt;
 &lt;/jbosscache&gt;</programlisting>
 
       <para>As you see, all configurable parameters are filled by templates
       and will be replaced by LockManagers configuration parameters:</para>
 
-      <programlisting language="xml">&lt;lock-manager class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.CacheableLockManagerImpl"&gt;
+<programlisting language="xml">&lt;lock-manager class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.CacheableLockManagerImpl"&gt;
    &lt;properties&gt;
       &lt;property name="time-out" value="15m" /&gt;
       &lt;property name="jbosscache-configuration" value="test-jbosscache-lock.xml" /&gt;
@@ -277,10 +273,10 @@
             own configuration.</para>
           </listitem>
         </itemizedlist></para>
-
+    </listitem>    
+    <listitem>
       <para><filename>our udp-mux.xml</filename></para>
-
-      <programlisting language="xml">&lt;config&gt;
+<programlisting language="xml">&lt;config&gt;
     &lt;UDP
          singleton_name="JCR-cluster" 
          mcast_addr="${jgroups.udp.mcast_addr:228.10.10.10}"
@@ -345,5 +341,8 @@
    &lt;pbcast.STATE_TRANSFER /&gt;
    &lt;pbcast.FLUSH /&gt;
 &lt;/config&gt;</programlisting>
-    </section>    
+          </listitem>
+        </itemizedlist>
+    </listitem>  
+  </itemizedlist>  
 </section>

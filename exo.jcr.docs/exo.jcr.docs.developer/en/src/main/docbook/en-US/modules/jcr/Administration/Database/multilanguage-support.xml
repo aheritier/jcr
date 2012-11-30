@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCRMultilanguageSupport">
+<section id="JCRMultilanguageSupport" role="NotInToc">
   <title>Multi-language support in eXo JCR RDB backend</title>
 
 
@@ -10,8 +10,7 @@
     support UTF-8 encoding. Here is a short HOWTO instruction for several
     supported RDBMS with examples.</para>
 
-    <para>The configuration file you have to modify:
-    .../webapps/portal/WEB-INF/conf/jcr/repository-configuration.xml</para>
+    <para>The configuration file you have to modify: <filename>.../webapps/portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>.</para>
 
     <note>
       <para>Datasource <parameter>jdbcjcr</parameter> used in examples can be

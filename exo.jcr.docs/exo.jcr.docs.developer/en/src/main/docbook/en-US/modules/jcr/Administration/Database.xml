@@ -3,11 +3,29 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section xml:id="chapter-Administration-Database">
   <title>Database</title>
+  <highlights>
+  <itemizedlist>
+	<listitem>
+		<para><emphasis role="bold"><link linkend="JCRMultilanguageSupport">Multi-language support in eXo JCR RDB backend</link></emphasis></para>
+		<para>Details of multi-language JCR on Oracle, DB2, MySQL and PostgreSQL.</para>
+	</listitem>
+	<listitem>
+		<para><emphasis role="bold"><link linkend="JCR.DBCleanerService">DBCleanService</link></emphasis></para>
+		<para>Methods of DBCleanerService, and instructions on how to clean only single workspace and the whole repository.</para>
+	</listitem>
+	<listitem>
+		<para><emphasis role="bold"><link linkend="JCR.MultiDBSchemaSupport">How to host several JCR instances on the same database instance?</link></emphasis></para>
+		<para>How to apply configuration changes on LockManager and HibernateService.</para>
+	</listitem>
+	<listitem>
+		<para><emphasis role="bold"><link linkend="JCR.FAQ.Database">Frequently asked questions</link></emphasis></para>
+		<para>Many useful questions and their answers which are common in Database.</para>
+	</listitem>
+  </itemizedlist>
+  </highlights>
 
-  <xi:include href="Database/multilanguage-support.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
-  <xi:include href="Database/db-cleaner-service.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
-  <xi:include href="Database/multi-db-schema-support.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Database/multilanguage-support.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Database/db-cleaner-service.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Database/multi-db-schema-support.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Database/FAQs_database.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 </section>

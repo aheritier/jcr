@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+
+  <section id="JCR.Datacontainer.Requirements">
+    <title>Requirements</title>
+
+    <para>Connection creation and reuse should be a thread safe operation.
+    Connection provides CRUD operations support on the storage.</para>
+
+    <para xml:id="JCR.Architecture.Requirements.ReadOperations">
+      <citetitle>
+        <emphasis role="bold">Read operations</emphasis>
+      </citetitle>
+    </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Read ItemData from the storage by item identifier.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">ItemData getItemData(String identifier) throws RepositoryException, IllegalStateException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Read ItemData from the storage by using the parent and name of
+          the item, related to the parent location.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">ItemData getItemData(NodeData parentData, QPathEntry name) throws RepositoryException,IllegalStateException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Read List of NodeData from the storage by using the parent
+          location of the item.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">List&lt;NodeData&gt; getChildNodesData(NodeData parent) throws RepositoryException, IllegalStateException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Reads List of PropertyData from the storage by using the
+          parent location of the item.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">List&lt;PropertyData&gt; getChildPropertiesData(NodeData parent) throws RepositoryException, IllegalStateException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Reads List of PropertyData with empty ValueData from the
+          storage by using the parent location of the item.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>This methiod specially dedicated for non-content modification
+      operations (e.g. Items delete).</para>
+
+      <programlisting language="java">List&lt;PropertyData&gt; listChildPropertiesData(NodeData parent) throws RepositoryException, IllegalStateException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Reads List of PropertyData from the storage by using the
+          parent location of the item.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>It's REFERENCE type: Properties referencing Node with given
+      nodeIdentifier. See more in javax.jcr.Node.getReferences()</para>
+
+      <programlisting language="java">List&lt;PropertyData&gt; getReferencesData(String nodeIdentifier) throws RepositoryException,IllegalStateException,UnsupportedOperationException;
+</programlisting>
+
+    <para xml:id="JCR.Architecture.Requirements.WriteOperations">
+      <citetitle>
+        <emphasis role="bold">Write operations</emphasis>
+      </citetitle>
+    </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Add single NodeData.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">void add(NodeData data) throws RepositoryException,UnsupportedOperationException,InvalidItemStateException,IllegalStateException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Add single PropertyData.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">void add(PropertyData data) throws RepositoryException,UnsupportedOperationException,InvalidItemStateException,IllegalStateException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Update NodeData.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">void update(NodeData data) throws RepositoryException,UnsupportedOperationException,InvalidItemStateException,IllegalStateException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Update PropertyData.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">void update(PropertyData data) throws RepositoryException,UnsupportedOperationException,InvalidItemStateException,IllegalStateException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Rename NodeData by using Node identifier and new name and
+          indexing from the data.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">void rename(NodeData data) throws RepositoryException,UnsupportedOperationException,InvalidItemStateException,IllegalStateException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Delete NodeData.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">void delete(NodeData data) throws RepositoryException,UnsupportedOperationException,InvalidItemStateException,IllegalStateException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Delete PropertyData.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">void delete(PropertyData data) throws RepositoryException,UnsupportedOperationException,InvalidItemStateException,IllegalStateException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Persist changes and closes connection. It can be database
+          transaction commit for instance etc.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">void commit() throws IllegalStateException, RepositoryException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Refuse persistent changes and closes connection. It can be
+          database transaction rollback for instance etc.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">void rollback() throws IllegalStateException, RepositoryException;
+</programlisting>
+
+      <para>All methods throw IllegalStateException if connection is closed.
+      UnsupportedOperationException if the method is not supported (e.g. JCR
+      Level 1 implementation etc). RepositoryException if some errors occur
+      during preparation, validation or persistence.</para>
+
+    <para xml:id="JCR.Architecture.Requirements.StateOperations">
+      <citetitle>
+        <emphasis role="bold">State operations</emphasis>
+      </citetitle>
+    </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Return true if connection can be used.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">boolean isOpened();
+</programlisting>
+
+      <para xml:id="JCR.Architecture.Requirements.ValidationOfWriteOperations">
+        <citetitle>
+          <emphasis role="bold">Validation of write operations</emphasis>
+        </citetitle>
+      </para>
+
+      <para>Container has to care about storage consistency (JCR constraints)
+      on write operations: (InvalidItemStateException should be thrown
+      according the spec). At least, the following checks should be
+      performed:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>On ADD errors</para>
+
+          <itemizedlist>
+            <listitem>
+              <para>Parent not found. Condition: Parent ID (Item with ID is
+              not exists).</para>
+            </listitem>
+
+            <listitem>
+              <para>Item already exists. Condition: ID (Item with ID already
+              exists).</para>
+            </listitem>
+
+            <listitem>
+              <para>Item already exists. Condition: Parent ID, Name, Index
+              (Item with parent ID, name and index already exists).</para>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+      </itemizedlist>
+
+      <itemizedlist>
+        <listitem>
+          <para>On DELETE errors</para>
+
+          <itemizedlist>
+            <listitem>
+              <para>Item not found. Condition ID.</para>
+            </listitem>
+
+            <listitem>
+              <para>Can not delete parent till children exists.</para>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+      </itemizedlist>
+
+      <itemizedlist>
+        <listitem>
+          <para>On UPDATE errors</para>
+
+          <itemizedlist>
+            <listitem>
+              <para>Item not found. Condition ID.</para>
+            </listitem>
+
+            <listitem>
+              <para>Item already exists with higher Version. Condition: ID,
+              Version (Some Session had updated Item with ID prior this
+              update).</para>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+      </itemizedlist>
+
+      <para xml:id="JCR.Architecture.Requirements.ConsistencyOfSave">
+        <citetitle>
+          <emphasis role="bold">Consistency of save</emphasis>
+        </citetitle>
+      </para>
+
+      <para>The container (connection) should implement consistency of Commit
+      (Rollback) in <emphasis role="bold">transaction manner</emphasis>. I.e.
+      If a set of operations was performed <emphasis
+      role="bold">before</emphasis> the future <emphasis
+      role="bold">Commit</emphasis> and another next operation <emphasis
+      role="bold">fails</emphasis>. <emphasis role="bold">It should be
+      possible to</emphasis> rollback applied changes using <emphasis
+      role="bold">Rollback</emphasis> command.</para>
+</section>

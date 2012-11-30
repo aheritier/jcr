@@ -4,11 +4,6 @@
 <section id="JCR.RegistryService">
   <title>Registry Service</title>
 
-  <para xml:id="JCR.RegistryService.Concept">
-    <citetitle>
-      <emphasis role="bold">Information of Registry Service</emphasis>
-    </citetitle>
-  </para>
     <para>The Registry Service is one of the key parts of the infrastructure
     built around eXo JCR. Each JCR that is based on service, applications, etc
     may have its own configuration, settings data and other data that have to

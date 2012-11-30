@@ -2,7 +2,7 @@
 <!-- This document was created with Syntext Serna Free. --><!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
 <section id="JCR.AccessControl.eXoAccessControl">
     <title>eXo Access Control</title>
-    <para>The JSR170 specification does not define how permissions are managed
+    <para>The <ulink url="http://jcp.org/en/jsr/detail?id=170">JSR 170</ulink> specification does not define how permissions are managed
     or checked. So eXo JCR has implemented its own proprietary extension to
     manage and check permissions on nodes. In essence, this extension uses an
     <ulink url="http://en.wikipedia.org/wiki/Access_control_list">Access Control List (ACL)</ulink> policy model applied to eXo Organization model
@@ -23,16 +23,16 @@
       JCR:</para>
       <itemizedlist>
         <listitem>
-          <para><emphasis role="bold">any</emphasis> : represents any
+          <para><emphasis role="bold">any</emphasis>: represents any
           authenticated session.</para>
         </listitem>
         <listitem>
-          <para><emphasis role="bold">anonim</emphasis> : represents a
+          <para><emphasis role="bold">anonim</emphasis>: represents a
           principal for non authenticated sessions. (No error, it&apos;s really
           &quot;\_\_anonim&quot;.)</para>
         </listitem>
         <listitem>
-          <para><emphasis role="bold">system</emphasis> : represents a
+          <para><emphasis role="bold">system</emphasis>: represents a
           principal for system sessions, typically used for administrative
           purposes. System session has full access (all permissions) to all
           nodes; therefore be careful when working with system
@@ -81,17 +81,16 @@
       an object. An ACL specifies which users, groups or system processes are
       granted access to JCR nodes, as well as what operations are allowed to
       be performed on given objects.</para>
-      <para>eXo JCR Access Control is based on two facets applied to nodes
-      :</para>
+      <para>eXo JCR Access Control is based on two facets applied to nodes:</para>
       <itemizedlist>
         <listitem>
-          <para><emphasis role="bold">Privilegeable</emphasis> : Means that
+          <para><emphasis role="bold">Privilegeable</emphasis>: Means that
           the user or group (also called principal) needs the appropriate
           privileges to access to this node. The privileges are defined as
           (positive) permissions that are granted to users or groups.</para>
         </listitem>
         <listitem>
-          <para><emphasis role="bold">Ownable</emphasis> : The node has an
+          <para><emphasis role="bold">Ownable</emphasis>: The node has an
           <emphasis role="bold">owner</emphasis>. The owner has always
           <emphasis role="bold">full access</emphasis> (all permissions) to
           the node, independent of the privilegeable facet.</para>
@@ -129,11 +128,11 @@
             properties can be removed.</para>
           </listitem>
           <listitem>
-            <para><emphasis role="bold">add_node</emphasis> : Child nodes can
+            <para><emphasis role="bold">add_node</emphasis>: Child nodes can
             be added to this node.</para>
           </listitem>
           <listitem>
-            <para><emphasis role="bold">set_property</emphasis> : The node&apos;s
+            <para><emphasis role="bold">set_property</emphasis>: The node&apos;s
             properties can be modified, added or removed.</para>
           </listitem>
         </itemizedlist>
@@ -368,32 +367,32 @@ exo:text=&quot;&quot; exo:title=&quot;Dogs_x0020_are_x0020_friends&quot; /&gt;
           </thead>
           <tbody>
             <row>
-              <entry>void setPermissions(Map&lt;String, String[]&gt; permissions)</entry>
-              <entry>Assigns a set of Permissions to a node</entry>
+              <entry><parameter>void setPermissions(Map&lt;String, String[]&gt; permissions</parameter></entry>
+              <entry>Assign a set of Permissions to a node.</entry>
             </row>
             <row>
-              <entry>void setPermission(String identity, String[] permission)</entry>
-              <entry>Assigns some Identities&apos; Permission to a node</entry>
+              <entry><parameter>void setPermission(String identity, String[] permission)</parameter></entry>
+              <entry>Assign some Identities&apos; Permission to a node.</entry>
             </row>
             <row>
-              <entry>void removePermission(String identity)</entry>
-              <entry>Removes an Identity&apos;s Permission</entry>
+              <entry><parameter>void removePermission(String identity)</parameter></entry>
+              <entry>Remove an Identity&apos;s Permission.</entry>
             </row>
             <row>
-              <entry>void removePermission(String identity, String permission)</entry>
-              <entry>Removes the specified permission for a particular identity</entry>
+              <entry><parameter>void removePermission(String identity, String permission)</parameter></entry>
+              <entry>Remove the specified permission for a particular identity.</entry>
             </row>
             <row>
-              <entry>void clearACL()</entry>
-              <entry>Clears the current ACL so it becomes default</entry>
+              <entry><parameter>void clearACL()</parameter></entry>
+              <entry>Clear the current ACL so it becomes default.</entry>
             </row>
             <row>
-              <entry>AccessControlList getACL()</entry>
-              <entry>Returns the current ACL</entry>
+              <entry><parameter>AccessControlList getACL()</parameter></entry>
+              <entry>Return the current ACL.</entry>
             </row>
             <row>
-              <entry>void checkPermission(String actions)</entry>
-              <entry>Checks Permission (AccessDeniedException will be thrown if denied)</entry>
+              <entry><parameter>void checkPermission(String actions)</parameter></entry>
+              <entry>Check Permission (AccessDeniedException will be thrown if denied).</entry>
             </row>
           </tbody>
         </tgroup>

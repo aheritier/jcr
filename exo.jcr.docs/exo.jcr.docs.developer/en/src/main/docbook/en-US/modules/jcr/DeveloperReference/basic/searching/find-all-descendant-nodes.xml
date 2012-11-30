@@ -4,8 +4,8 @@
 <section id="JCR.FindAllDescendantNodes">
   <title>Find All Descendant Nodes</title>
 
-  <para>Find all nodes with the primary type 'nt:folder' that are descendants
-  of the node "/folder1/folder2".</para>
+  <para>Find all nodes with the 'nt:folder' primary type that are descendants
+  of the "/folder1/folder2" node.</para>
 
   <para xml:id="JCR.FindAllDescendantNodes.RepositoryStructure">
     <citetitle>
@@ -58,8 +58,10 @@
       <emphasis role="bold">Query Execution</emphasis>
     </citetitle>
   </para>
-
-    <para><emphasis role="bold">SQL</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">SQL</emphasis></para>
 
     <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
@@ -68,8 +70,9 @@ String sqlStatement = "SELECT * FROM nt:folder WHERE jcr:path LIKE '/folder1/fol
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
-    <para><emphasis role="bold">XPath</emphasis></para>
+    </listitem>
+    <listitem>
+      <para><emphasis role="bold">XPath</emphasis></para>
 
     <programlisting language="java">// make XPath query
 QueryManager queryManager = workspace.getQueryManager();
@@ -78,10 +81,11 @@ String xpathStatement = "/jcr:root/folder1[1]/folder2[1]//element(*,nt:folder)";
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+   </listitem>
+  </itemizedlist>
   <para xml:id="JCR.FindAllDescendantNodes.FetchingResult">
     <citetitle>
-      <emphasis role="bold">Fetch result</emphasis>
+      <emphasis role="bold">Fetching result</emphasis>
     </citetitle>
   </para>
 

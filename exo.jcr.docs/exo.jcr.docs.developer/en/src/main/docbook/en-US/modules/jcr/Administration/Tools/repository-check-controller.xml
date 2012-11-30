@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.RepositoryCheckController">
-  <title>Checking repository integrity and consistency</title>
+<section id="JCR.RepositoryCheckController" role="NotInToc">
+  <title>Consistency Checker</title>
 
     <para>Production and any other system may have faults some day. They may
     be caused by hardware problems, human faults, software errors during
@@ -26,34 +26,34 @@
       <tgroup cols="2">
         <tbody>
           <row>
-            <entry>checkAll()</entry>
+            <entry><parameter>checkAll()</parameter></entry>
 
             <entry>Inspect full repository data (db, value storage and search
-            index)</entry>
+            index).</entry>
           </row>
 
           <row>
-            <entry>checkDataBase()</entry>
+            <entry><parameter>checkDataBase()</parameter></entry>
 
-            <entry>Inspect only DB</entry>
+            <entry>Inspect only DB.</entry>
           </row>
 
           <row>
-            <entry>checkValueStorage()</entry>
+            <entry><parameter>checkValueStorage()</parameter></entry>
 
-            <entry>Inspect only ValueStorage</entry>
+            <entry>Inspect only ValueStorage.</entry>
           </row>
 
           <row>
-            <entry>checkIndex()</entry>
+            <entry><parameter>checkIndex()</parameter></entry>
 
-            <entry>Inspect only SearchIndex</entry>
+            <entry>Inspect only SearchIndex.</entry>
           </row>
         </tbody>
       </tgroup>
     </table>
 
-    <para>Also tools provides abilities to repair possible inconsistencies:
+    <para>Also, the tools provide abilities to repair possible inconsistencies:
     </para>
 
     <itemizedlist>
@@ -114,15 +114,15 @@
       <tgroup cols="2">
         <tbody>
           <row>
-            <entry>repairDataBase()</entry>
+            <entry><parameter>repairDataBase()</parameter></entry>
 
-            <entry>repair DB</entry>
+            <entry>Repair DB.</entry>
           </row>
 
           <row>
-            <entry>repairValueStorage()</entry>
+            <entry><parameter>repairValueStorage()</parameter></entry>
 
-            <entry>repair ValueStorage</entry>
+            <entry>Repair ValueStorage.</entry>
           </row>
         </tbody>
       </tgroup>
@@ -142,23 +142,27 @@
     support team in case of deeper restoration process.</para>
 
     <para>Here are listed the examples of corruptions and ways to eliminate
-    them:<note>
-        <para>It is assumed that queries for single and multi db
-        configurations differs only by JCR_xITEM table name, otherwise queries
-        will be explicitly introduced.</para>
-      </note><note>
-        <para>In some examples you'll be asked to replace some identificator
-        with corresponding value. That basically means that you need to insert
-        values, from each row result of query executed during issue detection
-        stage, to corresponding place. Explicit explanation of what to do will
-        be introduced in case replacing is needed to be fulfilled in other
-        way.</para>
-      </note></para>
-
+    them:</para>
+	<note>
+		<itemizedlist>
+			<listitem>
+				<para>It is assumed that queries for single and multi db
+				configurations differs only by JCR_xITEM table name, otherwise queries
+				will be explicitly introduced.</para>
+			</listitem>
+			<listitem>
+				<para>In some examples you'll be asked to replace some identificator
+				with corresponding value. That basically means that you need to insert
+				values, from each row result of query executed during issue detection
+				stage, to corresponding place. Explicit explanation of what to do will
+				be introduced in case replacing is needed to be fulfilled in other
+				way.</para>
+			</listitem>
+		</itemizedlist>
+	</note>
     <orderedlist>
       <listitem>
-        <para><emphasis role="bold">Item has no parent node</emphasis></para>
-
+        <para><emphasis role="bold">Item has no parent node.</emphasis></para>
         <itemizedlist>
           <listitem>
             <para>To detect an issue you need to execute the following
@@ -168,14 +172,11 @@
           </listitem>
 
           <listitem>
-            <para>Fix description:</para>
-
-            <para>Assign root as parent node to be able to delete later if
+            <para>Fix description: Assign root as parent node to be able to delete later if
             node is not needed anymore</para>
           </listitem>
-
-          <listitem>
-            <para>To fix do the following:</para>
+			<listitem>
+            <para>To fix this problem, do the following:</para>
 
             <itemizedlist>
               <listitem>
@@ -209,13 +210,13 @@ delete from JCR_SVALUE where PROPERTY_ID = '${ID}'
 delete from JCR_SITEM where PARENT_ID = '${ID}' or ID='${ID}' </programlisting>
               </listitem>
             </itemizedlist>
-          </listitem>
+		</listitem>
         </itemizedlist>
       </listitem>
 
       <listitem>
         <para><emphasis role="bold">Node has a single valued properties with
-        no declaration in VALUE table</emphasis></para>
+        no declaration in VALUE table.</emphasis></para>
 
         <itemizedlist>
           <listitem>
@@ -231,9 +232,7 @@ delete from JCR_SITEM where PARENT_ID = '${ID}' or ID='${ID}' </programlisting>
           </listitem>
 
           <listitem>
-            <para>Fix description:</para>
-
-            <para>Simply remove corrupted properties</para>
+            <para>Fix description: Simply remove corrupted properties</para>
           </listitem>
 
           <listitem>
@@ -248,7 +247,7 @@ delete from JCR_SITEM where ID = '${ID}'</programlisting>
 
       <listitem>
         <para><emphasis role="bold">Node has no primary type
-        property</emphasis></para>
+        property.</emphasis></para>
 
         <itemizedlist>
           <listitem>
@@ -260,15 +259,11 @@ delete from JCR_SITEM where ID = '${ID}'</programlisting>
           </listitem>
 
           <listitem>
-            <para>Fix description:</para>
-
-            <para>Remove node, all its children, properties, values and
+            <para>Fix description: Remove node, all its children, properties, values and
             reference records</para>
           </listitem>
-
-          <listitem>
-            <para>To fix do the following:</para>
-
+		  <listitem>
+            <para>To fix this problem, do the following:</para>
             <itemizedlist>
               <listitem>
                 <para>First step is to recursivly travers to the bottom of the
@@ -298,13 +293,13 @@ delete from JCR_SVALUE where PROPERTY_ID = '${ID}'
 delete from JCR_SITEM where PARENT_ID = '${ID}' or ID='${ID}' </programlisting>
               </listitem>
             </itemizedlist>
-          </listitem>
+		  </listitem>
         </itemizedlist>
       </listitem>
 
       <listitem>
         <para><emphasis role="bold">All value records have no related property
-        record</emphasis></para>
+        record.</emphasis></para>
 
         <itemizedlist>
           <listitem>
@@ -315,26 +310,19 @@ delete from JCR_SITEM where PARENT_ID = '${ID}' or ID='${ID}' </programlisting>
           </listitem>
 
           <listitem>
-            <para>Fix description:</para>
-
-            <para>Remove these unnecessary records from JCR_SVALUE
-            table</para>
+            <para>Fix description: Remove these unnecessary records from JCR_SVALUE
+            table.</para>
           </listitem>
-
-          <listitem>
-            <para>To fix do the following:</para>
-
-            <para>For every row execute next queries replacing ${ID} with
-            corresponding value:</para>
-
+		  <listitem>
+            <para>To fix this problem, execute next queries replacing ${ID} with corresponding value as below for every row.</para>
             <programlisting>delete from JCR_SVALUE where ID = '${ID}'</programlisting>
-          </listitem>
+		  </listitem>
         </itemizedlist>
       </listitem>
 
       <listitem>
         <para><emphasis role="bold">Corrupted VALUE records. Both STORAGE_DESC
-        and DATA fields contain not null value</emphasis><itemizedlist>
+        and DATA fields contain not null value.</emphasis><itemizedlist>
             <listitem>
               <para>To detect an issue you need to execute the following
               query:</para>
@@ -343,30 +331,24 @@ delete from JCR_SITEM where PARENT_ID = '${ID}' or ID='${ID}' </programlisting>
             </listitem>
 
             <listitem>
-              <para>Fix description:</para>
-
-              <para>Set null for STORAGE_DESC field</para>
+              <para>Fix description: Set null for STORAGE_DESC field</para>
             </listitem>
-
-            <listitem>
-              <para>To fix do the following:</para>
-
-              <para>For every row execute next queries replacing ${ID} with
-              corresponding value:</para>
-
+			<listitem>
+              <para>To fix this problem, execute next queries replacing ${ID} with the corresponding value as below for every row.</para>
               <programlisting>update JCR_SVALUE set STORAGE_DESC = null where ID = '${ID}'</programlisting>
-            </listitem>
+			</listitem>
           </itemizedlist></para>
 
         <note>
-          <para>For Sybase DB "DATA is not null" must be replaced by "not DATA
-          like null"</para>
+          <para>For Sybase DB, "DATA is not null" must be replaced by "not DATA
+          like null".</para>
         </note>
       </listitem>
 
       <listitem>
         <para><emphasis role="bold">Item is its own
-        parent</emphasis><itemizedlist>
+        parent.</emphasis>
+		<itemizedlist>
             <listitem>
               <para>To detect an issue you need to execute the following
               query:</para>
@@ -375,14 +357,11 @@ delete from JCR_SITEM where PARENT_ID = '${ID}' or ID='${ID}' </programlisting>
             </listitem>
 
             <listitem>
-              <para>Fix description:</para>
-
-              <para>Assign root as parent node to be able to delete later if
+              <para>Fix description: Assign root as parent node to be able to delete later if
               node is not needed to use anymore</para>
             </listitem>
-
-            <listitem>
-              <para>To fix do the following:</para>
+			<listitem>
+              <para>To fix this problem, do the following:</para>
 
               <itemizedlist>
                 <listitem>
@@ -416,28 +395,24 @@ delete from JCR_SVALUE where PROPERTY_ID = '${ID}'
 delete from JCR_SITEM where PARENT_ID = '${ID}' or ID='${ID}' </programlisting>
                 </listitem>
               </itemizedlist>
-            </listitem>
+			</listitem>
           </itemizedlist></para>
       </listitem>
 
       <listitem>
         <para><emphasis role="bold">Several versions of same
-        item</emphasis><itemizedlist>
+        item.</emphasis><itemizedlist>
             <listitem>
               <para>To detect an issue you need to execute the following
               query:</para>
-
               <programlisting>select * from JCR_SITEM I where EXISTS (select * from JCR_SITEM J WHERE I.CONTAINER_NAME = J.CONTAINER_NAME and I.PARENT_ID = J.PARENT_ID AND I.NAME = J.NAME and I.I_INDEX = J.I_INDEX and I.I_CLASS = J.I_CLASS and I.VERSION != J.VERSION)</programlisting>
             </listitem>
 
             <listitem>
-              <para>Fix description:</para>
-
-              <para>Keep the newest version and remove the others</para>
+              <para>Fix description: Keep the newest version and remove the others</para>
             </listitem>
-
-            <listitem>
-              <para>To fix do the following:</para>
+			<listitem>
+              <para>To fix this problem, do the following:</para>
 
               <itemizedlist>
                 <listitem>
@@ -470,13 +445,13 @@ delete from JCR_SVALUE where PROPERTY_ID = '${ID}'
 delete from JCR_SITEM where ID='${ID}'</programlisting>
                 </listitem>
               </itemizedlist>
-            </listitem>
+			</listitem>
           </itemizedlist></para>
       </listitem>
 
       <listitem>
         <para><emphasis role="bold">Reference properties without reference
-        records</emphasis><itemizedlist>
+        records.</emphasis><itemizedlist>
             <listitem>
               <para>To detect an issue you need to execute the following
               query:</para>
@@ -485,27 +460,24 @@ delete from JCR_SITEM where ID='${ID}'</programlisting>
             </listitem>
 
             <listitem>
-              <para>Fix description:</para>
-
-              <para>Remove broken reference properties</para>
+              <para>Fix description: Remove broken reference properties.</para>
             </listitem>
-
-            <listitem>
-              <para>To fix do the following:</para>
+			<listitem>
+              <para>To fix this problem, do the following:</para>
 
               <para>Execute the query replacing ${ID} with corresponding
               value</para>
 
               <programlisting>delete from JCR_SVALUE where PROPERTY_ID = '${ID}'
 delete from JCR_SITEM where ID = '${ID}'</programlisting>
-            </listitem>
+			</listitem>
           </itemizedlist></para>
       </listitem>
 
       <listitem>
         <para><emphasis role="bold">Node, considered to be locked in the
         lockmanager data, is not locked according to the jcr data or the
-        opposite situation</emphasis><itemizedlist>
+        opposite situation.</emphasis><itemizedlist>
             <listitem>
               <para>To detect an issue you need:</para>
 
@@ -517,18 +489,24 @@ delete from JCR_SITEM where ID = '${ID}'</programlisting>
 
               <itemizedlist>
                 <listitem>
-                  <para>JBC<note>
-                      <para>During comparing results be aware that for single
-                      DB configurations you need to cut off ID prefix
-                      representing workspace name for results obtained from
-                      JCR_xITEM table.</para>
-                    </note><note>
-                      <para>Though usually single lock table is used for the
-                      whole repository, it is possible to configure separate
-                      db lock tables for each workspace, in this case to
-                      obtain information over repository you need to execute
-                      queries for each table.</para>
-                    </note></para>
+                  <para>JBC</para>
+					<note>
+						<itemizedlist>
+						  <listitem>
+							  <para>During comparing results be aware that for single
+							  DB configurations you need to cut off ID prefix
+							  representing workspace name for results obtained from
+							  JCR_xITEM table.</para>
+						   </listitem>
+						   <listitem>
+							  <para>Though usually single lock table is used for the
+							  whole repository, it is possible to configure separate
+							  db lock tables for each workspace, in this case to
+							  obtain information over repository you need to execute
+							  queries for each table.</para>
+							</listitem>
+						</itemizedlist>
+                    </note>
 
                   <itemizedlist>
                     <listitem>
@@ -550,14 +528,15 @@ delete from JCR_SITEM where ID = '${ID}'</programlisting>
 
                 <listitem>
                   <para>ISPN</para>
-
-                  <para><note>
+					<note>
                       <para>For ISPN lock tables are defined for each
                       workspace separately, so to obtain information over
                       repository you must execute queries for all lock
                       tables.</para>
-                    </note>To get all set of locked node IDs in repository you
-                  must execute the following query for each workspace</para>
+                    </note>
+			
+				  <para>To get all set of locked node IDs in repository you
+                  must execute the following query for each workspace.</para>
 
                   <programlisting>select id from ${LOCK_TABLE}</programlisting>
                 </listitem>
@@ -565,16 +544,14 @@ delete from JCR_SITEM where ID = '${ID}'</programlisting>
             </listitem>
 
             <listitem>
-              <para>Fix description:</para>
-
-              <para>Remove inconsistent lock entries and properties. Remove
+              <para>Fix description: Remove inconsistent lock entries and properties. Remove
               entries in LOCK_TABLE that have no corresponding properties in
               JCR_xITEM table and remove JCR_xITEM properties that have no
               corresponding entries in LOCK_TABLE.</para>
             </listitem>
 
             <listitem>
-              <para>To fix do the following:</para>
+              <para>To fix this problem, do the following:</para>
 
               <para>First remove property values, replace ${ID} with
               corresponding node ID<programlisting>delete from JCR_SVALUE where PROPERTY_ID in (select ID from JCR_SITEM where PARENT_ID='${ID}' and (NAME = '[http://www.jcp.org/jcr/1.0]lockIsDeep' or NAME = '[http://www.jcp.org/jcr/1.0]lockOwner'))</programlisting>Than
@@ -607,9 +584,8 @@ delete from JCR_SITEM where ID = '${ID}'</programlisting>
 
       <listitem>
         <para><emphasis role="bold">A property's value is stored in the file
-        system, but its content is missing</emphasis></para>
-
-        <para>This cannot be checked via simple SQL queries</para>
+        system, but its content is missing.</emphasis></para>
+        <para>This cannot be checked via simple SQL queries.</para>
       </listitem>
     </orderedlist>
 </section>

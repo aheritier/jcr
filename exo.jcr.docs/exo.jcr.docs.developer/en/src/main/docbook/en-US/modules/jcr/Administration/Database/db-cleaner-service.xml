@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.DBCleanerService">
+<section id="JCR.DBCleanerService" role="NotInToc">
   <title>DBCleanService</title>
 
     <para>It is a special service for data removal from database. The section
@@ -28,29 +28,29 @@
       <tgroup cols="2">
         <tbody>
           <row>
-            <entry>public static void cleanWorkspaceData(WorkspaceEntry
-            wsEntry)</entry>
+            <entry><parameter>public static void cleanWorkspaceData(WorkspaceEntry
+            wsEntry)</parameter></entry>
 
             <entry>Clean workspace data from database</entry>
           </row>
 
           <row>
-            <entry>public static void cleanRepositoryData(RepositoryEntry
-            repoEntry)</entry>
+            <entry><parameter>public static void cleanRepositoryData(RepositoryEntry
+            repoEntry)</parameter></entry>
 
-            <entry>Cleanup repository data from database</entry>
+            <entry>Clean up repository data from database</entry>
           </row>
 
           <row>
-            <entry>public static DBCleaner getWorkspaceDBCleaner(Connection
-            jdbcConn, WorkspaceEntry wsEntry)</entry>
+            <entry><parameter>public static DBCleaner getWorkspaceDBCleaner(Connection
+            jdbcConn, WorkspaceEntry wsEntry)</parameter></entry>
 
             <entry>Returns database cleaner of workspace.</entry>
           </row>
 
           <row>
-            <entry>public static DBCleaner getRepositoryDBCleaner(Connection
-            jdbcConn, RepositoryEntry repoEntry)</entry>
+            <entry><parameter>public static DBCleaner getRepositoryDBCleaner(Connection
+            jdbcConn, RepositoryEntry repoEntry)</parameter></entry>
 
             <entry>Returns database cleaner of repository. Returns null in
             case of multi-db configuration.</entry>
@@ -75,20 +75,20 @@
           </row>
 
           <row>
-            <entry>restore</entry>
+            <entry><parameter>restore</parameter></entry>
 
             <entry>does nothing with DBCleaner</entry>
           </row>
 
           <row>
-            <entry>commit</entry>
+            <entry><parameter>commit</parameter></entry>
 
             <entry><programlisting language="java">dbCleaner.executeCommitScripts();
 connection.commit();</programlisting></entry>
           </row>
 
           <row>
-            <entry>rollback</entry>
+            <entry><parameter>rollback</parameter></entry>
 
             <entry><programlisting language="java">connection.rollback();
 
@@ -115,20 +115,20 @@ connection.commit();</programlisting></entry>
       <tgroup cols="2">
         <tbody>
           <row>
-            <entry>executeCleanScripts()</entry>
+            <entry><parameter>executeCleanScripts()</parameter></entry>
 
             <entry>removing all records from the database. Foreign key of
             JCR_SITEM table is also removed</entry>
           </row>
 
           <row>
-            <entry>executeCommitScripts()</entry>
+            <entry><parameter>executeCommitScripts()</parameter></entry>
 
             <entry>adding foreign key</entry>
           </row>
 
           <row>
-            <entry>executeRollbackScripts()</entry>
+            <entry><parameter>executeRollbackScripts()</parameter></entry>
           </row>
         </tbody>
       </tgroup>
@@ -140,22 +140,22 @@ connection.commit();</programlisting></entry>
       <tgroup cols="2">
         <tbody>
           <row>
-            <entry>executeCleanScripts()</entry>
+            <entry><parameter>executeCleanScripts()</parameter></entry>
 
-            <entry>removing all records from the database. Foreign key of
-            JCR_SITEM table is also removed</entry>
+            <entry>Remove all records from the database. Foreign key of
+            JCR_SITEM table is also removed.</entry>
           </row>
 
           <row>
-            <entry>executeCommitScripts()</entry>
+            <entry><parameter>executeCommitScripts()</parameter></entry>
 
-            <entry>adding foreign key</entry>
+            <entry>Add the foreign key.</entry>
           </row>
 
           <row>
-            <entry>executeRollbackScripts()</entry>
+            <entry><parameter>executeRollbackScripts()</parameter></entry>
 
-            <entry>adding foreign key</entry>
+            <entry>Add the foreign key.</entry>
           </row>
         </tbody>
       </tgroup>

@@ -4,7 +4,7 @@
 <section id="JCR.FulltextSearchByProperty">
   <title>Fulltext Search by Property</title>
 
-  <para>Find all nodes containing a mixin type 'mix:title' and whose
+  <para>Find all nodes containing a 'mix:title' mixin type and whose
   'jcr:description' contains "forest" string.</para>
 
   <para xml:id="JCR.FulltextSearchByProperty.RepositoryStructure">
@@ -13,7 +13,7 @@
     </citetitle>
   </para>
 
-    <para>The repository is filled with nodes of the mixin type 'mix:title'
+    <para>The repository is filled with nodes of the 'mix:title' mixin type
     and different values of the 'jcr:description' property.</para>
 
     <itemizedlist>
@@ -50,8 +50,11 @@
       <emphasis role="bold">Query Execution</emphasis>
     </citetitle>
   </para>
-
-    <para><emphasis role="bold">SQL</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">SQL</emphasis>
+      </para>
 
     <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
@@ -61,8 +64,11 @@ String sqlStatement = "SELECT \* FROM mix:title WHERE CONTAINS(jcr:description, 
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
-    <para><emphasis role="bold">XPath</emphasis></para>
+    </listitem>
+    <listitem>
+      <para>
+        <emphasis role="bold">XPath</emphasis>
+      </para>
 
     <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
@@ -72,7 +78,8 @@ String xpathStatement = "//element(*,mix:title)[jcr:contains(@jcr:description, '
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+    </listitem>
+  </itemizedlist>
 
   <para xml:id="JCR.FulltextSearchByProperty.FetchingResult">
     <citetitle>

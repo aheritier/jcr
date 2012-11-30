@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
         "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.SearchingRepositoryContent.PropertyConstraints">
-  <title>Property Constraints</title>
+  <title>Property constraints</title>
   <xi:include href="property-comparison.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude"/>
 

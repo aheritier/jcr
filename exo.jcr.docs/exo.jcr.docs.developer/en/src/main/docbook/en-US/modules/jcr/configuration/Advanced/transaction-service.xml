@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="Kernel.TransactionService">
+<section id="Kernel.TransactionService" role="NotInToc">
   <title>TransactionService</title>
 
     <para>TransactionServices provides access to the TransactionManager and
@@ -13,39 +13,39 @@
       <tgroup cols="2">
         <tbody>
           <row>
-            <entry>getTransactionManager()</entry>
+            <entry><parameter>getTransactionManager()</parameter></entry>
 
-            <entry>Get used TransactionManager</entry>
+            <entry>Get the used TransactionManager.</entry>
           </row>
 
           <row>
-            <entry>getUserTransaction()</entry>
+            <entry><parameter>getUserTransaction()</parameter></entry>
 
-            <entry>Get UserTransaction on TransactionManager</entry>
+            <entry>Get UserTransaction on TransactionManager.</entry>
           </row>
 
           <row>
-            <entry>getDefaultTimeout()</entry>
+            <entry><parameter>getDefaultTimeout()</parameter></entry>
 
-            <entry>Return default TimeOut</entry>
+            <entry>Return the default TimeOut.</entry>
           </row>
 
           <row>
-            <entry>setTransactionTimeout(int seconds)</entry>
+            <entry><parameter>setTransactionTimeout(int seconds)</parameter></entry>
 
-            <entry>Set TimeOut in second</entry>
+            <entry>Set TimeOut in seconds.</entry>
           </row>
 
           <row>
-            <entry>enlistResource(XAResource xares)</entry>
+            <entry><parameter>enlistResource(XAResource xares)</parameter></entry>
 
-            <entry>Enlist XA resource in TransactionManager</entry>
+            <entry>Enlist XA resource in TransactionManager.</entry>
           </row>
 
           <row>
-            <entry>delistResource(XAResource xares)</entry>
+            <entry><parameter>delistResource(XAResource xares)</parameter></entry>
 
-            <entry>Delist XA resource from TransactionManager</entry>
+            <entry>Delist XA resource from TransactionManager.</entry>
           </row>
         </tbody>
       </tgroup>
@@ -69,17 +69,17 @@
       <para>To use JOTM as TransactionManager in standalone mode, simply add
       the following component configuration:</para>
 
-      <programlisting>   &lt;component&gt;
-      &lt;key&gt;org.exoplatform.services.transaction.TransactionService&lt;/key&gt;
-      &lt;type&gt;org.exoplatform.services.transaction.impl.jotm.TransactionServiceJotmImpl&lt;/type&gt;
-      &lt;!-- Uncomment the lines below if you want to set default transaction timeout that is expressed in seconds --&gt;
-      &lt;!--init-params&gt;
-         &lt;value-param&gt;
-            &lt;name&gt;timeout&lt;/name&gt;
-            &lt;value&gt;60&lt;/value&gt;
-         &lt;/value-param&gt;
-      &lt;/init-params--&gt;
-   &lt;/component&gt;</programlisting>    
+<programlisting language="xml">&lt;component&gt;
+	&lt;key&gt;org.exoplatform.services.transaction.TransactionService&lt;/key&gt;
+	&lt;type&gt;org.exoplatform.services.transaction.impl.jotm.TransactionServiceJotmImpl&lt;/type&gt;
+	&lt;!-- Uncomment the lines below if you want to set default transaction timeout that is expressed in seconds --&gt;
+	&lt;!--init-params&gt;
+		&lt;value-param&gt;
+			&lt;name&gt;timeout&lt;/name&gt;
+			&lt;value&gt;60&lt;/value&gt;
+		&lt;/value-param&gt;
+	&lt;/init-params--&gt;
+&lt;/component&gt;</programlisting>    
     <!-- Generic TransactionService -->
     <para id="Kernel.TransactionService.ExistingTransactionServiceImplementations.GenericTransactionServiceBasedOnTransactionManagerLookupOfJBossCache">
       <citetitle><emphasis role="bold">Generic TransactionService</emphasis></citetitle>
@@ -90,51 +90,50 @@
       Servers thanks to a set of JNDI lookups. This generic TransactionService
       covers mainly the TransactionManager lookups, the UserTransaction is
       actually simply the TransactionManager instance that has been wrapped.
-      See below an example of configuration:</para>
+      See the configuration example as below:</para>
 
-      <programlisting>   &lt;!-- Configuration of the TransactionManagerLookup --&gt;
-   &lt;component&gt;
-      &lt;key&gt;org.jboss.cache.transaction.TransactionManagerLookup&lt;/key&gt;
-      &lt;type&gt;org.jboss.cache.transaction.GenericTransactionManagerLookup&lt;/type&gt;
-   &lt;/component&gt;
-   &lt;!-- Configuration of the TransactionService --&gt;
-   &lt;component&gt;
-      &lt;key&gt;org.exoplatform.services.transaction.TransactionService&lt;/key&gt;
-      &lt;type&gt;org.exoplatform.services.transaction.jbosscache.GenericTransactionService&lt;/type&gt;
-      &lt;!-- Uncomment the lines below if you want to set default transaction timeout that is expressed in seconds --&gt;
-      &lt;!--init-params&gt;
-         &lt;value-param&gt;
-            &lt;name&gt;timeout&lt;/name&gt;
-            &lt;value&gt;60&lt;/value&gt;
-         &lt;/value-param&gt;
-      &lt;/init-params--&gt;
-   &lt;/component&gt;</programlisting>    
+<programlisting language="xml">&lt;!-- Configuration of the TransactionManagerLookup --&gt;
+&lt;component&gt;
+  &lt;key&gt;org.jboss.cache.transaction.TransactionManagerLookup&lt;/key&gt;
+  &lt;type&gt;org.jboss.cache.transaction.GenericTransactionManagerLookup&lt;/type&gt;
+&lt;/component&gt;
+&lt;!-- Configuration of the TransactionService --&gt;
+&lt;component&gt;
+  &lt;key&gt;org.exoplatform.services.transaction.TransactionService&lt;/key&gt;
+  &lt;type&gt;org.exoplatform.services.transaction.jbosscache.GenericTransactionService&lt;/type&gt;
+  &lt;!-- Uncomment the lines below if you want to set default transaction timeout that is expressed in seconds --&gt;
+  &lt;!--init-params&gt;
+	 &lt;value-param&gt;
+		&lt;name&gt;timeout&lt;/name&gt;
+		&lt;value&gt;60&lt;/value&gt;
+	 &lt;/value-param&gt;
+  &lt;/init-params--&gt;
+&lt;/component&gt;</programlisting>    
    <!-- Specific GenericTransactionService for JBoss Cache and Arjuna -->
     <para id="Kernel.TransactionService.ExistingTransactionServiceImplementations.GenericTransactionServiceForJBossCacheAndArjuna">
       <citetitle><emphasis role="bold">Specific GenericTransactionService for JBoss Cache and Arjuna</emphasis></citetitle>
     </para>
       <para>If you intend to use JBoss Cache with Arjuna, you can use a more
       specific GenericTransactionService, it is mostly interesting in case you
-      want to use the real UserTransaction. See below an example of
-      configuration:</para>
+      want to use the real UserTransaction. See the configuration example as below:</para>
 
-      <programlisting>   &lt;!-- Configuration of the TransactionManagerLookup --&gt;
-   &lt;component&gt;
-      &lt;key&gt;org.jboss.cache.transaction.TransactionManagerLookup&lt;/key&gt;
-      &lt;type&gt;org.jboss.cache.transaction.JBossStandaloneJTAManagerLookup&lt;/type&gt;
-   &lt;/component&gt;
-   &lt;!-- Configuration of the TransactionService --&gt;
-   &lt;component&gt;
-      &lt;key&gt;org.exoplatform.services.transaction.TransactionService&lt;/key&gt;
-      &lt;type&gt;org.exoplatform.services.transaction.jbosscache.JBossTransactionsService&lt;/type&gt;
-      &lt;!-- Uncomment the lines below if you want to set default transaction timeout that is expressed in seconds --&gt;
-      &lt;!--init-params&gt;
-         &lt;value-param&gt;
-            &lt;name&gt;timeout&lt;/name&gt;
-            &lt;value&gt;60&lt;/value&gt;
-         &lt;/value-param&gt;
-      &lt;/init-params--&gt;
-   &lt;/component&gt;</programlisting>    
+<programlisting language="xml">&lt;!-- Configuration of the TransactionManagerLookup --&gt;
+&lt;component&gt;
+  &lt;key&gt;org.jboss.cache.transaction.TransactionManagerLookup&lt;/key&gt;
+  &lt;type&gt;org.jboss.cache.transaction.JBossStandaloneJTAManagerLookup&lt;/type&gt;
+&lt;/component&gt;
+&lt;!-- Configuration of the TransactionService --&gt;
+&lt;component&gt;
+  &lt;key&gt;org.exoplatform.services.transaction.TransactionService&lt;/key&gt;
+  &lt;type&gt;org.exoplatform.services.transaction.jbosscache.JBossTransactionsService&lt;/type&gt;
+  &lt;!-- Uncomment the lines below if you want to set default transaction timeout that is expressed in seconds --&gt;
+  &lt;!--init-params&gt;
+	 &lt;value-param&gt;
+		&lt;name&gt;timeout&lt;/name&gt;
+		&lt;value&gt;60&lt;/value&gt;
+	 &lt;/value-param&gt;
+  &lt;/init-params--&gt;
+&lt;/component&gt;</programlisting>    
         
     <!-- A very specific TransactionService for JBoss AS -->
     <para id="Kernel.TransactionService.ExistingTransactionServiceImplementations.VerySpecificTransactionServiceForJBossAS">
@@ -142,42 +141,40 @@
     </para>  
 
       <para>If you intend to use JBoss AS with JBoss Cache, you
-      can use a very specific TransactionService for JBoss AS. See below an
-      example of configuration:</para>
+      can use a very specific TransactionService for JBoss AS. See the configuration example as below:</para>
 
-      <programlisting>   &lt;component&gt;
-      &lt;key&gt;org.exoplatform.services.transaction.TransactionService&lt;/key&gt;
-      &lt;type&gt;org.exoplatform.services.transaction.impl.jboss.JBossTransactionService&lt;/type&gt;
-      &lt;!-- Uncomment the lines below if you want to set default transaction timeout that is expressed in seconds --&gt;
-      &lt;!--init-params&gt;
-         &lt;value-param&gt;
-            &lt;name&gt;timeout&lt;/name&gt;
-            &lt;value&gt;60&lt;/value&gt;
-         &lt;/value-param&gt;
-      &lt;/init-params--&gt;
-   &lt;/component&gt;</programlisting>    
+<programlisting language="xml">&lt;component&gt;
+	&lt;key&gt;org.exoplatform.services.transaction.TransactionService&lt;/key&gt;
+	&lt;type&gt;org.exoplatform.services.transaction.impl.jboss.JBossTransactionService&lt;/type&gt;
+	&lt;!-- Uncomment the lines below if you want to set default transaction timeout that is expressed in seconds --&gt;
+	&lt;!--init-params&gt;
+		&lt;value-param&gt;
+			&lt;name&gt;timeout&lt;/name&gt;
+			&lt;value&gt;60&lt;/value&gt;
+		&lt;/value-param&gt;
+	&lt;/init-params--&gt;
+&lt;/component&gt;</programlisting>    
 
     <para id="Kernel.TransactionService.ExistingTransactionServiceImplementations.TransactionsEssentialsInStandaloneMode">
-      <citetitle><emphasis role="bold">TransactionsEssentials in standalone mode</emphasis></citetitle>
+      <citetitle><emphasis role="bold">TransactionsEssentials in standalone mode.</emphasis></citetitle>
     </para>
       <para>To use TransactionsEssentials as TransactionManager in standalone
       mode, simply add the following component configuration:</para>
 
-      <programlisting>   &lt;component&gt;
-      &lt;key&gt;org.exoplatform.services.transaction.TransactionService&lt;/key&gt;
-      &lt;type&gt;org.exoplatform.services.transaction.impl.atomikos.TransactionsEssentialsTransactionService&lt;/type&gt;
-      &lt;!-- Uncomment the lines below if you want to set default transaction timeout that is expressed in seconds --&gt;
-      &lt;!--init-params&gt;
-         &lt;value-param&gt;
-            &lt;name&gt;timeout&lt;/name&gt;
-            &lt;value&gt;60&lt;/value&gt;
-         &lt;/value-param&gt;
-      &lt;/init-params--&gt;
-   &lt;/component&gt;
-      </programlisting>    
+<programlisting language="xml">&lt;component&gt;
+  &lt;key&gt;org.exoplatform.services.transaction.TransactionService&lt;/key&gt;
+  &lt;type&gt;org.exoplatform.services.transaction.impl.atomikos.TransactionsEssentialsTransactionService&lt;/type&gt;
+  &lt;!-- Uncomment the lines below if you want to set default transaction timeout that is expressed in seconds --&gt;
+  &lt;!--init-params&gt;
+	 &lt;value-param&gt;
+		&lt;name&gt;timeout&lt;/name&gt;
+		&lt;value&gt;60&lt;/value&gt;
+	 &lt;/value-param&gt;
+  &lt;/init-params--&gt;
+&lt;/component&gt;</programlisting>    
   </section>
 
   <!-- 2.2.6.2. JBossTransactionsService -->
-  <xi:include href="jbossts-transaction-service.xml"
+  <xi:include href="jboss-transaction-service.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 </section>

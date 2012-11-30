@@ -4,7 +4,7 @@
 <section id="JCR.PropertyComparison">
   <title>Property Comparison</title>
 
-  <para>Find all nodes with mixin type 'mix:title' where the prop_pagecount
+  <para>Find all nodes with 'mix:title' mixin type where the 'prop_pagecount'
   property contains a value less than 90. Only select the title of each
   node.</para>
 
@@ -45,7 +45,8 @@
       <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
-
+   <itemizedlist>
+           <listitem>
     <para><emphasis role="bold">SQL</emphasis></para>
 
     <programlisting language="java">// make SQL query
@@ -55,7 +56,8 @@ String sqlStatement = "SELECT jcr:title FROM mix:title WHERE prop_pagecount &lt;
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+   </listitem>
+  <listitem>
     <para><emphasis role="bold">XPath</emphasis></para>
 
     <programlisting language="java">// make XPath query
@@ -65,7 +67,8 @@ String xpathStatement = "//element(*,mix:title)[@prop_pagecount &lt; 90]/@jcr:ti
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+  </listitem>
+  </itemizedlist>
   <para xml:id="JCR.PropertyComparison.FetchingResult">
     <citetitle>
       <emphasis role="bold">Fetching result</emphasis>
@@ -94,7 +97,7 @@ while (rit.hasNext())
    Value[] values = row.getValues();
 }</programlisting>
 
-    <para>The table content is <table>
+    <para>The table content is:<table>
         <title>Table Content</title>
 
         <tgroup cols="3">

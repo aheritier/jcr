@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.MultiDBSchemaSupport">
+<section id="JCR.MultiDBSchemaSupport" role="NotInToc">
   <title>How to host several JCR instances on the same database
   instance?</title>
 
@@ -17,10 +17,8 @@
   <listitem>
     <para xml:id="JCR.MultiDBSchemaSupport.LockManager_Config"><emphasis role="bold">LockManager configuration</emphasis></para>
 
-    <para>To enable this feature you need to replace
-    org.jboss.cache.loader.JDBCCacheLoader with
-    org.exoplatform.services.jcr.impl.core.lock.jbosscache.JDBCCacheLoader in
-    JBossCache configuration file.</para>
+    <para>To enable this feature you need to replace <parameter>org.jboss.cache.loader.JDBCCacheLoader</parameter> with
+    <parameter>org.exoplatform.services.jcr.impl.core.lock.jbosscache.JDBCCacheLoader</parameter> in the JBossCache configuration file.</para>
 
     <para>Here is an example of this very part of the configuration:</para>
 
@@ -68,7 +66,7 @@
   <listitem>
     <para xml:id="JCR.MultiDBSchemaSupport.HibernateService_Configuration"><emphasis role="bold">HibernateService configuration</emphasis></para>
 
-    <para>If you use HibernateService for JDBC connections management you will
+    <para>If you use <parameter>HibernateService</parameter> for JDBC connections management, you will
     need to specify explicitly the default schema by setting
     "hibernate.default_schema" property in the configuration of
     HibernateService.</para>

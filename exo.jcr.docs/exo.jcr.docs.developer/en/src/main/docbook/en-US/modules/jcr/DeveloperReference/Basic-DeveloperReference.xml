@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+        "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<section id="JCR.DeveloperReference.Basic">
+  <title>Basic usage</title>
+  <highlights>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <emphasis role="bold"><link linkend="JCR.UsingJCR">Use JCR</link></emphasis>
+        </para>
+        <para>Instructions on how to use JCR, such as how to obtain a Repository object, JCR Session common considerations and
+        JCR Application practices.</para>
+      </listitem>
+      <listitem>
+        <para>
+          <emphasis role="bold"><link linkend="JCR.NodeTypes">Node types</link></emphasis>
+        </para>
+        <para>Instructions on how to define node types in the Repository at the start-up time and register the node types.</para>
+      </listitem>
+      <listitem>
+        <para>
+          <emphasis role="bold"><link linkend="JCR.Namespaces">Namespace</link></emphasis>
+        </para>
+        <para>Instructions on how to define and alter namespace.</para>
+      </listitem>
+      <listitem>
+        <para>
+          <emphasis role="bold"><link linkend="JCR.SearchingRepositoryContent">Search Repository Content</link></emphasis>
+        </para>
+        <para>Instructions on how to use the searching function for repository content by providing with the detailed information on query lifecycle,
+        query usecases and XPath queries containing node names starting with a number.</para>
+      </listitem>
+      <listitem>
+        <para>
+          <emphasis role="bold"><link linkend="JCR.UseFulltextSearch">Use Fulltext Search</link></emphasis>
+        </para>
+        <para>Instructions on how to use fulltext search in eXo JCR.</para>
+      </listitem>
+      <listitem>
+        <para>
+          <emphasis role="bold"><link linkend="JCR.DeveloperReference.Basic.FAQs">Frequently asked questions</link></emphasis>
+        </para>
+        <para>A list of FAQs related to basic development.</para>
+      </listitem>
+    </itemizedlist>
+  </highlights>
+
+  <xi:include href="Basic/jcr-usage.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="Basic/nodetypes.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="Basic/jcr_namespaces.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="Basic/searching/searching-repository-content.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="Basic/searching/use-fulltext-search.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="Basic/developer-reference-faqs.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</section>

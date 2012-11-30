@@ -7,8 +7,8 @@
   <para>Find all documents whose title is 'Cinderella' or whose description is
   'novel'.</para>
 
-  <para>How does it sound in jcr terms? - Find all nodes with a mixin type
-  'mix:title' whose property 'jcr:title' equals "Cinderella" or whose
+  <para>How does it sound in jcr terms? - Find all nodes with the 'mix:title' mixin type
+  whose 'jcr:title' property equals "Cinderella" or whose
   "jcr:description" property value is "novel".</para>
 
   <para xml:id="JCR.ORConstraint.RepositoryStructure">
@@ -50,8 +50,11 @@
     </citetitle>
   </para>
 
-
-    <para><emphasis role="bold">SQL</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">SQL</emphasis>
+      </para>
 
     <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
@@ -60,20 +63,25 @@ String sqlStatement = "SELECT * FROM mix:title WHERE jcr:title = 'Cinderella' OR
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
+    </listitem>
+    <listitem>
+      <para>
+        <emphasis role="bold">XPath</emphasis>
+      </para>
 
-    <para><emphasis role="bold">XPath</emphasis></para>
-
-    <programlisting language="java">// make XPath query
+      <programlisting language="java">// make XPath query
 QueryManager queryManager = workspace.getQueryManager();
 // create query
 String xpathStatement = "//element(*,mix:title)[@jcr:title='Cinderella' or @jcr:description = 'novel']";
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
+    </listitem>
+  </itemizedlist>
 
   <para xml:id="JCR.ORConstraint.FetchingResult">
     <citetitle>
-      <emphasis role="bold">Fetching the Result</emphasis>
+      <emphasis role="bold">Fetching result</emphasis>
     </citetitle>
   </para>
 

@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.UseFulltextSearch">
+<section id="JCR.UseFulltextSearch" role="NotInToc">
   <title>Use Fulltext Search</title>
 
-    <para>You can find the JCR configuration file at
-    <emphasis>.../portal/WEB-INF/conf/jcr/repository-configuration.xml</emphasis>. Please read also
-    <link linkend="JCR.SearchConfiguration">Search Configuration</link> for
-    more information about index configuration.</para>
+	<note>
+		<para>You can find the JCR configuration file at
+		<filename>.../portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>. Read <link linkend="JCR.SearchConfiguration">Search Configuration</link> for
+		more information about index configuration.</para>
+	</note>
 
   <section id="JCR.UseFulltextSearch.Bi-directionalRangeIterator">
     <title>Bi-directional RangeIterator</title>
 
-    <para>QueryResult.getNodes() will return bi-directional NodeIterator
+    <para><parameter>QueryResult.getNodes()</parameter> will return bi-directional NodeIterator
     implementation.</para>
 
     <note>
@@ -70,7 +71,7 @@ Query q = qman.createQuery("select * from nt:base where contains(field, 'ccccc~'
 QueryResult res = q.execute();</programlisting>
   </section>
 
-  <section id="JCR.UseFulltextSearch.SynonimProvider">
+  <section id="JCR.UseFulltextSearch.SynonymProvider">
     <title>SynonymSearch</title>
 
     <para>Searching with synonyms is integrated in the jcr:contains() function
@@ -172,15 +173,15 @@ public interface SynonymProvider {
       form:</para>
 
       <programlisting language="html">&lt;div&gt;
-    &lt;span&gt;
+        &lt;span&gt;
         &lt;strong&gt;exoplatform&lt;/strong&gt; implements both the mandatory XPath
         and optional SQL &lt;strong&gt;query&lt;/strong&gt; syntax.
-    &lt;/span&gt;
-    &lt;span&gt;
+        &lt;/span&gt;
+        &lt;span&gt;
         Before parsing the XPath &lt;strong&gt;query&lt;/strong&gt; in
         &lt;strong&gt;exoplatform&lt;/strong&gt;, the statement is surrounded
-    &lt;/span&gt;
-&lt;/div&gt;</programlisting>
+        &lt;/span&gt;
+        &lt;/div&gt;</programlisting>
 
     <para xml:id="JCR.UseFulltextSearch.Highlighting.HowToUseIt">
       <citetitle>
@@ -228,16 +229,16 @@ for (RowIterator it = result.getRows(); it.hasNext(); ) {
   <section id="JCR.UseFulltextSearch.SpellChecker">
     <title>SpellChecker</title>
 
-    <para>The lucene based query handler implementation supports a pluggable
+    <para>The Lucene-based query handler implementation supports a pluggable
     spell checker mechanism. By default, spell checking is not available and
-    you have to configure it first. See parameter spellCheckerClass on page
+    you have to configure it first. See the <parameter>spellCheckerClass</parameter> parameter on page
     <link linkend="JCR.SearchConfiguration">Search Configuration.</link> JCR
-    currently provides an implementation class , which uses the <ulink
+    currently provides an implementation class, which uses the <ulink
     url="http://wiki.apache.org/jakarta-lucene/SpellChecker">lucene-spellchecker</ulink>
-    to contribute . The dictionary is derived from the fulltext indexed
+    to contribute. The dictionary is derived from the fulltext indexed
     content of the workspace and updated periodically. You can configure the
     refresh interval by picking one of the available inner classes of
-    org.exoplatform.services.jcr.impl.core.query.lucene.spell.LuceneSpellChecker:</para>
+    <parameter>org.exoplatform.services.jcr.impl.core.query.lucene.spell.LuceneSpellChecker</parameter>:</para>
 
     <itemizedlist>
       <listitem>

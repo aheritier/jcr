@@ -2,7 +2,7 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter xml:id="chapter-eXoWS">
-  <title>eXoWS</title>
+  <title>eXo Web Services</title>
 
   <para>The Web Services module allows eXo technology to integrate with
   external products and services.</para>

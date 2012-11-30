@@ -11,9 +11,9 @@
   criteria of node similarity (for node baseFile).</para>
 
   <note>
-    <para>See also about Similarity and configuration - <link
+    <para>See also Similarity and configuration in <link
     linkend="JCR.SearchingRepositoryContent">Searching Repository
-    Content</link></para>
+    Content</link>.</para>
   </note>
 
   <para>Highlighting support must be added to configuration.
@@ -33,7 +33,7 @@
     </citetitle>
   </para>
 
-    <para>Repository contains many nt:file nodes"</para>
+    <para>Repository contains many "nt:file" nodes:</para>
 
     <itemizedlist>
       <listitem>
@@ -103,7 +103,8 @@
       <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
-
+    <itemizedlist>
+            <listitem>
     <para><emphasis role="bold">SQL</emphasis></para>
 
     <programlisting language="java">// make SQL query
@@ -113,7 +114,8 @@ String sqlStatement = "SELECT * FROM nt:resource WHERE SIMILAR(.,'/baseFile/jcr:
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+    </listitem>
+  <listitem>
     <para><emphasis role="bold">XPath</emphasis></para>
 
     <programlisting language="java">// make XPath query
@@ -123,6 +125,8 @@ String xpathStatement = "//element(*, nt:resource)[rep:similar(., '/testroot/bas
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
+  </listitem>
+  </itemizedlist>
 
   <para xml:id="JCR.FindSimilarNodes.FetchingResult">
     <citetitle>
@@ -155,7 +159,7 @@ while (rit.hasNext())
    Value[] values = row.getValues();
 }</programlisting>
 
-    <para>The table content is</para>
+    <para>The table content is:</para>
 
     <table>
       <title>Table content</title>

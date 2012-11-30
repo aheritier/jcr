@@ -1,25 +1,27 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- This document was created with Syntext Serna Free. --><!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
 <section id="JCRref.Introduction.JCRArchitecture">
-  <title>JCR Architecture</title>  
-  <section id="JCRref.Introduction.JCRArchitecture.eXoRepositoryService">
-    <title>eXo Repository Service</title>
+  <title>JCR architecture</title>
+
+  <citetitle>
+    <para xml:id="JCRref.Introduction.JCRArchitecture.eXoRepositoryService"><emphasis role="bold">eXo Repository Service</emphasis></para>
+  </citetitle>
     <para>eXo Repository Service is a standard eXo service and is a registered
-    IoC component, i.e. can be deployed in some eXo Containers (see <link linkend="JCR.eXoJCRconfiguration.RepositoryConfiguration">Service configuration</link> for details). The relationships between components
+    IoC component that can be deployed in some eXo Containers (see <link linkend="JCR.eXoJCRconfiguration.RepositoryConfiguration">Repository configuration</link> for more details). The relationships between components
     are shown in the picture below:</para>
     <mediaobject>
       <imageobject>
-        <imagedata fileref="images/concepts/exojcr.gif"/>
+        <imagedata align="center" fileref="images/concepts/exojcr.gif "/>
       </imageobject>
     </mediaobject>
-    <para><keycap>eXo Container: </keycap>some subclasses of
+    <para><keycap>eXo Container:</keycap> Some subclasses of
     org.exoplatform.container.ExoContainer (usually
     org.exoplatform.container.StandaloneContainer or
     org.exoplatform.container.PortalContainer) that holds a reference to
     Repository Service.</para>
     <itemizedlist>
       <listitem>
-        <para><emphasis role="bold">Repository Service:</emphasis> contains
+        <para><emphasis role="bold">Repository Service:</emphasis> Contain
         information about repositories. eXo JCR is able to manage many
         Repositories.</para>
       </listitem>
@@ -34,29 +36,28 @@
         javax.jcr.Workspace as it is not a per Session object).</para>
       </listitem>
     </itemizedlist>
-    <para>Usual JCR application use case includes two initial steps:</para>
+    <para>The JCR application usecase typically includes two initial steps:</para>
     <itemizedlist>
       <listitem>
         <para>Obtaining Repository object by getting <emphasis role="bold">Repository Service</emphasis> from the current eXo
         Container (eXo &quot;native&quot; way) or via JNDI lookup if eXo repository is
-        bound to the naming context using (see <link linkend="JCR.eXoJCRconfiguration">Service configuration</link> for
-        details).</para>
+        bound to the naming context using (see <link linkend="JCR.eXoJCRconfiguration.RepositoryConfiguration">Repository configuration</link> for more details).</para>
       </listitem>
       <listitem>
         <para>Creating javax.jcr.Session object that calls
         Repository.login(..).</para>
       </listitem>
     </itemizedlist>
-  </section>
 
-  <section id="JCRref.Introduction.JCRArchitecture.WorkspaceDataModel">
-    <title>Workspace Data Model</title>
+  <citetitle>
+    <para xml:id="JCRref.Introduction.JCRArchitecture.WorkspaceDataModel"><emphasis role="bold">Workspace Data Model</emphasis></para>
+  </citetitle>
     <para>The following diagram explains which components of eXo JCR
     implementation are used in a data flow to perform operations specified in
-    JCR API</para>
+    JCR API.</para>
     <mediaobject>
       <imageobject>
-        <imagedata fileref="images/concepts/wsdatamodel.gif"/>
+        <imagedata align="center" fileref="images/concepts/wsdatamodel.gif"/>
       </imageobject>
     </mediaobject>
     <para>The Workspace Data Model can be split into 4 levels by data
@@ -121,5 +122,4 @@
         </itemizedlist>
       </listitem>
     </itemizedlist>
-  </section>
   </section>

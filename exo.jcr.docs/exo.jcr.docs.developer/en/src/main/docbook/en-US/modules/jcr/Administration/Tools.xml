@@ -3,7 +3,22 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section xml:id="chapter-Administration-Tools">
   <title>Tools</title>
-
+  <highlights>
+	<itemizedlist>
+		<listitem>
+			<para><emphasis role="bold"><link linkend="JCR.SessionLeakDetected">Session Leak Detector</link></emphasis></para>
+			<para>All necessary information about this tool, including activation and report.</para>
+		</listitem>
+		<listitem>
+			<para><emphasis role="bold"><link linkend="JCR.RepositoryCheckController">Consistency Checker</link></emphasis></para>
+			<para>Details of consistency checker, and Recommendations on how to fix corrupted JCR.</para>
+		</listitem>
+		<listitem>
+			<para><emphasis role="bold"><link linkend="JCR.Statistics">JCR statistics</link></emphasis></para>
+			<para>Instructions on how to get and manage statistics on Database Access Layer and on JCR API accesses, and statistics Manager.</para>
+		</listitem>
+	</itemizedlist>
+  </highlights>
   <xi:include href="Tools/session-leak-detected.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Tools/repository-check-controller.xml"

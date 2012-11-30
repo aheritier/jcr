@@ -2,7 +2,7 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <!-- 2.2.5. RepositoryCreationService -->
-<section id="JCR.RepositoryCreationService">
+<section id="JCR.RepositoryCreationService" role="NotInToc">
   <title>RepositoryCreationService</title>
     <para><emphasis>RepositoryCreationService</emphasis> is the service which is used to create repositories
     in runtime. The service can be used in a standalone or cluster
@@ -15,23 +15,18 @@
 
     <itemizedlist>
       <listitem>
-        <para><link linkend="Core.DBCreatorService">DBCreator</link> -
-        DBCreator used to create new database for each unbinded
-        datasource.</para>
+        <para><link linkend="Core.DBCreatorService">DBCreator</link> which is used to create new database for each unbinded datasource.</para>
       </listitem>
 
       <listitem>
-        <para><link linkend="JCR.BackupService">BackupManager</link> -
-        BackupManager used to created repository from backup.</para>
+        <para>BackupManager which is used to create repository from backup.</para>
       </listitem>
 
       <listitem>
-        <para><link linkend="Kernel.RPCService">RPCService</link> - RPCService
-        used for communication between cluster-nodes</para>
+        <para><link linkend="Kernel.RPCService">RPCService</link> which is used for communication between cluster-nodes.</para>
 
         <note>
-          <para>RPCService may not be configured - in this case,
-          RepositoryService will work as standalone service.</para>
+          <para>RPCService may not be configured. In this case, RepositoryService will work as a standalone service.</para>
         </note>
       </listitem>
     </itemizedlist>  
@@ -41,7 +36,7 @@
   </para>
     <itemizedlist>
       <listitem>
-        <para>User executes reserveRepositoryName(String repositoryName) -
+        <para>The user executes reserveRepositoryName(String repositoryName) -
         client-node calls coordinator-node to reserve repositoryName. If this
         name is already reserved or repository with this name exist,
         client-node will fetch RepositoryCreationException. If not Client will
@@ -49,19 +44,19 @@
       </listitem>
 
       <listitem>
-        <para>than user executes createRepository(String backupId,
-        RepositoryEntry rEntry, String token). Coordinator-node checks the
+        <para>Instead of executing createRepository(String backupId,
+        RepositoryEntry rEntry, String token), Coordinator-node checks the
         token, and creates Repository.</para>
       </listitem>
 
       <listitem>
-        <para>whan repository become created - user-node broadcast message to
+        <para>When the repository has been created, the user-node broadcasts message to
         all clusterNodes with RepositoryEntry, so each cluster node starts new
         Repository.</para>
       </listitem>
     </itemizedlist>
 
-    <para>There is two ways to create repositry: make it in single step - just
+    <para>There are two ways to create a repositry: make it in single step - just
     call createRepository(String backupId, RepositoryEntry); or reserve
     repositoryName at first (reserveRepositoryName(String repositoryName)),
     than create reserved repository (createRepository(String backupId,
@@ -77,7 +72,7 @@
       </listitem>
 
       <listitem>
-        <para>RPCService is optional component, but without it,
+        <para>RPCService is an optional component, but without it,
         RepositoryCreatorService can not communicate with other cluster-nodes
         and works as standalone.</para>
       </listitem>
@@ -87,9 +82,9 @@
   <section id="JCR.RepositoryCreationService.Configuration">
     <title>Configuration</title>
 
-    <para>RepositoryCreationService configuration</para>
+    <para>The RepositoryCreationService configuration is as follows:</para>
 
-    <programlisting language="xml">&lt;component&gt;
+<programlisting language="xml">&lt;component&gt;
    &lt;key&gt;org.exoplatform.services.jcr.ext.backup.BackupManager&lt;/key&gt;
    &lt;type&gt;org.exoplatform.services.jcr.ext.backup.impl.BackupManagerImpl&lt;/type&gt;
    &lt;init-params&gt;
@@ -156,16 +151,16 @@
 
     <itemizedlist>
       <listitem>
-        <para>factory-class-name - is not mandatory parameter, indicates what
-        the factory need to use to create DataSource objects</para>
+        <para><parameter>factory-class-name</parameter>: Indicate what
+        the factory needs to use for creating DataSource objects. This parameter is not mandatory.</para>
       </listitem>
     </itemizedlist>
   </section>
   <!-- 2.2.5.2 RepositoryCreationService Interface -->
   <section id="JCR.RepositoryCreationService.RepositoryCreationServiceInterface">
-    <title>RepositoryCreationService Interface</title>
-
-    <programlisting language="java">public interface RepositoryCreationService
+    <title>RepositoryCreationService interface</title>
+	<para>See the RepositoryCreationService Interface as follows:</para>
+<programlisting language="java">public interface RepositoryCreationService
 {
    /**
     * Reserves, validates and creates repository in a simplified form.

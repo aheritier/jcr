@@ -4,7 +4,7 @@
 <section id="JCR.DatePropertyComparison">
   <title>Date Property Comparison</title>
 
-  <para>Find all nodes of primary type "nt:resource" whose jcr:lastModified
+  <para>Find all nodes of the "nt:resource" primary type whose "jcr:lastModified"
   property value is greater than 2006-06-04 and less than 2008-06-04.</para>
 
   <para xml:id="JCR.DatePropertyComparison.RepositoryStructure">
@@ -14,8 +14,8 @@
   </para>
 
 
-    <para>Repository contains nt:resource nodes with different values of
-    jcr:lastModified property</para>
+    <para>Repository contains "nt:resource" nodes with different values of
+   the "jcr:lastModified" property</para>
 
     <itemizedlist>
       <listitem>
@@ -64,7 +64,8 @@
     </citetitle>
   </para>
 
-
+     <itemizedlist>
+             <listitem>
     <para><emphasis role="bold">SQL</emphasis></para>
 
     <para>In SQL you have to use the keyword <emphasis
@@ -95,7 +96,8 @@ String sqlStatement = sb.toString();
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+   </listitem>
+  <listitem>
     <para><emphasis role="bold">XPath</emphasis></para>
 
     <para>Compared to the SQL format, you have to use the keyword <emphasis
@@ -117,10 +119,11 @@ String xpathStatement = sb.toString();
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+ </listitem>
+  </itemizedlist>
   <para xml:id="JCR.DatePropertyComparison.FetchingResult">
     <citetitle>
-      <emphasis role="bold">Fetching the result</emphasis>
+      <emphasis role="bold">Fetching result</emphasis>
     </citetitle>
   </para>
 

@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+        "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<section id="JCR.ConfigurationFAQs" role="NotInToc">
+  <title>Frequently asked questions</title>
+<qandaset>
+<qandaentry xml:id="JCR.FAQ.JCR.Core.HowToConfigureJcrForCluster">
+		<question>
+			<para><emphasis role="bold">How to configure JCR for cluster?</emphasis></para>
+		</question>
+    <answer>
+    <para>So we have configured JCR in standalone mode and want to
+      reconfigure it for clustered environment. First of all, let's check
+      whether all requirements are satisfied:
+    </para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Dedicated RDBMS anyone like MySQL, Postges, Oracle and, etc
+          but just not HSSQL;
+        </para>
+      </listitem>
+
+      <listitem>
+        <para>Shared storage. The simplest thing is to use shared FS like
+          NFS or SMB mounted in operation system, but they are rather slow.
+          The best thing is to use SAN (Storage Area Network);
+        </para>
+      </listitem>
+
+      <listitem>
+        <para>Fast network between JCR nodes.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>So now, need to configure Container a bit. Check
+      exo-configuration.xml to be sure that you are using JBossTS
+      Transaction Service and JBossCache Transaction Manager, as shown
+      below.
+    </para>
+
+<programlisting language="xml">&lt;component&gt;
+	&lt;key&gt;org.jboss.cache.transaction.TransactionManagerLookup&lt;/key&gt;
+	&lt;type&gt;org.jboss.cache.GenericTransactionManagerLookup&lt;/type&gt;
+&lt;/component&gt;
+
+&lt;component&gt;
+	&lt;key&gt;org.exoplatform.services.transaction.TransactionService&lt;/key&gt;
+	&lt;type&gt;org.exoplatform.services.transaction.jbosscache.JBossTransactionsService&lt;/type&gt;
+	&lt;init-params&gt;
+		&lt;value-param&gt;
+			&lt;name&gt;timeout&lt;/name&gt;
+			&lt;value&gt;300&lt;/value&gt;
+		&lt;/value-param&gt;
+	&lt;/init-params&gt;
+&lt;/component&gt;</programlisting>
+
+    <para>Next stage is actually the JCR configuration. We need JBossCache
+      configuration templates for: <parameter>data-cache</parameter>, <parameter>indexer-cache</parameter> and
+      <parameter>lock-manager-cache</parameter>. Later they will be used to configure JCR's core
+      components. There are pre-bundled templates in EAR or JAR in
+      <filename>conf/standalone/cluster</filename>. They can be used or re-written if
+      needed. And now, re-configure a bit each workspace. Actually, a few
+      parameters need changing, e.g. <parameter>&lt;cache&gt;</parameter>, <parameter>&lt;query-handler&gt;</parameter>,
+      and <parameter>&lt;lock-manager&gt;</parameter>.
+    </para>
+
+    <itemizedlist>
+      <listitem>
+        <para>The <parameter>&lt;cache&gt;</parameter> configuration:</para>
+
+<programlisting language="xml">&lt;cache enabled="true" class="org.exoplatform.services.jcr.impl.dataflow.persistent.jbosscache.JBossCacheWorkspaceStorageCache"&gt;
+	&lt;properties&gt;
+		&lt;property name="jbosscache-configuration" value="test-jbosscache-data.xml" /&gt;
+		&lt;property name="jgroups-configuration" value="udp-mux.xml" /&gt;
+		&lt;property name="jgroups-multiplexer-stack" value="false" /&gt;
+		&lt;property name="jbosscache-cluster-name" value="JCR-cluster-data" /&gt;
+		&lt;property name="jbosscache-shareable" value="true"/&gt;
+	&lt;/properties&gt;
+&lt;/cache&gt;</programlisting>
+
+        <itemizedlist>
+          <listitem>
+            <para><parameter>jbosscache-configuration</parameter>: Path to the configuration template.</para>
+          </listitem>
+
+          <listitem>
+            <para><parameter>jgroups-configuration</parameter>: Path to JGroups configuration
+              that should not be anymore jgroups' stack definitions but a
+              normal jgroups configuration format with the shared transport
+              configured by simply setting the jgroups property
+              singleton_name to a unique name (it must remain unique from
+              one portal container to another). This file is also
+              pre-bundled with templates and is recommended for use;
+            </para>
+          </listitem>
+
+          <listitem>
+            <para><parameter>jgroups-multiplexer-stack</parameter>: Set to "false" in order to
+              disable the multiplexer stack as now it is recommended to use
+              the JGroups' shared transport instead.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para><parameter>jbosscache-cluster-name</parameter>: Name of cluster group.
+              It should be different for each workspace and each workspace
+              component. For example:  &lt;repository_name&gt;-&lt;ws_name&gt;-&lt;component(cache\|lock\|index)&gt;</para>
+          </listitem>
+
+          <listitem>
+            <para><parameter>jbosscache-shareable</parameter>: Set to "true" in order to share the
+              same JBoss Cache instance between several workspaces.
+            </para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
+
+    <itemizedlist>
+      <listitem>
+        <para>The <parameter>&lt;query-handler&gt;</parameter> configuration:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>You must replace or add to the <parameter>&lt;query-handler&gt;</parameter> block, 
+              the <parameter>changesfilter-class</parameter> parameter equals with:
+            </para>
+<programlisting language="xml">&lt;property name="changesfilter-class" value="org.exoplatform.services.jcr.impl.core.query.jbosscache.JBossCacheIndexChangesFilter"/&gt;</programlisting>
+          </listitem>
+
+          <listitem>
+            <para>Add the JBossCache-oriented configuration:</para>
+
+<programlisting language="xml">&lt;property name="jbosscache-configuration" value="test-jbosscache-indexer.xml" /&gt;
+&lt;property name="jgroups-configuration" value="udp-mux.xml" /&gt;
+&lt;property name="jgroups-multiplexer-stack" value="false" /&gt;
+&lt;property name="jbosscache-cluster-name" value="JCR-cluster-indexer" /&gt;
+&lt;property name="jbosscache-shareable" value="true"/&gt;
+&lt;property name="max-volatile-time" value="60" /&gt;</programlisting>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
+
+    <para>Those properties have the same meaning and restrictions as in
+      the previous block. The last property <parameter>max-volatile-time</parameter> is not
+      mandatory but recommended. This notifies that the latest changes in
+      index will be visible for each cluster node not later than in
+      60s.
+    </para>
+
+    <itemizedlist>
+      <listitem>
+        <para>The <parameter>&lt;lock-manager&gt;</parameter> configuration:</para>
+
+        <para>This may be the hardest element to configure, because we
+          have to define access to DB where locks will be stored. Replace
+          the exsiting <parameter>lock-manager</parameter> configuration with shown below.
+        </para>
+
+<programlisting language="xml">&lt;lock-manager class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.CacheableLockManagerImpl"&gt;
+	&lt;properties&gt;
+		&lt;property name="time-out" value="15m" /&gt;
+		&lt;property name="jbosscache-configuration" value="test-jbosscache-lock.xml" /&gt;
+		&lt;property name="jgroups-configuration" value="udp-mux.xml" /&gt;
+		&lt;property name="jgroups-multiplexer-stack" value="false" /&gt;
+		&lt;property name="jbosscache-cluster-name" value="JCR-cluster-locks" /&gt;
+		&lt;property name="jbosscache-cl-cache.jdbc.table.name" value="jcrlocks" /&gt;
+		&lt;property name="jbosscache-cl-cache.jdbc.table.create" value="true" /&gt;
+		&lt;property name="jbosscache-cl-cache.jdbc.table.drop" value="false" /&gt;
+		&lt;property name="jbosscache-cl-cache.jdbc.table.primarykey" value="jcrlocks_pk" /&gt;
+		&lt;property name="jbosscache-cl-cache.jdbc.fqn.column" value="fqn" /&gt;
+		&lt;property name="jbosscache-cl-cache.jdbc.node.column" value="node" /&gt;
+		&lt;property name="jbosscache-cl-cache.jdbc.parent.column" value="parent" /&gt;
+		&lt;property name="jbosscache-cl-cache.jdbc.datasource" value="jdbcjcr" /&gt;
+		&lt;property name="jbosscache-shareable" value="true"/&gt;
+	&lt;/properties&gt;
+&lt;/lock-manager&gt;</programlisting>
+
+        <para>First few properties are the same as in the previous
+          components, but here you can see some strange
+          "jbosscache-cl-cache.jdbc.*" properties. They define access
+          parameters for database where lock is persisted.
+        </para>
+
+        <itemizedlist>
+          <listitem>
+            <para><parameter>jbosscache-cl-cache.jdbc.table.create</parameter>: Whether to create it or not. Usually set to "true".
+            </para>
+          </listitem>
+
+          <listitem>
+            <para><parameter>jbosscache-cl-cache.jdbc.table.drop</parameter>: Whether to drop on a start or not. Use "false".
+            </para>
+          </listitem>
+
+          <listitem>
+            <para><parameter>jbosscache-cl-cache.jdbc.table.primarykey</parameter>: Name of column with pk;
+            </para>
+          </listitem>
+
+          <listitem>
+            <para><parameter>jbosscache-cl-cache.jdbc.fqn.column</parameter>: Name of one
+              more column. If you are not sure how to use, follow the
+              example above (if much interested, please refer to JBossCache
+              JDBCCacheLoader documentation)
+            </para>
+          </listitem>
+
+          <listitem>
+            <para><parameter>jbosscache-cl-cache.jdbc.node.column</parameter>: Name of one
+              more column. If you are not sure how to use, follow the
+              example above (if much interested, please refer to JBossCache
+              JDBCCacheLoader documentation)
+            </para>
+          </listitem>
+
+          <listitem>
+            <para><parameter>jbosscache-cl-cache.jdbc.parent.column</parameter>: Name of one
+              more column. If you are not sure how to use, follow the
+              example above if you are not sure (if much interested, please
+              refer to JBossCache JDBCCacheLoader documentation)
+            </para>
+          </listitem>
+
+          <listitem>
+            <para><parameter>jbosscache-cl-cache.jdbc.datasource</parameter>: Name of
+              configured in Container datasource, where you want to store
+              locks. The best idea is to use the same as for
+              workspace.
+            </para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
+
+    <para>And JCR is now ready for running in a cluster.</para>
+      </answer>
+    </qandaentry>
+	
+	<qandaentry xml:id="JCR.FAQ.JCR.Core.HowToUseLuceneSpellchecker">
+		<question>
+		<para><emphasis role="bold">How to use Lucene spellchecker?</emphasis></para>
+		</question>
+		<answer>
+		<para>You simply do the following steps:</para>
+
+		<itemizedlist>
+		<listitem>
+		<para>Enable the Lucene spellchecker in the JCR QueryHandler configuration:</para>
+
+<programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
+	&lt;properties&gt;
+		...
+		&lt;property name="spellchecker-class" value="org.exoplatform.services.jcr.impl.core.query.lucene.spell.LuceneSpellChecker$FiveSecondsRefreshInterval"/&gt;
+		...
+	&lt;/properties&gt;
+&lt;/query-handler&gt;</programlisting>
+		</listitem>
+		</itemizedlist>
+
+		<itemizedlist>
+		<listitem>
+		<para>Execute query with rep:spellcheck function and word that is checked:
+		</para>
+
+<programlisting language="java">Query query = qm.createQuery("select rep:spellcheck() from nt:base where " +
+  "jcr:path = '/' and spellcheck('word that is checked')", Query.SQL);
+  RowIterator rows = query.execute().getRows();
+</programlisting>
+		</listitem>
+		</itemizedlist>
+
+		<itemizedlist>
+		<listitem>
+		<para>Fetch a result:</para>
+
+<programlisting language="java">Row r = rows.nextRow();
+  Value v = r.getValue("rep:spellcheck()");
+</programlisting>
+		</listitem>
+		</itemizedlist>
+
+		<para>If there is no any result, this means there is no suggestion, so word is correct or spellcheckers dictionary does not contain any words like the checked word.
+		</para>
+		</answer>
+	</qandaentry>
+
+    <qandaentry xml:id="JCR.FAQ.JCR.Core.AffectSpellcheckerResults">
+		  <question>
+			<para><emphasis role="bold">How can I affect spellchecker results?</emphasis></para>
+		  </question>
+		<answer>
+		<para>There is two parameters in the JCR QueryHandler configuration:</para>
+
+		<itemizedlist>
+		  <listitem>
+			<para>Minimal distance between checked word and proposed
+			  suggestion;
+			</para>
+		  </listitem>
+
+		  <listitem>
+			<para>Search for more popular suggestions;</para>
+
+<programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
+	&lt;properties&gt;
+		...
+		&lt;property name="spellchecker-class" value="org.exoplatform.services.jcr.impl.core.query.lucene.spell.LuceneSpellChecker$FiveSecondsRefreshInterval" /&gt;
+		&lt;property name="spellchecker-more-popular" value="false" /&gt;
+		&lt;property name="spellchecker-min-distance" value="0.55" /&gt;
+		...
+	&lt;/properties&gt;
+&lt;/query-handler&gt;</programlisting>
+		  </listitem>
+		</itemizedlist>
+
+		<para>Minimal distance is counted as Levenshtein distance between checked word and spellchecker suggestion.
+		</para>
+
+		<para>The MorePopular parameter affects in next way: If "morePopular" is disabled:
+		</para>
+
+		<itemizedlist>
+		  <listitem>
+			<para>If the proposed word exists in the directory - no suggestion given;
+			</para>
+		  </listitem>
+
+		  <listitem>
+			<para>If the proposed word doesn't exist in the directory - propose the closed word;
+			</para>
+		  </listitem>
+		</itemizedlist>
+
+		<para>If "morePopular" is enabled:</para>
+
+		<itemizedlist>
+		  <listitem>
+			<para>No matter word exists or not, checker will propose the closed word that is more popular than the checked word.
+			</para>
+		  </listitem>
+		</itemizedlist>
+		</answer>
+   </qandaentry>
+   <qandaentry xml:id="JCR.eXoJCRconfiguration.HelpApplicationToProhibitUseOfClosedSessions">
+    <question>
+		<para>Does Help application prohibit the use of closed sessions?</para>
+	</question>
+	<answer>
+    <para>Products that use eXo JCR, sometimes missuse it since they continue
+    to use a session that has been closed through a method call on a node, a
+    property or even the session itself. To prevent bad practices we propose
+    three modes which are the folllowing:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>If the system property
+        <emphasis>exo.jcr.prohibit.closed.session.usage</emphasis> has been
+        set to <emphasis>true</emphasis>, then a RepositoryException will be
+        thrown any time an application will try to access to a closed session.
+        In the stack trace, you will be able to know the call stack that
+        closes the session.</para>
+      </listitem>
+
+      <listitem>
+        <para>If the system property
+        <emphasis>exo.jcr.prohibit.closed.session.usage</emphasis> has not
+        been set and the system property
+        <emphasis>exo.product.developing</emphasis> has been set to
+        <emphasis>true</emphasis>, then a warning will be logged in the log
+        file with the full stack trace in order to help identifying the root
+        cause of the issue. In the stack trace, you will be able to know the
+        call stack that closes the session.</para>
+      </listitem>
+
+      <listitem>
+        <para>If none of the previous system properties have been set, then we
+        will ignore that the issue and let the application use the closed
+        session as it was possible before without doing anything in order to
+        allow applications to migrate step by step.</para>
+      </listitem>
+    </itemizedlist>
+   </answer>
+  </qandaentry>
+	<qandaentry xml:id="JCR.eXoJCRconfiguration.HelpApplicationToAllowUseOfClosedDataSources">
+		<question>
+			<para>Does Help application allow the use of closed datasources?</para>
+		</question>
+		<answer>
+			<para>Since usage of closed session affects usage of closed datasource
+			we propose three ways to resolve such kind of isses: </para>
+
+			<itemizedlist>
+				<listitem>
+					<para>If the system property
+					<emphasis>exo.jcr.prohibit.closed.datasource.usage</emphasis> is
+					set to <emphasis>true</emphasis> (default value) then a SQLException will be
+					thrown any time an application will try to access to a closed datasource.
+					In the stack trace, you will be able to know the call stack that
+					closes the datasource.</para>
+				</listitem>
+
+				<listitem>
+					<para>If the system property
+					<emphasis>exo.jcr.prohibit.closed.datasource.usage</emphasis> is
+					set to <emphasis>false</emphasis> and the system property
+					<emphasis>exo.product.developing</emphasis> is set to
+					<emphasis>true</emphasis>, then a warning will be logged in the log
+					file with the full stack trace in order to help identifying the root
+					cause of the issue. In the stack trace, you will be able to know the
+					call stack that closes the datasource.</para>
+				</listitem>
+
+				<listitem>
+					<para>If the system property
+					<emphasis>exo.jcr.prohibit.closed.datasource.usage</emphasis> is
+					set to <emphasis>false</emphasis> and the system property
+					<emphasis>exo.product.developing</emphasis> is set to
+					<emphasis>false</emphasis> usage of closed datasource will be allowed
+					and nothing will be logged or thrown.</para>
+				</listitem>
+			</itemizedlist>
+		</answer>
+	</qandaentry>
+	<qandaentry xml:id="JCR.eXoJCRconfiguration.GettingEffectiveConfigurationAtRuntimeOfAllRepositories">
+		<question>
+			<para>How to get the effective configuration at Runtime of all the repositories?</para>
+		</question>
+		<answer>
+			<para>The effective configuration of all the repositories and their
+			workspaces can be known thanks to the method
+			<emphasis>getConfigurationXML</emphasis>() that is exposed through JMX at
+			the <emphasis>RepositoryServiceConfiguration</emphasis> level in case of a
+			<emphasis>PortalContainer</emphasis> the name of the related MBean will be
+			of type <emphasis>exo:portal=${portal-container-name},service=RepositoryServiceConfiguration</emphasis>.
+			This method will give you the effective configuration in XML format that
+			has been really interpreted by the the JCR core. This could be helpful to
+			understand how your repositories/workspaces are configured especially if
+			you would like to overwrite the configuration for some reasons.</para>
+		</answer>
+	</qandaentry>
+</qandaset>
+</section>

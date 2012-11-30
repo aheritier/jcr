@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+        "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<section id="JCR.DeveloperReference.Basic.FAQs" role="NotInToc">
+  <title>Frequently asked questions</title>
+<qandaset>
+  <qandaentry xml:id="JCR.FAQ.JCR.Core.AvoidMemoryLeaks">
+	<question>
+		<para><emphasis role="bold">How to open and close a session properly to avoid memory leaks?</emphasis></para>
+	</question>
+	<answer>
+	  <programlisting language="java">Session session = repository.login(credentials);
+		try
+		{
+		// here your code
+		}
+		finally
+		{
+		session.logout();
+		}
+	  </programlisting>
+	</answer>
+  </qandaentry>
+
+  <qandaentry>
+      <question xml:id="JCR.FAQ.JCR.Core.CheckIfItemExistsBeforeGettingValue">
+        <para><emphasis role="bold">What should I use to check if an Item exists before getting the Value?</emphasis></para>
+      </question>
+      <answer>
+        <para>Use Session.itemExists(String absPath), Node.hasNode(String
+          relPath) or Property.hasProperty(String name). It's also possible
+          to check Node.hasNodes() and Node.hasProprties().
+        </para>
+      </answer>
+    </qandaentry>
+
+  <qandaentry xml:id="JCR.FAQ.JCR.Core.UsegetNodeByUUID">
+      <question>
+            <para><emphasis role="bold">Does it make sense to have all the node referencable to use getNodeByUUID all the time?</emphasis></para>
+      </question>
+
+      <answer>
+        <para>Until it's applicable for a business logic it can be. But take
+          in account the paths are human readable and lets you think in
+          hierarchy. If it's important a location based approach is
+          preferable.
+        </para>
+      </answer>
+    </qandaentry>
+
+  <qandaentry xml:id="JCR.FAQ.JCR.Core.Session.getNodeByUUIDOrSession.getItem">
+      <question>
+        <para><emphasis role="bold">Is it better to use Session.getNodeByUUID or Session.getItem?</emphasis></para>
+      </question>
+
+      <answer>
+        <para>Session.getNodeByUUID() about 2.5 times faster of
+          Session.getItem(String) and only 25% faster of Node.getNode(String).
+          See the daily tests results for such comparisons, e.g.
+        </para>
+
+        <para>
+          <ulink
+                  url="http://tests.exoplatform.org/JCR/1.12.2-GA/rev.2442/daily-performance-testing-results/jcr.core./index.html">
+            http://tests.exoplatform.org/JCR/1.12.2-GA/rev.2442/daily-performance-testing-results/jcr.core./index.html
+          </ulink>
+        </para>
+      </answer>
+    </qandaentry>
+
+  <qandaentry xml:id="JCR.FAQ.JCR.Core.HowToUseObservationProperly">
+      <question>
+		<para><emphasis role="bold">How to use Observation properly?</emphasis></para>
+      </question>
+      <answer>
+        <para>JCR Observation's a way to listen on persistence changes of a
+          Repository. It provides several options to configure the listener for
+          an interesting only changes. To use properly, it's important to
+          understand concept of events filtering for a registered EventListener
+          (8.3.3 Observation Manager). An often confusing part, it's the
+          <emphasis role="bold">absPath</emphasis>, it's an associated parent of
+          a location you want to observe events on. I.e. it's a parent of child
+          node(s) or this parent property(ies); if
+          <emphasis
+                  role="bold">isDeep
+          </emphasis>
+          is true then you'll get events of all
+          the subtree of child nodes also. The same actual for
+          <emphasis
+                  role="bold">uuid
+          </emphasis>
+          and
+          <emphasis
+                  role="bold">nodeTypeName
+          </emphasis>
+          parameters of
+          ObservationManager.addEventListener() method.
+        </para>
+      </answer>
+    </qandaentry>
+
+  <qandaentry xml:id="JCR.FAQ.JCR.Core.WhatDefaultQueryOrdering">
+      <question><para><emphasis role="bold">What is default query ordering?</emphasis></para></question>
+      <answer>
+        <para>By default (if query do not contains any ordering statements)
+          result nodes is sorted by document order.
+        </para>
+      </answer>
+  </qandaentry>
+  <qandaentry xml:id="JCR.FAQ.JCR.Core.eXoJCRIndexerUsesContentEncoding">
+      <question>
+         <para><emphasis role="bold">How eXo JCR indexer uses content encoding?</emphasis></para>
+      </question>
+      <answer>
+        <para>1. Indexer uses jcr:encoding property of nt:resource node (used
+          as jcr:content child node of nt:file).
+		</para>
+		<para>2. If no jcr:encoding property
+          set the Document Service will use the one configured in the service
+          (defaultEncoding).
+		</para>
+		<para>3. If nothing is configured a JVM, the default
+          encoding will be used.
+        </para>
+      </answer>
+  </qandaentry>
+  <qandaentry xml:id="JCR.FAQ.JCR.Core.UseSessionAfterLogingOut">
+      <question>
+		<para><emphasis role="bold">Can I use Session after logging out?</emphasis></para>
+      </question>
+      <answer>
+        <para>No. Any instance of Session or Node (acquired through session)
+          shouldn't be used after logging out anymore. At least, it is highly
+          recommended not to use.
+        </para>
+      </answer>
+  </qandaentry>
+</qandaset>
+</section>

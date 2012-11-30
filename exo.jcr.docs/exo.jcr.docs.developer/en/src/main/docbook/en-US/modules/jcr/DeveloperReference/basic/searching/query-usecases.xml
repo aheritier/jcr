@@ -3,7 +3,7 @@
         "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 
 <section id="JCR.SearchingRepositoryContent.QueryUsecases">
-  <title>Query Usecases</title>
+  <title>Query usecases</title>
 
   <xi:include href="query-result-settings.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude"/>

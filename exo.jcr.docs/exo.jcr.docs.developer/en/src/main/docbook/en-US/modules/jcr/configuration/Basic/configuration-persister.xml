@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.ConfigurationPersister">
-  <title>JCR Configuration persister</title>
+<!-- 2.1.2 JCR configuration persister -->
+<section id="JCR.ConfigurationPersister" role="NotInToc">
+  <title>JCR configuration persister</title>
   <para>eXo JCR allows using <emphasis>persister</emphasis> to store configuration. In this section, you will understand how to use and configure
   eXo JCR persister.</para>
     <para>On startup <classname>RepositoryServiceConfiguration</classname>
@@ -12,27 +13,26 @@
 
     <para>Configuration with persister:</para>
     
-    <programlisting language="xml">&lt;component&gt;
-    &lt;key&gt;org.exoplatform.services.jcr.config.RepositoryServiceConfiguration&lt;/key&gt;
-    &lt;type&gt;org.exoplatform.services.jcr.impl.config.RepositoryServiceConfigurationImpl&lt;/type&gt;
-    &lt;init-params&gt;
-      &lt;value-param&gt;
-        &lt;name&gt;conf-path&lt;/name&gt;
-        &lt;description&gt;JCR configuration file&lt;/description&gt;
-        &lt;value&gt;/conf/standalone/exo-jcr-config.xml&lt;/value&gt;
-      &lt;/value-param&gt;
-      &lt;properties-param&gt;
-        &lt;name&gt;working-conf&lt;/name&gt;
-        &lt;description&gt;working-conf&lt;/description&gt;
-        &lt;property name="source-name" value="jdbcjcr" /&gt;
-        &lt;property name="dialect" value="mysql" /&gt;
-        &lt;property name="persister-class-name" value="org.exoplatform.services.jcr.impl.config.JDBCConfigurationPersister" /&gt;
-      &lt;/properties-param&gt;
-    &lt;/init-params&gt;
-  &lt;/component&gt;
-  </programlisting>
+<programlisting language="xml">&lt;component&gt;
+&lt;key&gt;org.exoplatform.services.jcr.config.RepositoryServiceConfiguration&lt;/key&gt;
+&lt;type&gt;org.exoplatform.services.jcr.impl.config.RepositoryServiceConfigurationImpl&lt;/type&gt;
+&lt;init-params&gt;
+  &lt;value-param&gt;
+	&lt;name&gt;conf-path&lt;/name&gt;
+	&lt;description&gt;JCR configuration file&lt;/description&gt;
+	&lt;value&gt;/conf/standalone/exo-jcr-config.xml&lt;/value&gt;
+  &lt;/value-param&gt;
+  &lt;properties-param&gt;
+	&lt;name&gt;working-conf&lt;/name&gt;
+	&lt;description&gt;working-conf&lt;/description&gt;
+	&lt;property name="source-name" value="jdbcjcr" /&gt;
+	&lt;property name="dialect" value="mysql" /&gt;
+	&lt;property name="persister-class-name" value="org.exoplatform.services.jcr.impl.config.JDBCConfigurationPersister" /&gt;
+  &lt;/properties-param&gt;
+&lt;/init-params&gt;
+&lt;/component&gt;</programlisting>
 
-    <para>Where:<itemizedlist>
+    <itemizedlist>
         <listitem>
           <para><parameter>source-name</parameter>: JNDI source name
           configured in <classname>InitialContextInitializer</classname>
@@ -49,12 +49,12 @@
         </listitem>
 
         <listitem>
-          <para><parameter>persister-class-name</parameter> - class name of
+          <para><parameter>persister-class-name</parameter> - Class name of
           <classname>ConfigurationPersister</classname> interface
           implementation. (<parameter>persisterClassName</parameter> prior
           v.1.9.)</para>
         </listitem>
-      </itemizedlist></para>
+      </itemizedlist>
 
     <para>If you want to customize, you can implement ConfigurationPersister interface as follows:</para>
     

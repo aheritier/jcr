@@ -7,19 +7,19 @@
   <para>This chapter is divided into 4 administration groups, including:</para>
 	<itemizedlist>
 		<listitem>
-			<para><link linkend="chapter-Administration-Connectors">Connectors</link></para>
+			<para><emphasis role="bold"><link linkend="chapter-Administration-Connectors">Connectors</link></emphasis></para>
 			<para>Details of WebDAV, FTP and JCA Resource Adapter, including configuration, parameters and examples.</para>
 		</listitem>
 		<listitem>
-			<para><link linkend="chapter-Administration-Database">Database</link></para>
+			<para><emphasis role="bold"><link linkend="chapter-Administration-Database">Database</link></emphasis></para>
 			<para>Issues related to the database administration, including multi-language support and DBCleanService; and instructions on how to host several JCR instances on the same database instance.</para>
 		</listitem>
 		<listitem>
-			<para><link linkend="chapter-Administration-Tools">Tools</link></para>
+			<para><emphasis role="bold"><link linkend="chapter-Administration-Tools">Tools</link></emphasis></para>
 			<para>Necessary information about Session Leak Detector, Consistency Checker, and Statistics.</para>
 		</listitem>
 		<listitem>
-			<para><link linkend="chapter-Administration-PerformanceTuning">Performance Tuning</link></para>
+			<para><emphasis role="bold"><link linkend="chapter-Administration-PerformanceTuning">Performance Tuning</link></emphasis></para>
 			<para>Instructions on JBoss AS Tuning, JCR Cache Tuning, Clustering, JVM parameters, and Force Query Hints.</para>
 		</listitem>
 	</itemizedlist>

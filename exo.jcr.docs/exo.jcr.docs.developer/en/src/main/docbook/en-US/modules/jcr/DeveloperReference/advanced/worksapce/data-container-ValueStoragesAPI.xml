@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<section id="JCR.Datacontainer.ValueStoragesAPI">
+    <title>Value storages API</title>
+
+    <para xml:id="JCR.Architecture.ValueStoragesAPI.StoragesProvider">
+      <citetitle>
+        <emphasis role="bold">Storages provider</emphasis>
+      </citetitle>
+    </para>
+
+      <para>Container implementation obtains Values Storages option via
+      ValueStoragePluginProvider component. Provider acts as a factory of
+      Value channels (ValueIOChannel) and has two methods for this
+      purpose:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Return ValueIOChannel matched this property and
+          valueOrderNumer. Null will be returned if no channel matches.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">ValueIOChannel getApplicableChannel(PropertyData property, int valueOrderNumer) throws IOException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Return ValueIOChannel associated with given storageId.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">ValueIOChannel getChannel(String storageId) throws IOException, ValueStorageNotFoundException;
+</programlisting>
+
+      <para>There is also method for consistency check, but this method
+      doesn't used anywhere and storage implementations has it empty.</para>
+
+    <para xml:id="JCR.Architecture.ValueStoragesAPI.ValueStoragePlugin">
+      <citetitle>
+        <emphasis role="bold">Value storage plugin</emphasis>
+      </citetitle>
+    </para>
+
+      <para>Provider implementation should use ValueStoragePlugin abstract
+      class as a base for all storage implementations. Plugin provides support
+      for provider implementation methods. Plugin's methods should be
+      implemented:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Initialize this plugin. Used at start time in
+          ValueStoragePluginProvider.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">public abstract void init(Properties props, ValueDataResourceHolder resources) throws RepositoryConfigurationException, IOException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Open ValueIOChannel.Used in
+          ValueStoragePluginProvider.getApplicableChannel(PropertyData, int)
+          and getChannel(String)</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">public abstract ValueIOChannel openIOChannel() throws IOException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Return true if this storage has the same storageId.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">public abstract boolean isSame(String valueDataDescriptor);
+</programlisting>
+
+    <para xml:id="JCR.Architecture.ValueStoragesAPI.ValueIOChannel">
+      <citetitle>
+        <emphasis role="bold">Value I/O channel</emphasis>
+      </citetitle>
+    </para>
+
+      <para>Channel should implement ValueIOChannel interface. CRUD operation
+      for Value Storage:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Read Property value.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">ValueData read(String propertyId, int orderNumber, int maxBufferSize) throws IOException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Add or update Property value.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">void write(String propertyId, ValueData data) throws IOException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Delete Property all values.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">void delete(String propertyId) throws IOException;
+</programlisting>
+
+    <para xml:id="JCR.Architecture.ValueStoragesAPI.TransactionSupportViaChannel">
+      <citetitle>
+        <emphasis role="bold">Transaction support via channel</emphasis>
+      </citetitle>
+    </para>
+
+      <para>Modification operations should be applied only when committing.
+      Rollback is required for data created cleanup.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Commit channel changes.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">void commit() throws IOException;
+</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>Rollback channel changes.</para>
+        </listitem>
+      </itemizedlist>
+
+      <programlisting language="java">void rollback() throws IOException;
+</programlisting>
+</section>

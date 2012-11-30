@@ -2,7 +2,7 @@
 <!-- This document was created with Syntext Serna Free. -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.WebDAV">
+<section id="JCR.WebDAV" role="NotInToc">
   <title>WebDAV</title>
 
     <para>The WebDAV protocol enables you to use the third party tools to
@@ -26,17 +26,18 @@
     <para>Now WebDav is an extension of the REST service. To get the WebDav
     server ready, you must deploy the REST application. Then, you can access
     any workspaces of your repository by using the following URL:</para>
+	<itemizedlist>
+		<listitem>
+			<para><emphasis role="bold">Standalone mode:</emphasis></para>
+			<para><uri>http://host:port/rest/jcr/{RepositoryName}/{WorkspaceName}/{Path}</uri></para>
+		</listitem>
+		<listitem>
+			<para><emphasis role="bold">Portal mode:</emphasis></para>
+			<para><uri>http://host:port/portal/rest/private/jcr/{RepositoryName}/{WorkspaceName}/{Path}</uri></para>
+		</listitem>
+	</itemizedlist>
 
-    <para>Standalone mode:</para>
-
-    <para><uri>http://host:port/rest/jcr/{RepositoryName}/{WorkspaceName}/{Path}</uri></para>
-
-    <para>Portal mode:</para>
-
-    <para><uri>http://host:port/portal/rest/private/jcr/{RepositoryName}/{WorkspaceName}/{Path}</uri></para>
-
-    <para>When accessing the WebDAV server with the
-    URL<uri>http://localhost:8080/rest/jcr/repository/production</uri>, you
+    <para>When accessing the WebDAV server with the URL: <uri>http://localhost:8080/rest/jcr/repository/production</uri>, you
     might also use "collaboration" (instead of "production") which is the
     default workspace in eXo products. You will be asked to enter your login
     and password. Those will then be checked by using the organization service
@@ -48,10 +49,9 @@
       <para>If you try the "in ECM" option, add "@ecm" to the user's password.
       Alternatively, you may modify jaas.conf by adding the <emphasis
       role="bold">domain=ecm</emphasis> option as follows:</para>
-
-      <programlisting>exo-domain {
-     org.exoplatform.services.security.jaas.BasicLoginModule required domain=ecm;
-};</programlisting>
+		<programlisting>exo-domain {
+			 org.exoplatform.services.security.jaas.BasicLoginModule required domain=ecm;
+		};</programlisting>
     </note>
 
     <para>
@@ -61,9 +61,7 @@
     <itemizedlist>
         <listitem>
             <para>
-                <link linkend="JCR.LinkProducerService">Link
-                    Producer
-                </link>
+                <link linkend="JCR.LinkProducerService">Link Producer</link>
             </para>
         </listitem>
     </itemizedlist>
@@ -168,7 +166,7 @@
   <section id="JCR.WebDAV.Examples">
     <title>Examples</title>
 
-    <para>At present, eXo JCR WebDav server is tested by using MS Internet
+    <para>At present, the eXo JCR WebDav server is tested by using MS Internet
     Explorer, <ulink url="http://www.ics.uci.edu/~webdav">Dav
     Explorer</ulink>, <ulink
     url="http://www.xythos.com/home/xythos/products/xythos_drive.html">Xythos
@@ -176,9 +174,7 @@
 
 	<itemizedlist>
     <listitem>
-      <para xml:id="JCR.WebDAV.Screenshots.MSInternetExplorer"><emphasis role="bold">MS Internet Explorer</emphasis></para>
-
-      <para>(File -&gt; Open as Web Folder)</para>
+      <para xml:id="JCR.WebDAV.Screenshots.MSInternetExplorer"><emphasis role="bold">MS Internet Explorer</emphasis>: Click <emphasis role="bold">File -&gt; Open as Web Folder</emphasis>.</para>
 
       <mediaobject>
         <imageobject>
@@ -209,11 +205,7 @@
     </listitem>
 
     <listitem>
-      <para xml:id="JCR.WebDAV.Screenshots.MicrosoftOffice2003"><emphasis role="bold">Microsoft Office 2003</emphasis></para>
-
-      <para>(as client) (File-&gt;Open with typing http://... href in the file
-      name box)</para>
-
+      <para xml:id="JCR.WebDAV.Screenshots.MicrosoftOffice2003"><emphasis role="bold">Microsoft Office 2003</emphasis>(as client): Select <emphasis role="bold">File-&gt;Open</emphasis> with typing http://... href in the file name box.</para>
       <mediaobject>
         <imageobject>
           <imagedata fileref="images/protocols/webdav_msoffice2003.jpg" />
@@ -223,7 +215,6 @@
 
     <listitem>
       <para xml:id="JCR.WebDAV.Screenshots.UbuntuLinux"><emphasis role="bold">Ubuntu Linux</emphasis></para>
-
       <mediaobject>
         <imageobject>
           <imagedata fileref="images/protocols/webdav_ubuntulinux.jpg" />
@@ -250,122 +241,122 @@
 
         <tbody>
           <row>
-            <entry>COPY</entry>
+            <entry><command>COPY</command></entry>
 
-            <entry>Workspace.copy(...)</entry>
+            <entry><command>Workspace.copy(...)</command></entry>
           </row>
 
           <row>
-            <entry>DELETE</entry>
+            <entry><command>DELETE</command></entry>
 
-            <entry>Node.remove()</entry>
+            <entry><command>Node.remove()</command></entry>
           </row>
 
           <row>
-            <entry>GET</entry>
+            <entry><command>GET</command></entry>
 
-            <entry>Node.getProperty(...); Property.getValue()</entry>
+            <entry><command>Node.getProperty(...); Property.getValue()</command></entry>
           </row>
 
           <row>
-            <entry>HEAD</entry>
+            <entry><command>HEAD</command></entry>
 
-            <entry>Node.getProperty(...); Property.getLength()</entry>
+            <entry><command>Node.getProperty(...); Property.getLength()</command></entry>
           </row>
 
           <row>
-            <entry>MKCOL</entry>
+            <entry><command>MKCOL</command></entry>
 
-            <entry>Node.addNode(...)</entry>
+            <entry><command>Node.addNode(...)</command></entry>
           </row>
 
           <row>
-            <entry>MOVE</entry>
+            <entry><command>MOVE</command></entry>
 
-            <entry>Session.move(...) or Workspace.move(...)</entry>
+            <entry><command>Session.move(...) or Workspace.move(...)</command></entry>
           </row>
 
           <row>
-            <entry>PROPFIND</entry>
+            <entry><command>PROPFIND</command></entry>
 
-            <entry>Session.getNode(...); Node.getNode(...);
-            Node.getNodes(...); Node.getProperties()</entry>
+            <entry><command>Session.getNode(...); Node.getNode(...);
+            Node.getNodes(...); Node.getProperties()</command></entry>
           </row>
 
           <row>
-            <entry>PROPPATCH</entry>
+            <entry><command>PROPPATCH</command></entry>
 
-            <entry>Node.setProperty(...);
-            Node.getProperty(...).remove()</entry>
+            <entry><command>Node.setProperty(...);
+            Node.getProperty(...).remove()</command></entry>
           </row>
 
           <row>
-            <entry>PUT</entry>
+            <entry><command>PUT</command></entry>
 
-            <entry>Node.addNode("node","nt:file");
-            Node.setProperty("jcr:data", "data")</entry>
+            <entry><command>Node.addNode("node","nt:file");
+            Node.setProperty("jcr:data", "data")</command></entry>
           </row>
 
           <row>
-            <entry>CHECKIN</entry>
+            <entry><command>CHECKIN</command></entry>
 
-            <entry>Node.checkin()</entry>
+            <entry><command>Node.checkin()</command></entry>
           </row>
 
           <row>
-            <entry>CHECKOUT</entry>
+            <entry><command>CHECKOUT</command></entry>
 
-            <entry>Node.checkout()</entry>
+            <entry><command>Node.checkout()</command></entry>
           </row>
 
           <row>
-            <entry>REPORT</entry>
+            <entry><command>REPORT</command></entry>
 
-            <entry>Node.getVersionHistory(); VersionHistory.getAllVersions();
-            Version.getProperties()</entry>
+            <entry><command>Node.getVersionHistory(); VersionHistory.getAllVersions();
+            Version.getProperties()</command></entry>
           </row>
 
           <row>
-            <entry>RESTORE</entry>
+            <entry><command>RESTORE</command></entry>
 
-            <entry>Node.restore(...)</entry>
+            <entry><command>Node.restore(...)</command></entry>
           </row>
 
           <row>
-            <entry>UNCHECKOUT</entry>
+            <entry><command>UNCHECKOUT</command></entry>
 
-            <entry>Node.restore(...)</entry>
+            <entry><command>Node.restore(...)</command></entry>
           </row>
 
           <row>
-            <entry>VERSION-CONTROL</entry>
+            <entry><command>VERSION-CONTROL</command></entry>
 
-            <entry>Node.addMixin("mix:versionable")</entry>
+            <entry><command>Node.addMixin("mix:versionable")</command></entry>
           </row>
 
           <row>
-            <entry>LOCK</entry>
+            <entry><command>LOCK</command></entry>
 
-            <entry>Node.lock(...)</entry>
+            <entry><command>Node.lock(...)</command></entry>
           </row>
 
           <row>
-            <entry>UNLOCK</entry>
+            <entry><command>UNLOCK</command></entry>
 
-            <entry>Node.unlock()</entry>
+            <entry><command>Node.unlock()</command></entry>
           </row>
 
           <row>
-            <entry>ORDERPATCH</entry>
+            <entry><command>ORDERPATCH</command></entry>
 
-            <entry>Node.orderBefore(...)</entry>
+            <entry><command>Node.orderBefore(...)</command></entry>
           </row>
 
           <row>
-            <entry>SEARCH</entry>
+            <entry><command>SEARCH</command></entry>
 
-            <entry>Workspace.getQueryManager(); QueryManager.createQuery();
-            Query.execute()</entry>
+            <entry><command>Workspace.getQueryManager(); QueryManager.createQuery();
+            Query.execute()</command></entry>
           </row>
         </tbody>
       </tgroup>
@@ -376,19 +367,16 @@
     <title>Restrictions</title>
 
     <para>There are some restrictions for WebDAV in different Operating systems.</para>
-	<itemizedlist>
-	<listitem>
+	<citetitle>
       <para xml:id="JCR.WebDAV.Restrictions.Windows7"><emphasis role="bold">Windows 7</emphasis></para>
+	</citetitle>
       <para>When you try to set up a web folder by “adding a network location”
       or “map a network drive” through My Computer, you can get an error
       message saying that either “The folder you entered does not appear to be
       valid. Please choose another” or “Windows cannot access… Check the
       spelling of the name. Otherwise, there might be…”. These errors may
       appear when you are using SSL or non-SSL.</para>
-
-	<citetitle>
-		  <para><emphasis role="bold">To fix this, do as follows:</emphasis></para>
-	</citetitle>
+	  <para>To fix this problem, do the following steps:</para>
 	  <procedure>
         <step>
 			<para>Go to Windows Registry Editor.</para>
@@ -402,12 +390,10 @@
           <para>Change the value to 2.</para>
         </step>
 	  </procedure>
-	</listitem>
-
-
-
-	<listitem>
-      <para xml:id="JCR.WebDAV.Restrictions.MicrosoftOffice2010"><emphasis role="bold">Microsoft Office 2010</emphasis></para>
+	
+	  <citetitle>
+		<para xml:id="JCR.WebDAV.Restrictions.MicrosoftOffice2010"><emphasis role="bold">Microsoft Office 2010</emphasis></para>
+	  </citetitle>
 
       <para>If you have Microsoft Office 2010 applications or Microsoft Office
       2007 applications installed on a client computer. From that client
@@ -432,9 +418,7 @@
             selected file does not open.</para>
           </listitem>
         </itemizedlist></para>
-	<citetitle>
-      <para><emphasis role="bold">Enable Basic authentication on the client computer:</emphasis></para>
-	</citetitle>
+      <para>To enable the Basic authentication on the client computer, do as follows:</para>
 	<procedure>
         <step>
           <para>Click Start, type regedit in the Start Search box, and then
@@ -458,7 +442,6 @@
           <para>In the Value data box, type 2, and then click OK.</para>
         </step>
 	 </procedure>
-	</listitem>
-   </itemizedlist>
   </section>
+  <xi:include href="faq-webdav.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </section>

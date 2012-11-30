@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.ExternalValueStorages">
+<section id="JCR.ExternalValueStorages" role="NotInToc">
   <title>External Value Storages</title>
 
     <para>By default JCR Values are stored in the Workspace Data container
@@ -19,8 +19,9 @@
 
     <note>
       <para id="JCR.ExternalValueStorages.DisablingValueStorage">JCR allows to disable value storage by adding property into
-      configuration. For interal usage and testing purpose only.</para>
+      configuration. For interal usage and testing purpose only.
       <programlisting language="xml">&lt;property name="enabled" value="false" /&gt;</programlisting>
+	  </para>
       <para>Be careful, all stored values will be unaccessible.</para>
     </note>
 
@@ -28,8 +29,7 @@
   <section id="JCR.ExternalValueStorages.TreeFileValueStorage">
     <title>Tree File Value Storage</title>
 
-    <para>Holds Values in tree-like FileSystem files.
-    <property>path</property> property points to the root directory to store
+    <para>Holds Values in tree-like FileSystem files. The <property>path</property> property points to the root directory to store
     the files.</para>
 
     <para>This is a recommended type of external storage, it can contain large
@@ -38,22 +38,25 @@
     <para>A disadvantage is that it's a higher time on Value deletion due to
     unused tree-nodes remove.</para>
 
-    <programlisting language="xml">&lt;value-storage id="Storage #1" class="org.exoplatform.services.jcr.impl.storage.value.fs.TreeFileValueStorage"&gt;
-     &lt;properties&gt;
-       &lt;property name="path" value="data/values"/&gt;
-     &lt;/properties&gt;
-     &lt;filters&gt;
-       &lt;filter property-type="Binary" min-value-size="1M"/&gt;
-     &lt;/filters&gt;</programlisting>
-
-    <para>Where :<simplelist>
-        <member><parameter>id</parameter>: The value storage unique
+<programlisting language="xml">&lt;value-storage id="Storage #1" class="org.exoplatform.services.jcr.impl.storage.value.fs.TreeFileValueStorage"&gt;
+	&lt;properties&gt;
+		&lt;property name="path" value="data/values"/&gt;
+	&lt;/properties&gt;
+	&lt;filters&gt;
+		&lt;filter property-type="Binary" min-value-size="1M"/&gt;
+	&lt;/filters&gt;</programlisting>
+		
+		<itemizedlist>
+			<listitem><para><parameter>id</parameter>: The value storage is a unique
         identifier, used for linking with properties stored in workspace
-        container.</member>
-
-        <member><parameter>path</parameter>: A location where value files will
-        be stored.</member>
-      </simplelist></para>
+        container.</para>
+			</listitem>
+			<listitem>
+				<para><parameter>path</parameter>: A location where value files will
+        be stored.</para>
+			</listitem>
+		</itemizedlist>
+  
 
     <para>Each file value storage can have the <function>filter(s)</function>
     for incoming values. A filter can match values by property type
@@ -73,23 +76,23 @@
     <property>min-value-size</property> and will be stored in the path
     "data/20Mvalues", all other in "data/values".</para>
 
-    <programlisting language="xml">&lt;value-storages&gt;
-  &lt;value-storage id="Storage #1" class="org.exoplatform.services.jcr.impl.storage.value.fs.TreeFileValueStorage"&gt;
-    &lt;properties&gt;
-      &lt;property name="path" value="data/20Mvalues"/&gt;
-    &lt;/properties&gt;
-    &lt;filters&gt;
-      &lt;filter property-type="Binary" min-value-size="20M"/&gt;
-    &lt;/filters&gt;
-  &lt;value-storage&gt;
-  &lt;value-storage id="Storage #2" class="org.exoplatform.services.jcr.impl.storage.value.fs.TreeFileValueStorage"&gt;
-    &lt;properties&gt;
-      &lt;property name="path" value="data/values"/&gt;
-    &lt;/properties&gt;
-    &lt;filters&gt;
-      &lt;filter property-type="Binary" min-value-size="1M"/&gt;
-    &lt;/filters&gt;
-  &lt;value-storage&gt;
+<programlisting language="xml">&lt;value-storages&gt;
+	&lt;value-storage id="Storage #1" class="org.exoplatform.services.jcr.impl.storage.value.fs.TreeFileValueStorage"&gt;
+		&lt;properties&gt;
+			&lt;property name="path" value="data/20Mvalues"/&gt;
+		&lt;/properties&gt;
+		&lt;filters&gt;
+			&lt;filter property-type="Binary" min-value-size="20M"/&gt;
+		&lt;/filters&gt;
+	&lt;value-storage&gt;
+	&lt;value-storage id="Storage #2" class="org.exoplatform.services.jcr.impl.storage.value.fs.TreeFileValueStorage"&gt;
+		&lt;properties&gt;
+			&lt;property name="path" value="data/values"/&gt;
+		&lt;/properties&gt;
+		&lt;filters&gt;
+			&lt;filter property-type="Binary" min-value-size="1M"/&gt;
+		&lt;/filters&gt;
+	&lt;value-storage&gt;
 &lt;value-storages&gt;</programlisting>
   </section>
 
@@ -98,23 +101,22 @@
     <title>Simple File Value Storage</title>
 
     <note>
-      <para>It's not recommended to use in production due to low capacity
-      capabilities on most file systems.</para>
+      <para>It is not recommended to use in production due to low capacity capabilities on most file systems.</para>
 
-      <para>But if you're sure in your file-system or data amount is small it
+      <para>But if you are sure in your file-system or data amount is small it
       may be useful for you as haves a faster speed of Value removal.</para>
     </note>
 
     <para>Hold Values in flat FileSystem files. <property>path</property>
     property points to root directory in order to store files</para>
 
-    <programlisting language="xml">&lt;value-storage id="Storage #1" class="org.exoplatform.services.jcr.impl.storage.value.fs.SimpleFileValueStorage"&gt;
-     &lt;properties&gt;
-       &lt;property name="path" value="data/values"/&gt;
-     &lt;/properties&gt;
-     &lt;filters&gt;
-       &lt;filter property-type="Binary" min-value-size="1M"/&gt;
-     &lt;/filters&gt;</programlisting>
+<programlisting language="xml">&lt;value-storage id="Storage #1" class="org.exoplatform.services.jcr.impl.storage.value.fs.SimpleFileValueStorage"&gt;
+	&lt;properties&gt;
+		&lt;property name="path" value="data/values"/&gt;
+	&lt;/properties&gt;
+	&lt;filters&gt;
+		&lt;filter property-type="Binary" min-value-size="1M"/&gt;
+	&lt;/filters&gt;</programlisting>
   </section>
   <!-- 2.2.7.3 Content Addressable Value storage (CAS) support -->
   <section id="JCR.ExternalValueStorages.ContentAddressableValueStorageSupport">
@@ -171,50 +173,54 @@
     <para>To enable CAS support, just configure it in JCR Repositories
     configuration as we do for other Value Storages.</para>
 
-    <programlisting language="xml">&lt;workspaces&gt;
-        &lt;workspace name="ws"&gt;
-          &lt;container class="org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer"&gt;
-            &lt;properties&gt;
-              &lt;property name="source-name" value="jdbcjcr"/&gt;
-              &lt;property name="dialect" value="oracle"/&gt;
-              &lt;property name="multi-db" value="false"/&gt;
-              &lt;property name="update-storage" value="false"/&gt;
-              &lt;property name="max-buffer-size" value="200k"/&gt;
-              &lt;property name="swap-directory" value="target/temp/swap/ws"/&gt;
-            &lt;/properties&gt;
-            &lt;value-storages&gt;
+<programlisting language="xml">&lt;workspaces&gt;
+    &lt;workspace name="ws"&gt;
+		&lt;container class="org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer"&gt;
+		&lt;properties&gt;
+			&lt;property name="source-name" value="jdbcjcr"/&gt;
+			&lt;property name="dialect" value="oracle"/&gt;
+			&lt;property name="multi-db" value="false"/&gt;
+			&lt;property name="update-storage" value="false"/&gt;
+			&lt;property name="max-buffer-size" value="200k"/&gt;
+			&lt;property name="swap-directory" value="target/temp/swap/ws"/&gt;
+		&lt;/properties&gt;
+		&lt;value-storages&gt;
 &lt;!------------------- here -----------------------&gt;
-              &lt;value-storage id="ws" class="org.exoplatform.services.jcr.impl.storage.value.fs.CASableTreeFileValueStorage"&gt;
-                &lt;properties&gt;
-                  &lt;property name="path" value="target/temp/values/ws"/&gt;
-                  &lt;property name="digest-algo" value="MD5"/&gt;
-                  &lt;property name="vcas-type" value="org.exoplatform.services.jcr.impl.storage.value.cas.JDBCValueContentAddressStorageImpl"/&gt;
-                  &lt;property name="jdbc-source-name" value="jdbcjcr"/&gt;
-                  &lt;property name="jdbc-dialect" value="oracle"/&gt;
-                &lt;/properties&gt;
-                &lt;filters&gt;
-                  &lt;filter property-type="Binary"/&gt;
-                &lt;/filters&gt;
-              &lt;/value-storage&gt;
-            &lt;/value-storages&gt;</programlisting>
+		&lt;value-storage id="ws" class="org.exoplatform.services.jcr.impl.storage.value.fs.CASableTreeFileValueStorage"&gt;
+			&lt;properties&gt;
+				&lt;property name="path" value="target/temp/values/ws"/&gt;
+				&lt;property name="digest-algo" value="MD5"/&gt;
+				&lt;property name="vcas-type" value="org.exoplatform.services.jcr.impl.storage.value.cas.JDBCValueContentAddressStorageImpl"/&gt;
+				&lt;property name="jdbc-source-name" value="jdbcjcr"/&gt;
+				&lt;property name="jdbc-dialect" value="oracle"/&gt;
+			&lt;/properties&gt;
+			&lt;filters&gt;
+				&lt;filter property-type="Binary"/&gt;
+			&lt;/filters&gt;
+		&lt;/value-storage&gt;
+	&lt;/value-storages&gt;</programlisting>
 
-    <para>Properties:<simplelist>
-        <member><parameter>digest-algo</parameter>: Digest hash algorithm (MD5
-        and SHA1 were tested);</member>
-
-        <member><parameter>vcas-type</parameter>: Value CAS internal data
+	<itemizedlist>
+		<listitem>
+			<para><parameter>digest-algo</parameter>: Digest hash algorithm (MD5 and SHA1 were tested).</para>
+		</listitem>
+		<listitem>
+			<para><parameter>vcas-type</parameter>: Value CAS internal data
         type, JDBC backed is currently implemented
-        org.exoplatform.services.jcr.impl.storage.value.cas.JDBCValueContentAddressStorageImp;l</member>
-
-        <member><parameter>jdbc-source-name</parameter>:
+        org.exoplatform.services.jcr.impl.storage.value.cas.JDBCValueContentAddressStorageImp;l</para>
+		</listitem>
+		<listitem>
+			<para><parameter>jdbc-source-name</parameter>:
         JDBCValueContentAddressStorageImpl specific parameter, database will
         be used to save CAS metadata. It's simple to use same as in workspace
-        container;</member>
-
-        <member><parameter>jdbc-dialect</parameter>:
+        container;</para>
+		</listitem>
+		<listitem>
+			<para><parameter>jdbc-dialect</parameter>:
         JDBCValueContentAddressStorageImpl specific parameter, database
         dialect. It's simple to use the same as in workspace
-        container;</member>
-      </simplelist></para>
+        container;</para>
+		</listitem>
+	</itemizedlist>
   </section>
 </section>

@@ -8,8 +8,7 @@
     creation on <ulink url="http://groovy.codehaus.org">Groovy
     script</ulink>.</para>
 
-    <para>The feature bases on <link linkend="WS.RestFramework">RESTful
-    framework</link> and uses ResourceContainer concept.</para>
+    <para>The feature bases on RESTful framework and uses ResourceContainer concept.</para>
 
   <para xml:id="JCR.RESTServicesOnGroovy.Usage">
     <citetitle>
@@ -18,10 +17,6 @@
   </para>
     <para>Scripts should extend ResourceContainer and should be stored in JCR
     as a node of type exo:groovyResourceContainer.</para>
-
-    <para>Detailed REST services step-by-step implementation check there <link
-    linkend="WS.RestServiceTutorial">Create REST service step by
-    step</link>.</para>
 
     <para>Component configuration enables Groovy services loader:</para>
 

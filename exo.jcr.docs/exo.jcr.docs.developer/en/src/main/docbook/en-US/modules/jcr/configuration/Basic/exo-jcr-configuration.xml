@@ -1,7 +1,8 @@
-<section id="JCR.eXoJCRconfiguration.JCRConfiguration">
-    <title>JCR Configuration</title>
+<!-- 2.1.1 JCR Configuration -->
+<section id="JCR.eXoJCRconfiguration.JCRConfiguration" role="NotInToc">
+    <title>JCR configuration</title>
 
-    <para>The Configuration is defined in an XML file (see DTD below).</para>
+    <para>The JCR Configuration is defined in an <filename>.xml</filename> file as below:</para>
     <programlisting language="xml">&lt;!ELEMENT repository-service (repositories)&gt;
 &lt;!ATTLIST repository-service default-repository NMTOKEN #REQUIRED&gt;
 &lt;!ELEMENT repositories (repository)&gt;
@@ -66,6 +67,30 @@
         5 days, 4w - 4 weeks.</para>
       </listitem>
     </itemizedlist>
+	<para>The elements in the above configuration file are detailed in the followings:</para>
+	<itemizedlist>
+		<listitem>
+			<para><link linkend="JCR.eXoJCRconfiguration.Repository">Repository</link></para>
+		</listitem>
+		<listitem>
+			<para><link linkend="JCR.eXoJCRconfiguration.workspace">Workspace</link></para>
+		</listitem>
+		<listitem>
+			<para><link linkend="JCR.ConfigurationPersister.ValueStoragePlugin">Value Storage Plugin for Data Container</link></para>
+		</listitem>
+		<listitem>
+			<para><link linkend="JCR.eXoJCRconfiguration.InitializerConfiguration">Initializer</link></para>
+		</listitem>
+		<listitem>
+			<para><link linkend="JCR.eXoJCRconfiguration.CacheConfiguration">Cache</link></para>
+		</listitem>
+		<listitem>
+			<para><link linkend="JCR.eXoJCRconfiguration.QueryHandlerConfiguration">Query Handler</link></para>
+		</listitem>
+		<listitem>
+			<para><link linkend="JCR.eXoJCRconfiguration.LockManagerConfiguration">Lock Manager</link></para>
+		</listitem>
+	</itemizedlist>
 
 <xi:include href="JCRConfiguration/Repository.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 <xi:include href="JCRConfiguration/Workspace.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> 

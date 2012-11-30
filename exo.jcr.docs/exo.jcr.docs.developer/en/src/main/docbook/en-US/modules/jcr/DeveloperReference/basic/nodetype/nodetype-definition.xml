@@ -2,54 +2,11 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.NodeTypes.NodeTypesDefinition">
-    <title>Node Types definition</title>
+    <title>Node type definition</title>
 
-    <para>Node type registration extension is declared in
-    org.exoplatform.services.jcr.core.nodetype.ExtendedNodeTypeManager
-    interface</para>
+    <para>The Node type definition file is in the following format:</para>
 
-    <para>Your custom service can register some neccessary predefined node
-    types at the start-up time. The node definition should be placed in a
-    special XML file (see DTD below) and declared in the service's
-    configuration file thanks to eXo component plugin mechanism, described as
-    follows:</para>
-
-    <programlisting language="xml">&lt;external-component-plugins&gt;
-  &lt;target-component&gt;org.exoplatform.services.jcr.RepositoryService&lt;/target-component&gt;
-      &lt;component-plugin&gt;
-        &lt;name&gt;add.nodeType&lt;/name&gt;
-        &lt;set-method&gt;addPlugin&lt;/set-method&gt;
-        &lt;type&gt;org.exoplatform.services.jcr.impl.AddNodeTypePlugin&lt;/type&gt;
-        &lt;init-params&gt;
-          &lt;values-param&gt;
-            &lt;name&gt;autoCreatedInNewRepository&lt;/name&gt;
-            &lt;description&gt;Node types configuration file&lt;/description&gt;
-            &lt;value&gt;jar:/conf/test/nodetypes-tck.xml&lt;/value&gt;
-            &lt;value&gt;jar:/conf/test/nodetypes-impl.xml&lt;/value&gt;
-          &lt;/values-param&gt;
-    &lt;values-param&gt;
-            &lt;name&gt;repo1&lt;/name&gt;
-            &lt;description&gt;Node types configuration file for repository with name repo1&lt;/description&gt;
-            &lt;value&gt;jar:/conf/test/nodetypes-test.xml&lt;/value&gt;
-          &lt;/values-param&gt;
-    &lt;values-param&gt;
-            &lt;name&gt;repo2&lt;/name&gt;
-            &lt;description&gt;Node types configuration file for repository with name repo2&lt;/description&gt;
-            &lt;value&gt;jar:/conf/test/nodetypes-test2.xml&lt;/value&gt;
-          &lt;/values-param&gt;
-        &lt;/init-params&gt;
-      &lt;/component-plugin&gt;</programlisting>
-
-    <para>There are two types of registration. The first type is the
-    registration of node types in all created repositories, it is configured
-    in values-param with the name <emphasis
-    role="bold">autoCreatedInNewRepository</emphasis>. The second type is
-    registration of node types in specified repository and it is configured in
-    values-param with the name of repository.</para>
-
-    <para>Node type definition file format:</para>
-
-    <programlisting language="xml">  &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<programlisting language="xml">  &lt;?xml version="1.0" encoding="UTF-8"?&gt;
   &lt;!DOCTYPE nodeTypes [
    &lt;!ELEMENT nodeTypes (nodeType)*&gt;
       &lt;!ELEMENT nodeType (supertypes?|propertyDefinitions?|childNodeDefinitions?)&gt;

@@ -1,29 +1,37 @@
-<section id="JCR.eXoJCRconfiguration.InitializerConfiguration">
+<!-- 2.1.1.4 Initializer -->
+<section id="JCR.eXoJCRconfiguration.InitializerConfiguration" role="NotInToc">
     <title>Initializer</title>
 
     <note><para>This configuration is optional.</para></note>
-
-    <para><emphasis role="bold">class</emphasis>: Initializer implementation
-    class.</para>
-
-    <para><emphasis role="bold">properties</emphasis>: The list of properties
-    (name-value pairs). Properties are supported.</para>
-
-    <para><emphasis role="bold">root-nodetype</emphasis>: The node type for
-    root node initialization.</para>
-
-    <para><emphasis role="bold">root-permissions</emphasis>: Default
-    permissions of the root node. It is defined as a set of
-    semicolon-delimited permissions containing a group of space-delimited
-    identities (user, group etc, see Organization service documentation for
-    details) and the type of permission. For example any read; <emphasis
-    role="bold">:/admin read;</emphasis>:/admin add_node; <emphasis
-    role="bold">:/admin set_property;</emphasis>:/admin remove means that
-    users from group <emphasis role="bold">admin</emphasis> have all
-    permissions and other users have only a 'read' permission.</para>
-
-    <para>Configurable initializer adds a capability to override workspace
-    initial startup procedure (used for Clustering). Also it replaces
-    workspace element parameters auto-init-root-nodetype and
-    auto-init-permissions with root-nodetype and root-permissions.</para>
+    <itemizedlist>
+        <listitem>
+            <para><emphasis role="bold">class</emphasis>: Initializer implementation
+            class.</para>
+        </listitem>
+        <listitem>
+            <para><emphasis role="bold">properties</emphasis>: The list of properties
+            (name-value pairs). Properties are supported.</para>
+        </listitem>
+        <listitem>
+            <para><emphasis role="bold">root-nodetype</emphasis>: The node type for
+            root node initialization.</para>
+        </listitem>
+        <listitem>
+            <para><emphasis role="bold">root-permissions</emphasis>: Default
+            permissions of the root node. It is defined as a set of
+            semicolon-delimited permissions containing a group of space-delimited
+            identities (user, group etc, see Organization service documentation for
+            details) and the type of permission. For example any read; <emphasis
+            role="bold">:/admin read;</emphasis>:/admin add_node; <emphasis
+            role="bold">:/admin set_property;</emphasis>:/admin remove means that
+            users from group <emphasis role="bold">admin</emphasis> have all
+            permissions and other users have only a 'read' permission.</para>
+        </listitem>
+        <listitem>
+            <para>Configurable initializer adds a capability to override workspace
+            initial startup procedure (used for Clustering). Also it replaces
+            workspace element parameters auto-init-root-nodetype and
+            auto-init-permissions with root-nodetype and root-permissions.</para>
+        </listitem>
+    </itemizedlist>
   </section>

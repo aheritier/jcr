@@ -8,13 +8,11 @@
   word.</para>
 
   <note>
-    <para>See also about synonym provider configuration - <link
-    linkend="JCR.SearchingRepositoryContent">Searching Repository
-    Content</link></para>
+    <para>See also about synonym provider configuration in <link linkend="JCR.SearchingRepositoryContent">Searching Repository
+    Content</link>.</para>
   </note>
 
-  <para>synonym provider must be configured in indexing-configuration.xml
-  :</para>
+  <para>The synonym provider must be configured in <filename>indexing-configuration.xml</filename>:</para>
 
   <programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
    &lt;properties&gt;
@@ -25,7 +23,7 @@
    &lt;/properties&gt;
 &lt;/query-handler&gt;</programlisting>
 
-  <para>File synonym.properties contains next synonyms list:</para>
+  <para>The <filename>synonym.properties</filename> file contains next synonyms list:</para>
 
   <programlisting>ASF=Apache Software Foundation
 quick=fast

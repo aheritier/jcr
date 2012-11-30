@@ -4,7 +4,7 @@
 <section id="JCR.OrderByDescendant">
   <title>Order by Descendant Node Property</title>
 
-  <para>Find all nodes with the primary type 'nt:unstructured' and sort them
+  <para>Find all nodes with the 'nt:unstructured' primary type and sort them
   by the property value of descendant nodes with the relative path
   '/a/b'.</para>
 
@@ -91,7 +91,8 @@
       <emphasis role="bold">Query Execution</emphasis>
     </citetitle>
   </para>
-
+     <itemizedlist>
+        <listitem>
     <para><emphasis role="bold">XPath</emphasis></para>
 
     <programlisting language="java">// make XPath query
@@ -101,10 +102,11 @@ String xpathStatement = "/jcr:root/* order by a/b/c/@prop descending;
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+     </listitem>
+  </itemizedlist>
   <para xml:id="JCR.OrderByDescendant.FetchingResult">
     <citetitle>
-      <emphasis role="bold">Fetch result</emphasis>
+      <emphasis role="bold">Fetching result</emphasis>
     </citetitle>
   </para>
 

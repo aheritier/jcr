@@ -4,8 +4,8 @@
 <section id="JCR.ExactPathConstraint">
   <title>Exact Path Constraint</title>
 
-  <para>Find a node with the primary type 'nt:file' that is located on the
-  exact path "/folder1/folder2/document1".</para>
+  <para>Find a node with the 'nt:file' primary type that is located on the
+  "/folder1/folder2/document1" exact path.</para>
 
   <para xml:id="JCR.ExactPathConstraint.RepositoryStructure">
     <citetitle>
@@ -56,10 +56,13 @@
       <emphasis role="bold">Query Execution</emphasis>
     </citetitle>
   </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">SQL</emphasis>
+      </para>
 
-    <para><emphasis role="bold">SQL</emphasis></para>
-
-    <programlisting language="java">// make SQL query
+      <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
 // we want find 'document1'
 String sqlStatement = "SELECT * FROM nt:file WHERE jcr:path = '/folder1/folder2/document1'";
@@ -67,10 +70,13 @@ String sqlStatement = "SELECT * FROM nt:file WHERE jcr:path = '/folder1/folder2/
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
+    </listitem>
+    <listitem>
+      <para>
+        <emphasis role="bold">XPath</emphasis>
+      </para>
 
-    <para><emphasis role="bold">XPath</emphasis></para>
-
-    <programlisting language="java">// make SQL query
+      <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
 // we want to find 'document1'
 String xpathStatement = "/jcr:root/folder1[1]/folder2[1]/element(document1,nt:file)[1]";
@@ -82,10 +88,11 @@ QueryResult result = query.execute();</programlisting>
     <para>Remark: The indexes [1] are used in order to get the same result as
     the SQL statement. SQL by default only returns the first node, whereas
     XPath fetches by default all nodes.</para>
-
+    </listitem>
+  </itemizedlist>
   <para xml:id="JCR.ExactPathConstraint.FetchingResult">
     <citetitle>
-      <emphasis role="bold">Fetch result</emphasis>
+      <emphasis role="bold">Fetching result</emphasis>
     </citetitle>
   </para>
 

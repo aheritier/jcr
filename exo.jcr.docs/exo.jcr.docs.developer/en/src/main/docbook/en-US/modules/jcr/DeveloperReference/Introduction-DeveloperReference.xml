@@ -1,7 +1,7 @@
-<para>
+<simplesect>
 <para>The main purpose of content repository is to maintain the data.
     The heart of content repository is the data model:
-  </para>
+</para>
 
   <para>
     <itemizedlist>
@@ -32,7 +32,7 @@
 
     <mediaobject>
       <imageobject>
-        <imagedata fileref="images/item-hierarchy.gif"/>
+        <imagedata align="center" fileref="images/item-hierarchy.gif"/>
       </imageobject>
     </mediaobject>
   </figure>
@@ -47,12 +47,14 @@
     Binary, Long, Boolean, Double, Date, Reference, Path).
   </para>
 
-  <para>It is important to note that the data model for the interface (the
+<note>
+  <para>The data model for the interface (the
     repository model) is rarely the same as the data models used by the
     repository's underlying storage subsystems. The repository knows how to
     make the client's changes persistent because that is part of the
     repository configuration, rather than part of the application
     programming task.
   </para>
-</para>
+</note>
+</simplesect>
 

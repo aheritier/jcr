@@ -4,8 +4,8 @@
 <section id="JCR.FindNodesCaseInsensitive">
   <title>Finding Nodes in a Case-Insensitive Way</title>
 
-  <para>Find all nodes with a mixin type 'mix:title' and where the property
-  'jcr:title' equals 'casesensitive' in lower or upper case.</para>
+  <para>Find all nodes with the 'mix:title' mixin type and where the 'jcr:title' property
+  equals 'casesensitive' in lower or upper case.</para>
 
   <para xml:id="JCR.FindNodesCaseInsensitive.RepositoryStructure">
     <citetitle>
@@ -45,58 +45,70 @@
     <itemizedlist>
       <listitem>
         <para>UPPER case</para>
-      </listitem>
-    </itemizedlist>
+      <itemizedlist>
+        <listitem>
+          <para>
+            <emphasis role="bold">SQL</emphasis>
+          </para>
 
-    <para><emphasis role="bold">SQL</emphasis></para>
-
-    <programlisting language="java">// make SQL query
+          <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
 // create query
 String sqlStatement = "SELECT * FROM mix:title WHERE UPPER(jcr:title) = 'CASESENSITIVE'";
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
+        </listitem>
+        <listitem>
+          <para>
+            <emphasis role="bold">XPath</emphasis>
+          </para>
 
-    <para><emphasis role="bold">XPath</emphasis></para>
-
-    <programlisting language="java">// make XPath query
+          <programlisting language="java">// make XPath query
 QueryManager queryManager = workspace.getQueryManager();
 // create query
 String xpathStatement = "//element(*,mix:title)[fn:upper-case(@jcr:title)='CASESENSITIVE']";
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
-    <itemizedlist>
+        </listitem>
+      </itemizedlist>
+      </listitem>
       <listitem>
         <para>LOWER case</para>
-      </listitem>
+      <itemizedlist>
+        <listitem>
+          <para>
+            <emphasis role="bold">SQL</emphasis>
+          </para>
+
+          <programlisting language="java">// make SQL query
+            QueryManager queryManager = workspace.getQueryManager();
+            // create query
+            String sqlStatement = "SELECT * FROM mix:title WHERE LOWER(jcr:title) = 'casesensitive'";
+            Query query = queryManager.createQuery(sqlStatement, Query.SQL);
+            // execute query and fetch result
+            QueryResult result = query.execute(); </programlisting>
+        </listitem>
+        <listitem>
+          <para>
+            <emphasis role="bold">XPath</emphasis>
+          </para>
+
+          <programlisting language="java">// make XPath query
+            QueryManager queryManager = workspace.getQueryManager();
+            // create query
+            String xpathStatement = "//element(*,mix:title)[fn:lower-case(@jcr:title)='casesensitive']";
+            Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
+            // execute query and fetch result
+            QueryResult result = query.execute(); </programlisting>
+        </listitem>
+      </itemizedlist>
+    </listitem>
     </itemizedlist>
-
-    <para><emphasis role="bold">SQL</emphasis></para>
-
-    <programlisting language="java">// make SQL query
-QueryManager queryManager = workspace.getQueryManager();
-// create query
-String sqlStatement = "SELECT * FROM mix:title WHERE LOWER(jcr:title) = 'casesensitive'";
-Query query = queryManager.createQuery(sqlStatement, Query.SQL);
-// execute query and fetch result
-QueryResult result = query.execute();</programlisting>
-
-    <para><emphasis role="bold">XPath</emphasis></para>
-
-    <programlisting language="java">// make XPath query
-QueryManager queryManager = workspace.getQueryManager();
-// create query
-String xpathStatement = "//element(*,mix:title)[fn:lower-case(@jcr:title)='casesensitive']";
-Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
-// execute query and fetch result
-QueryResult result = query.execute();</programlisting>
-
   <para xml:id="JCR.FindNodesCaseInsensitive.FetchingResult">
     <citetitle>
-      <emphasis role="bold">Fetching the Result</emphasis>
+      <emphasis role="bold">Fetching result</emphasis>
     </citetitle>
   </para>
 

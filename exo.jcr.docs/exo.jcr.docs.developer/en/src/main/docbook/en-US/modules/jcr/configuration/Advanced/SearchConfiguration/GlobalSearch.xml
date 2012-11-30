@@ -1,30 +1,24 @@
 <section id="JCR.SearchConfiguration.Global_Search_Index">
-    <title>Global Search Index</title>
-    <!-- 2.2.1.2.1 Global Search Index Configuration -->
-    <section id="JCR.SearchConfiguration.Global_Search_Index.Configuration">
-      <title>Global Search Index Configuration</title>
-
-      <para>The global search index is configured in the above-mentioned
-      configuration file
+    <title>Global Search Index</title>    
+    <para id="JCR.SearchConfiguration.Global_Search_Index.Configuration">
+	  The global search index is configured in the above-mentioned configuration file
       (<filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>)
-      in the tag "query-handler".</para>
-
-      <programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;</programlisting>
+      in the <parameter>query-handler</parameter> tag.</para>
+<programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;</programlisting>
 
       <para>In fact, when using Lucene, you should always use the same
       analyzer for indexing and for querying, otherwise the results are
       unpredictable. You don't have to worry about this, eXo JCR does this for
       you automatically. If you don't like the StandardAnalyzer configured by
-      default, just replace it by your own.</para>
+      default, just replace it with your own.</para>
 
       <para>If you don't have a handy QueryHandler, you should learn how
-      to create a customized Handler in 5 minutes.</para>
-    </section>
+      to create a customized Handler in 5 minutes.</para>    
     <!-- 2.2.1.2.2. Customized Search Indexes and Analyzers -->
     <section id="JCR.SearchConfiguration.Global_Search_Index.Customized_Search_Indexes_Analyzers">
       <title>Customized Search Indexes and Analyzers</title>
 
-      <para>By default Exo JCR uses the Lucene standard Analyzer to index
+      <para>By default eXo JCR uses the Lucene standard Analyzer to index
       contents. This analyzer uses some standard filters in the method that
       analyzes the content:</para>
       
@@ -67,63 +61,53 @@
       <para id="JCR.SearchConfiguration.Global_Search_Index.Customized_Search_Indexes_Analyzers.Creating_filter">
         <citetitle><emphasis role="bold">Create a filter</emphasis></citetitle>
       </para>
-        <para>The ISOLatin1AccentFilter is not present in the current Lucene
+        <para>The <parameter>ISOLatin1AccentFilter</parameter> is not present in the current Lucene
         version used by eXo. You can use the attached file. You can also
-        create your own filter, the relevant method is</para>
-        
-        <programlisting language="java">public final Token next(final Token reusableToken) throws java.io.IOException</programlisting> 
-        <para>which defines how chars are read and used by the filter.</para>
+        create your own filter with the relevant method as follows:</para>
+<programlisting language="java">public final Token next(final Token reusableToken) throws java.io.IOException</programlisting> 
+        <para>This method defines how chars are read and used by the filter.</para>
 
         <!-- Create an analyzer -->
       <para id="JCR.SearchConfiguration.Global_Search_Index.Customized_Search_Indexes_Analyzers.Creating_Analyzer">
         <citetitle><emphasis role="bold">Create an analyzer</emphasis></citetitle>
       </para>
-        <para>The analyzer has to extends
-        org.apache.lucene.analysis.standard.StandardAnalyzer, and overload the
-        method</para>
-
-        <programlisting language="java">public TokenStream tokenStream(String fieldName, Reader reader)</programlisting>
-        <para>to put your own filters. You can have a glance at the example analyzer attached to this article.</para>
-
-        <!-- Configure your application to use your Analyzer -->
-      <para id="JCR.SearchConfiguration.Global_Search_Index.Customized_Search_Indexes_Analyzers.Configure_Application_Use_Analyzer">
-        <citetitle><emphasis role="bold">Configure your application to use your Analyzer</emphasis></citetitle>
-      </para>
-        <para>In
-        <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>,
-        you have to add parameter "analyzer" to each query-handler
-        config:</para>
+        <para>The analyzer has to extend <parameter>org.apache.lucene.analysis.standard.StandardAnalyzer</parameter>, and overload the
+        following method to put your own filters.</para>
+<programlisting language="java">public TokenStream tokenStream(String fieldName, Reader reader)</programlisting>
         
-        <programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
-   &lt;properties&gt;
-      ...
-      &lt;property name="analyzer" value="org.exoplatform.services.jcr.impl.core.MyAnalyzer"/&gt;
-      ...
-   &lt;/properties&gt;
-&lt;/query-handler&gt;
-</programlisting>
+		<para>You can have a glance at the example analyzer attached to this article.</para>
 
-        <para>When you start exo, your SearchIndex will start to index
-        contents with the specified filters.</para>    
+        <!-- Configure Platform to use your Analyzer -->
+      <para id="JCR.SearchConfiguration.Global_Search_Index.Customized_Search_Indexes_Analyzers.Configure_Application_Use_Analyzer">
+        <citetitle><emphasis role="bold">Configure Platform to use your Analyzer</emphasis></citetitle>
+      </para>
+        <para>In <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>, you have to add the <parameter>analyzer</parameter> parameter to each query-handler config:</para>
+        
+<programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
+	&lt;properties&gt;
+	  ...
+	  &lt;property name="analyzer" value="org.exoplatform.services.jcr.impl.core.MyAnalyzer"/&gt;
+	  ...
+	&lt;/properties&gt;
+&lt;/query-handler&gt;</programlisting>
+
+        <para>When you start eXo, your SearchIndex will start to index content with the specified filters.</para>    
 
         <!-- Create a search index -->
       <para id="JCR.SearchConfiguration.Global_Search_Index.Customized_Search_Indexes_Analyzers.Creating_Search_Index">
         <citetitle><emphasis role="bold">Create a search index</emphasis></citetitle>
       </para>
-        <para>Now, we have the analyzer, we have to write the SearchIndex,
-        which will use the analyzer. Your have to extends
-        org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex. You
-        have to write the constructor, to set the right analyzer, and the
-        method</para>
-        <programlisting language="java">public Analyzer getAnalyzer() {
+        <para>You have had the analyzer, so you now need to write the SearchIndex,
+        which will use the analyzer. You have to extend <parameter>org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex</parameter>. You
+        have to write the constructor to set the right analyzer and the following method to return your analyzer.</para>
+
+<programlisting language="java">public Analyzer getAnalyzer() {
     return MyAnalyzer;
-  }</programlisting> 
-  <para>to return your analyzer. You can see the attached
-        SearchIndex.</para>
+}</programlisting> 
+  <para>You can see the attached SearchIndex.</para>
 
         <note>
-          <para>Since 1.12 version, we can set Analyzer directly in
-          configuration. So, creation new SearchIndex only for new Analyzer is
+          <para>Since 1.12 version, you can set Analyzer directly in your configuration. So, creating a new SearchIndex only for new Analyzer is
           redundant.</para>
         </note>
 
@@ -131,16 +115,10 @@
       <para id="JCR.SearchConfiguration.Global_Search_Index.Customized_Search_Indexes_Analyzers.Configuring_Application_Use_SearchIndex">
         <citetitle><emphasis role="bold">Configure Platform to use your SearchIndex</emphasis></citetitle>
       </para>
-        <para>In
-        <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>,
-        you have to replace each</para>
-        
-        <programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
-        </programlisting>
-        <para>by your own class</para>
-        
-        <programlisting language="xml">&lt;query-handler class="mypackage.indexation.MySearchIndex"&gt;
-        </programlisting>
+        <para>In <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>, you have to replace each:</para>
+<programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;</programlisting>
+        <para>with your own class</para>
+<programlisting language="xml">&lt;query-handler class="mypackage.indexation.MySearchIndex"&gt;</programlisting>
 
     </section>
         

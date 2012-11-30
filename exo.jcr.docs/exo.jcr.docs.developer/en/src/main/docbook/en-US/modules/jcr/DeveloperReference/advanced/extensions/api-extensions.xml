@@ -2,7 +2,7 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.APIExtensions">
-  <title>JCR API Extensions</title>
+  <title>JCR API</title>
 
       <para>eXo JCR implementation offers new extended feature beyond JCR
       specification. Sometimes one JCR Node has hundreds or
@@ -90,8 +90,9 @@
       ...
    &lt;/properties&gt;</programlisting>
 
-      <para>It's not recommended to configure a large number for the page
-      size.</para>
+	  <note>
+		<para>It is not recommended to configure a large number for the page size.</para>
+	  </note>
     </section>
 
 </section>

@@ -4,7 +4,7 @@
 <section id="JCR.OrderByProperty">
   <title>Order by Property</title>
 
-  <para>Select all nodes with the mixin type ''mix:title' and order them by
+  <para>Select all nodes with the 'mix:title' mixin type and order them by
   the 'prop_pagecount' property.</para>
 
   <para xml:id="JCR.OrderByProperty.RepositoryStructure">
@@ -14,7 +14,7 @@
   </para>
 
     <para>The repository contains several mix:title nodes, where
-    prop_pagecount has different values.</para>
+    'prop_pagecount' has different values.</para>
 
     <itemizedlist>
       <listitem>
@@ -44,7 +44,8 @@
       <emphasis role="bold">Query Execution</emphasis>
     </citetitle>
   </para>
-
+    <itemizedlist>
+            <listitem>
     <para><emphasis role="bold">SQL</emphasis></para>
 
     <programlisting language="java">// make SQL query
@@ -54,7 +55,8 @@ String sqlStatement = "SELECT * FROM mix:title ORDER BY prop_pagecount ASC";
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+     </listitem>
+  <listitem>
     <para><emphasis role="bold">XPath</emphasis></para>
 
     <programlisting language="java">// make XPath query
@@ -64,10 +66,11 @@ String xpathStatement = "//element(*,mix:title) order by @prop_pagecount ascendi
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+   </listitem>
+  </itemizedlist>
   <para xml:id="JCR.OrderByProperty.FetchingResult">
     <citetitle>
-      <emphasis role="bold">Fetch result</emphasis>
+      <emphasis role="bold">Fetching result</emphasis>
     </citetitle>
   </para>
 

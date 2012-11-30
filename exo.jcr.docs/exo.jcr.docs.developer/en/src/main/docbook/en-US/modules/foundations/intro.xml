@@ -1,0 +1,25 @@
+<abstract>
+	<para>
+		The intended readers of this document are developers using eXo Platform. This document provides developers with the comprehensive knowledge of eXo foundations: Kernel, Core and Web Services, which are the base of all eXo Platform and its modules.
+	</para>
+	<para>
+		The guide is divided into the following chapters:
+	</para>
+	<itemizedlist>
+		<listitem>
+			<para><emphasis role="bold"><link linkend="chapter-Kernel">eXo Kernel</link></emphasis></para>
+			<para>Instruction on how to use eXo Container and configure its services.</para>
+		</listitem>
+		<listitem>
+			<para><emphasis role="bold"><link linkend="chapter-eXoCore">eXo Core</link></emphasis></para>
+			<para>Information on common services, such as Authentication and Security, Organization, Database, Logging, JNDI, LDAP, Document reader, and other services, that are used by eXo Platform and its modules.
+			</para>
+		</listitem>
+		<listitem>
+			<para><emphasis role="bold"><link linkend="chapter-eXoWS">eXo Web Services</link></emphasis></para>
+			<para>
+			Information on how to use RESTful Web Services to integrate eXo Platform with external products and services.
+			</para>
+		</listitem>
+	</itemizedlist>	
+</abstract>

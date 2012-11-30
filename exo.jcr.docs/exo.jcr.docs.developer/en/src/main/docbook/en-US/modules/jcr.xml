@@ -5,12 +5,12 @@
 <book lang="en" xml:id="JCRReferenceGuide">
   <bookinfo>
     <title>Reference Guide / eXo JCR</title>
-    <subtitle>Java Content Repository and Extension services</subtitle> 
+    <subtitle>Java Content Repository and Extension services</subtitle>
+    <xi:include href="jcr/About.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   </bookinfo>
-   <xi:include href="jcr/introduction.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-   <xi:include href="jcr/configuration.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-   <xi:include href="jcr/developer-reference.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+   <xi:include href="jcr/Introduction.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+   <xi:include href="jcr/Configuration.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+   <xi:include href="jcr/DeveloperReference.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="jcr/Administration.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-   <xi:include href="jcr/faq.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <toc></toc>
 </book>

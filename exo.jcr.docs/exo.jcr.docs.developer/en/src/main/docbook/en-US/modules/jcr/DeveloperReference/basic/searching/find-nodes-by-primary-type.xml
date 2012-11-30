@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.FindNodesByPrimaryType">
-  <title>Finding All Nodes by Primary Type</title>
+  <title>Find All Nodes by Primary Type</title>
 
   <para>Find all nodes whose primary type is "nt:file".</para>
 
@@ -43,8 +43,11 @@
     </citetitle>
   </para>
 
-
-    <para><emphasis role="bold">SQL</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">SQL</emphasis>
+      </para>
 
     <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
@@ -53,8 +56,11 @@ String sqlStatement = "SELECT * FROM nt:file";
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
-    <para><emphasis role="bold">XPath</emphasis></para>
+    </listitem>
+    <listitem>
+      <para>
+        <emphasis role="bold">XPath</emphasis>
+      </para>
 
     <programlisting language="java">// make XPath query
 QueryManager queryManager = workspace.getQueryManager();
@@ -63,7 +69,8 @@ String xpathStatement = "//element(*,nt:file)";
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+    </listitem>
+  </itemizedlist>
   <para xml:id="JCR.FindNodesByPrimaryType.FetchingResult">
     <citetitle>
       <emphasis role="bold">Fetching result</emphasis>

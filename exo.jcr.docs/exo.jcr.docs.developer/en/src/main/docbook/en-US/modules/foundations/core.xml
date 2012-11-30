@@ -2,7 +2,7 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter xml:id="chapter-eXoCore">
-  <title>eXoCore</title>
+  <title>eXo Core</title>
 
     <para>The eXo Core is a set of common services, such as Authentication and Security, Organization, Database, Logging,
         JNDI, LDAP, Document reader, and other services, that are used by eXo

@@ -4,8 +4,8 @@
 <section id="JCR.EscapinginLIKEStatements">
   <title>Escaping in LIKE Statements</title>
 
-  <para>Find all nodes with a mixin type 'mix:title' and whose property
-  'jcr:title' starts with 'P%ri'.</para>
+  <para>Find all nodes with the 'mix:title' mixin type and whose 'jcr:title' property
+  starts with 'P%ri'.</para>
 
   <para>As you see "P%rison break" contains the symbol '%'. This symbol is
   reserved for LIKE comparisons. So what can we do?</para>
@@ -58,8 +58,9 @@
       <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
-
-    <para><emphasis role="bold">SQL</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <para><emphasis role="bold">SQL</emphasis></para>
 
     <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
@@ -68,8 +69,10 @@ String sqlStatement = "SELECT * FROM mix:title WHERE jcr:title LIKE 'P#%ri%' ESC
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
-    <para><emphasis role="bold">XPath</emphasis></para>
+    </listitem>
+    <listitem>
+      <para>
+        <emphasis role="bold">XPath</emphasis></para>
 
     <programlisting language="java">// make XPath query
 QueryManager queryManager = workspace.getQueryManager();
@@ -78,7 +81,8 @@ String xpathStatement = "//element(*,mix:title)[jcr:like(@jcr:title, 'P\\%ri%')]
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+    </listitem>
+  </itemizedlist>
   <para xml:id="JCR.EscapinginLIKEStatements.FetchingResult">
     <citetitle>
       <emphasis role="bold">Fetching result</emphasis>
@@ -107,7 +111,7 @@ while (rit.hasNext())
    Value[] values = row.getValues();
 }</programlisting>
 
-    <para>The table content is <table>
+    <para>The table content is: <table>
         <title>Table content</title>
 
         <tgroup cols="4">

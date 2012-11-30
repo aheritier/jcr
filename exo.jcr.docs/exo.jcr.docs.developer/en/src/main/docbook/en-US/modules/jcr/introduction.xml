@@ -3,9 +3,22 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter xml:id="chapter-JCR">
   <title>Introduction to JCR</title>
+  <abstract>
     <para>
       Java Content Repository API as well as other Java language related standards is created within the Java Community Process (http://jcp.org/) as a result of collaboration of an expert group and the Java community. It is known as <ulink url="http://www.jcp.org/en/jsr/detail?id=170">JSR-170</ulink> (Java Specification Request).
-    </para>        
+	  This chapter is for people new to eXo JCR. It walks you through an overview of outstanding advantages of JCR. Especially, you will also learn about the following core topics:
+    </para>
+	<itemizedlist>
+		<listitem>
+			<para><emphasis role="bold"><link linkend="JCRref.Introduction.JCRArchitecture">JCR architecture</link></emphasis></para>
+			<para>Introduction to 2 core factors of the JCR architecture: eXo Repository Service and Workspace Data Model.</para>
+		</listitem>
+		<listitem>
+			<para><emphasis role="bold"><link linkend="JCR.CompatibilityLevels">Compatibility levels</link></emphasis></para>
+			<para>Details of 2 compliance levels and a set of optional features.</para>
+		</listitem>
+	</itemizedlist>
+  </abstract>
     <!-- Why use JCR & What does eXo do -->    
 <para xml:id="JCRref.Introduction.WhyuseJCR">
   <citetitle>
@@ -48,7 +61,7 @@
   </citetitle> 
 </para>
 
-    <para>eXo fully complies a JCR standard <ulink url="http://jcp.org/en/jsr/detail?id=170">JSR 170</ulink>; therefore with
+    <para>eXo fully complies with <ulink url="http://jcp.org/en/jsr/detail?id=170">JSR 170</ulink>; therefore with
     eXo JCR you can use a vendor-independent API. It means that you could switch any time to a different vendor. Using the standard lowers your 
     lifecycle cost and reduces your long term risk.</para>
 
@@ -59,6 +72,6 @@
     
     <!-- Glossary -->  
     <!-- JCR Architecture -->
-    <xi:include href="introduction/jcr-architecture.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-	<xi:include href="introduction/jcr-compatibility-levels.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+    <xi:include href="Introduction/jcr-architecture.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include href="Introduction/jcr-compatibility-levels.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 </chapter>

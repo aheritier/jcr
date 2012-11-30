@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<chapter xml:id="JCRref.Configuration">
+<chapter xml:id="chapter-Configuration">
   <title>Configuration</title>
+  <abstract>
   <para>This chapter is divided into 2 main topics that allow you to follow easily:</para>
     <itemizedlist>
-    <listitem>Basic configuration</listitem>    
-    <listitem> Advanced configuration</listitem>
+    <listitem><emphasis role="bold"><link linkend="JCRref.Configuration.BasicConfiguration">Basic configuration</link></emphasis>
+    <para>Instructions on basic configurations related to JCR, persister and JDBC Data Container.</para>
+	</listitem>    
+    <listitem><emphasis role="bold"><link linkend="JCRref.Configuration.AdvancedConfiguration">Advanced configuration</link></emphasis>
+    <para>Instructions on advanced configurations regarding to Search, LockManager, QueryHandler, Cluster, RepositoryCreationService, TransactionService and External value storages.</para>
+	</listitem>
     </itemizedlist>
-    
-    <xi:include href="configuration/Basic.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-    <xi:include href="configuration/Advanced.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+	</abstract>
+    <xi:include href="Configuration/Basic.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+    <xi:include href="Configuration/Advanced.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  
 </chapter>

@@ -11,6 +11,8 @@
   <para>Select all nodes with primary type 'nt:unstructured' and returns only
   3 nodes starting with the second node in the list.</para>
 
+  <itemizedlist>
+    <listitem>
   <para xml:id="JCR.SetOffsetandSetLimit.CommonInfo">
     <emphasis role="bold">Common info</emphasis>
   </para>
@@ -30,8 +32,8 @@
         set.</para>
       </listitem>
     </itemizedlist>
-
-
+     </listitem>
+    <listitem>
   <para xml:id="JCR.SetOffsetandSetLimit.RepositoryStructure">
     <emphasis role="bold">Repository structure</emphasis>
   </para>
@@ -69,7 +71,8 @@
         </itemizedlist>
       </listitem>
     </itemizedlist>
-
+    </listitem>
+  <listitem>
   <para xml:id="JCR.SetOffsetandSetLimit.QueryExecution">
     <emphasis role="bold">Query execution</emphasis>
   </para>
@@ -88,7 +91,8 @@ query.setLimit(3);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
 
-
+   </listitem>
+  <listitem>
   <para xml:id="JCR.SetOffsetandSetLimit.FetchingResult">
     <emphasis role="bold">Fetching result</emphasis>
   </para>
@@ -108,4 +112,6 @@ if(it.hasNext())
     <para>\[node1 <emphasis role="bold">node2</emphasis> <emphasis
     role="bold">node3</emphasis> <emphasis role="bold">node4</emphasis> node5
     node6\]</para>
+  </listitem>
+  </itemizedlist>
 </section>

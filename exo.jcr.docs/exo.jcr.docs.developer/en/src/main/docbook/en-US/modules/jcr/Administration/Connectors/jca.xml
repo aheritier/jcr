@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.JCA">
+<section id="JCR.JCA" role="NotInToc">
   <title>JCA Resource Adapter</title>
 
     <para>eXo JCR supports <emphasis>J2EE Connector Architecture</emphasis>
@@ -113,7 +113,7 @@
     <emphasis>*-ds.xml</emphasis> (jcr-ds.xml for example) with the following
     content:</para>
 
-    <programlisting>&lt;connection-factories&gt;
+<programlisting language="xml">&lt;connection-factories&gt;
   &lt;tx-connection-factory&gt;
     &lt;jndi-name&gt;jcr/repository&lt;/jndi-name&gt;
     &lt;xa-transaction/&gt;

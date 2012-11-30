@@ -3,12 +3,8 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <!-- 2.2.4 Configuring eXo JCR in cluster -->
-<section id="JCR.ClusterConfig">
-  <title>Configuring eXo JCR in cluster</title>
- 
-  <section id="JCR.ClusterConfig.Requirements">
-    <title>Requirements</title>
-
+<section id="JCR.ClusterConfig" role="NotInToc">
+  <title>Configure eXo JCR in cluster</title>  
     <para id="JCR.ClusterConfig.Requirements.Environment_Requirements">
       <citetitle><emphasis role="bold">Environment requirements</emphasis></citetitle>
     </para>
@@ -38,65 +34,94 @@
     <para id="JCR.ClusterConfig.Requirements.Configuration_Requirements">
       <citetitle><emphasis role="bold">Configuration requirements</emphasis></citetitle>
     </para>
-      <para>Configuration of every workspace in repository must contains of
-      such parts:</para>
+      <para>Configuration of every workspace in repository must contain the following parts:</para>
 
       <itemizedlist>
         <listitem id="conf_value_storage">
-          <para>Value Storage configuration:</para>
+          <para><emphasis role="bold">Value Storage configuration:</emphasis></para>
 
-          <programlisting language="xml">&lt;value-storages&gt;
+<programlisting language="xml">&lt;value-storages&gt;
    &lt;value-storage id="system" class="org.exoplatform.services.jcr.impl.storage.value.fs.TreeFileValueStorage"&gt;
       &lt;properties&gt;
-         &lt;property name="path" value="/mnt/tornado/temp/values/production" /&gt;    &lt;!--path within NFS where ValueStorage will hold it's data--&gt;
+         &lt;property name="path" value="/mnt/tornado/temp/values/production" /&gt;    
       &lt;/properties&gt;
       &lt;filters&gt;
          &lt;filter property-type="Binary" /&gt;
       &lt;/filters&gt;
    &lt;/value-storage&gt;
 &lt;/value-storages&gt;</programlisting>
-        </listitem>
+          <itemizedlist>      
+            <listitem>
+              <para><parameter>Path:</parameter> Path within NFS where ValueStorage will hold it's data.</para>
+            </listitem>  
+        </itemizedlist>  
+      </listitem>
 
         <listitem id="conf_cache">
-          <para>Cache configuration:</para>
+          <para><emphasis role="bold">Cache configuration:</emphasis></para>
 
-          <programlisting language="xml">&lt;cache enabled="true" class="org.exoplatform.services.jcr.impl.dataflow.persistent.jbosscache.JBossCacheWorkspaceStorageCache"&gt;
+<programlisting language="xml">&lt;cache enabled="true" class="org.exoplatform.services.jcr.impl.dataflow.persistent.jbosscache.JBossCacheWorkspaceStorageCache"&gt;
    &lt;properties&gt;
-      &lt;property name="jbosscache-configuration" value="jar:/conf/portal/test-jbosscache-data.xml" /&gt;     &lt;!--    path to JBoss Cache configuration for data storage --&gt;
-      &lt;property name="jgroups-configuration" value="jar:/conf/portal/udp-mux.xml" /&gt;                     &lt;!--    path to JGroups configuration --&gt;
-      &lt;property name="jbosscache-cluster-name" value="JCR_Cluster_cache" /&gt;                              &lt;!--    JBoss Cache data storage cluster name --&gt;
+      &lt;property name="jbosscache-configuration" value="jar:/conf/portal/test-jbosscache-data.xml" /&gt;     
+      &lt;property name="jgroups-configuration" value="jar:/conf/portal/udp-mux.xml" /&gt;                     
+      &lt;property name="jbosscache-cluster-name" value="JCR_Cluster_cache" /&gt;                              
       &lt;property name="jgroups-multiplexer-stack" value="false" /&gt;
       &lt;property name="jbosscache-shareable" value="true" /&gt;
    &lt;/properties&gt;
-&lt;/cache&gt; </programlisting>
+&lt;/cache&gt;</programlisting>
+          <itemizedlist>
+            <listitem>
+              <para><parameter>Jbosscache-configuration</parameter>: Path to JBoss Cache configuration for data storage.</para>
+            </listitem>
+            <listitem>  
+              <para><parameter>jgroups-configuration</parameter>: Path to JGroups configuration.</para>
+            </listitem>
+            <listitem>  
+              <para><parameter>jbosscache-cluster-name</parameter>: JBoss Cache data storage cluster name.</para>
+            </listitem>  
+          </itemizedlist>
         </listitem>
 
         <listitem id="conf_indexer">
-          <para>Indexer configuration:</para>
+          <para><emphasis role="bold">Indexer configuration:</emphasis></para>
 
-          <programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
+<programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
    &lt;properties&gt;
       &lt;property name="changesfilter-class" value="org.exoplatform.services.jcr.impl.core.query.jbosscache.JBossCacheIndexChangesFilter" /&gt;
-      &lt;property name="index-dir" value="/mnt/tornado/temp/jcrlucenedb/production" /&gt;                       &lt;!--    path within NFS where ValueStorage will hold it's data --&gt;
-      &lt;property name="jbosscache-configuration" value="jar:/conf/portal/test-jbosscache-indexer.xml" /&gt;    &lt;!--    path to JBoss Cache configuration for indexer --&gt;
-      &lt;property name="jgroups-configuration" value="jar:/conf/portal/udp-mux.xml" /&gt;                       &lt;!--    path to JGroups configuration --&gt;
-      &lt;property name="jbosscache-cluster-name" value="JCR_Cluster_indexer" /&gt;                              &lt;!--    JBoss Cache indexer cluster name --&gt;
+      &lt;property name="index-dir" value="/mnt/tornado/temp/jcrlucenedb/production" /&gt;                       
+      &lt;property name="jbosscache-configuration" value="jar:/conf/portal/test-jbosscache-indexer.xml" /&gt;    
+      &lt;property name="jgroups-configuration" value="jar:/conf/portal/udp-mux.xml" /&gt;                       
+      &lt;property name="jbosscache-cluster-name" value="JCR_Cluster_indexer" /&gt;                              
       &lt;property name="jgroups-multiplexer-stack" value="false" /&gt;
       &lt;property name="jbosscache-shareable" value="true" /&gt;
    &lt;/properties&gt;
 &lt;/query-handler&gt; </programlisting>
+           <itemizedlist>
+              <listitem>
+                <para><parameter>index-dir</parameter>: Path within NFS where ValueStorage will hold its data.</para>
+              </listitem>  
+              <listitem>
+                <para><parameter>jboss-cache-configuration</parameter>: Path to JBoss Cache configuration for indexer.</para>
+              </listitem>              
+              <listitem>
+                <para><parameter>jgroups-configuration</parameter>: path to JGroups configuration.</para>
+              </listitem>              
+              <listitem>
+                <para><parameter>jboss-cache-cluster-name</parameter>: JBoss Cache indexer cluster name.</para>
+              </listitem>                          
+           </itemizedlist> 
         </listitem>
 
         <listitem id="conf_lock_manager">
-          <para>Lock Manager configuration:</para>
+          <para><emphasis role="bold">Lock Manager configuration:</emphasis></para>
 
-          <programlisting language="xml">&lt;lock-manager class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.CacheableLockManagerImpl"&gt;
+<programlisting language="xml">&lt;lock-manager class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.CacheableLockManagerImpl"&gt;
    &lt;properties&gt;
       &lt;property name="time-out" value="15m" /&gt;
-      &lt;property name="jbosscache-configuration" value="jar:/conf/portal/test-jbosscache-lock.xml" /&gt;       &lt;!--    path to JBoss Cache configuration for lock manager --&gt;
-      &lt;property name="jgroups-configuration" value="jar:/conf/portal/udp-mux.xml" /&gt;                       &lt;!--    path to JGroups configuration --&gt;
-      &lt;property name="jbosscache-cluster-name" value="JCR_Cluster_locks" /&gt;                                &lt;!--    JBoss Cache locks cluster name --&gt;                    
-      &lt;property name="jbosscache-cl-cache.jdbc.table.name" value="jcrlocks"/&gt;                              &lt;!--    the name of the DB table where lock's data will be stored --&gt;
+      &lt;property name="jbosscache-configuration" value="jar:/conf/portal/test-jbosscache-lock.xml" /&gt;       
+      &lt;property name="jgroups-configuration" value="jar:/conf/portal/udp-mux.xml" /&gt;                       
+      &lt;property name="jbosscache-cluster-name" value="JCR_Cluster_locks" /&gt;                                
+      &lt;property name="jbosscache-cl-cache.jdbc.table.name" value="jcrlocks"/&gt;                              
       &lt;property name="jbosscache-cl-cache.jdbc.table.create" value="true"/&gt;
       &lt;property name="jbosscache-cl-cache.jdbc.table.drop" value="false"/&gt;
       &lt;property name="jbosscache-cl-cache.jdbc.table.primarykey" value="jcrlocks_pk"/&gt;
@@ -108,15 +133,28 @@
       &lt;property name="jbosscache-shareable" value="true" /&gt;
    &lt;/properties&gt;
 &lt;/lock-manager&gt;</programlisting>
+          <itemizedlist>
+            <listitem>
+              <para><parameter>jboss-cache-configuration</parameter>: Path to JBoss Cache configuration for lock manager.</para>
+            </listitem>  
+            <listitem>
+              <para><parameter>jgroups-configuration</parameter>: Path to JGroups configuration.</para>
+            </listitem>  
+            <listitem>
+              <para><parameter>jboss-cache-cluster-name</parameter>: JBoss Cache locks cluster name.</para>
+            </listitem>  
+            <listitem>
+              <para><parameter>jbosscache-cl-cache.jdbc.table.name</parameter>: Name of the DB table where lock's data will be stored.</para>
+            </listitem>              
+          </itemizedlist>  
         </listitem>
-      </itemizedlist>    
-  </section>
+      </itemizedlist>      
 
-  <!-- 2.2.4.3. JBoss Cache Configuration -->
+ <!-- 2.2.4.1. JBoss Cache Configuration -->
   <xi:include href="ClusterConfiguration/jbosscache-configuration-templates.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
- <!--  2.2.4.4. Stop the node properly -->
+ <!--  2.2.4.2. Stop the node properly -->
   <section id="JCR.ClusterConfig.How_to_stop_the_node_properly">
     <title>Stop the node properly</title>
 
@@ -130,19 +168,15 @@
       </listitem>
 
       <listitem>
-        <para>Use RepositorySuspendController suspend all repositories (see
-        <link linkend="JCR.SearchIndexBackup">37.1 Repository
-        suspending</link>)</para>
+        <para>Use RepositorySuspendController suspend all repositories.</para>
       </listitem>
 
       <listitem>
-        <para>Stop the node</para>
+        <para>Stop the node.</para>
       </listitem>
 
       <listitem>
-        <para>Use RepositorySuspendController to resume all repositories (see
-        <link linkend="JCR.SearchIndexBackup">37.3 Repository
-        resuming</link>)</para>
+        <para>Use RepositorySuspendController to resume all repositories.</para>
       </listitem>
     </itemizedlist>
   </section>

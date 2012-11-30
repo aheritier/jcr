@@ -1,63 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.UsingJCR">
+<section id="JCR.UsingJCR" role="NotInToc">
   <title>Use JCR</title>
 
-    <section id="JCR.UsingJCR.ObtainingRepositoryObject">
-      <title>Obtain a Repository object</title>
-
-      <para>A javax.jcr.Repository object can be obtained by:</para>
-      <itemizedlist>
-          <listitem>
-            <para>Using the eXo Container "native" mechanism. All Repositories
-            are kept with a single RepositoryService component. So it can be
-            obtained from eXo Container, described as the
-            following:</para>
-          </listitem>
-      </itemizedlist>
-            
-            <programlisting language="java">
-            RepositoryService repositoryService = (RepositoryService) container.getComponentInstanceOfType(RepositoryService.class);
-  Repository repository = repositoryService.getRepository("repositoryName"); 
-            </programlisting>
-  
-      <itemizedlist>    
-          <listitem>
-            <para>Using the eXo Container "native" mechanism with a thread
-            local saved "current" repository (especially if you plan to use a
-            single repository which covers more than 90% of use
-            cases)</para>
-          </listitem>
-      </itemizedlist>         
-            
-            <programlisting language="java">  // set current repository at initial time
-  RepositoryService repositoryService = (RepositoryService) container.getComponentInstanceOfType(RepositoryService.class);
-  repositoryService.setCurrentRepositoryName("repositoryName");
-  ....
-  // retrieve and use this repository
-  Repository repository = repositoryService.getCurrentRepository();
-            </programlisting>
-          
-      <itemizedlist>
-          <listitem>
-            <para>Using JNDI as specified in JSR-170. This way you have to
-            configure the reference (see eXo <link
-            linkend="Kernel.JNDINaming">JNDI Naming configuration</link>
-            )</para>
-          </listitem>
-      </itemizedlist>      
-            
-            <programlisting language="java">  Context ctx = new InitialContext();
-  Repository repository =(Repository) ctx.lookup("repositoryName");</programlisting>
-          
-        
-    </section>
-
-    <section id="JCR.UsingJCR.JCRSessionCommonConsiderations">
+<note xml:id="JCR.UsingJCR.JCRSessionCommonConsiderations">
       <title>JCR Session common considerations</title>
-
-      <para><itemizedlist>
+		<itemizedlist>
           <listitem>
             <para>Remember that javax.jcr.Session is not a thread safe object.
             <emphasis role="bold">Never try to share it between
@@ -85,9 +34,53 @@
             role="bold">strategies</emphasis> are possible: <emphasis
             role="bold">Stateless</emphasis> (Session per business request)
             and <emphasis role="bold">Stateful</emphasis> (Session per User)
-            or some mix.</para>
+            or some mixings.</para>
           </listitem>
-        </itemizedlist></para>
+        </itemizedlist>
+    </note>
+
+    <section id="JCR.UsingJCR.ObtainingRepositoryObject">
+      <title>Obtain Repository object</title>
+
+      <para>A javax.jcr.Repository object can be obtained by:</para>
+      <itemizedlist>
+          <listitem>
+            <para>Using the eXo Container "native" mechanism. All Repositories
+            are kept with a single RepositoryService component. So it can be
+            obtained from eXo Container, described as the
+            following:</para>
+          </listitem>
+      </itemizedlist>
+            
+<programlisting language="java">RepositoryService repositoryService = (RepositoryService) container.getComponentInstanceOfType(RepositoryService.class);
+  Repository repository = repositoryService.getRepository("repositoryName");</programlisting>
+  
+      <itemizedlist>    
+          <listitem>
+            <para>Using the eXo Container "native" mechanism with a thread
+            local saved "current" repository (especially if you plan to use a
+            single repository which covers more than 90% of use
+            cases)</para>
+          </listitem>
+      </itemizedlist>         
+            
+<programlisting language="java">  // set current repository at initial time
+  RepositoryService repositoryService = (RepositoryService) container.getComponentInstanceOfType(RepositoryService.class);
+  repositoryService.setCurrentRepositoryName("repositoryName");
+  ....
+  // retrieve and use this repository
+  Repository repository = repositoryService.getCurrentRepository();</programlisting>
+          
+      <itemizedlist>
+          <listitem>
+            <para>Using JNDI as specified in <ulink url="http://jcp.org/en/jsr/detail?id=170">JSR-170</ulink>. This way you have to
+            configure the reference (see eXo <link
+            linkend="Kernel.JNDINaming">JNDI Naming configuration</link>).</para>
+          </listitem>
+      </itemizedlist>      
+            
+<programlisting language="java">Context ctx = new InitialContext();
+  Repository repository =(Repository) ctx.lookup("repositoryName");</programlisting> 
     </section>
 
   <section id="JCR.UsingJCR.JCRApplicationPractices">
@@ -104,7 +97,7 @@
       is responsible for caching/obtaining your JCR Sessions and closing all
       opened sessions at once.</para>
 
-      <programlisting language="java">public class SessionProvider {
+<programlisting language="java">public class SessionProvider {
 
   /**
    * Creates a SessionProvider for a certain identity
@@ -142,7 +135,7 @@
       operations, use it to obtain the Sessions and close at the end of an
       application session(request). See the following example:</para>
 
-      <programlisting language="groovy">// (1) obtain current javax.jcr.Credentials, for example get it from AuthenticationService
+<programlisting language="groovy">// (1) obtain current javax.jcr.Credentials, for example get it from AuthenticationService
 Credentials cred = ....
 
 // (2) create SessionProvider for current user
@@ -174,10 +167,9 @@ Session session = sessionProvider.getSession("workspaceName", repository);
       SessionProviderService whose goal is to help you to get a
       SessionProvider object.</para>
 
-      <para>The org.exoplatform.services.jcr.ext.app.SessionProviderService
-      interface is defined as follows:</para>
+      <para>The <parameter>org.exoplatform.services.jcr.ext.app.SessionProviderService</parameter> interface is defined as follows:</para>
 
-      <programlisting language="java">public interface SessionProviderService {
+<programlisting language="java">public interface SessionProviderService {
   void setSessionProvider(Object key, SessionProvider sessionProvider);
   SessionProvider getSessionProvider(Object key);
   void removeSessionProvider(Object key);
@@ -185,7 +177,7 @@ Session session = sessionProvider.getSession("workspaceName", repository);
 
       <para>Using this service is pretty straightforward, the main contract of
       an implemented component is getting a SessionProvider by key. eXo
-      provides two implementations :</para>
+      provides two implementations:</para>
 
       <table>
         <title>SessionProvider implementations</title>
@@ -203,19 +195,17 @@ Session session = sessionProvider.getSession("workspaceName", repository);
 
           <tbody>
             <row>
-              <entry>org.exoplatform.services.jcr.ext.app.MapStoredSessionProviderService</entry>
+              <entry><parameter>org.exoplatform.services.jcr.ext.app.MapStoredSessionProviderService</parameter></entry>
 
-              <entry>per-user style : keeps objects in a Map</entry>
+              <entry>per-user style: Keep objects in a Map.</entry>
 
-              <entry>per-user. The usual practice uses a user's name or
-              Credentials as a key.</entry>
+              <entry>per-user: The usual practice uses a user's name or Credentials as a key.</entry>
             </row>
 
             <row>
-              <entry>org.exoplatform.services.jcr.ext.app.ThreadLocalSessionProviderService</entry>
+              <entry><parameter>org.exoplatform.services.jcr.ext.app.ThreadLocalSessionProviderService</parameter></entry>
 
-              <entry>per-request style : keeps a single SessionProvider in a
-              static ThreadLocal variable</entry>
+              <entry>per-request style: Keep a single SessionProvider in a static ThreadLocal variable</entry>
 
               <entry>Always use null for the key.</entry>
             </row>
@@ -224,26 +214,25 @@ Session session = sessionProvider.getSession("workspaceName", repository);
       </table>
 
       <para>For any implementation, your code should follow the following
-      sequence :</para>
+      sequence:</para>
 
       <itemizedlist>
         <listitem>
-          <para>Call SessionProviderService.setSessionProvider(Object key,
-          SessionProvider sessionProvider) at the beginning of a business
+          <para>Call <parameter>SessionProviderService.setSessionProvider(Object key, SessionProvider sessionProvider)</parameter> at the beginning of a business
           request for Stateless application or application's session for
           Statefull policy.</para>
         </listitem>
 
         <listitem>
-          <para>Call SessionProviderService.getSessionProvider(Object key) for
+          <para>Call <parameter>SessionProviderService.getSessionProvider(Object key)</parameter> for
           obtaining a SessionProvider object</para>
         </listitem>
 
         <listitem>
-          <para>Call SessionProviderService.removeSessionProvider(Object key)
+          <para>Call <parameter>SessionProviderService.removeSessionProvider(Object key)</parameter>
           at the end of a business request for Stateless application or
           application's session for Statefull policy.</para>
         </listitem>
       </itemizedlist>
-      </section>
+    </section>
 </section>

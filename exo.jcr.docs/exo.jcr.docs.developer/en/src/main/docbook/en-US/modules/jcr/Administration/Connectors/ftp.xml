@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.FTP">
+<section id="JCR.FTP" role="NotInToc">
   <title>FTP</title>
 
     <para>The JCR-FTP Server represents the standard eXo service, operates as
@@ -16,9 +16,8 @@
 	</para>
     
 	<itemizedlist>
-	
     <listitem>
-      <para xml:id="JCR.FTP.ConfigurationParameters.CommandPort"><emphasis role="bold">command-port:</emphasis></para>
+      <para xml:id="JCR.FTP.ConfigurationParameters.CommandPort"><parameter>command-port</parameter></para>
 
       <programlisting language="xml">&lt;value-param&gt;
    &lt;name&gt;command-port&lt;/name&gt;
@@ -34,7 +33,7 @@
     </listitem>
 
     <listitem>
-      <para xml:id="JCR.FTP.ConfigurationParameters.DataminportAndDatamaxport"><emphasis role="bold">data-min-port &amp; data-max-port</emphasis></para>
+      <para xml:id="JCR.FTP.ConfigurationParameters.DataminportAndDatamaxport"><parameter>data-min-port &amp; data-max-port</parameter></para>
 
       <programlisting language="xml">&lt;value-param&gt;
    &lt;name&gt;data-min-port&lt;/name&gt;
@@ -54,7 +53,7 @@
     </listitem>
 
     <listitem>
-      <para xml:id="JCR.FTP.ConfigurationParameters.System"><emphasis role="bold">system</emphasis></para>
+      <para xml:id="JCR.FTP.ConfigurationParameters.System"><parameter>system</parameter></para>
 
       <programlisting language="xml">&lt;value-param&gt;
    &lt;name&gt;system&lt;/name&gt;
@@ -69,7 +68,7 @@
     </listitem>
 
     <listitem>
-      <para xml:id="JCR.FTP.ConfigurationParameters.Clientsideencoding"><emphasis role="bold">client-side-encoding</emphasis></para>
+      <para xml:id="JCR.FTP.ConfigurationParameters.Clientsideencoding"><parameter>client-side-encoding</parameter></para>
 
       <programlisting language="xml">&lt;value-param&gt;
    &lt;name&gt;client-side-encoding&lt;/name&gt;
@@ -85,7 +84,7 @@
     </listitem>
 
     <listitem>
-      <para xml:id="JCR.FTP.ConfigurationParameters.Deffoldernodetype"><emphasis role="bold">def-folder-node-type</emphasis></para>
+      <para xml:id="JCR.FTP.ConfigurationParameters.Deffoldernodetype"><parameter>def-folder-node-type</parameter></para>
 
       <programlisting language="xml">&lt;value-param&gt;
    &lt;name&gt;def-folder-node-type&lt;/name&gt;
@@ -97,7 +96,7 @@
     </listitem>
 
     <listitem>
-      <para xml:id="JCR.FTP.ConfigurationParameters.Deffilenodetype"><emphasis role="bold">def-file-node-type</emphasis></para>
+      <para xml:id="JCR.FTP.ConfigurationParameters.Deffilenodetype"><parameter>def-file-node-type</parameter></para>
 
       <programlisting language="xml">&lt;value-param&gt;
    &lt;name&gt;def-file-node-type&lt;/name&gt;
@@ -109,7 +108,7 @@
     </listitem>
 
     <listitem>
-      <para xml:id="JCR.FTP.ConfigurationParameters.Deffilemimetype"><emphasis role="bold">def-file-mime-type</emphasis></para>
+      <para xml:id="JCR.FTP.ConfigurationParameters.Deffilemimetype"><parameter>def-file-mime-type</parameter></para>
 
       <programlisting language="xml">&lt;value-param&gt;
    &lt;name&gt;def-file-mime-type&lt;/name&gt;                 
@@ -122,7 +121,7 @@
     </listitem>
 
     <listitem>
-      <para xml:id="JCR.FTP.ConfigurationParameters.Cachefoldername"><emphasis role="bold">cache-folder-name</emphasis></para>
+      <para xml:id="JCR.FTP.ConfigurationParameters.Cachefoldername"><parameter>cache-folder-name</parameter></para>
 
       <programlisting language="xml">&lt;value-param&gt;
    &lt;name&gt;cache-folder-name&lt;/name&gt;
@@ -133,7 +132,7 @@
     </listitem>
 
     <listitem>
-      <para xml:id="JCR.FTP.ConfigurationParameters.Uploadspeedlimit"><emphasis role="bold">upload-speed-limit</emphasis></para>
+      <para xml:id="JCR.FTP.ConfigurationParameters.Uploadspeedlimit"><parameter>upload-speed-limit</parameter></para>
 
       <programlisting language="xml">&lt;value-param&gt;
    &lt;name&gt;upload-speed-limit&lt;/name&gt;           
@@ -144,7 +143,7 @@
     </listitem>
 
     <listitem>
-      <para xml:id="JCR.FTP.ConfigurationParameters.Downloadspeedlimit"><emphasis role="bold">download-speed-limit</emphasis></para>
+      <para xml:id="JCR.FTP.ConfigurationParameters.Downloadspeedlimit"><parameter>download-speed-limit</parameter></para>
 
       <programlisting language="xml">&lt;value-param&gt;
    &lt;name&gt;download-speed-limit&lt;/name&gt;
@@ -155,14 +154,14 @@
     </listitem>
 
     <listitem>
-      <para xml:id="JCR.FTP.ConfigurationParameters.Timeout"><emphasis role="bold">timeout</emphasis></para>
+      <para xml:id="JCR.FTP.ConfigurationParameters.Timeout"><parameter>timeout</parameter></para>
 
       <programlisting language="xml">&lt;value-param&gt;
    &lt;name&gt;timeout&lt;/name&gt;
    &lt;value&gt;60&lt;/value&gt;
 &lt;/value-param&gt;</programlisting>
 
-      <para>Defines the value of a timeout.</para>
+      <para>This parameter defines the value of a timeout.</para>
     </listitem>
    </itemizedlist>
 </section>

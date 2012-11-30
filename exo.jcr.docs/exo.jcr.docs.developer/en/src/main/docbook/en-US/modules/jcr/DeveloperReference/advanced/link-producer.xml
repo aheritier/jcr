@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.LinkProducerService">
+<section id="JCR.LinkProducerService" role="NotInToc">
   <title>Link Producer Service</title>
 
   <para>Link Producer Service - a simple service, which generates an .lnk
@@ -78,5 +78,5 @@
 
   <programlisting language="html">&lt;a href="http://localhost:8080/rest/lnkproducer/openit.lnk?path=/repository/workspace/somenode/somefile.extention"&gt;somefile.extention&lt;/a&gt;</programlisting>
 
-  <para>the file "somefile.extention" will open directly.</para>
+  <para>The <filename>somefile.extention</filename> file will open directly.</para>
 </section>

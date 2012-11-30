@@ -2,17 +2,20 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.CompatibilityLevels">
-
-  <title>Compatibility Levels</title>
-
-    <para>The Java Content Repository specification JSR-170 has been split
-    into two compliance levels as well as a set of optional features.</para>
-    <para>Level 1 defines a read-only repository.</para>
-    <para>Level 2 defines methods for writing
-    content and bidirectional interaction with the repository.</para>
-
-    <para>eXo JCR supports JSR-170 level 1 and level 2 and all optional
-    features. The recent JSR-283 is not yet supported.</para>
+  <title>Compatibility levels</title>
+    <para>The Java Content Repository specification <ulink url="http://www.jcp.org/en/jsr/detail?id=170">JSR-170</ulink> has been split
+    into two compliance levels and a set of optional features.</para>
+	<itemizedlist>
+		<listitem>
+			<para><link linkend="JCR.CompatibilityLevels.Level1">Level 1</link> defines a read-only repository.</para>
+		</listitem>
+		<listitem>
+			<para><link linkend="JCR.CompatibilityLevels.Level2">Level 2</link> defines methods for writing content and bidirectional interaction with the repository.</para>
+		</listitem>
+	</itemizedlist>
+	<note>
+		<para>eXo JCR supports <ulink url="http://www.jcp.org/en/jsr/detail?id=170">JSR-170</ulink> level 1 and level 2 and all optional features. The recent <ulink url="http://www.jcp.org/en/jsr/detail?id=283">JSR-283</ulink> is not yet supported.</para>
+	</note>
 
   <citetitle>
     <para xml:id="JCR.CompatibilityLevels.Level1"><emphasis role="bold">Level 1</emphasis></para>
@@ -90,7 +93,7 @@
 
     <mediaobject>
       <imageobject>
-        <imagedata fileref="images/concepts/level_1.gif" />
+        <imagedata align="center" fileref="images/concepts/level_1.gif" />
       </imageobject>
     </mediaobject>
 
@@ -142,7 +145,7 @@
 
     <mediaobject>
       <imageobject>
-        <imagedata fileref="images/concepts/level_2.gif" />
+        <imagedata align="center" fileref="images/concepts/level_2.gif" />
       </imageobject>
     </mediaobject>
   
@@ -157,7 +160,7 @@
 
     <mediaobject>
       <imageobject>
-        <imagedata fileref="images/concepts/optional.gif" />
+        <imagedata align="center" fileref="images/concepts/optional.gif" />
       </imageobject>
     </mediaobject>
 </section>

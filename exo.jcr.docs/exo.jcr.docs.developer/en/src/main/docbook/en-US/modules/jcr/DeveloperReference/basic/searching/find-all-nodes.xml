@@ -2,9 +2,9 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.FindAllNodes">
-  <title>Finding All Nodes</title>
+  <title>Find all nodes</title>
 
-  <para>Find all nodes in the repository. Only those nodes are found to which
+  <para>Only those nodes are found to which
   the session has READ permission. See also <link
   linkend="JCR.AccessControl">Access Control</link>.</para>
 
@@ -52,19 +52,25 @@
     <citetitle>
       <emphasis role="bold">Query execution</emphasis>
     </citetitle>
-  </para>
+   </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">SQL</emphasis>
+      </para>
 
-    <para><emphasis role="bold">SQL</emphasis></para>
-
-    <programlisting language="java">// make SQL query
-QueryManager queryManager = workspace.getQueryManager();
-// create query
-String sqlStatement = "SELECT * FROM nt:base";
-Query query = queryManager.createQuery(sqlStatement, Query.SQL);
-// execute query and fetch result
-QueryResult result = query.execute();</programlisting>
-
-    <para><emphasis role="bold">XPath</emphasis></para>
+      <programlisting language="java">// make SQL query
+        QueryManager queryManager = workspace.getQueryManager();
+        // create query
+        String sqlStatement = "SELECT * FROM nt:base";
+        Query query = queryManager.createQuery(sqlStatement, Query.SQL);
+        // execute query and fetch result
+        QueryResult result = query.execute();</programlisting>
+    </listitem>
+    <listitem>
+      <para>
+        <emphasis role="bold">XPath</emphasis>
+      </para>
 
     <programlisting language="java">// make XPath query
 QueryManager queryManager = workspace.getQueryManager();
@@ -73,7 +79,8 @@ String xpathStatement = "//element(*,nt:base)";
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+    </listitem>
+  </itemizedlist>
   <para xml:id="JCR.FindAllNodes.FetchingResult">
     <citetitle>
       <emphasis role="bold">Fetching result</emphasis>

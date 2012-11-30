@@ -2,9 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.Extensions">
-    <title>JCR Service Extensions</title>
-    <section id="JCR.Extensions.Concept">
-      <title>Concept</title>
+    <title>JCR Service</title>
 
       <para>eXo JCR supports <emphasis role="bold">observation</emphasis>
       (JSR-170 8.3), which enables applications to register interest in events
@@ -33,22 +31,52 @@
       save these changes immediately after the JCR API method call is
       returned, the suggestion with Thread is not applicable for you in this
       case.</para>
-    </section>
 
-    <section id="JCR.Extensions.Implementation">
-      <title>Implementation</title>
+  <para>
+    <citetitle>
+      <emphasis role="bold">Related Pages</emphasis>
+    </citetitle>
+  </para>
 
+  <itemizedlist>
+    <listitem>
+      <para>
+        <link linkend="JCR.AccessControlExtension">Access Control system</link>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link linkend="JCR.RegistryService">Registry Service</link>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link linkend="JCR.RESTServicesOnGroovy">REST Groovy
+          services
+        </link>
+      </para>
+    </listitem>
+  </itemizedlist>
+
+  <para xml:id="JCR.Extensions.Implementation">
+    <citetitle>
+      <emphasis role="bold">Implementation</emphasis>
+    </citetitle>
+  </para>
       <mediaobject>
         <imageobject>
-          <imagedata fileref="images/concepts/interceptor.jpg" />
+          <imagedata align="center" fileref="images/concepts/interceptor.jpg" />
         </imageobject>
       </mediaobject>
 
       <para>Interceptor framework class diagram</para>
-    </section>
 
-    <section id="JCR.Extensions.Configuration">
-      <title>Configuration</title>
+  <para xml:id="JCR.Extensions.Configuration">
+    <citetitle>
+      <emphasis role="bold">Configuration</emphasis>
+    </citetitle>
+  </para>
+
 
       <para>Add a <emphasis role="bold">SessionActionCatalog</emphasis>
       service and an appropriate <emphasis
@@ -69,50 +97,76 @@
       role="bold">criteria</emphasis>. All other fields are criteria. The
       criteria are *AND*ed together. In other words, for a particular item to
       be listened to, it must meet ALL the criteria:</para>
+	
+		<itemizedlist>
+			<listitem>
+				<para><parameter>workspace</parameter>: A comma delimited (ORed) list of workspaces</para>
+			</listitem>
 
-      <para>* <emphasis role="bold">workspace</emphasis>: the comma delimited
-      (ORed) list of workspaces</para>
+			<listitem>
+				<para><parameter>eventTypes</parameter>: A comma delimited (ORed) <emphasis role="bold">list of event names</emphasis> (see below)
+				to be listened to. This is the only mandatory field, others are optional
+				and if they are missing they are interpreted as ANY.</para>
+			</listitem>
+			<listitem>
+				<para><parameter>path</parameter>: A comma delimited (ORed)
+				list of <emphasis role="bold">item absolute paths</emphasis> (or within
+				its subtree if <emphasis role="bold">isDeep</emphasis> is <emphasis role="bold">true</emphasis>, which is the default value).</para>
+			</listitem>
+			<listitem>
+				<para><parameter>nodeTypes</parameter>: A comma delimited (ORed) list of the <emphasis role="bold">current NodeType</emphasis>.
+				Since version 1.6.1 JCR supports the functionalities of nodeType and
+			parentNodeType. This parameter has different semantics, depending on the
+			type of the current item and the operation performed.</para>
+				<itemizedlist>
+					<listitem>
+						<para>If the <emphasis role="bold">current item</emphasis> is a <emphasis role="bold">property</emphasis>, it means <emphasis role="bold">parent node type</emphasis>.</para>
+					</listitem>
+					<listitem>
+						<para>If the <emphasis role="bold">current item</emphasis> is a <emphasis role="bold">node,</emphasis> the semantic depends on the event type:</para>
+							<itemizedlist>
+								<listitem>
+									<para><emphasis role="bold">add node event</emphasis>: the node type of the newly added node.</para>
+								</listitem>
+								<listitem>
+									<para><emphasis role="bold">add mixin event</emphasis>: the newly added mixing node type of the current node.</para>
+								</listitem>
+								<listitem>
+									<para><emphasis role="bold">remove mixin event</emphasis>: the removed mixin type of the current node.</para>
+								</listitem>
+								<listitem>
+									<para><emphasis role="bold">other events</emphasis>: the already assigned NodeType(s) of the current node (can be both primary
+									and mixin).</para>
+								</listitem>
+							</itemizedlist>
+					</listitem>
+				</itemizedlist>
+			</listitem>
+		</itemizedlist>
 
-      <para>* <emphasis role="bold">eventTypes</emphasis>: a comma delimited
-      (ORed) <emphasis role="bold">list of event names</emphasis> (see below)
-      to be listened to. This is the only mandatory field, others are optional
-      and if they are missing they are interpreted as ANY.</para>
-
-      <para>* <emphasis role="bold">path</emphasis> - a comma delimited (ORed)
-      list of <emphasis role="bold">item absolute paths</emphasis> (or within
-      its subtree if <emphasis role="bold">isDeep</emphasis> is <emphasis
-      role="bold">true</emphasis>, which is the default value)</para>
-
-      <para>* <emphasis role="bold">nodeTypes</emphasis> - a comma delimited
-      (ORed) list of the <emphasis role="bold">current NodeType</emphasis>.
-      Since version 1.6.1 JCR supports the functionalities of nodeType and
-      parentNodeType. This parameter has different semantics, depending on the
-      type of the current item and the operation performed. If the <emphasis
-      role="bold">current item</emphasis> is a <emphasis
-      role="bold">property</emphasis> it means the <emphasis
-      role="bold">parent node type</emphasis>. If the <emphasis
-      role="bold">current item</emphasis> is a <emphasis
-      role="bold">node,</emphasis> the semantic depends on the event type: **
-      <emphasis role="bold">add node event</emphasis>: the node type of the
-      newly added node. ** <emphasis role="bold">add mixin event</emphasis>:
-      the newly added mixing node type of the current node. ** <emphasis
-      role="bold">remove mixin event</emphasis> the removed mixin type of the
-      current node. ** <emphasis role="bold">other events</emphasis>: the
-      already assigned NodeType(s) of the current node (can be both primary
-      and mixin).</para>
-
-      <note><para> The list of fields can be extended.</para></note>
-
-      <note><para> No spaces between list elements.</para></note>
-
-      <note><para> <emphasis role="bold">isDeep=false</emphasis> means <emphasis role="bold">node,
-      node properties and child nodes</emphasis>.</para></note>
+  <note>
+    <itemizedlist>
+      <listitem>
+        <para>The list of fields can be extended.</para>
+      </listitem>
+      <listitem>
+        <para>No spaces between list elements.</para>
+      </listitem>
+      <listitem>
+        <para>
+          <emphasis role="bold">isDeep=false</emphasis>
+          means<emphasis role="bold">node,
+          node properties and child nodes</emphasis>.
+        </para>
+      </listitem>
+    </itemizedlist>
+  </note>
 
       <para>The list of supported Event names: <emphasis role="bold">addNode,
       addProperty, changeProperty, removeProperty, removeNode, addMixin,
       removeMixin, lock, unlock, checkin, checkout, read.</emphasis></para>
 
-      <programlisting language="xml">&lt;component&gt;
+<programlisting language="xml">&lt;component&gt;
    &lt;type&gt;org.exoplatform.services.jcr.impl.ext.action.SessionActionCatalog&lt;/type&gt;
    &lt;component-plugins&gt;
       &lt;component-plugin&gt;
@@ -144,17 +198,5 @@
       &lt;/component-plugin&gt;
     &lt;/component-plugins&gt;
 &lt;/component&gt;</programlisting>
-    </section>
 
-  <section id="JCR.Extensions.RelatedPages">
-    <title>Related Pages</title>
-
-    <para><link linkend="JCR.AccessControlExtension">Access Control
-    extension</link></para>
-
-    <para><link linkend="JCR.RegistryService">Registry Service</link></para>
-
-    <para><link linkend="JCR.RESTServicesOnGroovy">REST Groovy
-    services</link></para>
-  </section>
 </section>

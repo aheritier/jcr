@@ -31,7 +31,7 @@
     </citetitle>
   </para>
 
-    <para>Repository contains nt:unstructured nodes, with same 'text'property
+    <para>Repository contains the "nt:unstructured" nodes, with same 'text' property
     and different 'rule' properties (even null)</para>
 
     <itemizedlist>
@@ -62,8 +62,11 @@
       <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
-
-    <para><emphasis role="bold">SQL</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">SQL</emphasis>
+      </para>
 
     <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
@@ -72,8 +75,11 @@ String sqlStatement = "SELECT * FROM nt:unstructured WHERE CONTAINS(*,'quick')";
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
-    <para><emphasis role="bold">XPath</emphasis></para>
+    </listitem>
+    <listitem>
+      <para>
+        <emphasis role="bold">XPath</emphasis>
+      </para>
 
     <programlisting language="java">// make XPath query
 QueryManager queryManager = workspace.getQueryManager();
@@ -82,6 +88,8 @@ String xpathStatement = "//element(*,nt:unstructured)[jcr:contains(., 'quick')]"
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
+    </listitem>
+  </itemizedlist>
 
   <para xml:id="JCR.NodeScopeIndex.FetchingResult">
     <citetitle>
@@ -112,7 +120,7 @@ while (rit.hasNext())
    Value[] values = row.getValues();
 }</programlisting>
 
-    <para>Table content is</para>
+    <para>Table content is:</para>
 
     <table>
       <title>Table content</title>

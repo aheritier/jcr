@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<abstract>
+<para>The intended readers of this document are developers using eXo Platform. This document provides developers, and beginners with the
+  comprehensive knowledge of eXo JCR - a powerful open source implementation of the <ulink url="http://jcp.org/en/jsr/detail?id=170">Java Specification Request 170</ulink>
+  also known as the Content Repository for Java technology API. </para>
+ <para>It is expected you will be able to use your gained knowledge here either for portlet development or as the first step to bundle eXo Portlet Container with your own Portal implementation to reach compliance with <ulink url="http://jcp.org/en/jsr/detail?id=168">JSR 168</ulink> and <ulink url="http://jcp.org/en/jsr/detail?id=286">JSR 286</ulink>.</para>
+  <para>The guide is divided into the following chapters:</para>
+  <itemizedlist>
+	<listitem>
+	<para><emphasis role="bold"><link linkend="chapter-JCR">Introduction to JCR</link></emphasis></para>
+	<para>Basic knowledge of JCR, the JCR architecture and its compatibility levels.</para>
+	</listitem>
+	<listitem>
+	<para><emphasis role="bold"><link linkend="chapter-Configuration">Configuration</link></emphasis></para>
+	<para>Instructions on how to configure and use JCR from basic to advanced configuration.</para>
+	</listitem>
+	<listitem>
+	<para><emphasis role="bold"><link linkend="chapter_DeveloperReference">Developer Reference</link></emphasis></para>
+	<para>The references which are useful for developers, including JCR node type, namespace, search, services and extensions.</para>
+	</listitem>
+	<listitem>
+	<para><emphasis role="bold"><link linkend="chapter-Administration">Administration</link></emphasis></para>
+	<para>Instructions on how to configure JCR connectors, database, administration tools and performance tuning.</para>
+	</listitem>
+  </itemizedlist>
+</abstract>

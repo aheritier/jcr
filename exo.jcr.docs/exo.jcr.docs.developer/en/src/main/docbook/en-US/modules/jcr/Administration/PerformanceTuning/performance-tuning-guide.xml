@@ -4,14 +4,14 @@
 <section id="chapter-Administration-PerformanceTuning">
   <title>Performance Tuning</title>
 
-    <para>This section will show you possible ways of improving JCR</para>
+    <para>This section will show you possible ways of improving JCR.</para>
 
     <para>It is intended to GateIn Administrators and those who wants to use
     JCR features.</para>
 
-	<itemizedlist>
-    <listitem>
+	<citetitle>
       <para xml:id="JCR.PerformanceTuningGuide.PerformanceTuningGuide.JBossASTuning"><emphasis role="bold">JBoss AS Tuning</emphasis></para>
+	</citetitle>
 
       <para>You can use <parameter>maxThreads</parameter> parameter to
       increase maximum amount of threads that can be launched in AS instance.
@@ -22,120 +22,124 @@
       <tip>
         <para>Beware of setting <parameter>maxThreads</parameter> too big,
         this can cause <exceptionname>OutOfMemoryError</exceptionname>. We've
-        got it with <code>maxThreads=1250</code> on such machine:</para>
-
-        <simplelist>
-          <member>7.5 GB memory</member>
-
-          <member>4 EC2 Compute Units (2 virtual cores with 2 EC2 Compute
-          Units each)</member>
-
-          <member>850 GB instance storage (2×420 GB plus 10 GB root
-          partition)</member>
-
-          <member>64-bit platform</member>
-
-          <member>I/O Performance: High</member>
-
-          <member>API name: m1.large</member>
-
-          <member>java -Xmx 4g</member>
-        </simplelist>
+        got it with <code>maxThreads=1250</code> on such machine:
+        <itemizedlist>
+		  <listitem>
+			<para>7.5 GB memory</para>
+		  </listitem>
+		  <listitem>
+			<para>4 EC2 Compute Units (2 virtual cores with 2 EC2 Compute Units each)</para>
+		  </listitem>
+		  <listitem>
+			<para>850 GB instance storage (2×420 GB plus 10 GB root partition)</para>
+		  </listitem>
+		  <listitem>
+			<para>64-bit platform</para>
+		  </listitem>
+		  <listitem>
+			<para>I/O Performance: High</para>
+		  </listitem>
+		  <listitem>
+			<para>API name: m1.large</para>
+		  </listitem>
+		  <listitem>
+			<para>java -Xmx 4g</para>
+		  </listitem>
+        </itemizedlist>
+	   </para>
       </tip>
-    </listitem>
 
-    <listitem>
+    <citetitle>
       <para xml:id="JCR.PerformanceTuningGuide.PerformanceTuningGuide.JCRCacheTuning"><emphasis role="bold">JCR Cache Tuning</emphasis></para>
-
-      <para><citetitle>Cache size</citetitle></para>
-
-      <para>JCR-cluster implementation is built using JBoss Cache as
+	</citetitle>
+	
+	<itemizedlist>
+	  <listitem>
+		<para><emphasis role="bold">Cache size</emphasis>: The JCR-cluster implementation is built using JBoss Cache as
       distributed, replicated cache. But there is one particularity related to
       remove action in it. Speed of this operation depends on the actual size
       of cache. As many nodes are currently in cache as much time is needed to
       remove one particular node (subtree) from it.</para>
-
-      <para><citetitle>Eviction</citetitle></para>
-
-      <para>Manipulations with eviction <parameter>wakeUpInterval</parameter>
-      value doestn't affect on performance. Performance results with values
-      from 500 up to 3000 are approximately equal.</para>
-
-      <para><citetitle>Transaction Timeout</citetitle></para>
-
-      <para>Using short timeout for long transactions such as Export/Import,
-      removing huge subtree defined timeout may cause
-      <exceptionname>TransactionTimeoutException</exceptionname>. [TODO] put
-      recomended timeout value</para>
-    </listitem>
-
-    <listitem>
+      </listitem>
+	  <listitem>
+		<para><emphasis role="bold">Eviction</emphasis>: Manipulations with eviction <parameter>wakeUpInterval</parameter>
+		value doestn't affect on performance. Performance results with values
+		from 500 up to 3000 are approximately equal.</para>
+      </listitem>
+	  <listitem>
+		<para><emphasis role="bold">Transaction Timeout</emphasis>: Using short timeout for long transactions such as Export/Import,
+		removing huge subtree defined timeout may cause <exceptionname>TransactionTimeoutException</exceptionname>. [TODO] put
+		recomended timeout value.</para>
+      </listitem>
+	</itemizedlist>
+  <citetitle>
       <para xml:id="JCR.PerformanceTuningGuide.PerformanceTuningGuide.Clustering"><emphasis role="bold">Clustering</emphasis></para>
-
+  </citetitle>
+	
       <para>For performance it is better to have loadbalacer, DB server and
       shared NFS on different computers. If in some reasons you see that one
       node gets more load than others you can decrease this load using load
       value in load balancer.</para>
-
-      <para><citetitle>JGroups configuration</citetitle></para>
-
-      <para>It's recommended to use "multiplexer stack" feature present in
-      JGroups. It is set by default in eXo JCR and offers higher performance
-      in cluster, using less network connections also. If there are two or
-      more clusters in your network, please check that they use different
-      ports and different cluster names.</para>
-
-      <para><citetitle>Write performance in cluster</citetitle></para>
-
-      <para>Exo JCR implementation uses Lucene indexing engine to provide
-      search capabilities. But Lucene brings some limitations for write
-      operations: it can perform indexing only in one thread. Thats why write
-      performance in cluster is not higher than in singleton environment. Data
-      is indexed on coordinator node, so increasing write-load on cluster may
-      lead to ReplicationTimeout exception. It occurs because writing threads
-      queue in the indexer and under high load timeout for replication to
-      coordinator will be exceeded.</para>
-
-      <para>Taking in consideration this fact, it is recommended to exceed
-      <parameter>replTimeout</parameter> value in cache configurations in case
-      of high write-load.</para>
-
-      <para><citetitle>Replication timeout</citetitle></para>
-
-      <para>Some operations may take too much time. So if you get
-      <exceptionname>ReplicationTimeoutException</exceptionname> try
-      increasing replication timeout:</para>
+	<itemizedlist>
+	  <listitem>
+		<para><emphasis role="bold">JGroups configuration</emphasis>: It's recommended to use "multiplexer stack" feature present in
+		JGroups. It is set by default in eXo JCR and offers higher performance
+		in cluster, using less network connections also. If there are two or
+		more clusters in your network, please check that they use different
+		ports and different cluster names.</para>
+	  </listitem>
+	  <listitem>
+		<para><emphasis role="bold">Write performance in cluster</emphasis>: The eXo JCR implementation uses Lucene indexing engine to provide
+		search capabilities. But Lucene brings some limitations for write
+		operations: it can perform indexing only in one thread. Thats why write
+		performance in cluster is not higher than in singleton environment. Data
+		is indexed on coordinator node, so increasing write-load on cluster may
+		lead to ReplicationTimeout exception. It occurs because writing threads
+		queue in the indexer and under high load timeout for replication to
+		coordinator will be exceeded.</para>
+		<para>Taking in consideration this fact, it is recommended to exceed
+		<parameter>replTimeout</parameter> value in cache configurations in case
+		of high write-load.</para>
+      </listitem>
+	  <listitem>
+		<para><emphasis role="bold">Replication timeout</emphasis>: Some operations may take too much time. So if you get
+		<exceptionname>ReplicationTimeoutException</exceptionname> try
+		increasing replication timeout:</para>
       
       <programlisting language="xml">   &lt;clustering mode="replication" clusterName="${jbosscache-cluster-name}"&gt;
       ...
       &lt;sync replTimeout="60000" /&gt;
    &lt;/clustering&gt;
    </programlisting>
-   <para>value is set in miliseconds.</para>
-    </listitem>
-
-    <listitem>
+		<para>The value is set in miliseconds.</para>
+	</listitem>
+  </itemizedlist>
+ <citetitle>
       <para xml:id="JCR.PerformanceTuningGuide.PerformanceTuningGuide.JVMParameters"><emphasis role="bold">JVM parameters</emphasis></para>
-
-      <para><citetitle>PermGen space size</citetitle></para>
-
-      <para>If you intend to use Infinispan, you will have to increase the
-      PermGen size to at least 256 Mo due to the latest versions of JGroups
-      that are needed by Infinispan (please note that Infinspan is only
-      dedicated to the community for now, no support will be provided). In
-      case, you intend to use JBoss Cache, you can keep on using JGroups
-      2.6.13.GA which means that you don't need to increase the PermGen
-      size.</para>
-    </listitem>
-	<listitem>
+ </citetitle>
+   <itemizedlist>
+		<listitem>
+			<para><emphasis role="bold">PermGen space size</emphasis>: If you intend to use Infinispan, you will have to increase the
+			PermGen size to at least 256 Mo due to the latest versions of JGroups
+			that are needed by Infinispan (please note that Infinspan is only
+			dedicated to the community for now, no support will be provided). In
+			case, you intend to use JBoss Cache, you can keep on using JGroups
+			2.6.13.GA which means that you don't need to increase the PermGen
+			size.</para>
+		</listitem>
+	</itemizedlist>
+  <citetitle>
     <para xml:id="JCR.JDBCDataContainerConfig.ForseQueryHints"><emphasis role="bold">Forse Query Hints</emphasis></para>
+  </citetitle>
 
     <para>Some databases supports hints to increase query performance (like
     Oracle, MySQL, etc). eXo JCR have separate Complex Query implementation
     for Orcale dialect, that uses query hints to increase performance for few
     important queries.</para>
 
-    <para>To enable this option put next configuration property:</para>
+    <itemizedlist>
+		<listitem>
+			<para>To enable this option put next configuration property:</para>
 
     <programlisting language="xml">&lt;workspace name="ws" auto-init-root-nodetype="nt:unstructured"&gt;
   &lt;container class="org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer"&gt;
@@ -143,11 +147,12 @@
       &lt;property name="dialect" value="oracle"/&gt;
       &lt;property name="force.query.hints" value="true" /&gt;
       ......</programlisting>
-
-    <para>Query hints enabled by default.</para>
-
-    <para>eXo JCR uses query hints only for Complex Query Oracle dialect. For
-    all other dialects this parameter is ignored.</para>
-  </listitem>
-</itemizedlist>
+	    </listitem>
+		<listitem>
+			<para>The Query hints are enabled by default.</para>
+		</listitem>
+		<listitem>
+			<para>eXo JCR uses query hints only for Complex Query Oracle dialect. For all other dialects this parameter is ignored.</para>
+		</listitem>
+	</itemizedlist>
 </section>

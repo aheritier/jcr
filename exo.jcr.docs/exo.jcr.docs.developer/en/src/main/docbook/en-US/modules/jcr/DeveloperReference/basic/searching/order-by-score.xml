@@ -71,8 +71,10 @@ SELECT * FROM nt:base ORDER BY jcr:score()[ASC|DESC]
       <emphasis role="bold">Query Execution</emphasis>
     </citetitle>
   </para>
-
-    <para><emphasis role="bold">SQL</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">SQL</emphasis></para>
 
     <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
@@ -80,21 +82,25 @@ QueryManager queryManager = workspace.getQueryManager();
 String sqlStatement = "SELECT * FROM mix:title WHERE CONTAINS(*, 'brown OR fox OR jumps') ORDER BY jcr:score() ASC";
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
-QueryResult result = query.execute();</programlisting>
+      QueryResult result = query.execute(); </programlisting>
+    </listitem>
+    <listitem>
+      <para>
+      <emphasis role="bold">XPath</emphasis>
+         </para>
 
-    <para><emphasis role="bold">XPath</emphasis></para>
-
-    <programlisting language="java">// make XPath query
+         <programlisting language="java">// make XPath query
 QueryManager queryManager = workspace.getQueryManager();
 // create query
 String xpathStatement = "//element(*,mix:title)[jcr:contains(., 'brown OR fox OR jumps')] order by jcr:score()";
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+  </listitem>
+     </itemizedlist>
   <para xml:id="JCR.OrderByScore.FetchingResult">
     <citetitle>
-      <emphasis role="bold">Fetch result</emphasis>
+      <emphasis role="bold">Fetching result</emphasis>
     </citetitle>
   </para>
 

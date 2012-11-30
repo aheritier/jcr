@@ -5,7 +5,7 @@
   <title>Child Node Constraint</title>
 
   <para>Find all nodes with the primary type 'nt:folder' that are children of
-  node by path "/root1/root2". Only find children, do not find further
+  node by the "/root1/root2" path. Only find children, do not find further
   descendants.</para>
 
   <para xml:id="JCR.ChildNodeConstraint.RepositoryStructure">
@@ -59,8 +59,10 @@
       <emphasis role="bold">Query Execution</emphasis>
     </citetitle>
   </para>
-
-    <para><emphasis role="bold">SQL</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">SQL</emphasis></para>
 
     <para>The use of "%" in the LIKE statement includes any string, therefore
     there is a second LIKE statement that excludes that the string contains
@@ -74,8 +76,10 @@ String sqlStatement = "SELECT * FROM nt:folder WHERE jcr:path LIKE '/folder1/fol
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
-    <para><emphasis role="bold">XPath</emphasis></para>
+    </listitem>
+    <listitem>
+      <para>
+        <emphasis role="bold">XPath</emphasis></para>
 
     <programlisting language="java">// make XPath query
 QueryManager queryManager = workspace.getQueryManager();
@@ -84,10 +88,11 @@ String xpathStatement = "/jcr:root/folder1[1]/folder2[1]/element(*,nt:folder)";
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+    </listitem>
+  </itemizedlist>
   <para xml:id="JCR.ChildNodeConstraint.FetchingResult">
     <citetitle>
-      <emphasis role="bold">Fetch result</emphasis>
+      <emphasis role="bold">Fetching result</emphasis>
     </citetitle>
   </para>
 

@@ -9,7 +9,7 @@
   </para>
     <para>Each property of a node (if it is indexable) is processed with
     Lucene analyzer and stored in Lucene index. That's called indexing of a
-    property. After that we can perform a fulltext search among these indexed
+    property. After that, you can perform a fulltext search among these indexed
     properties.</para>
   <!-- Lucene Analyzers -->
   <para id="JCR.FulltextSearchAndSettings.Lucene_Analyzers">
@@ -22,8 +22,7 @@
     <para>Therefore, performing the same query using different analyzers can
     return different results.</para>
 
-    <para>Now, let's see how the same string is transformed by different
-    analyzers.</para>
+    <para>Now, let's see how the same string is transformed by different analyzers.</para>
 
     <table>
       <title>"The quick brown fox jumped over the lazy dogs"</title>
@@ -139,19 +138,16 @@
       engine. But we do not use stop words.</para>
     </note>
 
-    <para>You can assign your analyzer as described in <link
-    linkend="JCR.SearchConfiguration">Search Configuration</link></para>
+    <para>You can assign your analyzer as described in <link linkend="JCR.SearchConfiguration">Search Configuration</link>.</para>
 
   <!-- How are different properties indexed? -->
 
   <para id="JCR.FulltextSearchAndSettings.How_different_properties_indexed">
     <citetitle><emphasis role="bold">How are different properties indexed?</emphasis></citetitle>
   </para>
-    <para>Different properties are indexed in different ways, this affects to
-    if it can be searched like fulltext by property or not.</para>
+    <para>Different properties are indexed in different ways that defines if it can be searched like fulltext by property or not.</para>
 
-    <para>Only two property types are indexed as fulltext searcheable: STRING
-    and BINARY.</para>
+    <para>Only two property types are indexed as fulltext searcheable: STRING and BINARY.</para>
 
     <table>
       <title>Fulltext search by different properties</title>
@@ -187,7 +183,7 @@
       </tgroup>
     </table>
 
-    <para>For example, ưe have property jcr:data (it' BINARY). It's stored
+    <para>For example, we have the <parameter>jcr:data</parameter> property (it is BINARY). It is stored
     well, but you will never find any string with query like:</para>
 
     <programlisting>SELECT * FROM nt:resource WHERE CONTAINS(jcr:data, 'some string')</programlisting>
@@ -195,8 +191,7 @@
     <para>Because,  BINARY is not searchable by fulltext search on exact
     property.</para>
 
-    <para>But, next query will return result (off course if node has searched
-    data):</para>
+    <para>But, next query will return result (in case the node has searched data):</para>
 
     <programlisting>SELECT * FROM nt:resource WHERE CONTAINS( * , 'some string')</programlisting>
 
@@ -206,23 +201,19 @@
   </para>
     <itemizedlist>
       <listitem>
-        <para><link linkend="JCR.FulltextSearchByProperty">JCR.Fulltext Search
-        by Property</link></para>
+        <para><link linkend="JCR.FulltextSearchByProperty">Fulltext Search by Property</link></para>
       </listitem>
 
       <listitem>
-        <para><link linkend="JCR.FulltextSearchByAllProperties">JCR.Fulltext
-        Search by All Properties</link></para>
+        <para><link linkend="JCR.FulltextSearchByAllProperties">Fulltext Search by All Properties</link></para>
       </listitem>
 
       <listitem>
-        <para><link linkend="JCR.AggregationRule">Find nt:file document by
-        content of its child jcr:content node</link></para>
+        <para><link linkend="JCR.AggregationRule">Find nt:file document by content of its child jcr:content node</link></para>
       </listitem>
 
       <listitem>
-        <para><link linkend="JCR.IgnoreAccentSymbols">How to set a new
-        analyzer. Accent symbols ignoring</link></para>
+        <para><link linkend="JCR.IgnoreAccentSymbols">Set new Analyzer and Ignore Accent symbols</link></para>
       </listitem>
     </itemizedlist>
 
@@ -231,7 +222,7 @@
     <citetitle><emphasis role="bold">Different analyzers in action</emphasis></citetitle>
   </para>
     <para>First of all, we will fill repository by nodes with mixin type
-    'mix:title' and different values of 'jcr:description' property.</para>
+    'mix:title' and different values of <parameter>jcr:description</parameter> property.</para>
 
     <itemizedlist>
       <listitem>
@@ -256,12 +247,12 @@
       </listitem>
     </itemizedlist>
 
-    <para>Let's see analyzers effect closer. In first case, we use base jcr
+    <para>Let's see analyzers effect closer. In first case, we use the base JCR
     settings, so, as mentioned above, string "The quick brown fox jumped over
     the lazy dogs" will be transformed to set {[the] [quick] [brown] [fox]
     [jumped] [over] [the] [lazy] [dogs] }</para>
 
-    <programlisting language="java">// make SQL query
+<programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
 String sqlStatement = "SELECT * FROM mix:title WHERE CONTAINS(jcr:description, 'the')";
 // create query
@@ -271,9 +262,7 @@ QueryResult result = query.execute();</programlisting>
 
     <para>NodeIterator will return "document1".</para>
 
-    <para>Now change the default analyzer to
-    org.apache.lucene.analysis.StopAnalyzer. Fill repository again (new
+    <para>Now change the default analyzer to <parameter>org.apache.lucene.analysis.StopAnalyzer</parameter>. Fill repository again (new
     Analyzer must process nodes properties) and run the same query again. It
-    will return nothing, because stop words like "the" will be excluded from
-    parsed string set.</para>
+    will return nothing, because stop words like "the" will be excluded from parsed string set.</para>
   </section>

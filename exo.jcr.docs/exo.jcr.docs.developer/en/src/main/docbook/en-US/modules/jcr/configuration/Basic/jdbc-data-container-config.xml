@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.JDBCDataContainerConfig">
-  <title>JDBC Data Container Configiguration</title>
-	<note>
+<!-- 2.1.3 JDBC Data Container Configuration -->
+<section id="JCR.JDBCDataContainerConfig" role="NotInToc">
+  <title>JDBC Data Container configuration</title>
+	
     <para xml:id="JCR.JDBCDataContainerConfig.NotesForMicrosoftWindowsUsers">The current configuration of eXo JCR uses <ulink
     url="http://commons.apache.org/dbcp/">Apache DBCP</ulink> connection pool
     (<classname>org.apache.commons.dbcp.BasicDataSourceFactory</classname>).
@@ -38,7 +39,7 @@
 [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters]
 "MaxUserPort"=dword:00001b58
 "TcpTimedWaitDelay"=dword:0000001e</programlisting>  
-	</note>
+	
 
 <section id="JCR.JDBCDataContainerConfig.Multi-databaseConfiguration">
     <title>Multi-database configuration</title>
@@ -55,7 +56,7 @@
     <parameter>jdbcjcr</parameter> - local HSQLDB,
     <parameter>jdbcjcr1</parameter> - remote MySQL):</para>
 
-    <programlisting language="xml">&lt;component&gt;
+<programlisting language="xml">&lt;component&gt;
     &lt;key&gt;org.exoplatform.services.naming.InitialContextInitializer&lt;/key&gt;
     &lt;type&gt;org.exoplatform.services.naming.InitialContextInitializer&lt;/type&gt;
     &lt;component-plugins&gt;
@@ -123,8 +124,7 @@
         &lt;value&gt;org.exoplatform.services.naming.SimpleContextFactory&lt;/value&gt;
       &lt;/value-param&gt;
     &lt;/init-params&gt;
-  &lt;/component&gt;
-  </programlisting>
+&lt;/component&gt;</programlisting>
 
     <para>We configure the database connection parameters:<itemizedlist>
         <listitem>
@@ -286,46 +286,45 @@
 <section id="JCR.JDBCDataContainerConfig.Single-databaseConfiguration">
     <title>Single-database configuration</title>
 
-    <para>It's more simple to configure a single-database data container. We
+    <para>It is more simple to configure a single-database data container. We
     have to configure one naming resource.</para>
 
     <para>For example (embedded mode for <parameter>jdbcjcr</parameter> data
     container):</para>
 
-    <programlisting language="xml">&lt;external-component-plugins&gt;
-    &lt;target-component&gt;org.exoplatform.services.naming.InitialContextInitializer&lt;/target-component&gt;
-    &lt;component-plugin&gt;
-        &lt;name&gt;bind.datasource&lt;/name&gt;
-        &lt;set-method&gt;addPlugin&lt;/set-method&gt;
-        &lt;type&gt;org.exoplatform.services.naming.BindReferencePlugin&lt;/type&gt;
-        &lt;init-params&gt;
-          &lt;value-param&gt;
-            &lt;name&gt;bind-name&lt;/name&gt;
-            &lt;value&gt;jdbcjcr&lt;/value&gt;
-          &lt;/value-param&gt;
-          &lt;value-param&gt;
-            &lt;name&gt;class-name&lt;/name&gt;
-            &lt;value&gt;javax.sql.DataSource&lt;/value&gt;
-          &lt;/value-param&gt;
-          &lt;value-param&gt;
-            &lt;name&gt;factory&lt;/name&gt;
-            &lt;value&gt;org.apache.commons.dbcp.BasicDataSourceFactory&lt;/value&gt;
-          &lt;/value-param&gt;
-          &lt;properties-param&gt;
-            &lt;name&gt;ref-addresses&lt;/name&gt;
-            &lt;description&gt;ref-addresses&lt;/description&gt;
-            &lt;property name="driverClassName" value="org.postgresql.Driver"/&gt;
-            &lt;property name="url" value="jdbc:postgresql://exoua.dnsalias.net/portal"/&gt;
-            &lt;property name="username" value="exoadmin"/&gt;
-            &lt;property name="password" value="exo12321"/&gt;
-            &lt;property name="maxActive" value="50"/&gt;
-            &lt;property name="maxIdle" value="5"/&gt;
-            &lt;property name="initialSize" value="5"/&gt;
-          &lt;/properties-param&gt;
-        &lt;/init-params&gt;
-    &lt;/component-plugin&gt;
-  &lt;/external-component-plugins&gt;
-  </programlisting>
+<programlisting language="xml">&lt;external-component-plugins&gt;
+&lt;target-component&gt;org.exoplatform.services.naming.InitialContextInitializer&lt;/target-component&gt;
+&lt;component-plugin&gt;
+	&lt;name&gt;bind.datasource&lt;/name&gt;
+	&lt;set-method&gt;addPlugin&lt;/set-method&gt;
+	&lt;type&gt;org.exoplatform.services.naming.BindReferencePlugin&lt;/type&gt;
+	&lt;init-params&gt;
+	  &lt;value-param&gt;
+		&lt;name&gt;bind-name&lt;/name&gt;
+		&lt;value&gt;jdbcjcr&lt;/value&gt;
+	  &lt;/value-param&gt;
+	  &lt;value-param&gt;
+		&lt;name&gt;class-name&lt;/name&gt;
+		&lt;value&gt;javax.sql.DataSource&lt;/value&gt;
+	  &lt;/value-param&gt;
+	  &lt;value-param&gt;
+		&lt;name&gt;factory&lt;/name&gt;
+		&lt;value&gt;org.apache.commons.dbcp.BasicDataSourceFactory&lt;/value&gt;
+	  &lt;/value-param&gt;
+	  &lt;properties-param&gt;
+		&lt;name&gt;ref-addresses&lt;/name&gt;
+		&lt;description&gt;ref-addresses&lt;/description&gt;
+		&lt;property name="driverClassName" value="org.postgresql.Driver"/&gt;
+		&lt;property name="url" value="jdbc:postgresql://exoua.dnsalias.net/portal"/&gt;
+		&lt;property name="username" value="exoadmin"/&gt;
+		&lt;property name="password" value="exo12321"/&gt;
+		&lt;property name="maxActive" value="50"/&gt;
+		&lt;property name="maxIdle" value="5"/&gt;
+		&lt;property name="initialSize" value="5"/&gt;
+	  &lt;/properties-param&gt;
+	&lt;/init-params&gt;
+&lt;/component-plugin&gt;
+&lt;/external-component-plugins&gt;</programlisting>
 
     <para>And configure repository workspaces in repositories configuration
     with this one database. Parameter "multi-db" must be switched off (set
@@ -421,20 +420,20 @@
         </itemizedlist></para>
 
       <note>
-        <para>But be careful in this case JDBC driver should implement and
+        <para>Be careful in the case JDBC driver should implement and
         provide connection pooling. Connection pooling is very recommended for
-        use with JCR to prevent a database overload.</para>
+        using with JCR to prevent a database overload.</para>
       </note>
 
-      <programlisting language="xml">&lt;workspace name="ws" auto-init-root-nodetype="nt:unstructured"&gt;
-  &lt;container class="org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer"&gt;
-    &lt;properties&gt;
-      &lt;property name="dialect" value="hsqldb"/&gt;
-      &lt;property name="driverClassName" value="org.hsqldb.jdbcDriver"/&gt;
-      &lt;property name="url" value="jdbc:hsqldb:file:target/temp/data/portal"/&gt;
-      &lt;property name="username" value="su"/&gt;
-      &lt;property name="password" value=""/&gt; 
-      ......</programlisting>
+<programlisting language="xml">&lt;workspace name="ws" auto-init-root-nodetype="nt:unstructured"&gt;
+&lt;container class="org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer"&gt;
+&lt;properties&gt;
+  &lt;property name="dialect" value="hsqldb"/&gt;
+  &lt;property name="driverClassName" value="org.hsqldb.jdbcDriver"/&gt;
+  &lt;property name="url" value="jdbc:hsqldb:file:target/temp/data/portal"/&gt;
+  &lt;property name="username" value="su"/&gt;
+  &lt;property name="password" value=""/&gt; 
+......</programlisting>
 
   </section>
 </section>

@@ -1,6 +1,7 @@
-<section id="JCR.eXoJCRconfiguration.workspace">
+<!-- 2.1.1.2 Workspace -->
+<section id="JCR.eXoJCRconfiguration.workspace" role="NotInToc">
     <title>Workspace</title>
-
+  <!-- Workspace configuration -->
   <para id="JCR.eXoJCRconfiguration.WorkspaceConfiguration">
     <citetitle>
       <emphasis role="bold">
@@ -8,37 +9,45 @@
       </emphasis>
     </citetitle>
   </para>  
-
-    <para><emphasis role="bold">name</emphasis>: The name of a
-    workspace.</para>
-
-    <para><emphasis role="bold">auto-init-root-nodetype</emphasis>: DEPRECATED
-    in JCR 1.9 (use initializer). The node type for root node
-    initialization.</para>
-
-    <para><emphasis role="bold">container</emphasis>: Workspace data container
-    (physical storage) configuration.</para>
-
-    <para><emphasis role="bold">initializer</emphasis>: Workspace initializer
-    configuration.</para>
-
-    <para><emphasis role="bold">cache</emphasis>: Workspace storage cache
-    configuration.</para>
-
-    <para><emphasis role="bold">query-handler</emphasis>: Query handler
-    configuration.</para>
-
-    <para><emphasis role="bold">auto-init-permissions</emphasis>: DEPRECATED
-    in JCR 1.9 (use initializer). Default permissions of the root node. It is
-    defined as a set of semicolon-delimited permissions containing a group of
-    space-delimited identities (user, group, etc, see Organization service
-    documentation for details) and the type of permission. For example, any
-    read; <emphasis role="bold">:/admin read;</emphasis>:/admin add_node;
-    <emphasis role="bold">:/admin set_property;</emphasis>:/admin remove means
-    that users from group <emphasis role="bold">admin</emphasis> have all
-    permissions and other users have only a 'read' permission.</para>
-
-
+    <itemizedlist>
+      <listitem>
+        <para><emphasis role="bold">name</emphasis>: The name of a
+        workspace.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">auto-init-root-nodetype</emphasis>: DEPRECATED
+        in JCR 1.9 (use initializer). The node type for root node
+        initialization.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">container</emphasis>: Workspace data container
+        (physical storage) configuration.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">initializer</emphasis>: Workspace initializer
+        configuration.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">cache</emphasis>: Workspace storage cache
+        configuration.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">query-handler</emphasis>: Query handler
+        configuration.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">auto-init-permissions</emphasis>: DEPRECATED
+        in JCR 1.9 (use initializer). Default permissions of the root node. It is
+        defined as a set of semicolon-delimited permissions containing a group of
+        space-delimited identities (user, group, etc, see Organization service
+        documentation for details) and the type of permission. For example, any
+        read; <emphasis role="bold">:/admin read;</emphasis>:/admin add_node;
+        <emphasis role="bold">:/admin set_property;</emphasis>:/admin remove means
+        that users from group <emphasis role="bold">admin</emphasis> have all
+        permissions and other users have only a 'read' permission.</para>
+      </listitem>
+    </itemizedlist>
+  <!-- Workspace data container configuration -->
   <para id="JCR.eXoJCRconfiguration.WorkspaceDataContainerConfiguration">
     <citetitle>
       <emphasis role="bold">
@@ -46,55 +55,60 @@
       </emphasis>
     </citetitle>
   </para>  
+    
+    <itemizedlist>
+      <listitem>
+        <para><parameter>class:</parameter> A workspace data container
+        class name.</para>
+      </listitem>
+	  <listitem>
+          <para><parameter>value-storages</parameter>: The list of value
+          storage plugins.</para>
+      </listitem>
+      <listitem>
+        <para><parameter>properties</parameter>: The list of properties
+        (name-value pairs) for the concrete Workspace data container.</para>      
+        <table>
+          <tgroup cols="2">
+            <tbody>
+              <row>
+                <entry>trigger_events_for_descendents_on_rename</entry>
 
-    <para><emphasis role="bold">class:</emphasis> A workspace data container
-    class name.</para>
+                <entry>Indicate if it is needed to trigger events for descendents on
+                rename or not. It allows to increase performance on rename
+                operation but in same time Observation'll not notified, has
+                default value true</entry>
+              </row>
 
-    <para><emphasis role="bold">properties</emphasis>: The list of properties
-    (name-value pairs) for the concrete Workspace data container.</para>
+              <row>
+                <entry>lazy-node-iterator-page-size</entry>
 
-    <table>
-      <tgroup cols="2">
-        <tbody>
-          <row>
-            <entry>trigger_events_for_descendents_on_rename</entry>
+                <entry>The page size for lazy iterator. Indicates how many nodes
+                can be retrieved from storage per request. The default value is
+                100</entry>
+              </row>
 
-            <entry>indicates if need to trigger events for descendents on
-            rename or not. It allows to increase performance on rename
-            operation but in same time Observation'll not notified, has
-            default value true</entry>
-          </row>
+              <row>
+                <entry>acl-bloomfilter-false-positive-probability</entry>
 
-          <row>
-            <entry>lazy-node-iterator-page-size</entry>
+                <entry>ACL Bloom-filter desired false positive probability. Range
+                [0..1]. Default value 0.1d. (See the note below)</entry>
+              </row>
 
-            <entry>the page size for lazy iterator. Indicates how many nodes
-            can be retrieved from storage per request. The default value is
-            100</entry>
-          </row>
+              <row>
+                <entry>acl-bloomfilter-elements-number</entry>
 
-          <row>
-            <entry>acl-bloomfilter-false-positive-probability</entry>
-
-            <entry>ACL Bloom-filter desired false positive probability. Range
-            [0..1]. Default value 0.1d. (See the note below)</entry>
-          </row>
-
-          <row>
-            <entry>acl-bloomfilter-elements-number</entry>
-
-            <entry>Expected number of ACL-elements in the Bloom-filter.
-            Default value 1000000. (See the note below)</entry>
-          </row>
-        </tbody>
-      </tgroup>
-    </table>
-
-    <note>
-      <para>Bloom filters are not supported by all the cache implementations
-      so far only the inplementation for infinispan supports it.</para>
-    </note>
-
-    <para><emphasis role="bold">value-storages</emphasis>: The list of value
-    storage plugins.</para>
+                <entry>Expected number of ACL-elements in the Bloom-filter.
+                Default value 1000000. (See the note below)</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>      
+        <note>
+          <para>Bloom filters are not supported by all the cache implementations
+          so far only the inplementation for infinispan supports it.</para>
+        </note>
+        </listitem>
+        
+      </itemizedlist>
   </section>

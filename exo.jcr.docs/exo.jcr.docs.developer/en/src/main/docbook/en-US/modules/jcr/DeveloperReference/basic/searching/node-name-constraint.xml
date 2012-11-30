@@ -4,12 +4,12 @@
 <section id="JCR.NodeNameConstraint">
   <title>Node Name Constraint</title>
 
-  <para>Find all nodes with primary type 'nt:file' whose node name is
+  <para>Find all nodes with the 'nt:file' primary type whose node name is
   'document'. The node name is accessible by a function called
   "fn:name()".</para>
 
   <note>
-    <para>fn:name() can be used ONLY with an equal('=') comparison.</para>
+    <para>"fn:name()" can be used ONLY with an equal('=') comparison.</para>
   </note>
 
   <para xml:id="JCR.NodeNameConstraint.RepositoryStructure">
@@ -45,7 +45,8 @@
       <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
-
+    <itemizedlist>
+            <listitem>
     <para><emphasis role="bold">SQL</emphasis></para>
 
     <programlisting language="java">// make SQL query
@@ -55,7 +56,8 @@ String sqlStatement = "SELECT * FROM nt:file WHERE fn:name() = 'document'";
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+     </listitem>
+  <listitem>
     <para><emphasis role="bold">XPath</emphasis></para>
 
     <programlisting language="java">// make XPath query
@@ -65,11 +67,12 @@ String xpathStatement = "//element(*,nt:file)[fn:name() = 'document']";
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+    </listitem>
+  </itemizedlist>
 
   <para xml:id="JCR.NodeNameConstraint.FetchingResult">
     <citetitle>
-      <emphasis role="bold">Fetching the Result</emphasis>
+      <emphasis role="bold">Fetching result</emphasis>
     </citetitle>
   </para>
 

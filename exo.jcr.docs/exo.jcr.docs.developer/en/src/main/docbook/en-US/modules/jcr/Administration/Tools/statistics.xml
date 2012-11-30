@@ -1,10 +1,154 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.Statistics">
-  <title>eXo JCR statistics</title>
-  <para>This section will show you how to get and manage all statistics provided by eXo JCR.</para>
-  
+<section id="JCR.Statistics" role="NotInToc">
+  <title>JCR statistics</title>
+  <para>This section will show you how to get and manage all statistics provided by eXo JCR.
+ All the statistics are controlled by the statistics manager which is reponsible for printing data into the CSV files and  exposing the statistics through JMX and/or Rest.
+  </para>
+  <para xml:id="JCR.Statistics.Statistics_Manager">
+    <citetitle><emphasis role="bold">Statistics Manager</emphasis></citetitle>
+  </para>
+    <para>The statistics manager will create all the CSV files for each
+    category of statistics that it manages, the format of those files is
+    <emphasis>Statistics${category-name}-${creation-timestamp}.csv</emphasis>.
+    Those files will be created into the user directory if it is possible
+    otherwise it will create them into the temporary directory. The format of
+    those files is <envar>CSV</envar> (i.e. Comma-Seperated Values), one new
+    line will be added regularily (every 5 seconds by default) and one last
+    line will be added at JVM exit. Each line, will be composed of the 5
+    figures described below for each method and globaly for all the
+    methods.</para>
+
+    <para><table>
+        <title>Metric Alias</title>
+
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry><parameter>Min</parameter></entry>
+
+              <entry>The minimum time spent into the method expressed in
+              milliseconds.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>Max</parameter></entry>
+
+              <entry>The maximum time spent into the method expressed in
+              milliseconds.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>Total</parameter></entry>
+
+              <entry>The total amount of time spent into the method expressed
+              in milliseconds.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>Avg</parameter></entry>
+
+              <entry>The average time spent into the method expressed in
+              milliseconds.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>Times</parameter></entry>
+
+              <entry>The total amount of times the method has been
+              called.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>You can disable the persistence of the statistics by setting the
+    JVM parameter called <parameter>JCRStatisticsManager.persistence.enabled</parameter> to
+    <emphasis>false</emphasis>, by default, it is set to
+    <emphasis>true</emphasis>. You can aslo define the period of time between
+    each record (i.e. line of data into the file) by setting the JVM parameter
+    called <parameter>JCRStatisticsManager.persistence.timeout</parameter> to
+    your expected value expressed in miliseconds, by default it is set to
+    <emphasis>5000</emphasis>.</para>
+
+    <para>You can also access to the statistics thanks to JMX, the available
+    methods are the following:</para>
+
+    <para><table>
+        <title>JMX Methods</title>
+
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry><parameter>getMin</parameter></entry>
+
+              <entry>Give the minimum time spent into the method corresponding
+              to the given category name and statistics name. The expected
+              arguments are the name of the category of statistics (e.g.
+              JDBCStorageConnection) and the name of the expected method or
+              global for the global value.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>getMax</parameter></entry>
+
+              <entry>Give the maximum time spent into the method corresponding
+              to the given category name and statistics name. The expected
+              arguments are the name of the category of statistics (e.g.
+              JDBCStorageConnection) and the name of the expected method or
+              global for the global value.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>getTotal</parameter></entry>
+
+              <entry>Give the total amount of time spent into the method
+              corresponding to the given category name and statistics name.
+              The expected arguments are the name of the category of
+              statistics (e.g. JDBCStorageConnection) and the name of the
+              expected method or global for the global value.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>getAvg</parameter></entry>
+
+              <entry>Give the average time spent into the method corresponding
+              to the given category name and statistics name. The expected
+              arguments are the name of the category of statistics (e.g.
+              JDBCStorageConnection) and the name of the expected method or
+              global for the global value.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>getTimes</parameter></entry>
+
+              <entry>Give the total amount of times the method has been called
+              corresponding to the given ,category name and statistics name.
+              The expected arguments are the name of the category of
+              statistics (e.g. JDBCStorageConnection) and the name of the
+              expected method or global for the global value.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>reset</parameter></entry>
+
+              <entry>Reset the statistics for the given category name and
+              statistics name. The expected arguments are the name of the
+              category of statistics (e.g. JDBCStorageConnection) and the name
+              of the expected method or global for the global value.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>resetAll</parameter></entry>
+
+              <entry>Reset all the statistics for the given category name. The
+              expected argument is the name of the category of statistics
+              (e.g. JDBCStorageConnection).</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>The full name of the related MBean is
+    <parameter>exo:service=statistic, view=jcr</parameter>.</para>
+
   <section id="JCR.Statistics.Database_access_layer">
     <title>Statistics on Database Access Layer</title>
 
@@ -16,13 +160,13 @@
     to fix the problem quickly.</para>
 
     <para>In case you use
-    <envar>org.exoplatform.services.jcr.impl.storage.jdbc.optimisation.CQJDBCWorkspaceDataContainer</envar>
+    <parameter>org.exoplatform.services.jcr.impl.storage.jdbc.optimisation.CQJDBCWorkspaceDataContainer</parameter>
     or
-    <envar>org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer</envar>
-    as <envar>WorkspaceDataContainer</envar>, you can get statistics on the
+    <parameter>org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer</parameter>
+    as <parameter>WorkspaceDataContainer</parameter>, you can get statistics on the
     time spent into the database access layer. The database access layer (in
     eXo JCR) is represented by the methods of the interface
-    <envar>org.exoplatform.services.jcr.storage.WorkspaceStorageConnection</envar>,
+    <parameter>org.exoplatform.services.jcr.storage.WorkspaceStorageConnection</parameter>,
     so for all the methods defined in this interface, we can have the
     following figures:</para>
 
@@ -53,9 +197,9 @@
 
     <para>If you want to enable the statistics, you just need to set the JVM
     parameter called
-    <emphasis>JDBCWorkspaceDataContainer.statistics.enabled</emphasis> to
+    <parameter>JDBCWorkspaceDataContainer.statistics.enabled</parameter> to
     <emphasis>true</emphasis>. The corresponding CSV file is
-    <emphasis>StatisticsJDBCStorageConnection-${creation-timestamp}.csv</emphasis>
+    <parameter>StatisticsJDBCStorageConnection-${creation-timestamp}.csv</parameter>
     for more details about how the csv files are managed, please refer to the
     section dedicated to the statistics manager.</para>
 
@@ -63,7 +207,7 @@
     The metric alias are described in the statistics manager section.</para>
 
     <para>The name of the category of statistics corresponding to these
-    statistics is <emphasis>JDBCStorageConnection</emphasis>, this name is
+    statistics is <parameter>JDBCStorageConnection</parameter>, this name is
     mostly needed to access to the statistics through JMX.</para>
 
     <table>
@@ -72,20 +216,20 @@
       <tgroup cols="2">
         <tbody>
           <row>
-            <entry>global</entry>
+            <entry><parameter>global</parameter></entry>
 
             <entry>This is the alias for all the methods.</entry>
           </row>
 
           <row>
-            <entry>getItemDataById</entry>
+            <entry><parameter>getItemDataById</parameter></entry>
 
-            <entry>This is the alias for the method
-            <emphasis>getItemData(String identifier).</emphasis></entry>
+            <entry>This is the alias for the 
+            <parameter>getItemData(String identifier)</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>getItemDataByNodeDataNQPathEntry</entry>
+            <entry><parameter>getItemDataByNodeDataNQPathEntry</parameter></entry>
 
             <entry>This is the alias for the method
             <emphasis>getItemData(NodeData parentData, QPathEntry
@@ -93,118 +237,99 @@
           </row>
 
           <row>
-            <entry>getChildNodesData</entry>
+            <entry><parameter>getChildNodesData</parameter></entry>
 
-            <entry>This is the alias for the method
-            <emphasis>getChildNodesData(NodeData parent).</emphasis></entry>
+            <entry>This is the alias for the <parameter>getChildNodesData(NodeData parent)</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>getChildNodesCount</entry>
+            <entry><parameter>getChildNodesCount</parameter></entry>
 
-            <entry>This is the alias for the method
-            <emphasis>getChildNodesCount(NodeData parent).</emphasis></entry>
+            <entry>This is the alias for the <parameter> getChildNodesCount(NodeData parent)</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>getChildPropertiesData</entry>
+            <entry><parameter>getChildPropertiesData</parameter></entry>
 
-            <entry>This is the alias for the method
-            <emphasis>getChildPropertiesData(NodeData
-            parent).</emphasis></entry>
+            <entry>This is the alias for the <parameter>getChildPropertiesData(NodeData parent)</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>listChildPropertiesData</entry>
+            <entry><parameter>listChildPropertiesData</parameter></entry>
 
-            <entry>This is the alias for the method
-            <emphasis>listChildPropertiesData(NodeData
-            parent).</emphasis></entry>
+            <entry>This is the alias for the <parameter>listChildPropertiesData(NodeData parent)</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>getReferencesData</entry>
+            <entry><parameter>getReferencesData</parameter></entry>
 
-            <entry>This is the alias for the method
-            <emphasis>getReferencesData(String
-            nodeIdentifier).</emphasis></entry>
+            <entry>This is the alias for the <parameter>getReferencesData(String nodeIdentifier)</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>commit</entry>
+            <entry><parameter>commit</parameter></entry>
 
-            <entry>This is the alias for the method
-            <emphasis>commit().</emphasis></entry>
+            <entry>This is the alias for the <parameter>commit()</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>addNodeData</entry>
+            <entry><parameter>addNodeData</parameter></entry>
 
-            <entry>This is the alias for the method <emphasis>add(NodeData
-            data).</emphasis></entry>
+            <entry>This is the alias for the <parameter>add(NodeData data)</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>addPropertyData</entry>
+            <entry><parameter>addPropertyData</parameter></entry>
 
-            <entry>This is the alias for the method <emphasis>add(PropertyData
-            data).</emphasis></entry>
+            <entry>This is the alias for the <parameter>add(PropertyData data)</parameter> mehod.</entry>
           </row>
 
           <row>
-            <entry>updateNodeData</entry>
+            <entry><parameter>updateNodeData</parameter></entry>
 
-            <entry>This is the alias for the method <emphasis>update(NodeData
-            data).</emphasis></entry>
+            <entry>This is the alias for the <parameter>update(NodeData data)</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>updatePropertyData</entry>
+            <entry><parameter>updatePropertyData</parameter></entry>
 
-            <entry>This is the alias for the method
-            <emphasis>update(PropertyData data).</emphasis></entry>
+            <entry>This is the alias for the <parameter>update(PropertyData data)</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>deleteNodeData</entry>
+            <entry><parameter>deleteNodeData</parameter></entry>
 
-            <entry>This is the alias for the method <emphasis>delete(NodeData
-            data).</emphasis></entry>
+            <entry>This is the alias for the <parameter>delete(NodeData data)</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>deletePropertyData</entry>
+            <entry><parameter>deletePropertyData</parameter></entry>
 
-            <entry>This is the alias for the method
-            <emphasis>delete(PropertyData data).</emphasis></entry>
+            <entry>This is the alias for the <parameter>delete(PropertyData data)</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>renameNodeData</entry>
+            <entry><parameter>renameNodeData</parameter></entry>
 
-            <entry>This is the alias for the method <emphasis>rename(NodeData
-            data).</emphasis></entry>
+            <entry>This is the alias for the <parameter>rename(NodeData data)</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>rollback</entry>
+            <entry><parameter>rollback</parameter></entry>
 
-            <entry>This is the alias for the method
-            <emphasis>rollback().</emphasis></entry>
+            <entry>This is the alias for the <parameter>rollback()</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>isOpened</entry>
+            <entry><parameter>isOpened</parameter></entry>
 
-            <entry>This is the alias for the method
-            <emphasis>isOpened().</emphasis></entry>
+            <entry>This is the alias for the <parameter>isOpened()</parameter> method.</entry>
           </row>
 
           <row>
-            <entry>close</entry>
+            <entry><parameter>close</parameter></entry>
 
-            <entry>This is the alias for the method
-            <emphasis>close().</emphasis></entry>
+            <entry>This is the alias for the <parameter>close()</parameter> method.</entry>
           </row>
         </tbody>
       </tgroup>
@@ -229,14 +354,14 @@
 
     <itemizedlist>
       <listitem>
-        <para><emphasis>exo.jcr.component.statistics-X.Y.Z</emphasis>.jar
+        <para><filename>exo.jcr.component.statistics-X.Y.Z.jar</filename> 
         corresponding to your eXo JCR version that you can get from the jboss
         maven repository <ulink
         url="https://repository.jboss.org/nexus/content/groups/public/org/exoplatform/jcr/exo.jcr.component.statistics">https://repository.jboss.org/nexus/content/groups/public/org/exoplatform/jcr/exo.jcr.component.statistics</ulink>.</para>
       </listitem>
 
       <listitem>
-        <para>aspectjrt-1.6.8.jar that you can get from the main maven
+        <para><filename>aspectjrt-1.6.8.jar</filename> that you can get from the main maven
         repository <ulink
         url="http://repo2.maven.org/maven2/org/aspectj/aspectjrt"><uri>http://repo2.maven.org/maven2/org/aspectj/aspectjrt</uri></ulink>.</para>
       </listitem>
@@ -253,22 +378,20 @@
 
     <para>By default, the configuration will collect statistics on all the
     methods of the internal interfaces
-    <emphasis>org.exoplatform.services.jcr.core.ExtendedSession</emphasis> and
-    <emphasis>org.exoplatform.services.jcr.core.ExtendedNode</emphasis>, and
-    the JCR API interface <emphasis>javax.jcr.Property</emphasis>. To add
+    <parameter>org.exoplatform.services.jcr.core.ExtendedSession</parameter> and
+    <parameter>org.exoplatform.services.jcr.core.ExtendedNode</parameter>, and
+    the JCR API interface <parameter>javax.jcr.Property</parameter>. To add
     and/or remove some interfaces to monitor, you have two configuration files
-    to change that are bundled into the jar
-    <emphasis>exo.jcr.component.statistics-X.Y.Z</emphasis>.jar, which are
-    <emphasis>conf/configuration.xml</emphasis> and
-    <emphasis>META-INF/aop.xml</emphasis>.</para>
+    to change that are bundled into the <filename>exo.jcr.component.statistics-X.Y.Z.jar</filename>, which are 
+    <filename>conf/configuration.xml</filename> and <filename>META-INF/aop.xml</filename>.</para>
 
     <para>The file content below is the content of
-    <emphasis>conf/configuration.xml</emphasis> that you will need to modify
+    <filename>conf/configuration.xml</filename> that you will need to modify
     to add and/or remove the full qualified name of the interfaces to monitor,
     into the list of parameter values of the init param called
-    <emphasis>targetInterfaces</emphasis>.</para>
+    <parameter>targetInterfaces</parameter>.</para>
 
-    <programlisting language="xml">&lt;configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
+<programlisting language="xml">&lt;configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
  xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"&gt;
 
  &lt;component&gt;
@@ -285,14 +408,14 @@
 &lt;/configuration&gt;</programlisting>
 
     <para>The file content below is the content of
-    <emphasis>META-INF/aop.xml</emphasis> that you will need to modify to
+    <filename>META-INF/aop.xml</filename> that you will need to modify to
     add and/or remove the full qualified name of the interfaces to monitor,
     into the expression filter of the pointcut called
-    <emphasis>JCRAPIPointcut</emphasis>. As you can see below, by default only
+    <parameter>JCRAPIPointcut</parameter>. As you can see below, by default only
     JCR API calls from the exoplatform packages are took into account, don't
     hesistate to modify this filter to add your own package names.</para>
 
-    <programlisting language="xml">&lt;aspectj&gt;
+<programlisting language="xml">&lt;aspectj&gt;
   &lt;aspects&gt;
     &lt;concrete-aspect name="org.exoplatform.services.jcr.statistics.JCRAPIAspectImpl" extends="org.exoplatform.services.jcr.statistics.JCRAPIAspect"&gt;
       &lt;pointcut name="JCRAPIPointcut"
@@ -302,10 +425,10 @@
   &lt;weaver options="-XnoInline"&gt;
     &lt;include within="org.exoplatform..*" /&gt;
   &lt;/weaver&gt;
-&lt;/aspectj&gt; </programlisting>
+&lt;/aspectj&gt;</programlisting>
 
-    <para>The corresponding CSV files are of type
-    <emphasis>Statistics${interface-name}-${creation-timestamp}.csv</emphasis>
+    <para>The corresponding CSV files are of the
+    <parameter>Statistics${interface-name}-${creation-timestamp}.csv</parameter> type 
     for more details about how the csv files are managed, please refer to the
     section dedicated to the statistics manager.</para>
 
@@ -321,156 +444,9 @@
     ExtendedSession for org.exoplatform.services.jcr.core.ExtendedSession),
     this name is mostly needed to access to the statistics through JMX.</para>
 
-    <remark>Please note that this feature will affect the performances of eXo
-    JCR so it must be used with caution.</remark>
-  </section>
-
-  <section id="JCR.Statistics.Statistics_Manager">
-    <title>Statistics Manager</title>
-
-    <para>The statistics manager manages all the statistics provided by eXo
-    JCR, it is responsible of printing the data into the CSV files and also
-    exposing the statistics through JMX and/or Rest.</para>
-
-    <para>The statistics manager will create all the CSV files for each
-    category of statistics that it manages, the format of those files is
-    <emphasis>Statistics${category-name}-${creation-timestamp}.csv</emphasis>.
-    Those files will be created into the user directory if it is possible
-    otherwise it will create them into the temporary directory. The format of
-    those files is <envar>CSV</envar> (i.e. Comma-Seperated Values), one new
-    line will be added regularily (every 5 seconds by default) and one last
-    line will be added at JVM exit. Each line, will be composed of the 5
-    figures described below for each method and globaly for all the
-    methods.</para>
-
-    <para><table>
-        <title>Metric Alias</title>
-
-        <tgroup cols="2">
-          <tbody>
-            <row>
-              <entry>Min</entry>
-
-              <entry>The minimum time spent into the method expressed in
-              milliseconds.</entry>
-            </row>
-
-            <row>
-              <entry>Max</entry>
-
-              <entry>The maximum time spent into the method expressed in
-              milliseconds.</entry>
-            </row>
-
-            <row>
-              <entry>Total</entry>
-
-              <entry>The total amount of time spent into the method expressed
-              in milliseconds.</entry>
-            </row>
-
-            <row>
-              <entry>Avg</entry>
-
-              <entry>The average time spent into the method expressed in
-              milliseconds.</entry>
-            </row>
-
-            <row>
-              <entry>Times</entry>
-
-              <entry>The total amount of times the method has been
-              called.</entry>
-            </row>
-          </tbody>
-        </tgroup>
-      </table>You can disable the persistence of the statistics by setting the
-    JVM parameter called
-    <emphasis>JCRStatisticsManager.persistence.enabled</emphasis> to
-    <emphasis>false</emphasis>, by default, it is set to
-    <emphasis>true</emphasis>. You can aslo define the period of time between
-    each record (i.e. line of data into the file) by setting the JVM parameter
-    called <emphasis>JCRStatisticsManager.persistence.timeout</emphasis> to
-    your expected value expressed in milliseconds, by default it is set to
-    <emphasis>5000</emphasis>.</para>
-
-    <para>You can also access to the statistics thanks to JMX, the available
-    methods are the following:</para>
-
-    <para><table>
-        <title>JMX Methods</title>
-
-        <tgroup cols="2">
-          <tbody>
-            <row>
-              <entry>getMin</entry>
-
-              <entry>Give the minimum time spent into the method corresponding
-              to the given category name and statistics name. The expected
-              arguments are the name of the category of statistics (e.g.
-              JDBCStorageConnection) and the name of the expected method or
-              global for the global value.</entry>
-            </row>
-
-            <row>
-              <entry>getMax</entry>
-
-              <entry>Give the maximum time spent into the method corresponding
-              to the given category name and statistics name. The expected
-              arguments are the name of the category of statistics (e.g.
-              JDBCStorageConnection) and the name of the expected method or
-              global for the global value.</entry>
-            </row>
-
-            <row>
-              <entry>getTotal</entry>
-
-              <entry>Give the total amount of time spent into the method
-              corresponding to the given category name and statistics name.
-              The expected arguments are the name of the category of
-              statistics (e.g. JDBCStorageConnection) and the name of the
-              expected method or global for the global value.</entry>
-            </row>
-
-            <row>
-              <entry>getAvg</entry>
-
-              <entry>Give the average time spent into the method corresponding
-              to the given category name and statistics name. The expected
-              arguments are the name of the category of statistics (e.g.
-              JDBCStorageConnection) and the name of the expected method or
-              global for the global value.</entry>
-            </row>
-
-            <row>
-              <entry>getTimes</entry>
-
-              <entry>Give the total amount of times the method has been called
-              corresponding to the given ,category name and statistics name.
-              The expected arguments are the name of the category of
-              statistics (e.g. JDBCStorageConnection) and the name of the
-              expected method or global for the global value.</entry>
-            </row>
-
-            <row>
-              <entry>reset</entry>
-
-              <entry>Reset the statistics for the given category name and
-              statistics name. The expected arguments are the name of the
-              category of statistics (e.g. JDBCStorageConnection) and the name
-              of the expected method or global for the global value.</entry>
-            </row>
-
-            <row>
-              <entry>resetAll</entry>
-
-              <entry>Reset all the statistics for the given category name. The
-              expected argument is the name of the category of statistics
-              (e.g. JDBCStorageConnection).</entry>
-            </row>
-          </tbody>
-        </tgroup>
-      </table>The full name of the related MBean is
-    <emphasis>exo:service=statistic, view=jcr</emphasis>.</para>
+    <note>
+		<para>This feature will affect the performances of eXo JCR, so it must be used carefully.
+		</para>
+	</note>
   </section>
 </section>

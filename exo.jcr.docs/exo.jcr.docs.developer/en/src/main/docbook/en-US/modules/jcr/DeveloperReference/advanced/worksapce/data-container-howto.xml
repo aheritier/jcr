@@ -177,13 +177,11 @@ ValueData vdata = channel.read(propertyData.getIdentifier(),  orderNumber,  maxB
 
 </programlisting>
 
-    <important>
-      <title>Important</title>
-
-      <para>After a sequence of write and/or delete operations on the storage
+    <note>
+          <para>After a sequence of write and/or delete operations on the storage
       channel, the channel should be committed (or rolled back on an error).
       See <emphasis role="bold">ValueIOChannel.commit()</emphasis> and
       <emphasis role="bold">ValueIOChannel.rollback()</emphasis> and how those
-      methods are used in JDBC container.</para>
-    </important>
+      methods are used in the JDBC container.</para>
+    </note>
 </section>

@@ -1,20 +1,29 @@
-<section id="JCR.eXoJCRconfiguration.LockManagerConfiguration">
+<!-- 2.1.1.7 Lock Manager -->
+<section id="JCR.eXoJCRconfiguration.LockManagerConfiguration" role="NotInToc">
     <title>Lock Manager</title>
-
-    <para><emphasis role="bold">time-out</emphasis>: Time after which the
-    unused global lock will be removed.</para>
-
-    <para><emphasis role="bold">persister</emphasis>: A class for storing lock
-    information for future use. For example, remove lock after jcr
-    restart.</para>
-
-    <para><emphasis role="bold">path</emphasis>: A lock folder. Each workspace
-    has its own one.</para>
-
+      <itemizedlist>
+        <listitem>
+          <para><emphasis role="bold">time-out</emphasis>: Time after which the
+          unused global lock will be removed.</para>
+        </listitem>
+        <listitem>
+          <para><emphasis role="bold">persister</emphasis>: A class for storing lock
+          information for future use. For example, remove lock after jcr
+          restart.</para>
+        </listitem>
+        <listitem>
+          <para><emphasis role="bold">path</emphasis>: A lock folder. Each workspace
+          has its own one.</para>
+        </listitem>
+      </itemizedlist>
     <note>
-      <para>Also see <link
-      linkend="JCR.eXoJCRconfiguration.LockRemoverMaxThreads"><emphasis
-      role="bold">lock-remover-max-threads</emphasis></link> repository
-      configuration parameter.</para>
+	  <itemizedlist>
+		<listitem>
+			<para>See <link linkend="JCR.LockManagerConfiguration">LockManager configuration</link> for advanced configuration of LockManager.</para>
+		</listitem>
+		<listitem>
+			<para>Also see <link linkend="JCR.eXoJCRconfiguration.LockRemoverMaxThreads"><emphasis role="bold">lock-remover-max-threads</emphasis></link> repository configuration parameter.</para>
+		</listitem>
+	  </itemizedlist>
     </note>
 </section>

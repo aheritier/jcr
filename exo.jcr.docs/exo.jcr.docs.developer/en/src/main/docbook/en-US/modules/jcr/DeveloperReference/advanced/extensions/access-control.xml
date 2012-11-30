@@ -2,8 +2,8 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
 <section id="JCR.AccessControl">
   <title>Access Control</title>
-  <para>eXo JCR is a complete implementation of the standard JSR 170:<ulink url="http://jcp.org/en/jsr/detail?id=170">
-    Content Repository for Java TM Technology API</ulink>, including
+  <para>eXo JCR is a complete implementation of the standard <ulink url="http://jcp.org/en/jsr/detail?id=170">
+    JSR 170 - Content Repository for Java TM Technology API</ulink>, including
     <emphasis role="bold">Level 1, Level 2 and Additional Features</emphasis>
     specified in the JCR Specification.
   </para>
@@ -13,74 +13,63 @@
       <emphasis role="bold">Standard Action Permissions</emphasis>
     </citetitle>
   </para>
-  <para>The JCR specification (JSR 170) does not have many requirements
+  <para>The JCR specification (<ulink url="http://jcp.org/en/jsr/detail?id=170">JSR 170</ulink>) does not have many requirements
     about Access Control. It only requires the implementation of the
-    Session.checkPermission(String absPath, String actions) method. This
+    <parameter>Session.checkPermission(String absPath, String actions)</parameter> method. This
     method checks if a current session has permissions to perform some actions
     on absPath:
   </para>
   <itemizedlist>
     <listitem>
-      <para>absPath : The string representation of a JCR absolute
-        path.
-      </para>
+      <para>absPath: The string representation of a JCR absolute path.</para>
     </listitem>
     <listitem>
-      <para>actions : eXo JCR interprets this string as a comma separated
+      <para>actions: eXo JCR interprets this string as a comma separated
         the list of individual action names, such as the 4 types defined in JSR
-        170 :
-      </para>
+        170:</para>
       <itemizedlist>
         <listitem>
           <para>
-            <emphasis role="bold">add_node</emphasis>
-            : Permission to
-            add a node.
+            <emphasis role="bold">add_node</emphasis>: Permission to add a node.
           </para>
         </listitem>
         <listitem>
           <para>
-            <emphasis role="bold">set_property</emphasis>
-            : Permission
-            to set a property.
+            <emphasis role="bold">set_property</emphasis>: Permission to set a property.
           </para>
         </listitem>
         <listitem>
           <para>
-            <emphasis role="bold">remove</emphasis>
-            : Permission to
-            remove an item (node or property).
+            <emphasis role="bold">remove</emphasis>: Permission to remove an item (node or property).
           </para>
         </listitem>
         <listitem>
           <para>
-            <emphasis role="bold">read</emphasis>
-            : Permission to
-            retrieve a node or read a property value.
+            <emphasis role="bold">read</emphasis>: Permission to retrieve a node or read a property value.
           </para>
         </listitem>
       </itemizedlist>
     </listitem>
   </itemizedlist>
-  <para>For example :</para>
+  <para>For example:</para>
   <itemizedlist>
     <listitem>
-      <para>session.checkPermission(&quot;/Groups/organization&quot;,
-        &quot;add_node,set_property&quot;) will check if the session is allowed to add a
+      <para><parameter>session.checkPermission(&quot;/Groups/organization&quot;,
+        &quot;add_node,set_property&quot;)</parameter> will check if the session is allowed to add a
         child node to &quot;organization&quot; and to modify its properties. If one of
         the two permissions is denied, an AccessDeniedException is
         thrown.
       </para>
     </listitem>
     <listitem>
-      <para>session.checkPermission(&quot;/Groups/organization/exo:name&quot;,
-        &quot;read,set_property&quot;) will check if the session is allowed to read and
+      <para><parameter>session.checkPermission(&quot;/Groups/organization/exo:name&quot;,
+        &quot;read,set_property&quot;)</parameter> will check if the session is allowed to read and
         change the &quot;exo:name&quot; property of the &quot;organization&quot; node.
       </para>
     </listitem>
     <listitem>
-      <para>session.checkPermission(&quot;/Groups/organization/exo:name&quot;,
-        &quot;remove&quot;) will check if the session allowed to remove &quot;exo:name&quot;
+      <para><parameter>session.checkPermission(&quot;/Groups/organization/exo:name&quot;,
+        &quot;remove&quot;)</parameter> will check if the session allowed to remove &quot;exo:name&quot;
         property or node.
       </para>
     </listitem>

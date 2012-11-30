@@ -5,8 +5,11 @@
   <title>XPath queries containing node names starting with a number</title>
 
   <para>If you execute an XPath request like this:</para>
-
-  <para><emphasis role="bold">XPath</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">XPath</emphasis>
+      </para>
 
   <programlisting language="java">// get QueryManager
 QueryManager queryManager = workspace.getQueryManager(); 
@@ -29,14 +32,19 @@ Query query = queryManager.createQuery("/jcr:root/Documents/Publie/2010//element
     </listitem>
 
     <listitem>
-      <para>Use escaping :</para>
+      <para>Use escaping:</para>
     </listitem>
   </itemizedlist>
+    </listitem>
+    <listitem>
+      <para>
+        <emphasis role="bold">XPath</emphasis>
+      </para>
 
-  <para><emphasis role="bold">XPath</emphasis></para>
-
-  <programlisting language="java">// get QueryManager
+      <programlisting language="java">// get QueryManager
 QueryManager queryManager = workspace.getQueryManager(); 
 // make XPath query
 Query query = queryManager.createQuery("/jcr:root/Documents/Publie/_x0032_010//element(*, exo:article)", Query.XPATH);</programlisting>
+    </listitem>
+  </itemizedlist>
 </section>

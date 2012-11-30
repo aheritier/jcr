@@ -4,7 +4,7 @@
 <section id="JCR.MultivaluePropertyComparison">
   <title>Multivalue Property Comparison</title>
 
-  <para>Find all nodes with the primary type 'nt:unstructured' whose property
+  <para>Find all nodes with the 'nt:unstructured' primary type whose property
   'multiprop' contains both values "one" and "two".</para>
 
   <para xml:id="JCR.MultivaluePropertyComparison.RepositoryStructure">
@@ -13,7 +13,7 @@
     </citetitle>
   </para>
 
-    <para>The repository contains nt:unstructured nodes with different
+    <para>The repository contains "nt:unstructured" nodes with different
     'multiprop' properties.</para>
 
     <itemizedlist>
@@ -42,8 +42,10 @@
       <emphasis role="bold">Query Execution</emphasis>
     </citetitle>
   </para>
-
-    <para><emphasis role="bold">SQL</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">SQL</emphasis></para>
 
     <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
@@ -52,8 +54,9 @@ String sqlStatement = "SELECT * FROM nt:unstructured WHERE multiprop = 'one' AND
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
-    <para><emphasis role="bold">XPath</emphasis></para>
+    </listitem>
+    <listitem>
+      <para><emphasis role="bold">XPath</emphasis></para>
 
     <programlisting language="java">// make XPath query
 QueryManager queryManager = workspace.getQueryManager();
@@ -62,10 +65,11 @@ String xpathStatement = "//element(*,nt:unstructured)[@multiprop = 'one' and @mu
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+    </listitem>
+  </itemizedlist>
   <para xml:id="JCR.MultivaluePropertyComparison.FetchingResult">
     <citetitle>
-      <emphasis role="bold">Fetching the Result</emphasis>
+      <emphasis role="bold">Fetching result</emphasis>
     </citetitle>
   </para>
 

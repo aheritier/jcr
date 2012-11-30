@@ -8,14 +8,14 @@
   data already stored in index.</para>
 
   <note>
-    <para>See also about SpellChecker configuration - <link
+    <para>See also SpellChecker configuration in <link
     linkend="JCR.SearchingRepositoryContent">Searching Repository
-    Content</link></para>
+    Content</link>.</para>
   </note>
 
   <para>SpellChecker must be settled in query-handler config.</para>
 
-  <para>test-jcr-config.xml:</para>
+  <para>See the <filename>test-jcr-config.xml</filename> file as below:</para>
 
   <programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
    &lt;properties&gt;
@@ -56,6 +56,8 @@
     <para>Query looks only for root node, because spell checker looks for
     suggestions by full index. So complicated query is redundant.</para>
 
+    <itemizedlist>
+       <listitem>
     <para><emphasis role="bold">SQL</emphasis></para>
 
     <programlisting language="java">// make SQL query
@@ -65,7 +67,8 @@ String sqlStatement = "SELECT rep:spellcheck() FROM nt:base WHERE jcr:path = '/'
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+    </listitem>
+  <listitem>
     <para><emphasis role="bold">XPath</emphasis></para>
 
     <programlisting language="java">// make XPath query
@@ -75,6 +78,8 @@ String xpathStatement = "/jcr:root[rep:spellcheck('quik OR (-foo bar)')]/(rep:sp
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
+ </listitem>
+  </itemizedlist>
 
   <para xml:id="JCR.SpellChecker.FetchingResult">
     <citetitle>

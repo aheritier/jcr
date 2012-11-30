@@ -3,6 +3,38 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
  <section id="JCRref.Configuration.AdvancedConfiguration">
         <title>Advanced configuration</title>
+        <highlights>
+            <itemizedlist>
+              <listitem>
+                <para><emphasis role="bold"><link linkend="JCR.SearchConfiguration">Search configuration</link></emphasis></para>
+                <para>Details of Search configuration, including XML parameters, global search index and indexing tuning.</para>
+              </listitem>  
+              <listitem>
+                <para><emphasis role="bold"><link linkend="JCR.LockManagerConfiguration">LockManager configuration</link></emphasis></para>
+                <para>Instructions on how to configure LockManager which is used to store Lock objects.</para>
+              </listitem>
+              <listitem>
+                <para><emphasis role="bold"><link linkend="JCR.QueryHandlerConfiguration">QueryHandler configuration</link></emphasis></para>
+                <para>Details of Indexing in clustered environment, query-handler parameters, cluster-ready indexing strategies, Asynchronous reindexing and Lucene tuning.</para>
+              </listitem>  
+              <listitem>
+                <para><emphasis role="bold"><link linkend="JCR.ClusterConfig">Configure eXo JCR in cluster</link></emphasis></para>
+                <para>Requirements related to environment and configuration, instructions on how to configure JBoss Cache and stop a node properly in the cluster environment.</para>
+              </listitem>  
+              <listitem>
+                <para><emphasis role="bold"><link linkend="JCR.RepositoryCreationService">RepositoryCreationService</link></emphasis></para>
+                <para>Overview of dependencies and how RepositoryCreationService works, details of its configuration and interface.</para>
+              </listitem> 
+              <listitem>
+                <para><emphasis role="bold"><link linkend="Kernel.TransactionService">TransactionService</link></emphasis></para>
+                <para>Details of existing TransactionService implementations and JBoss TransactionService.</para>
+              </listitem> 
+              <listitem>
+                <para><emphasis role="bold"><link linkend="JCR.ExternalValueStorages">External Value Storages</link></emphasis></para>
+                <para>Details of Tree File Value Storage, Simple File Value Storage and Content Addressable Value storage support.</para>
+              </listitem>             
+            </itemizedlist>  
+        </highlights>
             <!-- 2.2.1 Search configuration -->
             <xi:include href="Advanced/search-configuration.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
             <!-- 2.2.2 LockManager configuration -->

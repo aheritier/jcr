@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<section id="JCR.QueryHandlerConfiguration">
+<section id="JCR.QueryHandlerConfiguration" role="NotInToc">
   <title>QueryHandler configuration</title>
 
-  <para>This section shows you how to configure
-  <emphasis>QueryHandler</emphasis>: <link
-  linkend="JCR.QueryHandlerConfiguration.Indexing_in_clustered_environment">Indexing
-  in clustered environment</link>.</para>
-  <!-- 2.2.3.1 Indexing in clustered environment -->
-  <section id="JCR.QueryHandlerConfiguration.Indexing_in_clustered_environment">
-    <title>Indexing in clustered environment</title>
+  <para>Before going deeper into the <emphasis>QueryHandler</emphasis> configuration, you first need to learn about the concept of Indexing
+  in clustered environment.</para>
+ 
+  <para xml:id="JCR.QueryHandlerConfiguration.Indexing_in_clustered_environment">
+    <citetitle><emphasis role="bold">Indexing in clustered environment</emphasis></citetitle>
+  </para>
 
     <para>JCR offers multiple indexing strategies. They include both for
     standalone and clustered environments using the advantages of running in a
@@ -86,13 +85,12 @@
 
     <para>See more about <link linkend="JCR.SearchConfiguration">Search
     Configuration</link>.</para>
-  </section>
   
-    <!-- 2.2.3.2 Query-handler parameters -->
+    <!-- 2.2.3.1 Query-handler parameters -->
     <section id="JCR.QueryHandlerConfiguration.Configuration.Query-handlerConfigurationOverview">
       <title>Query-handler parameters</title>
 
-      <para>Configuration example:</para>
+      <para>See the following configuration example:</para>
 
       <programlisting language="xml">&lt;workspace name="ws"&gt;
    &lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
@@ -129,95 +127,94 @@
 
           <tbody>
             <row>
-              <entry>index-dir</entry>
+              <entry><parameter>index-dir</parameter></entry>
 
-              <entry>path to index</entry>
+              <entry>Path to index.</entry>
             </row>
 
             <row>
-              <entry>changesfilter-class</entry>
+              <entry><parameter>changesfilter-class</parameter></entry>
 
-              <entry>template of JBoss-cache configuration for all
-              query-handlers in repository</entry>
+              <entry>Template of JBoss-cache configuration for all
+              query-handlers in repository.</entry>
             </row>
 
             <row>
-              <entry>jbosscache-configuration</entry>
+              <entry><parameter>jbosscache-configuration</parameter></entry>
 
-              <entry>template of JBoss-cache configuration for all
-              query-handlers in repository</entry>
+              <entry>Template of JBoss-cache configuration for all
+              query-handlers in repository.</entry>
             </row>
 
             <row>
-              <entry>jgroups-configuration</entry>
+              <entry><parameter>jgroups-configuration</parameter></entry>
 
-              <entry>jgroups-configuration is template configuration for all
+              <entry>Template configuration for all
               components (search, cache, locks) [Add link to document
-              describing template configurations]</entry>
+              describing template configurations].</entry>
             </row>
 
             <row>
-              <entry>jgroups-multiplexer-stack</entry>
+              <entry><parameter>jgroups-multiplexer-stack</parameter></entry>
 
               <entry>[TODO about jgroups-multiplexer-stack - add link to JBoss
-              doc]</entry>
+              doc].</entry>
             </row>
 
             <row>
-              <entry>jbosscache-cluster-name</entry>
+              <entry><parameter>jgroups-multiplexer-stackjbosscache-cluster-name</parameter></entry>
 
-              <entry>cluster name (must be unique)</entry>
+              <entry>Cluster name which must be unique.</entry>
             </row>
 
             <row>
-              <entry>max-volatile-time</entry>
+              <entry><parameter>max-volatile-time</parameter></entry>
 
-              <entry>max time to live for Volatile Index</entry>
+              <entry>Max time to live for Volatile Index.</entry>
             </row>
 
             <row>
-              <entry>rdbms-reindexing</entry>
+              <entry><parameter>rdbms-reindexing</parameter></entry>
 
-              <entry>indicate that need to use rdbms reindexing mechanism if
-              possible, the default value is true</entry>
+              <entry>Indicate that it is needed to use rdbms reindexing mechanism if
+              possible, the default value is true.</entry>
             </row>
 
             <row>
-              <entry>reindexing-page-size</entry>
+              <entry><parameter>reindexing-page-size</parameter></entry>
 
-              <entry>maximum amount of nodes which can be retrieved from
+              <entry>Maximum amount of nodes which can be retrieved from
               storage for re-indexing purpose, the default value is
-              100</entry>
+              100.</entry>
             </row>
 
             <row>
-              <entry>index-recovery-mode</entry>
+              <entry><parameter>index-recovery-mode</parameter></entry>
 
-              <entry>If the parameter has been set to
-              <command>from-indexing</command>, so a full indexing will be
+              <entry>If the parameter has been set to <command>from-indexing</command>, so a full indexing will be
               automatically launched, if the parameter has been set to
               <command>from-coordinator</command> (default behavior), the
-              index will be retrieved from coordinator</entry>
+              index will be retrieved from coordinator.</entry>
             </row>
 
             <row>
-              <entry>index-recovery-filter</entry>
+              <entry><parameter>index-recovery-filter</parameter></entry>
 
-              <entry>Defines implementation class or classes of
+              <entry>Define implementation class or classes of
               RecoveryFilters, the mechanism of index synchronization for
               Local Index strategy.</entry>
             </row>
 
             <row>
-              <entry>async-reindexing</entry>
+              <entry><parameter>async-reindexing</parameter></entry>
 
-              <entry>Controls the process of re-indexing on JCR's startup. If
+              <entry>Control the process of re-indexing on JCR's startup. If
               flag set, indexing will be launched asynchronously, without
               blocking the JCR. Default is "false".</entry>
             </row>
 
             <row>
-              <entry>indexing-thread-pool-size</entry>
+              <entry><parameter>indexing-thread-pool-size</parameter></entry>
 
               <entry>Define the total amount of indexing threads.</entry>
             </row>
@@ -226,23 +223,26 @@
       </table>
 
       <note>
-        <para>If you use postgreSQL and the parameter rdbms-reindexing is set
-        to true, the performances of the queries used while indexing can be
-        improved by setting the parameter "enable_seqscan" to "off" or
-        "default_statistics_target" to at least "50" in the configuration of
-        your database. Then you need to restart DB server and make analyze of
-        the JCR_SVALUE (or JCR_MVALUE) table.</para>
-      </note>
-
-      <note>
-        <para>If you use DB2 and the parameter rdbms-reindexing is set to
-        true, the performance of the queiries used while indexing can be
-        improved by making statisticks on tables by running "RUNSTATS ON TABLE
-        &lt;scheme&gt;.&lt;table&gt; WITH DISTRIBUTION AND INDEXES ALL" for
-        JCR_SITEM (or JCR_MITEM) and JCR_SVALUE (or JCR_MVALUE) tables.</para>
+		<itemizedlist>
+			<listitem>
+				<para>If you use postgreSQL and the parameter rdbms-reindexing is set
+				to true, the performances of the queries used while indexing can be
+				improved by setting the parameter "enable_seqscan" to "off" or
+				"default_statistics_target" to at least "50" in the configuration of
+				your database. Then you need to restart DB server and make analyze of
+				the JCR_SVALUE (or JCR_MVALUE) table.</para>
+			</listitem>
+			<listitem>
+				<para>If you use DB2 and the parameter rdbms-reindexing is set to
+				true, the performance of the queiries used while indexing can be
+				improved by making statisticks on tables by running "RUNSTATS ON TABLE
+				&lt;scheme&gt;.&lt;table&gt; WITH DISTRIBUTION AND INDEXES ALL" for
+				JCR_SITEM (or JCR_MITEM) and JCR_SVALUE (or JCR_MVALUE) tables.</para>
+			</listitem>
+		</itemizedlist>
       </note>
     </section>
-    <!-- 2.2.3.3 Cluster-ready indexing strategies -->
+    <!-- 2.2.3.2 Cluster-ready indexing strategies -->
     <section id="JCR.QueryHandlerConfiguration.Configuration.Cluster-readyIndexingStrategies">
       <title>Cluster-ready indexing strategies</title>
 
@@ -254,7 +254,7 @@
       "org.exoplatform.services.jcr.impl.core.query.jbosscache.JBossCacheIndexChangesFilter"
       will enable shared index implementation.</para>
 
-      <programlisting language="xml">&lt;workspace name="ws"&gt;
+<programlisting language="xml">&lt;workspace name="ws"&gt;
    &lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
       &lt;properties&gt;
          &lt;property name="index-dir" value="/mnt/nfs_drive/index/db1/ws" /&gt;
@@ -279,7 +279,7 @@
       folder on local file system and "changesfilter-class" must be set to
       "org.exoplatform.services.jcr.impl.core.query.jbosscache.LocalIndexChangesFilter".</para>
 
-      <programlisting language="xml">&lt;workspace name="ws"&gt;
+<programlisting language="xml">&lt;workspace name="ws"&gt;
    &lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
       &lt;properties&gt;
          &lt;property name="index-dir" value="/mnt/nfs_drive/index/db1/ws" /&gt;
@@ -296,8 +296,7 @@
          &lt;property name="jbosscache-shareable" value="true" /&gt;
       &lt;/properties&gt;
    &lt;/query-handler&gt;
-&lt;/workspace&gt;
-</programlisting>
+&lt;/workspace&gt;</programlisting>
 
       <para id="JCR.QueryHandlerConfiguration.Configuration.Cluster-readyIndexingStrategies.LocalIndexRecoveryFilters">
         <citetitle><emphasis role="bold">Local Index Recovery Filters</emphasis></citetitle>
@@ -333,53 +332,46 @@
         previously described parameter (can be "from-indexing" or
         "from-coordinator" (default value))</para>
 
-        <programlisting language="xml">&lt;property name="index-recovery-mode" value="from-coordinator" /&gt;
-</programlisting>
+<programlisting language="xml">&lt;property name="index-recovery-mode" value="from-coordinator" /&gt;</programlisting>
 
         <para>There are couple implementations of filters:</para>
 
         <itemizedlist>
           <listitem>
-            <para>org.exoplatform.services.jcr.impl.core.query.lucene.DummyRecoveryFilter:
-            always returns true, for cases when index must be force
+            <para><parameter>org.exoplatform.services.jcr.impl.core.query.lucene.DummyRecoveryFilter</parameter>: Always return true, for cases when index must be force
             resynchronized (recovered) each time;</para>
           </listitem>
 
           <listitem>
-            <para>org.exoplatform.services.jcr.impl.core.query.lucene.SystemPropertyRecoveryFilter
-            : return value of system property
+            <para><parameter>org.exoplatform.services.jcr.impl.core.query.lucene.SystemPropertyRecoveryFilter</parameter>: Return value of system property
             "org.exoplatform.jcr.recoveryfilter.forcereindexing". So index
             recovery can be controlled from the top without changing
             documentation using system properties;</para>
           </listitem>
 
           <listitem>
-            <para>org.exoplatform.services.jcr.impl.core.query.lucene.ConfigurationPropertyRecoveryFilter
-            : return value of QueryHandler configuration property
+            <para><parameter>org.exoplatform.services.jcr.impl.core.query.lucene.ConfigurationPropertyRecoveryFilter</parameter>: Return value of QueryHandler configuration property
             "index-recovery-filter-forcereindexing". So index recovery can be
             controlled from configuration separately for each workspace.
             I.e:</para>
 
-            <programlisting language="xml">&lt;property name="index-recovery-filter" value="org.exoplatform.services.jcr.impl.core.query.lucene.ConfigurationPropertyRecoveryFilter" /&gt;
-&lt;property name="index-recovery-filter-forcereindexing" value="true" /&gt;
-</programlisting>
+<programlisting language="xml">&lt;property name="index-recovery-filter" value="org.exoplatform.services.jcr.impl.core.query.lucene.ConfigurationPropertyRecoveryFilter" /&gt;
+&lt;property name="index-recovery-filter-forcereindexing" value="true" /&gt;</programlisting>
           </listitem>
 
           <listitem>
-            <para>org.exoplatform.services.jcr.impl.core.query.lucene.DocNumberRecoveryFilter
-            : checks number of documents in index on coordinator side and
+            <para><parameter>org.exoplatform.services.jcr.impl.core.query.lucene.DocNumberRecoveryFilter</parameter>: Check number of documents in index on coordinator side and
             self-side. Return true if differs. Advantage of this filter
             comparing to other, it will skip reindexing for workspaces where
             index wasn't modified. I.e. there is 10 repositories with 3
-            workspaces in each one. Only one is really heavily used in cluster
-            : frontend/production. So using this filter will only reindex
+            workspaces in each one. Only one is really heavily used in cluster: frontend/production. So using this filter will only reindex
             those workspaces that are really changed, without affecting other
             indexes thus greatly reducing startup time.</para>
           </listitem>
         </itemizedlist>      
     </section>  
 
-  <!-- 2.2.3.4. Asynchronous reindexing -->
+  <!-- 2.2.3.3. Asynchronous reindexing -->
   <section id="JCR.QueryHandlerConfiguration.Asynchronous_reindexing">
     <title>Asynchronous reindexing</title>
 
@@ -390,6 +382,27 @@
     include hardware faults, hard restarts, data-corruption, migrations and
     JCR updates that brings new features related to index. Usually index
     re-creation requested on server's startup or in runtime.</para>
+    <note>      
+      <para id="JCR.QueryHandlerConfiguration.Asynchronous_reindexing.Notices">
+      First of all, you can not launch Hot re-indexing via JMX if index is
+      already in offline mode. It means that index is currently is invoked in
+      some operations, like re-indexing at startup, copying in cluster to
+      another node or whatever. Another important this is Hot Asynchronous
+      Reindexing via JMX and "on startup" reindexing are completely different
+      features. So you can't get the state of startup reindexing using command
+      getHotReindexingState in JMX interface, but there are some common JMX
+      operations:
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>getIOMode - returns current index IO mode (READ_ONLY /
+          READ_WRITE), belongs to clustered configuration states;</para>
+        </listitem>
+        <listitem>
+          <para>getState - returns current state: ONLINE / OFFLINE.</para>
+        </listitem>
+      </itemizedlist>
+    </note>
     <!-- On startup indexing -->
     <para id="JCR.QueryHandlerConfiguration.Asynchronous_reindexing.OnStartupIndexing">
       <citetitle><emphasis role="bold">On startup indexing</emphasis></citetitle>
@@ -417,12 +430,11 @@
 
       <para>"OFFLINE" state means that index is currently re-creating. When
       state changed, corresponding log event is printed. From the start of
-      background task index is switched to "OFFLINE", with following log event
-      :</para>
+      background task index is switched to "OFFLINE", with following log event:</para>
 
       <programlisting>[INFO] Setting index OFFLINE (repository/production[system]).</programlisting>
 
-      <para>When process finished, two events are logged :</para>
+      <para>When the process has been finished, two events are logged:</para>
 
       <programlisting>[INFO] Created initial index for 143018 nodes (repository/production[system]).
 [INFO] Setting index ONLINE (repository/production[system]).</programlisting>
@@ -468,38 +480,10 @@
           done.</para>
         </listitem>
       </itemizedlist>    
-
-    <section id="JCR.QueryHandlerConfiguration.Asynchronous_reindexing.Notices">
-      <title>Notices</title>
-
-      <para>First of all, can't launch Hot re-indexing via JMX if index is
-      already in offline mode. It means that index is currently is invoked in
-      some operations, like re-indexing at startup, copying in cluster to
-      another node or whatever. Another important this is Hot Asynchronous
-      Reindexing via JMX and "on startup" reindexing are completely different
-      features. So you can't get the state of startup reindexing using command
-      getHotReindexingState in JMX interface, but there are some common JMX
-      operations:</para>
-
-      <itemizedlist>
-        <listitem>
-          <para>getIOMode - returns current index IO mode (READ_ONLY /
-          READ_WRITE), belongs to clustered configuration states;</para>
-        </listitem>
-
-        <listitem>
-          <para>getState - returns current state: ONLINE / OFFLINE.</para>
-        </listitem>
-      </itemizedlist>
-    </section>
   </section>
-
-  <section id="JCR.QueryHandlerConfiguration.Advanced_tuning">
-    <title>Advanced tuning</title>
-
-    <section id="JCR.QueryHandlerConfiguration.Advanced_tuning.LuceneTuning">
+  <!-- 2.2.3.4. Lucene tuning -->
+  <section id="JCR.QueryHandlerConfiguration.Advanced_tuning.LuceneTuning">
       <title>Lucene tuning</title>
-
       <para>As mentioned above, JCR Indexing is based on Lucene indexing
       library as underlying search engine. It uses Directories to store index
       and manages access to index by Lock Factories. By default JCR
@@ -518,6 +502,5 @@
       documentation. But be sure You know what You are changing. JCR allows
       end users to change implementation classes of Lucene internals, but
       doesn't guarantee it's stability and functionality.</para>
-    </section>
-  </section>
+  </section>  
 </section>

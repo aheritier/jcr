@@ -4,10 +4,10 @@
 <section id="JCR.ANDConstraint">
   <title>AND Constraint</title>
 
-  <para>Find all fairytales with a page count more than 90 pages.</para>
+  <para>Find all "fairytales" with a page count more than 90 pages.</para>
 
-  <para>How does it sound in jcr terms - Find all nodes with mixin type
-  'mix:title' where the property 'jcr:description' equals "fairytale" and
+  <para>How does it sound in JCR terms - Find all nodes with the 'mix:title' mixin type
+  where the 'jcr:description' property equals "fairytale" and
   whose "prop_pagecount" property value is less than 90.</para>
 
   <note>
@@ -22,7 +22,7 @@
  </para>
 
 
-    <para>The repository contains mix:title nodes, where prop_pagecount has
+    <para>The repository contains "mix:title" nodes, where "prop_pagecount" has
     different values.</para>
 
     <itemizedlist>
@@ -54,8 +54,10 @@
     </citetitle>
   </para>
 
-
-    <para><emphasis role="bold">SQL</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <emphasis role="bold">SQL</emphasis></para>
 
     <programlisting language="java">// make SQL query
 QueryManager queryManager = workspace.getQueryManager();
@@ -64,21 +66,25 @@ String sqlStatement = "SELECT * FROM mix:title WHERE jcr:description = 'fairytal
 Query query = queryManager.createQuery(sqlStatement, Query.SQL);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
+    </listitem>
+    <listitem>
+      <para>
+        <emphasis role="bold">XPath</emphasis>
+      </para>
 
-    <para><emphasis role="bold">XPath</emphasis></para>
-
-    <programlisting language="java">// make XPath query
+      <programlisting language="java">// make XPath query
 QueryManager queryManager = workspace.getQueryManager();
 // create query
 String xpathStatement = "//element(*,mix:title)[@jcr:description='fairytale' and @prop_pagecount &gt; 90]";
 Query query = queryManager.createQuery(xpathStatement, Query.XPATH);
 // execute query and fetch result
 QueryResult result = query.execute();</programlisting>
-
+   </listitem>
+  </itemizedlist>
 
   <para xml:id="JCR.ANDConstraint.FetchingResult">
     <citetitle>
-      <emphasis role="bold">Fetching the Result</emphasis>
+      <emphasis role="bold">Fetching result</emphasis>
     </citetitle>
   </para>
 
