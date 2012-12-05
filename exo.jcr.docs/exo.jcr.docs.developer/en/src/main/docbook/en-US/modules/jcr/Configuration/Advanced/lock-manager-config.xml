@@ -52,10 +52,10 @@
     JBoss-cache has JDBCCacheLoader, so Locks will be stored to the
     database.</para>
 
-    <para>Both of the implementations support to remove Expired Locks.
+    <para>Both implementations support to remove Expired Locks.
     LockRemover separates threads, that periodically ask LockManager to remove
     Locks that live so long. So, the timeout for LockRemover may be set as
-    follows, the default value is 30m.</para>
+    follows (the default value is 30m).</para>
 
     <programlisting language="xml">&lt;properties&gt;
    &lt;property name="time-out" value="10m" /&gt;
@@ -100,19 +100,19 @@
     <listitem id="JCR.LockManagerConfiguration.CacheableLockManagerImpl.SimpleJbossCacheConfiguration">
       <para><emphasis role="bold">Simple JbossCache Configuration:</emphasis></para>
 
-      <para>The first one is putting JbossCache configuraion file path to
+      <para>The first one is putting JbossCache configuration file path to
       CacheableLockManagerImpl.</para>
 
       <para><note>
-          <para>This configuration is not so good as you think. Because the
+          <para>This configuration is not so good as you think. As the
           repository may contain many workspaces, and each workspace must
           contain LockManager configuration, and LockManager configuration may
           contain the JbossCache config file. So, the total configuration will
-          grow up. But it is useful if we want to have a single LockManager
+          grow up. However, it is useful if we want to have a single LockManager
           with a special configuration.</para>
         </note></para>
 
-      <para>Configuration is as follows:</para>
+      <para>The configuration is as follows:</para>
 
       <programlisting language="xml">&lt;lock-manager class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.CacheableLockManagerImpl"&gt;
    &lt;properties&gt;
@@ -164,19 +164,19 @@
           </listitem>
 
           <listitem>
-            <para><parameter>cache.jdbc.table.name</parameter> must be unique
+            <para><parameter>cache.jdbc.table.name</parameter>: must be unique
             per datasource.</para>
           </listitem>
 
           <listitem>
             <para><parameter>cache.jdbc.node.type</parameter> and
-            <parameter>cache.jdbc.fqn.type</parameter> must be configured
+            <parameter>cache.jdbc.fqn.type</parameter>: must be configured
             according to your database.</para>
 
             <note>
               <para>To prevent any consistency issue regarding the lock data, ensure that your cache loader is
               <parameter>org.exoplatform.services.jcr.impl.core.lock.jbosscache.JDBCCacheLoader</parameter>
-              and that your database engine is transactional.</para>
+              and your database engine is transactional.</para>
             </note>
             </listitem>
             </itemizedlist>
@@ -189,7 +189,7 @@
       <para>The second one is using the template JBoss-cache configuration for
       all LockManagers.</para>
 
-      <para>Lock template configuration:</para>
+      <para>The lock template configuration:</para>
         <itemizedlist>
           <listitem>
             <para><filename>test-jbosscache-lock.xml</filename></para>

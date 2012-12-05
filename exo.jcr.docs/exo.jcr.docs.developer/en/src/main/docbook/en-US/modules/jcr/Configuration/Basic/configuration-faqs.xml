@@ -9,14 +9,14 @@
 			<para><emphasis role="bold">How to configure JCR for cluster?</emphasis></para>
 		</question>
     <answer>
-    <para>So we have configured JCR in standalone mode and want to
+    <para>So you have configured JCR in standalone mode and want to
       reconfigure it for clustered environment. First of all, let's check
       whether all requirements are satisfied:
     </para>
 
     <itemizedlist>
       <listitem>
-        <para>Dedicated RDBMS anyone like MySQL, Postges, Oracle and, etc
+        <para>Any dedicated RDBMS anyone like MySQL, Postges, Oracle and, etc
           but just not HSSQL;
         </para>
       </listitem>
@@ -33,8 +33,8 @@
       </listitem>
     </itemizedlist>
 
-    <para>So now, need to configure Container a bit. Check
-      exo-configuration.xml to be sure that you are using JBossTS
+    <para>So now, need to configure the Container a bit. Check
+      <filename>exo-configuration.xml</filename> to be sure that you are using JBossTS
       Transaction Service and JBossCache Transaction Manager, as shown
       below.
     </para>
@@ -154,9 +154,9 @@
       <listitem>
         <para>The <parameter>&lt;lock-manager&gt;</parameter> configuration:</para>
 
-        <para>This may be the hardest element to configure, because we
-          have to define access to DB where locks will be stored. Replace
-          the exsiting <parameter>lock-manager</parameter> configuration with shown below.
+        <para>This may be the hardest element to configure, because you
+          have to define access to the database where locks will be stored. Replace
+          the existing <parameter>lock-manager</parameter> with configuration shown below:
         </para>
 
 <programlisting language="xml">&lt;lock-manager class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.CacheableLockManagerImpl"&gt;
@@ -178,10 +178,10 @@
 	&lt;/properties&gt;
 &lt;/lock-manager&gt;</programlisting>
 
-        <para>First few properties are the same as in the previous
+        <para>First, few properties are the same as in the previous
           components, but here you can see some strange
           "jbosscache-cl-cache.jdbc.*" properties. They define access
-          parameters for database where lock is persisted.
+          parameters for the database where the lock is persisted.
         </para>
 
         <itemizedlist>
@@ -349,7 +349,7 @@
 		<para>Does Help application prohibit the use of closed sessions?</para>
 	</question>
 	<answer>
-    <para>Products that use eXo JCR, sometimes missuse it since they continue
+    <para>Products that use JCR, sometimes missuse it since they continue
     to use a session that has been closed through a method call on a node, a
     property or even the session itself. To prevent bad practices we propose
     three modes which are the folllowing:</para>

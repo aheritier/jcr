@@ -8,7 +8,7 @@
     <citetitle><emphasis role="bold">Property content indexing</emphasis></citetitle>
   </para>
     <para>Each property of a node (if it is indexable) is processed with
-    Lucene analyzer and stored in Lucene index. That's called indexing of a
+    Lucene analyzer and stored in Lucene index. That is called indexing of a
     property. After that, you can perform a fulltext search among these indexed
     properties.</para>
   <!-- Lucene Analyzers -->
@@ -71,7 +71,7 @@
 
           <row>
             <entry>org.apache.lucene.analysis.standard.StandardAnalyzer
-            (configured without stop word - jcr default analyzer)</entry>
+            (configured without stop word - JCR default analyzer)</entry>
 
             <entry>[the] [quick] [brown] [fox] [jumped] [over] [the] [lazy]
             [dogs]</entry>
@@ -134,8 +134,8 @@
     </table>
 
     <note>
-      <para>StandardAnalyzer is the default analyzer in exo's jcr search
-      engine. But we do not use stop words.</para>
+      <para>StandardAnalyzer is the default analyzer in JCR search
+      engine but it does not use stop words.</para>
     </note>
 
     <para>You can assign your analyzer as described in <link linkend="JCR.SearchConfiguration">Search Configuration</link>.</para>
@@ -183,7 +183,7 @@
       </tgroup>
     </table>
 
-    <para>For example, we have the <parameter>jcr:data</parameter> property (it is BINARY). It is stored
+    <para>For example, you have the <parameter>jcr:data</parameter> property (it is BINARY). It is stored
     well, but you will never find any string with query like:</para>
 
     <programlisting>SELECT * FROM nt:resource WHERE CONTAINS(jcr:data, 'some string')</programlisting>
@@ -205,15 +205,15 @@
       </listitem>
 
       <listitem>
-        <para><link linkend="JCR.FulltextSearchByAllProperties">Fulltext Search by All Properties</link></para>
+        <para><link linkend="JCR.FulltextSearchByAllProperties">Fulltext Search by All Properties.</link></para>
       </listitem>
 
       <listitem>
-        <para><link linkend="JCR.AggregationRule">Find nt:file document by content of its child jcr:content node</link></para>
+        <para><link linkend="JCR.AggregationRule">Find nt:file document by content of its child jcr:content node.</link></para>
       </listitem>
 
       <listitem>
-        <para><link linkend="JCR.IgnoreAccentSymbols">Set new Analyzer and Ignore Accent symbols</link></para>
+        <para><link linkend="JCR.IgnoreAccentSymbols">Set new Analyzer and Ignore Accent symbols.</link></para>
       </listitem>
     </itemizedlist>
 
@@ -221,7 +221,7 @@
   <para id="JCR.FulltextSearchAndSettings.Different_analyzers_in_action">
     <citetitle><emphasis role="bold">Different analyzers in action</emphasis></citetitle>
   </para>
-    <para>First of all, we will fill repository by nodes with mixin type
+    <para>First of all, fill repository by nodes with mixin type
     'mix:title' and different values of <parameter>jcr:description</parameter> property.</para>
 
     <itemizedlist>
@@ -231,7 +231,7 @@
         <itemizedlist>
           <listitem>
             <para>document1 (mix:title) jcr:description = "The quick brown fox
-            jumped over the lazy dogs"</para>
+            jumped over the lazy dogs."</para>
           </listitem>
 
           <listitem>
@@ -247,8 +247,8 @@
       </listitem>
     </itemizedlist>
 
-    <para>Let's see analyzers effect closer. In first case, we use the base JCR
-    settings, so, as mentioned above, string "The quick brown fox jumped over
+    <para>Let's see analyzers effect closer. In the first case, the base JCR
+    settings is used, so as mentioned above, the string "The quick brown fox jumped over
     the lazy dogs" will be transformed to set {[the] [quick] [brown] [fox]
     [jumped] [over] [the] [lazy] [dogs] }</para>
 
@@ -262,7 +262,7 @@ QueryResult result = query.execute();</programlisting>
 
     <para>NodeIterator will return "document1".</para>
 
-    <para>Now change the default analyzer to <parameter>org.apache.lucene.analysis.StopAnalyzer</parameter>. Fill repository again (new
+    <para>Now change the default analyzer to <parameter>org.apache.lucene.analysis.StopAnalyzer</parameter>. Fill the repository (new
     Analyzer must process nodes properties) and run the same query again. It
     will return nothing, because stop words like "the" will be excluded from parsed string set.</para>
   </section>

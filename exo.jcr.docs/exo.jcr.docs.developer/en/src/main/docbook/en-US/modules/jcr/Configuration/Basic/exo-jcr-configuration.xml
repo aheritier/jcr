@@ -50,7 +50,7 @@
     <emphasis role="bold">Workspaces</emphasis>.
     </para>
     <para>
-    From v.1.9 JCR, repositories configuration parameters support human-readable formats of values. They are all case-insensitive:
+    Repositories configuration parameters support human-readable formats of values. They are all case-insensitive:
     </para>
     <itemizedlist>
       <listitem>
@@ -62,12 +62,15 @@
     <itemizedlist>
       <listitem>
         <para>Time format endings: ms - milliseconds, m - minutes, h - hours,
-        d - days, w - weeks, if no ending - seconds. Examples: 500ms - 500
+        d - days, w - weeks.</para>
+      </listitem>
+        <listitem>
+        <para>No ending - seconds: 500ms - 500
         milliseconds, 20 - 20 seconds, 30m - 30 minutes, 12h - 12 hours, 5d -
         5 days, 4w - 4 weeks.</para>
-      </listitem>
+        </listitem>
     </itemizedlist>
-	<para>The elements in the above configuration file are detailed in the followings:</para>
+	<para>The elements in the above configuration file are detailed in the following sections:</para>
 	<itemizedlist>
 		<listitem>
 			<para><link linkend="JCR.eXoJCRconfiguration.Repository">Repository</link></para>

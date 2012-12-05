@@ -3,8 +3,8 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.SearchConfiguration" role="NotInToc">
   <title>Search configuration</title>
-  <para>Search is an important function in eXo JCR, so it is very necessary for you to know how to configure the eXo JCR Search tool.
-	Before going deeper into the JCR Search tool, you first need to learn about the <filename>.xml</filename> configuration file and its parameters as follows.</para>
+  <para>Search is an important function in JCR, so it is very necessary for you to know how to configure the JCR Search tool.
+	Before going deeper into the JCR Search tool, you need to learn about the <filename>.xml</filename> configuration file and its parameters as follows.</para>
 
 <para id="JCR.SearchConfiguration.XMLConfig">
     <citetitle><emphasis role="bold">XML Configuration</emphasis></citetitle>
@@ -58,7 +58,7 @@
             <entry>none</entry>
 
             <entry>The location of the index directory. This parameter is
-            mandatory. Up to 1.9, this parameter called "indexDir"</entry>
+            mandatory. Up to JCR 1.9, this parameter called "indexDir"</entry>
 
             <entry>1.0</entry>
           </row>
@@ -172,9 +172,9 @@
 
             <entry>true</entry>
 
-            <entry>If true and the query does not contain an 'order by'
-            clause, result nodes will be in document order. For better
-            performance when queries return a lot of nodes set to
+            <entry>If 'true' is set and the query does not contain an 'order by'
+            clause, result nodes will be in 'document order'. For better
+            performance when queries return a lot of nodes, set this parameter to
             'false'.</entry>
 
             <entry>1.9</entry>
@@ -222,7 +222,7 @@
 
             <entry>The name of a class that implements
             <parameter>org.exoplatform.services.jcr.impl.core.query.lucene.SynonymProvider</parameter>.
-            The default value is null (-&gt; not set).</entry>
+            The default value is null (not set).</entry>
 
             <entry>1.9</entry>
           </row>
@@ -233,7 +233,7 @@
             <entry>none</entry>
 
             <entry>The path to the synonym provider configuration file. This
-            path interpreted is relative to the path parameter. If there is a
+            path is interpreted relatively to the path parameter. If there is a
             path element inside the <parameter>SearchIndex</parameter> element, then this path is
             interpreted and relative to the root path of the path. Whether
             this parameter is mandatory or not, it depends on the synonym
@@ -268,7 +268,7 @@
 
             <entry>false</entry>
 
-            <entry>If setting to true, a consistency check is performed,
+            <entry>If "true" is set, a consistency check is performed,
             depending on the <parameter>forceConsistencyCheck</parameter> parameter. If setting to
             false, no consistency check is performed on startup, even if a redo log had been applied.</entry>
 
@@ -290,10 +290,10 @@
 
             <entry>true</entry>
 
-            <entry>If setting true, spellchecker returns only the suggest
+            <entry>If "true" is set, spellchecker returns only the suggest
             words that are as frequent or more frequent than the checked word.
-            If setting false, spellchecker returns null (if checked word exit
-            in dictionary), or spellchecker will return most close suggest
+            If "false" set, spellchecker returns null (if checked word exit
+            in dictionary), or spellchecker will return the most close suggested
             word.</entry>
 
             <entry>1.10</entry>
@@ -304,7 +304,7 @@
 
             <entry>0.55f</entry>
 
-            <entry>Minimal distance between checked word and proposed suggest word.</entry>
+            <entry>Minimal distance between checked word and the proposed suggested word.</entry>
 
             <entry>1.10</entry>
           </row>
@@ -330,9 +330,9 @@
             1.12 will not run with JCR 1.12. Hence you have to run an
             automatic migration: Start JCR with -Dupgrade-index=true. The old
             index format is then converted in the new index format. After the
-            conversion the new format is used. On the next start, you don't
-            need this option anymore. The old index is replaced and a back
-            conversion is not possible - therefore better take a backup of the
+            conversion, the new format is used. On the next start, you do not
+            need this option anymore. As the old index is replaced and a back
+            conversion is not possible, you should take a backup of the
             index before. (Only for migrations from JCR 1.9 and
             later.)</entry>
 

@@ -7,7 +7,7 @@
             </listitem>
             <listitem>
                 <para><emphasis role="bold">class</emphasis>: Cache implementation class,
-                optional from 1.9. Default value is <parameter>org.exoplatform.services.jcr.impl.dataflow.persistent.LinkedWorkspaceStorageCacheImpl</parameter>.</para>
+                optional from JCR 1.9. Default value is <parameter>org.exoplatform.services.jcr.impl.dataflow.persistent.LinkedWorkspaceStorageCacheImpl</parameter>.</para>
             </listitem>
             <listitem>
                 <para>Cache can be configured to use concrete implementation of
@@ -15,12 +15,12 @@
 
                 <itemizedlist>
                   <listitem>
-                    <para>LinkedWorkspaceStorageCacheImpl - default, with configurable
+                    <para>LinkedWorkspaceStorageCacheImpl: The default implementation with configurable
                     read behavior and statistic.</para>
                   </listitem>
 
                   <listitem>
-                    <para>WorkspaceStorageCacheImpl - pre 1.9, still can be used.</para>
+                    <para>WorkspaceStorageCacheImpl: This implementation still can be used before JCR 1.9,.</para>
                   </listitem>
                 </itemizedlist>
             </listitem>
@@ -30,19 +30,19 @@
             </listitem>
             <listitem>
                 <para><emphasis role="bold">max-size</emphasis>: Cache maximum size
-                (maxSize prior to v.1.9).</para>
+                (maxSize prior to JCR 1.9).</para>
             </listitem>
             <listitem>
                 <para><emphasis role="bold">live-time</emphasis>: Cached item live time
-                (liveTime prior to v.1.9).</para>
+                (liveTime prior to JCR 1.9).</para>
             </listitem>
             <listitem>
-                <para>From 1.9 LinkedWorkspaceStorageCacheImpl supports additional
+                <para>From JCR 1.9, LinkedWorkspaceStorageCacheImpl supports additional
                 optional parameters.</para>
             </listitem>
             <listitem>
                 <para><emphasis role="bold">statistic-period</emphasis>: Period (time
-                format) of cache statistic thread execution, 5 minutes by default.</para>
+                format) of cache statistic thread execution. The default value is 5 minutes.</para>
             </listitem>
             <listitem>
                 <para><emphasis role="bold">statistic-log</emphasis>: If true cache
@@ -50,8 +50,8 @@
                 or not.</para>
             </listitem>
             <listitem>
-                <para><emphasis role="bold">statistic-clean</emphasis>: If true cache
-                statistic will be cleaned after was gathered, false by default or
+                <para><emphasis role="bold">statistic-clean</emphasis>: If the value is set to "true", The cache
+                statistic will be cleaned after gathered, false by default or
                 not.</para>
             </listitem>
             <listitem>

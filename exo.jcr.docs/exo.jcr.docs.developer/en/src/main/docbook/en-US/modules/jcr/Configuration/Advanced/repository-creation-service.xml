@@ -38,8 +38,8 @@
       <listitem>
         <para>The user executes reserveRepositoryName(String repositoryName) -
         client-node calls coordinator-node to reserve repositoryName. If this
-        name is already reserved or repository with this name exist,
-        client-node will fetch RepositoryCreationException. If not Client will
+        name is already reserved or repository with this name exists,
+        client-node will fetch RepositoryCreationException. If not, Client will
         get token string.</para>
       </listitem>
 
@@ -66,14 +66,14 @@
       <itemizedlist id="JCR.RepositoryCreationService.ConclusionsAndRestrictions">
       <listitem>
         <para>Each datasource in RepositoryEntry of new Repository must have
-        unbinded datasources. Thats mean, such datasource must have not
+        unbinded datasources. That means such datasource must have not
         databases behind them. This restriction exists to avoid corruption of
         existing repositories data.</para>
       </listitem>
 
       <listitem>
         <para>RPCService is an optional component, but without it,
-        RepositoryCreatorService can not communicate with other cluster-nodes
+        RepositoryCreatorService cannot communicate with other cluster-nodes
         and works as standalone.</para>
       </listitem>
     </itemizedlist>  

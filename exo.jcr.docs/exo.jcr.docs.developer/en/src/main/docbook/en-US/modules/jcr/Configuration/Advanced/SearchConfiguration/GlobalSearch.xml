@@ -8,7 +8,7 @@
 
       <para>In fact, when using Lucene, you should always use the same
       analyzer for indexing and for querying, otherwise the results are
-      unpredictable. You don't have to worry about this, eXo JCR does this for
+      unpredictable. You don't have to worry about this,JCR does this for
       you automatically. If you don't like the StandardAnalyzer configured by
       default, just replace it with your own.</para>
 
@@ -18,7 +18,7 @@
     <section id="JCR.SearchConfiguration.Global_Search_Index.Customized_Search_Indexes_Analyzers">
       <title>Customized Search Indexes and Analyzers</title>
 
-      <para>By default eXo JCR uses the Lucene standard Analyzer to index
+      <para>By default JCR uses the Lucene standard Analyzer to index
       contents. This analyzer uses some standard filters in the method that
       analyzes the content:</para>
       

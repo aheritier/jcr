@@ -4,7 +4,7 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <!-- 2.2.4 Configuring eXo JCR in cluster -->
 <section id="JCR.ClusterConfig" role="NotInToc">
-  <title>Configure eXo JCR in cluster</title>  
+  <title>Configure JCR in cluster</title>
     <para id="JCR.ClusterConfig.Requirements.Environment_Requirements">
       <citetitle><emphasis role="bold">Environment requirements</emphasis></citetitle>
     </para>
@@ -23,8 +23,8 @@
         </listitem>
 
         <listitem>
-          <para>The same Clusters on different nodes MUST have the same names
-          (e.g., if Indexer cluster in workspace production on the first node
+          <para>The same clusters on different nodes MUST have the same names
+          (for example if Indexer cluster in workspace production on the first node
           has the name "production_indexer_cluster", then indexer clusters in
           workspace production on all other nodes MUST have the same name
           "production_indexer_cluster" ).</para>
@@ -52,7 +52,7 @@
 &lt;/value-storages&gt;</programlisting>
           <itemizedlist>      
             <listitem>
-              <para><parameter>Path:</parameter> Path within NFS where ValueStorage will hold it's data.</para>
+              <para><parameter>Path:</parameter> Path within NFS where ValueStorage will hold its data.</para>
             </listitem>  
         </itemizedlist>  
       </listitem>
@@ -71,10 +71,10 @@
 &lt;/cache&gt;</programlisting>
           <itemizedlist>
             <listitem>
-              <para><parameter>Jbosscache-configuration</parameter>: Path to JBoss Cache configuration for data storage.</para>
+              <para><parameter>Jbosscache-configuration</parameter>: Path to the JBoss Cache configuration for data storage.</para>
             </listitem>
             <listitem>  
-              <para><parameter>jgroups-configuration</parameter>: Path to JGroups configuration.</para>
+              <para><parameter>jgroups-configuration</parameter>: Path to the JGroups configuration.</para>
             </listitem>
             <listitem>  
               <para><parameter>jbosscache-cluster-name</parameter>: JBoss Cache data storage cluster name.</para>
@@ -101,10 +101,10 @@
                 <para><parameter>index-dir</parameter>: Path within NFS where ValueStorage will hold its data.</para>
               </listitem>  
               <listitem>
-                <para><parameter>jboss-cache-configuration</parameter>: Path to JBoss Cache configuration for indexer.</para>
+                <para><parameter>jboss-cache-configuration</parameter>: Path to the JBoss Cache configuration for indexer.</para>
               </listitem>              
               <listitem>
-                <para><parameter>jgroups-configuration</parameter>: path to JGroups configuration.</para>
+                <para><parameter>jgroups-configuration</parameter>: path to the JGroups configuration.</para>
               </listitem>              
               <listitem>
                 <para><parameter>jboss-cache-cluster-name</parameter>: JBoss Cache indexer cluster name.</para>
@@ -135,10 +135,10 @@
 &lt;/lock-manager&gt;</programlisting>
           <itemizedlist>
             <listitem>
-              <para><parameter>jboss-cache-configuration</parameter>: Path to JBoss Cache configuration for lock manager.</para>
+              <para><parameter>jboss-cache-configuration</parameter>: Path to the JBoss Cache configuration for lock manager.</para>
             </listitem>  
             <listitem>
-              <para><parameter>jgroups-configuration</parameter>: Path to JGroups configuration.</para>
+              <para><parameter>jgroups-configuration</parameter>: Path to the JGroups configuration.</para>
             </listitem>  
             <listitem>
               <para><parameter>jboss-cache-cluster-name</parameter>: JBoss Cache locks cluster name.</para>
@@ -159,11 +159,11 @@
     <title>Stop the node properly</title>
 
     <para>To be sure that all transactions are over and JCR is in consistent
-    state after stopping node, you need to follow next steps:</para>
+    state after stopping node, you need to follow these steps:</para>
 
     <itemizedlist>
       <listitem>
-        <para>Connect using JMX to one of cluster's node which you won't need
+        <para>Connect using JMX to one of cluster's node which you will not need
         to stop.</para>
       </listitem>
 

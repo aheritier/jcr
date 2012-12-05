@@ -54,7 +54,7 @@
   <section id="Kernel.TransactionService.ExistingTransactionServiceImplementations">
     <title>Existing TransactionService implementations</title>
 
-    <para>eXo JCR proposes out of the box several implementations, they all
+    <para>JCR proposes out of the box several implementations, they all
     implement the abstract class
     <emphasis>org.exoplatform.services.transaction.impl.AbstractTransactionService</emphasis>.
     This main class implement the biggest part of all the methods proposed by
@@ -114,7 +114,7 @@
       <citetitle><emphasis role="bold">Specific GenericTransactionService for JBoss Cache and Arjuna</emphasis></citetitle>
     </para>
       <para>If you intend to use JBoss Cache with Arjuna, you can use a more
-      specific GenericTransactionService, it is mostly interesting in case you
+      specific GenericTransactionService. It is mostly interesting in case you
       want to use the real UserTransaction. See the configuration example as below:</para>
 
 <programlisting language="xml">&lt;!-- Configuration of the TransactionManagerLookup --&gt;

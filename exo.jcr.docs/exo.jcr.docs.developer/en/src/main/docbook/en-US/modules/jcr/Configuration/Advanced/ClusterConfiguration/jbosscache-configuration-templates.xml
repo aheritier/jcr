@@ -7,7 +7,7 @@
 
   <para>This section will show you how to use and configure Jboss Cache in the
   clustered environment. Also, you will know how to use a template-based
-  configuration offered by eXo JCR for JBoss Cache instances.</para>
+  configuration offered by JCR for JBoss Cache instances.</para>
   <!-- For indexer, lock manager and data container -->
   <para id="JCR.JBossCacheConfigurationTemplates.JBoss_Cache_Config_for_Indexer">
     <citetitle><emphasis role="bold">For indexer, lock manager and data container</emphasis></citetitle>
@@ -15,14 +15,14 @@
     <para>Each mentioned components uses instances of JBoss Cache product for
     caching in clustered environment. So every element has its own transport
     and has to be configured in a proper way. As usual, workspaces have
-    similar configuration but with different cluster-names and may-be some
+    similar configuration but with different cluster-names and maybe some
     other parameters. The simplest way to configure them is to define their
     own configuration files for each component in each workspace:</para>
 
     <programlisting language="xml">&lt;property name="jbosscache-configuration" value="conf/standalone/test-jbosscache-lock-db1-ws1.xml" /&gt;</programlisting>
 
-    <para>But if there are few workspaces, configuring them in such a way can
-    be painful and hard-manageable. eXo JCR offers a template-based
+    <para>However, if there are few workspaces, configuring them in such a way can
+    be painful and hard to manageJCR offers a template-based
     configuration for JBoss Cache instances. You can have one template for
     Lock Manager, one for Indexer and one for data container and use them in
     all the workspaces, defining the map of substitution parameters in a main
@@ -63,24 +63,25 @@
     query handler) for each workspace requires its own clustered environment.
     In other words, they have their own clusters with unique names. By
     default, each cluster should perform multi-casts on a separate port. This
-    configuration leads to much unnecessary overhead on cluster. That's why
-    JGroups offers multiplexer feature, providing ability to use one single
+    configuration leads to much unnecessary overhead on cluster. That is why
+    JGroups offers multiplexer feature, providing the ability to use one single
     channel for set of clusters. This feature reduces network overheads and
-    increase performance and stability of application. To enable multiplexer
+    increase performance and stability of application.</para>
+    <para> To enable multiplexer
     stack, you should define appropriate configuration file (upd-mux.xml is
-    pre-shipped one with eXo JCR) and set "jgroups-multiplexer-stack" to
+    pre-shipped one with JCR) and set "jgroups-multiplexer-stack" to
     "true".</para>
 
     <programlisting language="xml">&lt;property name="jgroups-configuration" value="jar:/conf/portal/udp-mux.xml" /&gt;
 &lt;property name="jgroups-multiplexer-stack" value="true" /&gt;</programlisting>
 
-    <para>I<emphasis>t is now highly recommended to use the shared transport
-    instead of the multiplexer</emphasis>, to do so simply disable the
+    <para>It<emphasis> is now highly recommended to use the shared transport
+    instead of the multiplexer</emphasis>. To do so, simply disable the
     multiplexer stack in the configuration of each component by setting the
     property <emphasis>jgroups-multiplexer-stack</emphasis> to
-    <emphasis>false</emphasis> then you will need to ensure that the format of
+    "false" then you will need to ensure that the format of
     your jgroups configuration is not anymore a jgroups stack definitions but
-    a normal configuration and finally you will need to set the property
+    a normal configuration. Finally, you will need to set the property
     <emphasis>singleton_name</emphasis> of your JGroups configuration to a
     unique name (this name must not be the same from one portal container to
     another).</para>
@@ -94,25 +95,25 @@
     <para>A JBoss Cache instance is quite resource consuming and by default we
     will have 3 JBoss Cache instances (one instance for the indexer, one for
     the lock manager and one for the data container) for each workspace, so if
-    you intend to have a lot of workspaces it could make sense to decide to
+    you intend to have a lot of workspaces, it could make sense to decide to
     share one JBoss Cache instance with several cache instances of the same
-    type (i.e. indexer, lock manager or data container). This feature is
+    type (for example: indexer, lock manager or data container). This feature is
     disabled by default and can be enabled at component configuration level
-    (i.e. indexer configuration, lock manager configuration and/or data
+    (for example: indexer configuration, lock manager configuration and/or data
     container configuration) by setting the property "jbosscache-shareable" to
-    true as below:</para>
+    "true" as below:</para>
 
     <programlisting language="xml">&lt;property name="jbosscache-shareable" value="true" /&gt;</programlisting>
 
-    <para>Once enabled this feature will allow the JBoss Cache instance used
+    <para>Once enabled, this feature will allow the JBoss Cache instance used
     by the component to be re-used by another components of the same type
-    (i.e. indexer, lock manager or data container) with the exact same JBoss
-    Cache configuration (except the eviction configuration that cans be
-    different), which means that all the parameters of type
+    (for example: indexer, lock manager or data container) with the same JBoss
+    Cache configuration (except the eviction configuration that can be
+    different). This means all the parameters of type
     ${jbosscache-&lt;parameter name&gt;} must be identical between the
-    components of same type of different workspaces. In other words, if we use
+    components of same type of different workspaces. In other words, if you use
     the same values for the parameters of type ${jbosscache-&lt;parameter
-    name&gt;} in each workspace, we will have only 3 JBoss Cache instances
+    name&gt;} in each workspace, you will have only 3 JBoss Cache instances
     (one instance for the indexer, one for the lock manager and one for the
     data container) used whatever the total amount of workspaces
     defined.</para>  
@@ -120,7 +121,7 @@
   <para id="JCR.JBossCacheConfigurationTemplates.Shipped_Jboss_Cache_Config_template">
     <citetitle><emphasis role="bold">Shipped JBoss Cache configuration templates</emphasis></citetitle>
   </para>
-    <para>eXo JCR implementation is shipped with ready-to-use JBoss Cache
+    <para>JCR implementation is shipped with ready-to-use JBoss Cache
     configuration templates for JCR's components. They are situated in
     application package in /conf/porta/ folder.</para>
     <itemizedlist>
@@ -207,10 +208,10 @@
 &lt;/jbosscache&gt;</programlisting>
 
       <note>
-        <para>To prevent any consistency issue regarding the lock data please
+        <para>To prevent any consistency issue regarding the lock data,
         ensure that your cache loader is
         <emphasis>org.exoplatform.services.jcr.impl.core.lock.jbosscache.JDBCCacheLoader</emphasis>
-        and that your database engine is transactional.</para>
+        and your database engine is transactional.</para>
       </note>
 
       <table>
@@ -275,7 +276,7 @@
     <para id="JCR.JBossCacheConfigurationTemplates.Shipped_Jboss_Cache_Config_template.Query_handler">
       <emphasis role="bold">Query handler (indexer) template</emphasis>
     </para>
-      <para>Have a look at "jbosscache-indexer.xml"</para>
+      <para>Have a look at <filename>jbosscache-indexer.xml</filename></para>
 
       <programlisting language="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;jbosscache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:jboss:jbosscache-core:config:3.1"&gt;

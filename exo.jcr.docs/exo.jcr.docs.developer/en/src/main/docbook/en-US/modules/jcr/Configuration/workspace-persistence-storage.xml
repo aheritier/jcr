@@ -52,12 +52,11 @@
 
   <para><emphasis
   role="bold">acl-bloomfilter-false-positive-probability</emphasis>: ACL
-  Bloom-filter settings. ACL Bloom-filter desired false positive probability.
-  Range [0..1]. Default value 0.1d.</para>
+  Bloom-filter settings. ACL Bloom-filter desired false positive probability with the range [0..1]. The default value is "0.1d".</para>
 
   <para><emphasis role="bold">acl-bloomfilter-elements-number</emphasis>: ACL
   Bloom-filter settings. Expected number of ACL-elements in the Bloom-filter.
-  Default value 1000000.</para>
+  The default value is "1000000".</para>
 
   <note>
     <para>Bloom filters are not supported by all the cache implementations so
@@ -71,11 +70,11 @@
     implementations so far only the inplementation for infinispan supports
     it.</para>
 
-    <para>More about Bloom filters you can read here <ulink
+    <para>More about Bloom-filters you can read here <ulink
     url="http://en.wikipedia.org/wiki/Bloom_filter">http://en.wikipedia.org/wiki/Bloom_filter</ulink>.</para>
   </note>
 
-  <para>eXo JCR has an RDB (JDBC) based, production ready <emphasis
+  <para>JCR has an RDB (JDBC) based, production ready <emphasis
   role="bold">Workspace Data Container</emphasis>.</para>
 
   <para>Workspace Data Container MAY support external storages for
@@ -100,7 +99,7 @@
   <emphasis role="bold">properties</emphasis> are optional plugin specific
   parameters.</para>
 
-  <para><emphasis role="bold">filters</emphasis> : Each file value storage can
+  <para><emphasis role="bold">filters</emphasis>: Each file value storage can
   have the filter(s) for incoming values. If there are several filter
   criteria, they all have to match (AND-Condition).</para>
 
@@ -112,6 +111,6 @@
   min-value-size only. That means that the storage is only for binary values
   whose size is greater than 1Mbyte.</para>
 
-  <para>It's recommended to store properties with large values in a file value
+  <para>It is recommended to store properties with large values in a file value
   storage only.</para>
 </section>

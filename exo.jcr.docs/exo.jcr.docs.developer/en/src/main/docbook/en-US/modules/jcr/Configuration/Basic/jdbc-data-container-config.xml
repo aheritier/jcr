@@ -5,30 +5,29 @@
 <section id="JCR.JDBCDataContainerConfig" role="NotInToc">
   <title>JDBC Data Container configuration</title>
 	
-    <para xml:id="JCR.JDBCDataContainerConfig.NotesForMicrosoftWindowsUsers">The current configuration of eXo JCR uses <ulink
+    <para xml:id="JCR.JDBCDataContainerConfig.NotesForMicrosoftWindowsUsers">The current configuration of JCR uses <ulink
     url="http://commons.apache.org/dbcp/">Apache DBCP</ulink> connection pool
     (<classname>org.apache.commons.dbcp.BasicDataSourceFactory</classname>).
-    It's possible to set a big value for maxActive parameter in
-    <filename>configuration.xml</filename>. That means usage of lots of TCP/IP
-    ports from a client machine inside the pool (i.e. JDBC driver). As a
+    It is possible to set a big value for maxActive parameter in
+    <filename>configuration.xml</filename>. That means lots of TCP/IP
+    ports from a client machine inside the pool are used, such as JDBC driver. As the
     result, the data container can throw exceptions like "Address already in
     use". To solve this problem, you have to configure the client's machine
-    networking software for the usage of shorter timeouts for opened TCP/IP
+    networking software for using shorter timeouts for opened TCP/IP
     ports.</para>
 
     <para>Microsoft Windows has <parameter>MaxUserPort</parameter>,
     <parameter>TcpTimedWaitDelay</parameter> registry keys in the node
     <parameter>HKEY_LOCAL_MACHINESYSTEMCurrentControlSetServicesTcpipParameters</parameter>,
-    by default these keys are unset, set each one with values like
-    these:<itemizedlist>
+    by default these keys are unset. Set each one with values as follows:<itemizedlist>
       <listitem>
           <para>"TcpTimedWaitDelay"=dword:0000001e, sets TIME_WAIT parameter
-          to 30 seconds, default is 240.</para>
+          to 30 seconds (default value is "240").</para>
       </listitem>
 
       <listitem>
           <para>"MaxUserPort"=dword:00001b58, sets the maximum of open ports
-          to 7000 or higher, default is 5000.</para>
+          to 7000 or higher (default value is "5000").</para>
       </listitem>
     </itemizedlist></para>
 
@@ -40,6 +39,7 @@
 "MaxUserPort"=dword:00001b58
 "TcpTimedWaitDelay"=dword:0000001e</programlisting>  
 	
+<!--Multi-database configuration-->
 
 <section id="JCR.JDBCDataContainerConfig.Multi-databaseConfiguration">
     <title>Multi-database configuration</title>
@@ -47,14 +47,14 @@
     <para>You need to configure each workspace in a repository. You may have
     each one on different remote servers as far as you need.</para>
 
-    <para>First of all configure the data containers in the
+    <para>First of all, configure the data containers in the
     <classname>org.exoplatform.services.naming.InitialContextInitializer</classname>
-    service. It's the JNDI context initializer which registers (binds) naming
+    service. It is the JNDI context initializer which registers (binds) naming
     resources (DataSources) for data containers.</para>
 
-    <para>For example (standalone mode, two data containers
+    <para>For example, the configuration for two data containers
     <parameter>jdbcjcr</parameter> - local HSQLDB,
-    <parameter>jdbcjcr1</parameter> - remote MySQL):</para>
+    <parameter>jdbcjcr1</parameter> - remote MySQL) in standalone mode is as follows :</para>
 
 <programlisting language="xml">&lt;component&gt;
     &lt;key&gt;org.exoplatform.services.naming.InitialContextInitializer&lt;/key&gt;
@@ -126,7 +126,7 @@
     &lt;/init-params&gt;
 &lt;/component&gt;</programlisting>
 
-    <para>We configure the database connection parameters:<itemizedlist>
+    <para>Configure the database connection parameters:<itemizedlist>
         <listitem>
           <para><parameter>driverClassName</parameter>, e.g.
           "org.hsqldb.jdbcDriver", "com.mysql.jdbc.Driver",
@@ -286,7 +286,7 @@
 <section id="JCR.JDBCDataContainerConfig.Single-databaseConfiguration">
     <title>Single-database configuration</title>
 
-    <para>It is more simple to configure a single-database data container. We
+    <para>It is simpler to configure a single-database data container. We
     have to configure one naming resource.</para>
 
     <para>For example (embedded mode for <parameter>jdbcjcr</parameter> data
@@ -392,7 +392,7 @@
 &lt;/workspaces&gt;
 </programlisting>
 
-    <para>In this way, we have configured two workspaces which will be
+    <para>In this way, you have configured two workspaces which will be
     persisted in one database (PostgreSQL).</para>
 
     <para id="JCR.JDBCDataContainerConfig.Single-databaseConfiguration.ConfigurationWithoutDataSource">
@@ -404,9 +404,9 @@
 
       <para>This case may be usable if you have a dedicated JDBC driver
       implementation with special features like XA transactions,
-      statements/connections pooling etc:<itemizedlist>
+      statements/connections pooling and so on:<itemizedlist>
           <listitem>
-            <para>You have to remove the configuration in
+            <para>Remove the configuration in
             <classname>InitialContextInitializer</classname> for your database
             and configure a new one directly in the workspace
             container.</para>
@@ -414,13 +414,13 @@
 
           <listitem>
             <para>Remove parameter "source-name" and add next lines instead.
-            Describe your values for a JDBC driver, database url and
+            Describe your values for a JDBC driver, database URL and
             username.</para>
           </listitem>
         </itemizedlist></para>
 
       <note>
-        <para>Be careful in the case JDBC driver should implement and
+        <para>Be careful in the case JDBC driver should be implemented and
         provide connection pooling. Connection pooling is very recommended for
         using with JCR to prevent a database overload.</para>
       </note>

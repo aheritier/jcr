@@ -4,19 +4,19 @@
 <section id="JCR.QueryHandlerConfiguration" role="NotInToc">
   <title>QueryHandler configuration</title>
 
-  <para>Before going deeper into the <emphasis>QueryHandler</emphasis> configuration, you first need to learn about the concept of Indexing
+  <para>Before going deeper into the <emphasis>QueryHandler</emphasis> configuration, you need to learn about the concept of Indexing
   in clustered environment.</para>
  
   <para xml:id="JCR.QueryHandlerConfiguration.Indexing_in_clustered_environment">
     <citetitle><emphasis role="bold">Indexing in clustered environment</emphasis></citetitle>
   </para>
 
-    <para>JCR offers multiple indexing strategies. They include both for
+    <para>JCR offers multiple indexing strategies. They include both strategies for
     standalone and clustered environments using the advantages of running in a
     single JVM or doing the best to use all resources available in cluster.
     JCR uses Lucene library as underlying search and indexing engine, but it
     has several limitations that greatly reduce possibilities and limits the
-    usage of cluster advantages. That's why eXo JCR offers three strategies
+    usage of cluster advantages. That is why eXo JCR offers three strategies
     that are suitable for it's own usecases. They are standalone, clustered
     with shared index and clustered with local indexes. Each one has it's pros
     and cons.</para>
@@ -53,10 +53,10 @@
     write operation). Prepared "documents" (Lucene term that means block of
     data ready for indexing) are replicated withing cluster nodes and
     processed by local indexes. So each cluster instance has the same index
-    content. When new node joins the cluster it has no initial index, so it
+    content. When new node joins the cluster, it has no initial index, so it
     must be created. There are some supported ways of doing this operation.
     The simplest is to simply copy the index manually but this is not intended
-    for use. If no initial index found JCR uses automated sceneries. They are
+    for use. If no initial index found, JCR will use automated scenarios. They are
     controlled via configuration (see "index-recovery-mode" parameter)
     offering full re-indexing from database or copying from another cluster
     node.</para>
@@ -176,23 +176,23 @@
             <row>
               <entry><parameter>rdbms-reindexing</parameter></entry>
 
-              <entry>Indicate that it is needed to use rdbms reindexing mechanism if
-              possible, the default value is true.</entry>
+              <entry>Indicate that it is needed to use RDBMS re-indexing mechanism if
+              possible, the default value is "true".</entry>
             </row>
 
             <row>
               <entry><parameter>reindexing-page-size</parameter></entry>
 
-              <entry>Maximum amount of nodes which can be retrieved from
+              <entry>The maximum amount of nodes which can be retrieved from
               storage for re-indexing purpose, the default value is
-              100.</entry>
+              "100".</entry>
             </row>
 
             <row>
               <entry><parameter>index-recovery-mode</parameter></entry>
 
-              <entry>If the parameter has been set to <command>from-indexing</command>, so a full indexing will be
-              automatically launched, if the parameter has been set to
+              <entry>If the parameter has been set to <command>from-indexing</command>, a full indexing will be
+              automatically launched. If the parameter has been set to
               <command>from-coordinator</command> (default behavior), the
               index will be retrieved from coordinator.</entry>
             </row>
@@ -210,7 +210,7 @@
 
               <entry>Control the process of re-indexing on JCR's startup. If
               flag set, indexing will be launched asynchronously, without
-              blocking the JCR. Default is "false".</entry>
+              blocking the JCR. The default value is "false".</entry>
             </row>
 
             <row>
@@ -226,7 +226,7 @@
 		<itemizedlist>
 			<listitem>
 				<para>If you use postgreSQL and the parameter rdbms-reindexing is set
-				to true, the performances of the queries used while indexing can be
+				to "true", the performances of the queries used while indexing can be
 				improved by setting the parameter "enable_seqscan" to "off" or
 				"default_statistics_target" to at least "50" in the configuration of
 				your database. Then you need to restart DB server and make analyze of
@@ -234,7 +234,7 @@
 			</listitem>
 			<listitem>
 				<para>If you use DB2 and the parameter rdbms-reindexing is set to
-				true, the performance of the queiries used while indexing can be
+				"true", the performance of the queiries used while indexing can be
 				improved by making statisticks on tables by running "RUNSTATS ON TABLE
 				&lt;scheme&gt;.&lt;table&gt; WITH DISTRIBUTION AND INDEXES ALL" for
 				JCR_SITEM (or JCR_MITEM) and JCR_SVALUE (or JCR_MVALUE) tables.</para>
@@ -248,11 +248,14 @@
 
       <para>For both cluster-ready implementations JBoss Cache, JGroups and
       Changes Filter values must be defined. Shared index requires some kind
-      of remote or shared file system to be attached in a system (i.e. NFS,
-      SMB or etc). Indexing directory ("indexDir" value) must point to it.
+      of remote or shared file system to be attached in a system (for example: NFS,
+      SMB and so on).
+      </para>
+      <para>Indexing directory ("indexDir" value) must point to it.
       Setting "changesfilter-class" to
       "org.exoplatform.services.jcr.impl.core.query.jbosscache.JBossCacheIndexChangesFilter"
-      will enable shared index implementation.</para>
+      will enable shared index implementation.
+      </para>
 
 <programlisting language="xml">&lt;workspace name="ws"&gt;
    &lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
@@ -273,10 +276,9 @@
    &lt;/query-handler&gt;
 &lt;/workspace&gt;</programlisting>
 
-      <para>In order to use cluster-ready strategy based on local indexes,
-      when each node has own copy of index on local file system, the following
-      configuration must be applied. Indexing directory must point to any
-      folder on local file system and "changesfilter-class" must be set to
+      <para>To use cluster-ready strategy based on local indexes,
+      the following configuration must be applied when each node has its own copy of index on local file system.
+      Indexing directory must point to any folder on local file system and "changesfilter-class" must be set to
       "org.exoplatform.services.jcr.impl.core.query.jbosscache.LocalIndexChangesFilter".</para>
 
 <programlisting language="xml">&lt;workspace name="ws"&gt;
@@ -302,15 +304,18 @@
         <citetitle><emphasis role="bold">Local Index Recovery Filters</emphasis></citetitle>
       </para>
         <para>Common usecase for all cluster-ready applications is a hot
-        joining and leaving of processing units. Node that is joining cluster
-        for the first time or node joining after some downtime, they all must
-        be in a synchronized state. When having a deal with shared value
+        joining and leaving of processing units. All nodes that are joining cluster
+        for the first time or after some downtime must
+        be in a synchronized state.</para>
+        <para>
+        When having a deal with shared value
         storages, databases and indexes, cluster nodes are synchronized
-        anytime. But it's an issue when local index strategy used. If new node
-        joins cluster, having no index it is retrieved or recreated. Node can
-        be restarted also and thus index not empty. Usually existing index is
-        thought to be actual, but can be outdated. JCR offers a mechanism
-        called RecoveryFilters that will automatically retrieve index for the
+        anytime. However it is an issue when local index strategy is used. If the new node
+        joins cluster having no index, it will be retrieved or recreated. Node can
+        be restarted also and thus index is not empty. Usually existing index is
+        thought to be actual, but can be outdated.
+        </para>
+        <para>JCR offers a mechanism called RecoveryFilters that will automatically retrieve index for the
         joining node on startup. This feature is a set of filters that can be
         defined via QueryHandler configuration:</para>
 
@@ -323,14 +328,14 @@
 </programlisting>
 
         <para>If any one fires, the index is re-synchronized. Please take in
-        account, that DocNumberRecoveryFilter is used in cases when no filter
-        configured. So, if resynchronization should be blocked, or strictly
+        account that DocNumberRecoveryFilter is used in cases no filter is
+        configured. So, if resynchronization should be blocked or strictly
         required on start, then ConfigurationPropertyRecoveryFilter can be
         used.</para>
 
-        <para>This feature uses standard index recovery mode defined by
+        <para>This feature uses the standard index recovery mode defined by
         previously described parameter (can be "from-indexing" or
-        "from-coordinator" (default value))</para>
+        "from-coordinator" (default value)).</para>
 
 <programlisting language="xml">&lt;property name="index-recovery-mode" value="from-coordinator" /&gt;</programlisting>
 
@@ -351,9 +356,9 @@
 
           <listitem>
             <para><parameter>org.exoplatform.services.jcr.impl.core.query.lucene.ConfigurationPropertyRecoveryFilter</parameter>: Return value of QueryHandler configuration property
-            "index-recovery-filter-forcereindexing". So index recovery can be
+            "index-recovery-filter-forcereindexing" so the index recovery can be
             controlled from configuration separately for each workspace.
-            I.e:</para>
+            For example:</para>
 
 <programlisting language="xml">&lt;property name="index-recovery-filter" value="org.exoplatform.services.jcr.impl.core.query.lucene.ConfigurationPropertyRecoveryFilter" /&gt;
 &lt;property name="index-recovery-filter-forcereindexing" value="true" /&gt;</programlisting>
@@ -361,45 +366,45 @@
 
           <listitem>
             <para><parameter>org.exoplatform.services.jcr.impl.core.query.lucene.DocNumberRecoveryFilter</parameter>: Check number of documents in index on coordinator side and
-            self-side. Return true if differs. Advantage of this filter
-            comparing to other, it will skip reindexing for workspaces where
-            index wasn't modified. I.e. there is 10 repositories with 3
-            workspaces in each one. Only one is really heavily used in cluster: frontend/production. So using this filter will only reindex
+            self-side and return true if differs. Advantage of this filter
+            comparing to other is it will skip reindexing for workspaces where
+            index was not modified. For example, there are 10 repositories with 3
+            workspaces in each one. Only one is really heavily used in cluster: frontend/production. So using this filter will only re-index
             those workspaces that are really changed, without affecting other
-            indexes thus greatly reducing startup time.</para>
+            indexes thus greatly reduce the startup time.</para>
           </listitem>
         </itemizedlist>      
     </section>  
 
   <!-- 2.2.3.3. Asynchronous reindexing -->
   <section id="JCR.QueryHandlerConfiguration.Asynchronous_reindexing">
-    <title>Asynchronous reindexing</title>
+    <title>Asynchronous re-indexing</title>
 
     <para>Managing a big set of data using JCR in production environment
-    sometimes requires special operations with Indexes, stored on File System.
-    One of those maintenance operations is a recreation of it. Also called
-    "re-indexing". There are various usecases when it's important to do. They
+    sometimes requires special operations with Indexes stored on File System.
+    One of those maintenance operations is a recreation of it or
+    "re-indexing". There are various usecases when re-indexing is important to do. They
     include hardware faults, hard restarts, data-corruption, migrations and
-    JCR updates that brings new features related to index. Usually index
+    JCR updates that brings new features related to index. Usually, index
     re-creation requested on server's startup or in runtime.</para>
     <note>      
       <para id="JCR.QueryHandlerConfiguration.Asynchronous_reindexing.Notices">
       First of all, you can not launch Hot re-indexing via JMX if index is
-      already in offline mode. It means that index is currently is invoked in
+      already in offline mode. It means that index is currently invoked in
       some operations, like re-indexing at startup, copying in cluster to
-      another node or whatever. Another important this is Hot Asynchronous
-      Reindexing via JMX and "on startup" reindexing are completely different
-      features. So you can't get the state of startup reindexing using command
+      another node or whatever. Another important notice is Hot Asynchronous
+      Reindexing via JMX and "on startup" re-indexing are completely different
+      features. So you can not get the state of startup re-indexing using the command
       getHotReindexingState in JMX interface, but there are some common JMX
       operations:
       </para>
       <itemizedlist>
         <listitem>
-          <para>getIOMode - returns current index IO mode (READ_ONLY /
-          READ_WRITE), belongs to clustered configuration states;</para>
+          <para>getIOMode: return the current index IO mode (READ_ONLY /
+          READ_WRITE), belongs to clustered configuration states.</para>
         </listitem>
         <listitem>
-          <para>getState - returns current state: ONLINE / OFFLINE.</para>
+          <para>getState: return the current state (ONLINE / OFFLINE).</para>
         </listitem>
       </itemizedlist>
     </note>
@@ -410,27 +415,29 @@
       <para>Common usecase for updating and re-creating the index is to stop
       the server and manually remove indexes for workspaces requiring it. When
       server will be started, missing indexes are automatically recovered by
-      re-indexing. JCR Supports direct RDBMS re-indexing, that usually is
+      re-indexing.</para>
+      <para>JCR Supports direct RDBMS re-indexing, that is usually
       faster than ordinary and can be configured via QueryHandler parameter
       "rdbms-reindexing" set to "true" (for more information please refer to
-      "Query-handler configuration overview"). New feature to introduce is
-      asynchronous indexing on startup. Usually startup is blocked until
-      process is finished. Block can take any period of time, depending on
-      amount of data persisted in repositories. But this can be resolved by
-      using an asynchronous approaches of startup indexation. Saying briefly,
+      "Query-handler configuration overview").</para>
+      <para>One new feature to introduce is
+      the asynchronous indexing on startup. Usually the startup is blocked until
+      the process is finished. Block can take any period of time, depending on
+      amount of data persisted in repositories. However, this can be resolved by
+      using an asynchronous approaches of startup indexation. In brief,
       it performs all operations with index in background, without blocking
       the repository. This is controlled by the value of "async-reindexing"
       parameter in QueryHandler configuration. With asynchronous indexation
       active, JCR starts with no active indexes present. Queries on JCR still
-      can be executed without exceptions, but no results will be returned
+      can be executed without exceptions but no results will be returned
       until index creation completed. Checking index state is possible via
       QueryManagerImpl:</para>
 
       <para><programlisting lang="java">boolean online = ((QueryManagerImpl)Workspace.getQueryManager()).getQueryHandeler().isOnline();</programlisting></para>
 
       <para>"OFFLINE" state means that index is currently re-creating. When
-      state changed, corresponding log event is printed. From the start of
-      background task index is switched to "OFFLINE", with following log event:</para>
+      the state changed, the corresponding log event is printed. From the start of
+      background task, index is switched to "OFFLINE" with the following log event:</para>
 
       <programlisting>[INFO] Setting index OFFLINE (repository/production[system]).</programlisting>
 
@@ -448,34 +455,34 @@
     </para>
       <para>Some hard system faults, error during upgrades, migration issues
       and some other factors may corrupt the index. Most likely end customers
-      would like the production systems to fix index issues in run-time,
+      would like the production systems to fix index issues in run-time
       without delays and restarts. Current versions of JCR supports "Hot
       Asynchronous Workspace Reindexing" feature. It allows end-user (Service
       Administrator) to launch the process in background without stopping or
-      blocking whole application by using any JMX-compatible console (see
-      screenshot below, "JConsole in action").<mediaobject>
+      blocking the whole application by using any JMX-compatible console (see
+      the "JConsole in action" screenshot below).<mediaobject>
           <imageobject>
             <imagedata align="center" fileref="images/jmx-jconsole.png" />
           </imageobject>
-        </mediaobject>Server can continue working as expected while index is
-      recreated. This depends on the flag "allow queries", passed via JMX
-      interface to reindex operation invocation. If the flag set, then
-      application continues working. But there is one critical limitation the
-      end-users must be aware. Index is frozen while background task is
-      running. It meant that queries are performed on index present on the
+        </mediaobject>The server can continue working as expected while index is
+      re-created. This depends on the flag "allow queries", passed via JMX
+      interface to re-index operation invocation. If the flag set, then the
+      application continues working. However, there is one critical limitation that the
+      end-users must be aware. If the index is frozen while background task is
+      running, it means queries are performed on index present on the
       moment of task startup and data written into repository after startup
-      won't be available through the search until process finished. Data added
+      will not be available through the search until the process finished. Data added
       during re-indexation is also indexed, but will be available only when
       task is done. Briefly, JCR makes the snapshot of indexes on asynch task
       startup and uses it for searches. When operation finished, stale indexes
-      replaced by newly created including newly added data. If flag "allow
-      queries" is set to false, then all queries will throw an exception while
-      task is running. Current state can be acquired using the following JMX
+      are replaced by newly created including newly added data. If the flag "allow
+      queries" is set to "false", then all queries will throw an exception while
+      the task is running. Current state can be acquired using the following JMX
       operation:</para>
 
       <itemizedlist>
         <listitem>
-          <para>getHotReindexingState() - returns information about latest
+          <para>getHotReindexingState(): return information about latest
           invocation: start time, if in progress or finish time if
           done.</para>
         </listitem>
@@ -486,21 +493,31 @@
       <title>Lucene tuning</title>
       <para>As mentioned above, JCR Indexing is based on Lucene indexing
       library as underlying search engine. It uses Directories to store index
-      and manages access to index by Lock Factories. By default JCR
+      and manages access to index by Lock Factories.</para>
+      <para>
+      By default, JCR
       implementation uses optimal combination of Directory implementation and
       Lock Factory implementation. When running on OS different from Windows,
-      NIOFSDirectory implementation used. And SimpleFSDirectory for Windows
-      stations. NativeFSLockFactory is an optimal solution for wide variety of
-      cases including clustered environment with NFS shared resources. But
-      those default can be overridden with the help of system properties.
-      There are two properties:
-      "org.exoplatform.jcr.lucene.store.FSDirectoryLockFactoryClass" and
-      "org.exoplatform.jcr.lucene.FSDirectory.class" that are responsible for
-      changing default behavior. First one defines implementation of abstract
-      Lucene LockFactory class and the second one sets implementation class
-      for FSDirectory instances. For more information please refer to Lucene
-      documentation. But be sure You know what You are changing. JCR allows
+      NIOFSDirectory implementation is used and SimpleFSDirectory is used for Windows
+      stations.
+      </para>
+      <para>
+      NativeFSLockFactory is an optimal solution for wide variety of
+      cases including clustered environment with NFS shared resources. However,
+      those defaults can be overridden with the help of system properties. There are two properties that are responsible for
+      changing default behavior:</para>
+      <itemizedlist>
+        <listitem>"org.exoplatform.jcr.lucene.store.FSDirectoryLockFactoryClass": define implementation of abstract
+      Lucene LockFactory class.</listitem>
+        <listitem>"org.exoplatform.jcr.lucene.FSDirectory.class": set implementation class
+      for FSDirectory instances.</listitem>
+      </itemizedlist>
+
+      <note>
+      For more information please refer to Lucene
+      documentation but <emphasis role="bold">make sure that you know what you are changing</emphasis>. JCR allows
       end users to change implementation classes of Lucene internals, but
-      doesn't guarantee it's stability and functionality.</para>
+      does not guarantee its stability and functionality.
+      </note>
   </section>  
 </section>

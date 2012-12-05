@@ -25,7 +25,7 @@
       </listitem>  
     </itemizedlist>  
   </highlights>  
-    <para>Like other eXo services, eXo JCR can be configured and used in the
+    <para>Like other eXo services, JCR can be configured and used in the
     portal or embedded mode (as a service embedded in eXo Portal) and in
     standalone mode.</para>
 
@@ -102,8 +102,8 @@
     <itemizedlist>
     <listitem><para><emphasis role="bold">conf-path</emphasis>: a path to a RepositoryService JCR Configuration.</para></listitem>
     <listitem><para><emphasis role="bold">max-backup-files</emphasis>: max number of backup files. This option lets you specify the number of stored backups. 
-    Number of backups can't exceed this value. File which will exceed the limit will replace the oldest file.</para></listitem>
-    <listitem><para><emphasis role="bold">working-conf</emphasis>: optional; <link linkend="JCR.ConfigurationPersister">JCR configuration persister</link> configuration. If there isn't a working-conf, the persister will be disabled.</para></listitem>  
+    Number of backups can not exceed this value. File which will exceed the limit will replace the oldest file.</para></listitem>
+    <listitem><para><emphasis role="bold">working-conf</emphasis>: optional; <link linkend="JCR.ConfigurationPersister">JCR configuration persister</link> configuration. If there is not a working-conf, the persister will be disabled.</para></listitem>
     </itemizedlist>
     <para>The JCR Core implementation contains a persister which stores the
     repository configuration in the relational database using JDBC calls -

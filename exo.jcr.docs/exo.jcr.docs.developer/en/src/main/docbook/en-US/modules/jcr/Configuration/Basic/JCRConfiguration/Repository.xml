@@ -9,9 +9,10 @@
   </para>  
 
     <para>Service configuration may be placed in
-    jar:/conf/standalone/exo-jcr-config.xml for standalone mode. For portal
+    <filename>jar:/conf/standalone/exo-jcr-config.xml</filename> for standalone mode. For portal
     mode, it is located in the portal web application
-    portal/WEB-INF/conf/jcr/repository-configuration.xml.</para>
+        <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml.</filename>
+    </para>
     <itemizedlist>
         <listitem>
             <para><emphasis role="bold">default-repository</emphasis>: The name of a
@@ -46,9 +47,10 @@
         </listitem>
         <listitem>
             <para><emphasis role="bold">access-control</emphasis>: The name of an
-            access control policy. There can be 3 types: optional - ACL is created
-            on-demand(default), disable - no access control, mandatory - an ACL is
-            created for each added node(not supported yet).</para>
+            access control policy. There can be 3 types:</para>
+                <para> optional - ACL is created on-demand (default)</para>
+                <para>disable - no access control</para>
+                <para>mandatory - an ACL is created for each added node (not supported yet).</para>
         </listitem>
         <listitem>
             <para><emphasis role="bold">authentication-policy</emphasis>: The name of
@@ -66,13 +68,11 @@
         <listitem>
             <para id="JCR.eXoJCRconfiguration.LockRemoverMaxThreads"><emphasis
             role="bold">lock-remover-max-threads</emphasis>: Number of threads that
-            can serve LockRemover tasks. Default value is 1. Repository may have many
+            can serve LockRemover tasks. The default value is "1". A repository may have many
             workspaces, each workspace have own LockManager. JCR supports Locks with
-            defined lifetime. Such a lock must be removed is it become expired. That
-            is what LockRemovers does. But LockRemovers is not an independent
-            timer-threads, its a task that executed each 30 seconds. Such a task is
-            served by ThreadPoolExecutor which may use different number of
-            threads.</para>
+            defined lifetime and these locks removed as it becomes expired by LockRemovers. However, LockRemovers is not an independent
+            timer-threads, it is a task that executed each 30 seconds. Such task is
+            served by ThreadPoolExecutor which may use different number of threads.</para>
         </listitem>
     </itemizedlist>
 	<note>

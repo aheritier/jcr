@@ -5,10 +5,10 @@
   <title>External Value Storages</title>
 
     <para>By default JCR Values are stored in the Workspace Data container
-    along with the JCR structure (i.e. Nodes and Properties). eXo JCR offers
+    along with the JCR structure (for example: Nodes and Properties).JCR offers
     an additional option of storing JCR Values separately from Workspace Data
     container, which can be extremely helpful to keep Binary Large Objects
-    (BLOBs) for example.</para>
+    (BLOBs) for instance.</para>
 
     <para>Value storage configuration is a part of Repository configuration,
     find more details <link
@@ -19,7 +19,7 @@
 
     <note>
       <para id="JCR.ExternalValueStorages.DisablingValueStorage">JCR allows to disable value storage by adding property into
-      configuration. For interal usage and testing purpose only.
+      configuration. For internal usage and testing purpose only.
       <programlisting language="xml">&lt;property name="enabled" value="false" /&gt;</programlisting>
 	  </para>
       <para>Be careful, all stored values will be unaccessible.</para>
@@ -35,7 +35,7 @@
     <para>This is a recommended type of external storage, it can contain large
     amount of files limited only by disk/volume free space.</para>
 
-    <para>A disadvantage is that it's a higher time on Value deletion due to
+    <para>A disadvantage is that it is a higher time on Value deletion due to
     unused tree-nodes remove.</para>
 
 <programlisting language="xml">&lt;value-storage id="Storage #1" class="org.exoplatform.services.jcr.impl.storage.value.fs.TreeFileValueStorage"&gt;
@@ -64,8 +64,8 @@
     (<property>property-name</property>), ancestor path
     (<property>ancestor-path</property>) and/or size of values stored
     (<property>min-value-size</property>, in bytes). In code sample, we use a
-    filter with property-type and min-value-size only. I.e. storage for binary
-    values with size greater of 1MB. It's recommended to store properties with
+    filter with property-type and min-value-size only. For example, storage for binary
+    values with size greater of 1MB. It is recommended to store properties with
     large values in file value storage only.</para>
 
     <para>Another example shows a value storage with different locations for
@@ -103,12 +103,12 @@
     <note>
       <para>It is not recommended to use in production due to low capacity capabilities on most file systems.</para>
 
-      <para>But if you are sure in your file-system or data amount is small it
-      may be useful for you as haves a faster speed of Value removal.</para>
+      <para>However, if you are sure that your file-system or data amount is small, it
+      may be useful for you as it will increase the speed of Value removal.</para>
     </note>
 
     <para>Hold Values in flat FileSystem files. <property>path</property>
-    property points to root directory in order to store files</para>
+    property points to root directory in order to store files.</para>
 
 <programlisting language="xml">&lt;value-storage id="Storage #1" class="org.exoplatform.services.jcr.impl.storage.value.fs.SimpleFileValueStorage"&gt;
 	&lt;properties&gt;
@@ -122,7 +122,7 @@
   <section id="JCR.ExternalValueStorages.ContentAddressableValueStorageSupport">
     <title>Content Addressable Value storage (CAS) support</title>
 
-    <para>eXo JCR supports <phrase>Content-addressable storage</phrase>
+    <para>JCR supports <phrase>Content-addressable storage</phrase>
     feature for <phrase>Values</phrase> storing.</para>
 
     <note>
@@ -145,7 +145,7 @@
 
     <note>
       <para>For example: if you have 100 different properties containing the
-      same data (e.g. mail attachment), the storage stores only one single
+      same data (for example: mail attachment), the storage stores only one single
       file. The file will be shared with all referencing properties.</para>
     </note>
 

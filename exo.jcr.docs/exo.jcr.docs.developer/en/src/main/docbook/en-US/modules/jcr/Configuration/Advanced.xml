@@ -18,7 +18,7 @@
                 <para>Details of Indexing in clustered environment, query-handler parameters, cluster-ready indexing strategies, Asynchronous reindexing and Lucene tuning.</para>
               </listitem>  
               <listitem>
-                <para><emphasis role="bold"><link linkend="JCR.ClusterConfig">Configure eXo JCR in cluster</link></emphasis></para>
+                <para><emphasis role="bold"><link linkend="JCR.ClusterConfig">Configure JCR in cluster</link></emphasis></para>
                 <para>Requirements related to environment and configuration, instructions on how to configure JBoss Cache and stop a node properly in the cluster environment.</para>
               </listitem>  
               <listitem>

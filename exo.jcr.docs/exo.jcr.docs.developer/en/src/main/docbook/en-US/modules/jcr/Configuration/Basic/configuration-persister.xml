@@ -4,8 +4,8 @@
 <!-- 2.1.2 JCR configuration persister -->
 <section id="JCR.ConfigurationPersister" role="NotInToc">
   <title>JCR configuration persister</title>
-  <para>eXo JCR allows using <emphasis>persister</emphasis> to store configuration. In this section, you will understand how to use and configure
-  eXo JCR persister.</para>
+  <para>JCR allows using <emphasis>persister</emphasis> to store configuration. In this section, you will understand how to use and configure
+  JCR persister.</para>
     <para>On startup <classname>RepositoryServiceConfiguration</classname>
     component checks if a configuration persister was configured. In that
     case, it uses the provided <classname>ConfigurationPersister</classname>
