@@ -65,7 +65,7 @@
           $service_jar_file/conf/portal/configuration.xml.</para>
 		<warning>
 			<para>
-				Don't rely on some concrete jar's configuration if you have more than one jar containing conf/portal/configuration.xml file. In this case, choosing a configuration is unpredictable.
+				Do not rely on some concrete jar's configuration if you have more than one jar containing conf/portal/configuration.xml file. In this case, choosing a configuration is unpredictable.
 			</para>
 		</warning>
         </listitem>

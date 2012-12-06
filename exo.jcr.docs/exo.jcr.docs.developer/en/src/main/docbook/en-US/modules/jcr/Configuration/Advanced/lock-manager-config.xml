@@ -70,23 +70,22 @@
       <para>You can see a full JCR configuration example at <link
       linkend="JCR.ClusterConfig.JCRExternalConfig">here</link>.</para>
 
-      <para>Common tips:</para>
       <tip>
         <itemizedlist>
           <listitem>
             <para><parameter>clusterName</parameter> ("jbosscache-cluster-name")
-            must be unique;</para>
+            must be unique.</para>
           </listitem>
 
           <listitem>
             <para><parameter>cache.jdbc.table.name</parameter> must be unique
-            per datasource;</para>
+            for each datasource.</para>
           </listitem>
 
           <listitem>
             <para><parameter>cache.jdbc.fqn.type</parameter> and
             cache.jdbc.node.type must be configured according to your
-            database;</para>
+            database.</para>
           </listitem>
         </itemizedlist>
       </tip>
@@ -98,9 +97,9 @@
     </listitem>
 
     <listitem id="JCR.LockManagerConfiguration.CacheableLockManagerImpl.SimpleJbossCacheConfiguration">
-      <para><emphasis role="bold">Simple JbossCache Configuration:</emphasis></para>
+      <para><emphasis role="bold">Simple JbossCache configuration:</emphasis></para>
 
-      <para>The first one is putting JbossCache configuration file path to
+      <para>The first way is putting JbossCache configuration file path to
       CacheableLockManagerImpl.</para>
 
       <para><note>
@@ -108,7 +107,7 @@
           repository may contain many workspaces, and each workspace must
           contain LockManager configuration, and LockManager configuration may
           contain the JbossCache config file. So, the total configuration will
-          grow up. However, it is useful if we want to have a single LockManager
+          grow up. However, it is useful if you want to have a single LockManager
           with a special configuration.</para>
         </note></para>
 
@@ -165,7 +164,7 @@
 
           <listitem>
             <para><parameter>cache.jdbc.table.name</parameter>: must be unique
-            per datasource.</para>
+            for each datasource.</para>
           </listitem>
 
           <listitem>
@@ -184,9 +183,9 @@
       </itemizedlist>
     </listitem>
     <listitem id="JCR.LockManagerConfiguration.CacheableLockManagerImpl.TemplateJBossCacheConfiguration">
-      <para><emphasis role="bold">Template JBossCache Configuration</emphasis></para>
+      <para><emphasis role="bold">Template JBossCache configuration</emphasis></para>
 
-      <para>The second one is using the template JBoss-cache configuration for
+      <para>The second way is using the template JBoss-cache configuration for
       all LockManagers.</para>
 
       <para>The lock template configuration:</para>
@@ -269,7 +268,7 @@
             <para>As you see, jgroups-configuration is moved to separate the
             configuration file - udp-mux.xml. In this case, the udp-mux.xml
             file is a common JGroup configuration for all components
-            (QueryHandler, Cache, LockManager), but we can still create our
+            (QueryHandler, Cache, LockManager), but you can still create your
             own configuration.</para>
           </listitem>
         </itemizedlist></para>

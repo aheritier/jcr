@@ -11,9 +11,9 @@
     Lucene analyzer and stored in Lucene index. That is called indexing of a
     property. After that, you can perform a fulltext search among these indexed
     properties.</para>
-  <!-- Lucene Analyzers -->
+  <!-- Lucene analyzers -->
   <para id="JCR.FulltextSearchAndSettings.Lucene_Analyzers">
-    <citetitle><emphasis role="bold">Lucene Analyzers</emphasis></citetitle>
+    <citetitle><emphasis role="bold">Lucene analyzers</emphasis></citetitle>
   </para>
     <para>The sense of analyzers is to transform all strings stored in the
     index in a well-defined condition. The same analyzer(s) is/are used when

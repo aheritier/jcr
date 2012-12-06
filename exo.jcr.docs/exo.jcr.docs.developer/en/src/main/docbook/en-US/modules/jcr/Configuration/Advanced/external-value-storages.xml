@@ -5,7 +5,7 @@
   <title>External Value Storages</title>
 
     <para>By default JCR Values are stored in the Workspace Data container
-    along with the JCR structure (for example: Nodes and Properties).JCR offers
+    along with the JCR structure (for example: Nodes and Properties). JCR offers
     an additional option of storing JCR Values separately from Workspace Data
     container, which can be extremely helpful to keep Binary Large Objects
     (BLOBs) for instance.</para>
@@ -135,8 +135,8 @@
     </note>
 
     <para>Content Addressable Value storage stores unique content once.
-    Different properties (values) with same content will be stored as one data
-    file shared between those values. We can tell the Value content will be
+    Different properties (values) with the same content will be stored as one data
+    file shared between those values. You can tell the Value content will be
     shared across some Values in storage and will be stored on one physical
     file.</para>
 
@@ -150,7 +150,7 @@
     </note>
 
     <para>If property Value changes, it is stored in an additional file.
-    Alternatively the file is shared with other values, pointing to the same
+    Alternatively, the file is shared with other values, pointing to the same
     content.</para>
 
     <para>The storage calculates Value content address each time the property
@@ -171,7 +171,7 @@
     <phrase>Simple File Value Storage</phrase> types.</para>
 
     <para>To enable CAS support, just configure it in JCR Repositories
-    configuration as we do for other Value Storages.</para>
+    configuration as you do for other Value Storages.</para>
 
 <programlisting language="xml">&lt;workspaces&gt;
     &lt;workspace name="ws"&gt;
@@ -207,19 +207,19 @@
 		<listitem>
 			<para><parameter>vcas-type</parameter>: Value CAS internal data
         type, JDBC backed is currently implemented
-        org.exoplatform.services.jcr.impl.storage.value.cas.JDBCValueContentAddressStorageImp;l</para>
+        org.exoplatform.services.jcr.impl.storage.value.cas.JDBCValueContentAddressStorageImpl.</para>
 		</listitem>
 		<listitem>
 			<para><parameter>jdbc-source-name</parameter>:
         JDBCValueContentAddressStorageImpl specific parameter, database will
-        be used to save CAS metadata. It's simple to use same as in workspace
-        container;</para>
+        be used to save CAS metadata. It is simple to use same as in workspace
+        container.</para>
 		</listitem>
 		<listitem>
 			<para><parameter>jdbc-dialect</parameter>:
         JDBCValueContentAddressStorageImpl specific parameter, database
-        dialect. It's simple to use the same as in workspace
-        container;</para>
+        dialect. It is simple to use the same as in workspace
+        container.</para>
 		</listitem>
 	</itemizedlist>
   </section>

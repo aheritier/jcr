@@ -261,8 +261,8 @@
 
       <listitem>
         <para><parameter>max-buffer-size: A</parameter> a threshold (in bytes)
-        after which a javax.jcr.Value content will be swapped to a file in a
-        temporary storage. I.e. swap for pending changes.</para>
+        after which a javax.jcr. Value content will be swapped to a file in a
+        temporary storage. For example: swap for pending changes.</para>
       </listitem>
 
       <listitem>

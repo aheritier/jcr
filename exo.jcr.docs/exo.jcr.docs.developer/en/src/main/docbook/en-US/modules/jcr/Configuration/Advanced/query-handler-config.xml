@@ -16,12 +16,12 @@
     single JVM or doing the best to use all resources available in cluster.
     JCR uses Lucene library as underlying search and indexing engine, but it
     has several limitations that greatly reduce possibilities and limits the
-    usage of cluster advantages. That is why eXo JCR offers three strategies
+    usage of cluster advantages. That is why JCR offers three strategies
     that are suitable for it's own usecases. They are standalone, clustered
-    with shared index and clustered with local indexes. Each one has it's pros
+    with shared index and clustered with local indexes. Each one has its pros
     and cons.</para>
 
-    <para>Stanadlone strategy provides a stack of indexes to achieve greater
+    <para>Standalone strategy provides a stack of indexes to achieve greater
     performance within single JVM.</para>
 
     <mediaobject>
@@ -47,9 +47,9 @@
       </imageobject>
     </mediaobject>
 
-    <para>As this implementation designed for clustered environment it has
+    <para>As this implementation designed for clustered environment, it has
     additional mechanisms for data delivery within cluster. Actual text
-    extraction jobs done on the same node that does content operations (i.e.
+    extraction jobs are done on the same node that does content operations (for example:
     write operation). Prepared "documents" (Lucene term that means block of
     data ready for indexing) are replicated withing cluster nodes and
     processed by local indexes. So each cluster instance has the same index
@@ -57,7 +57,7 @@
     must be created. There are some supported ways of doing this operation.
     The simplest is to simply copy the index manually but this is not intended
     for use. If no initial index found, JCR will use automated scenarios. They are
-    controlled via configuration (see "index-recovery-mode" parameter)
+    controlled via configuration (see the <link linkend="JCR.QueryHandlerConfiguration.Configuration.Query-handlerConfigurationOverview">index-recovery-mode parameter</link> )
     offering full re-indexing from database or copying from another cluster
     node.</para>
 
@@ -78,8 +78,8 @@
     single "coordinator" node only. Each cluster instance has a read access
     for shared index to perform queries combining search results found in own
     in-memory index also. Take in account that shared folder must be
-    configured in your system environment (i.e. mounted NFS folder). But this
-    strategy in some extremely rare cases can have a bit different volatile
+    configured in your system environment (for example: mounted NFS folder). However, this
+    strategy in some extremely rare cases may have a bit different volatile
     indexes within cluster instances for a while. In a few seconds they will
     be up to date.</para>
 
@@ -90,7 +90,7 @@
     <section id="JCR.QueryHandlerConfiguration.Configuration.Query-handlerConfigurationOverview">
       <title>Query-handler parameters</title>
 
-      <para>See the following configuration example:</para>
+      <para>See the following sample configuration :</para>
 
       <programlisting language="xml">&lt;workspace name="ws"&gt;
    &lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
@@ -419,7 +419,7 @@
       <para>JCR Supports direct RDBMS re-indexing, that is usually
       faster than ordinary and can be configured via QueryHandler parameter
       "rdbms-reindexing" set to "true" (for more information please refer to
-      "Query-handler configuration overview").</para>
+      the <link linkend="JCR.QueryHandlerConfiguration">Query-handler configuration overview</link>).</para>
       <para>One new feature to introduce is
       the asynchronous indexing on startup. Usually the startup is blocked until
       the process is finished. Block can take any period of time, depending on
@@ -451,7 +451,7 @@
       return true.</para>    
       <!-- Hot Asynchronous Workspace Reindexing via JMX -->
     <para id="JCR.QueryHandlerConfiguration.Asynchronous_reindexing.HotAsynchronousWorkspaceReindexingViaJMX">
-      <citetitle><emphasis role="bold">Hot Asynchronous Workspace Reindexing via JMX</emphasis></citetitle>
+      <citetitle><emphasis role="bold">Hot asynchronous workspace reindexing via JMX</emphasis></citetitle>
     </para>
       <para>Some hard system faults, error during upgrades, migration issues
       and some other factors may corrupt the index. Most likely end customers
@@ -514,10 +514,10 @@
       </itemizedlist>
 
       <note>
-      For more information please refer to Lucene
+      <para>For more information please refer to Lucene
       documentation but <emphasis role="bold">make sure that you know what you are changing</emphasis>. JCR allows
       end users to change implementation classes of Lucene internals, but
-      does not guarantee its stability and functionality.
+      does not guarantee its stability and functionality.</para>
       </note>
   </section>  
 </section>

@@ -24,7 +24,7 @@
 
         <listitem>
           <para>The same clusters on different nodes MUST have the same names
-          (for example if Indexer cluster in workspace production on the first node
+          (for example, if Indexer cluster in workspace production on the first node
           has the name "production_indexer_cluster", then indexer clusters in
           workspace production on all other nodes MUST have the same name
           "production_indexer_cluster" ).</para>

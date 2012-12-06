@@ -34,7 +34,13 @@
   &lt;/repositories&gt;
 &lt;/repository-service&gt;</programlisting>
 
-  <para id="JCR.SearchConfiguration.Config_Parameters">This code includes the following configuration parameters:</para>  
+
+  <para id="JCR.SearchConfiguration.Config_Parameters">
+      <citetitle><emphasis role="bold">Configuration parameters</emphasis></citetitle>
+  </para>
+    <para>
+    Followings are parameters of JCR index configuration:
+    </para>
     <table>
       <title></title>
 

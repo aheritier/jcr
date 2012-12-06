@@ -16,7 +16,7 @@
 
     <itemizedlist>
       <listitem>
-        <para>Any dedicated RDBMS anyone like MySQL, Postges, Oracle and, etc
+        <para>Any dedicated RDBMS like MySQL, Postges, Oracle and, etc
           but just not HSSQL;
         </para>
       </listitem>
@@ -24,7 +24,7 @@
       <listitem>
         <para>Shared storage. The simplest thing is to use shared FS like
           NFS or SMB mounted in operation system, but they are rather slow.
-          The best thing is to use SAN (Storage Area Network);
+          The best thing is to use SAN (Storage Area Network).
         </para>
       </listitem>
 
@@ -55,13 +55,13 @@
 	&lt;/init-params&gt;
 &lt;/component&gt;</programlisting>
 
-    <para>Next stage is actually the JCR configuration. We need JBossCache
+    <para>Next stage is actually the JCR configuration. You will need JBossCache
       configuration templates for: <parameter>data-cache</parameter>, <parameter>indexer-cache</parameter> and
       <parameter>lock-manager-cache</parameter>. Later they will be used to configure JCR's core
       components. There are pre-bundled templates in EAR or JAR in
       <filename>conf/standalone/cluster</filename>. They can be used or re-written if
       needed. And now, re-configure a bit each workspace. Actually, a few
-      parameters need changing, e.g. <parameter>&lt;cache&gt;</parameter>, <parameter>&lt;query-handler&gt;</parameter>,
+      parameters need changing. For example: <parameter>&lt;cache&gt;</parameter>, <parameter>&lt;query-handler&gt;</parameter>,
       and <parameter>&lt;lock-manager&gt;</parameter>.
     </para>
 
@@ -91,7 +91,7 @@
               configured by simply setting the jgroups property
               singleton_name to a unique name (it must remain unique from
               one portal container to another). This file is also
-              pre-bundled with templates and is recommended for use;
+              pre-bundled with templates and is recommended for use.
             </para>
           </listitem>
 
@@ -196,7 +196,7 @@
           </listitem>
 
           <listitem>
-            <para><parameter>jbosscache-cl-cache.jdbc.table.primarykey</parameter>: Name of column with pk;
+            <para><parameter>jbosscache-cl-cache.jdbc.table.primarykey</parameter>: Name of column with pk.
             </para>
           </listitem>
 
@@ -204,7 +204,7 @@
             <para><parameter>jbosscache-cl-cache.jdbc.fqn.column</parameter>: Name of one
               more column. If you are not sure how to use, follow the
               example above (if much interested, please refer to JBossCache
-              JDBCCacheLoader documentation)
+              JDBCCacheLoader documentation).
             </para>
           </listitem>
 
@@ -212,7 +212,7 @@
             <para><parameter>jbosscache-cl-cache.jdbc.node.column</parameter>: Name of one
               more column. If you are not sure how to use, follow the
               example above (if much interested, please refer to JBossCache
-              JDBCCacheLoader documentation)
+              JDBCCacheLoader documentation).
             </para>
           </listitem>
 
@@ -292,17 +292,17 @@
 			<para><emphasis role="bold">How can I affect spellchecker results?</emphasis></para>
 		  </question>
 		<answer>
-		<para>There is two parameters in the JCR QueryHandler configuration:</para>
+		<para>There are two parameters in the JCR QueryHandler configuration:</para>
 
 		<itemizedlist>
 		  <listitem>
 			<para>Minimal distance between checked word and proposed
-			  suggestion;
+			  suggestion:
 			</para>
 		  </listitem>
 
 		  <listitem>
-			<para>Search for more popular suggestions;</para>
+			<para>Search for more popular suggestions:</para>
 
 <programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
 	&lt;properties&gt;
@@ -319,17 +319,18 @@
 		<para>Minimal distance is counted as Levenshtein distance between checked word and spellchecker suggestion.
 		</para>
 
-		<para>The MorePopular parameter affects in next way: If "morePopular" is disabled:
+		<para>The MorePopular parameter affects in the following way:
 		</para>
+        <para>If "morePopular" is disabled:</para>
 
 		<itemizedlist>
 		  <listitem>
-			<para>If the proposed word exists in the directory - no suggestion given;
+			<para>If the proposed word exists in the directory: no suggestion given.
 			</para>
 		  </listitem>
 
 		  <listitem>
-			<para>If the proposed word doesn't exist in the directory - propose the closed word;
+			<para>If the proposed word does not exist in the directory: propose the closed word.
 			</para>
 		  </listitem>
 		</itemizedlist>
@@ -346,20 +347,20 @@
    </qandaentry>
    <qandaentry xml:id="JCR.eXoJCRconfiguration.HelpApplicationToProhibitUseOfClosedSessions">
     <question>
-		<para>Does Help application prohibit the use of closed sessions?</para>
+		<para><emphasis role="bold">Does Help application prohibit the use of closed sessions?</emphasis></para>
 	</question>
 	<answer>
     <para>Products that use JCR, sometimes missuse it since they continue
     to use a session that has been closed through a method call on a node, a
-    property or even the session itself. To prevent bad practices we propose
-    three modes which are the folllowing:</para>
+    property or even the session itself. To prevent bad practices, we propose
+    three following modes:</para>
 
     <itemizedlist>
       <listitem>
         <para>If the system property
         <emphasis>exo.jcr.prohibit.closed.session.usage</emphasis> has been
-        set to <emphasis>true</emphasis>, then a RepositoryException will be
-        thrown any time an application will try to access to a closed session.
+        set to "true", then a RepositoryException will be
+        thrown any time an application is trying to access to a closed session.
         In the stack trace, you will be able to know the call stack that
         closes the session.</para>
       </listitem>
@@ -377,8 +378,8 @@
 
       <listitem>
         <para>If none of the previous system properties have been set, then we
-        will ignore that the issue and let the application use the closed
-        session as it was possible before without doing anything in order to
+        will ignore that issue and let the application use the closed
+        session as before without doing anything to
         allow applications to migrate step by step.</para>
       </listitem>
     </itemizedlist>
@@ -386,11 +387,11 @@
   </qandaentry>
 	<qandaentry xml:id="JCR.eXoJCRconfiguration.HelpApplicationToAllowUseOfClosedDataSources">
 		<question>
-			<para>Does Help application allow the use of closed datasources?</para>
+			<para><emphasis role="bold">Does Help application allow the use of closed datasources?</emphasis> </para>
 		</question>
 		<answer>
-			<para>Since usage of closed session affects usage of closed datasource
-			we propose three ways to resolve such kind of isses: </para>
+			<para>Since the usage of closed session affects usage of closed datasource,
+			we propose three ways to resolve such kind of issues: </para>
 
 			<itemizedlist>
 				<listitem>
@@ -405,9 +406,9 @@
 				<listitem>
 					<para>If the system property
 					<emphasis>exo.jcr.prohibit.closed.datasource.usage</emphasis> is
-					set to <emphasis>false</emphasis> and the system property
+					set to "false" and the system property
 					<emphasis>exo.product.developing</emphasis> is set to
-					<emphasis>true</emphasis>, then a warning will be logged in the log
+					"true", then a warning will be logged in the log
 					file with the full stack trace in order to help identifying the root
 					cause of the issue. In the stack trace, you will be able to know the
 					call stack that closes the datasource.</para>
@@ -416,9 +417,9 @@
 				<listitem>
 					<para>If the system property
 					<emphasis>exo.jcr.prohibit.closed.datasource.usage</emphasis> is
-					set to <emphasis>false</emphasis> and the system property
+					set to "false" and the system property
 					<emphasis>exo.product.developing</emphasis> is set to
-					<emphasis>false</emphasis> usage of closed datasource will be allowed
+					"false" usage of closed datasource will be allowed
 					and nothing will be logged or thrown.</para>
 				</listitem>
 			</itemizedlist>
@@ -426,14 +427,14 @@
 	</qandaentry>
 	<qandaentry xml:id="JCR.eXoJCRconfiguration.GettingEffectiveConfigurationAtRuntimeOfAllRepositories">
 		<question>
-			<para>How to get the effective configuration at Runtime of all the repositories?</para>
+			<para><emphasis role="bold">How to get the effective configuration at Runtime of all the repositories?</emphasis> </para>
 		</question>
 		<answer>
 			<para>The effective configuration of all the repositories and their
 			workspaces can be known thanks to the method
-			<emphasis>getConfigurationXML</emphasis>() that is exposed through JMX at
-			the <emphasis>RepositoryServiceConfiguration</emphasis> level in case of a
-			<emphasis>PortalContainer</emphasis> the name of the related MBean will be
+			<emphasis>getConfigurationXML</emphasis>(). This method is exposed through JMX at
+			the <emphasis>RepositoryServiceConfiguration</emphasis> level. In case of a
+			<emphasis>PortalContainer</emphasis>, the name of the related MBean will be
 			of type <emphasis>exo:portal=${portal-container-name},service=RepositoryServiceConfiguration</emphasis>.
 			This method will give you the effective configuration in XML format that
 			has been really interpreted by the the JCR core. This could be helpful to

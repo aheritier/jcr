@@ -1,5 +1,5 @@
 <section id="JCR.SearchConfiguration.Global_Search_Index">
-    <title>Global Search Index</title>    
+    <title>Global Search index</title>
     <para id="JCR.SearchConfiguration.Global_Search_Index.Configuration">
 	  The global search index is configured in the above-mentioned configuration file
       (<filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>)
@@ -8,15 +8,15 @@
 
       <para>In fact, when using Lucene, you should always use the same
       analyzer for indexing and for querying, otherwise the results are
-      unpredictable. You don't have to worry about this,JCR does this for
-      you automatically. If you don't like the StandardAnalyzer configured by
+      unpredictable. You do not have to worry about this, JCR does this for
+      you automatically. If you do not like the StandardAnalyzer configured by
       default, just replace it with your own.</para>
 
-      <para>If you don't have a handy QueryHandler, you should learn how
+      <para>If you do not have a handy QueryHandler, you should learn how
       to create a customized Handler in 5 minutes.</para>    
     <!-- 2.2.1.2.2. Customized Search Indexes and Analyzers -->
     <section id="JCR.SearchConfiguration.Global_Search_Index.Customized_Search_Indexes_Analyzers">
-      <title>Customized Search Indexes and Analyzers</title>
+      <title>Customized Search indexes and analyzers</title>
 
       <para>By default JCR uses the Lucene standard Analyzer to index
       contents. This analyzer uses some standard filters in the method that
@@ -77,9 +77,9 @@
         
 		<para>You can have a glance at the example analyzer attached to this article.</para>
 
-        <!-- Configure Platform to use your Analyzer -->
+        <!-- Configure Platform to use your analyzer -->
       <para id="JCR.SearchConfiguration.Global_Search_Index.Customized_Search_Indexes_Analyzers.Configure_Application_Use_Analyzer">
-        <citetitle><emphasis role="bold">Configure Platform to use your Analyzer</emphasis></citetitle>
+        <citetitle><emphasis role="bold">Configure Platform to use your analyzer</emphasis></citetitle>
       </para>
         <para>In <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>, you have to add the <parameter>analyzer</parameter> parameter to each query-handler config:</para>
         
