@@ -2,12 +2,12 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.RegistryService">
-  <title>Registry Service</title>
+  <title>Registry service</title>
 
     <para>The Registry Service is one of the key parts of the infrastructure
     built around eXo JCR. Each JCR that is based on service, applications, etc
     may have its own configuration, settings data and other data that have to
-    be stored persistently and used by the approptiate service or application.
+    be stored persistently and used by the appropriate service or application.
     ( We call it "<emphasis role="bold">Consumer</emphasis>").</para>
 
     <para>The service acts as a centralized collector (Registry) for such

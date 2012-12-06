@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.LIKEConstraint">
-  <title>LIKE Constraint</title>
+  <title>LIKE constraint</title>
 
   <para>Find all nodes with the 'mix:title' mixin type and where the 'jcr:title' property
   starts with 'P'.</para>

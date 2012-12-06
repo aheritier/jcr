@@ -2,14 +2,14 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.PropertyExistenceConstraint">
-  <title>Property Existence Constraint</title>
+  <title>Property existence constraint</title>
 
   <para>Find all nodes with the 'mix:title' mixin type  where the 'jcr:description' property
   does not exist (is null).</para>
 
   <para xml:id="JCR.PropertyExistenceConstraint.RepositoryStructure">
     <citetitle>
-      <emphasis role="bold">Repository Structure</emphasis>
+      <emphasis role="bold">Repository structure</emphasis>
     </citetitle>
   </para>
 
@@ -41,7 +41,7 @@
 
   <para xml:id="JCR.PropertyExistenceConstraint.QueryExecution">
     <citetitle>
-      <emphasis role="bold">Query Execution</emphasis>
+      <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
 

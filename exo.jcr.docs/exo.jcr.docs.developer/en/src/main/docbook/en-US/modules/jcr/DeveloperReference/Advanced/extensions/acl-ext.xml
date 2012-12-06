@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.AccessControlExtension">
-  <title>Access Control system</title>
+  <title>Access control system</title>
 
   <para>An extended Access Control system consists of:</para>
 
@@ -32,7 +32,7 @@
 
   <para xml:id="JCR.AccessControlExtension.AccessContextAction">
     <citetitle>
-      <emphasis role="bold">Access Context Action</emphasis>
+      <emphasis role="bold">Access context action</emphasis>
     </citetitle>
   </para>
 
@@ -55,7 +55,7 @@
 
   <para xml:id="JCR.AccessControlExtension.InvocationContext">
     <citetitle>
-      <emphasis role="bold">Invocation Context</emphasis>
+      <emphasis role="bold">Invocation context</emphasis>
     </citetitle>
   </para>
 
@@ -74,7 +74,7 @@
 
   <para xml:id="JCR.AccessControlExtension.CustomExtendedAccessManager">
     <citetitle>
-      <emphasis role="bold">Custom Extended Access Manager</emphasis>
+      <emphasis role="bold">Custom extended access manager</emphasis>
     </citetitle>
   </para>
 
@@ -116,7 +116,7 @@
 
   <para xml:id="JCR.AccessControlExtension.ExampleCustomAccessManager">
     <citetitle>
-      <emphasis role="bold">Example of a custom Access Manager</emphasis>
+      <emphasis role="bold">Example of a custom access manager</emphasis>
     </citetitle>
   </para>
 

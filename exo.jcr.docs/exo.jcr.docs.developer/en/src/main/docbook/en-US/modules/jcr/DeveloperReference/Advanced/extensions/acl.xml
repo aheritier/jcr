@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- This document was created with Syntext Serna Free. --><!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
 <section id="JCR.AccessControl.eXoAccessControl">
-    <title>eXo Access Control</title>
+    <title>eXo access control</title>
     <para>The <ulink url="http://jcp.org/en/jsr/detail?id=170">JSR 170</ulink> specification does not define how permissions are managed
     or checked. So eXo JCR has implemented its own proprietary extension to
     manage and check permissions on nodes. In essence, this extension uses an
@@ -41,7 +41,7 @@
       </itemizedlist>
   <note>
     <para xml:id="JCR.AccessControl.eXoAccessControl.Notes">
-      <emphasis role="bold">Access Control nodetypes are not extendible:</emphasis>
+      <emphasis role="bold">Access control nodetypes are not extendible:</emphasis>
       The access control mechanism works for
       <emphasis role="bold">exo:owneable</emphasis>
       and
@@ -165,7 +165,7 @@
 
         <para xml:id="JCR.AccessControl.eXoAccessControl.ACL.ACLInheritance">
           <citetitle>
-            <emphasis role="bold">ACL Inheritance</emphasis>
+            <emphasis role="bold">ACL inheritance</emphasis>
           </citetitle>
         </para>
 

@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.synonymProvider">
-  <title>Synonym Provider</title>
+  <title>Synonym provider</title>
 
   <para>Find all mix:title nodes where title contains synonyms to 'fast'
   word.</para>

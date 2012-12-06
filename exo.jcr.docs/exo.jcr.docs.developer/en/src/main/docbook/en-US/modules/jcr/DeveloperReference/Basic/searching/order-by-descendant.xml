@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.OrderByDescendant">
-  <title>Order by Descendant Node Property</title>
+  <title>Order by descendant node property</title>
 
   <para>Find all nodes with the 'nt:unstructured' primary type and sort them
   by the property value of descendant nodes with the relative path
@@ -88,7 +88,7 @@
 
   <para xml:id="JCR.OrderByDescendant.QueryExecution">
     <citetitle>
-      <emphasis role="bold">Query Execution</emphasis>
+      <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
      <itemizedlist>

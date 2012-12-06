@@ -8,11 +8,11 @@
 		<itemizedlist>
 			<listitem>
 				<para><emphasis role="bold"><link linkend="JCR.DeveloperReference.Basic">Basic usage</link></emphasis> </para>
-				<para>Issues around how to use JCR, NodeType, Namespace, Searching Repository Content, and Fulltext Search.</para>
+				<para>Issues around how to use JCR, NodeType, Namespace, Searching repository content, and Fulltext search.</para>
 			</listitem>
 			<listitem>
 				<para><emphasis role="bold"><link linkend="JCR.DeveloperReference.Advanced">Advanced usage</link></emphasis> </para>
-				<para>Details of advanced usages in eXo JCR, including Extensions, Workspace Data Container, Binary Values Processing, and Link Producer Service.</para>
+				<para>Details of advanced usages in eXo JCR, including Extensions, Workspace data container, Binary values processing, and Link producer service.</para>
 			</listitem>
 		</itemizedlist>
 	</abstract>

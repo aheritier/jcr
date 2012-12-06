@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.LinkProducerService" role="NotInToc">
-  <title>Link Producer Service</title>
+  <title>Link producer service</title>
 
   <para>Link Producer Service - a simple service, which generates an .lnk
   file, that is compatible with the Microsoft link file format. It is an

@@ -9,25 +9,25 @@
         <para>
           <emphasis role="bold"><link linkend="JCR.DeveloperReference.Advanced.Extensions">Extensions</link></emphasis>
         </para>
-        <para>Details on advanced usage of eXo JCR extensions, including JCR Service Extensions, Access Control, JCR API
-          Extensions, Registry Service and Groovy REST Services.
+        <para>Details on advanced usage of eXo JCR extensions, including JCR Service extensions, Access control, JCR API
+          extensions, Registry service and Groovy REST services.
         </para>
       </listitem>
       <listitem>
         <para>
-          <emphasis role="bold"><link linkend="JCR.DeveloperReference.Advanced.WorkspaceDataContainer">Workspace Data Container</link></emphasis>
+          <emphasis role="bold"><link linkend="JCR.DeveloperReference.Advanced.WorkspaceDataContainer">Workspace data container</link></emphasis>
         </para>
         <para>Explanation on the architecture of workspace data container and instructions on how to implement workspace data container. </para>
       </listitem>
       <listitem>
         <para>
-          <emphasis role="bold"><link linkend="JCR.BinaryValuesProcessing">Binary Values Processing</link></emphasis>
+          <emphasis role="bold"><link linkend="JCR.BinaryValuesProcessing">Binary values processing</link></emphasis>
         </para>
         <para>Instructions on how to process binary large objects in eXo JCR.</para>
       </listitem>
       <listitem>
         <para>
-          <emphasis role="bold"><link linkend="JCR.LinkProducerService">Link Producer Service</link></emphasis>
+          <emphasis role="bold"><link linkend="JCR.LinkProducerService">Link producer service</link></emphasis>
         </para>
         <para>Explanation on what link producer service is and why and how to use it.</para>
       </listitem>

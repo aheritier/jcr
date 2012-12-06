@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.FindNodesByMixinType">
-  <title>Find All Nodes by Mixin Type</title>
+  <title>Find all nodes by mixin type</title>
 
   <para>Find all nodes in repository, that contain a "mix:title" mixin type.</para>
 

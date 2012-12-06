@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.ChildNodeConstraint">
-  <title>Child Node Constraint</title>
+  <title>Child node constraint</title>
 
   <para>Find all nodes with the primary type 'nt:folder' that are children of
   node by the "/root1/root2" path. Only find children, do not find further
@@ -56,7 +56,7 @@
 
   <para xml:id="JCR.ChildNodeConstraint.QueryExecution">
     <citetitle>
-      <emphasis role="bold">Query Execution</emphasis>
+      <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
   <itemizedlist>

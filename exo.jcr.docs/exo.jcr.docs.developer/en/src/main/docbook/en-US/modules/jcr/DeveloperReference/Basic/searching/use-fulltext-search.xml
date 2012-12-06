@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.UseFulltextSearch" role="NotInToc">
-  <title>Use Fulltext Search</title>
+  <title>Use fulltext search</title>
 
 	<note>
 		<para>You can find the JCR configuration file at
@@ -57,7 +57,7 @@ while (iter.hasNext()) {
   </section>
 
   <section id="JCR.UseFulltextSearch.FuzzySearches">
-    <title>Fuzzy Searches</title>
+    <title>Fuzzy searches</title>
 
     <para>JCR supports such features as Lucene Fuzzy Searches <ulink
     url="http://lucene.apache.org/java/2_3_2/queryparsersyntax.html">Apache

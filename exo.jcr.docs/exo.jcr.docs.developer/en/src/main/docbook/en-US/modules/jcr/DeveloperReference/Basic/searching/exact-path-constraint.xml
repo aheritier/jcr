@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.ExactPathConstraint">
-  <title>Exact Path Constraint</title>
+  <title>Exact path constraint</title>
 
   <para>Find a node with the 'nt:file' primary type that is located on the
   "/folder1/folder2/document1" exact path.</para>
@@ -53,7 +53,7 @@
 
   <para xml:id="JCR.ExactPathConstraint.QueryExecution">
     <citetitle>
-      <emphasis role="bold">Query Execution</emphasis>
+      <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
   <itemizedlist>

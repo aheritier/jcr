@@ -2,14 +2,14 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.FulltextSearchByProperty">
-  <title>Fulltext Search by Property</title>
+  <title>Fulltext search by property</title>
 
   <para>Find all nodes containing a 'mix:title' mixin type and whose
   'jcr:description' contains "forest" string.</para>
 
   <para xml:id="JCR.FulltextSearchByProperty.RepositoryStructure">
     <citetitle>
-      <emphasis role="bold">Repository Structure</emphasis>
+      <emphasis role="bold">Repository structure</emphasis>
     </citetitle>
   </para>
 
@@ -47,7 +47,7 @@
 
   <para xml:id="JCR.FulltextSearchByProperty.QueryExecution">
     <citetitle>
-      <emphasis role="bold">Query Execution</emphasis>
+      <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
   <itemizedlist>

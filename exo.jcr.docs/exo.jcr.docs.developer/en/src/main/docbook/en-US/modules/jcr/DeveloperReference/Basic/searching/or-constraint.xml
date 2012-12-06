@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.ORConstraint">
-  <title>OR Constraint</title>
+  <title>OR constraint</title>
 
   <para>Find all documents whose title is 'Cinderella' or whose description is
   'novel'.</para>
@@ -13,7 +13,7 @@
 
   <para xml:id="JCR.ORConstraint.RepositoryStructure">
     <citetitle>
-      <emphasis role="bold">Repository Structure</emphasis>
+      <emphasis role="bold">Repository structure</emphasis>
     </citetitle>
   </para>
 
@@ -46,7 +46,7 @@
 
   <para xml:id="JCR.ORConstraint.QueryExecution">
     <citetitle>
-      <emphasis role="bold">Query Execution</emphasis>
+      <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
 

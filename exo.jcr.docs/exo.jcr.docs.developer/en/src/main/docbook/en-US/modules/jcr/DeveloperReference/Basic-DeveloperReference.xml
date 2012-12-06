@@ -26,14 +26,14 @@
       </listitem>
       <listitem>
         <para>
-          <emphasis role="bold"><link linkend="JCR.SearchingRepositoryContent">Search Repository Content</link></emphasis>
+          <emphasis role="bold"><link linkend="JCR.SearchingRepositoryContent">Search repository content</link></emphasis>
         </para>
         <para>Instructions on how to use the searching function for repository content by providing with the detailed information on query lifecycle,
-        query usecases and XPath queries containing node names starting with a number.</para>
+        query usecases, and XPath queries containing node names starting with a number.</para>
       </listitem>
       <listitem>
         <para>
-          <emphasis role="bold"><link linkend="JCR.UseFulltextSearch">Use Fulltext Search</link></emphasis>
+          <emphasis role="bold"><link linkend="JCR.UseFulltextSearch">Use fulltext search</link></emphasis>
         </para>
         <para>Instructions on how to use fulltext search in eXo JCR.</para>
       </listitem>

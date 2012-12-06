@@ -2,14 +2,14 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.NOTConstraint">
-  <title>NOT Constraint</title>
+  <title>NOT constraint</title>
 
   <para>Find all nodes with a 'mix:title' mixin type and where the 'jcr:title' property
   does NOT start with a 'P' symbol</para>
 
   <para xml:id="JCR.NOTConstraint.RepositoryStructure">
     <citetitle>
-      <emphasis role="bold">Repository Structure</emphasis>
+      <emphasis role="bold">Repository structure</emphasis>
     </citetitle>
   </para>
 

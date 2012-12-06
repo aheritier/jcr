@@ -2,9 +2,9 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.RESTServicesOnGroovy">
-  <title>Groovy REST Services</title>
+  <title>Groovy REST services</title>
 
-    <para>Starting from version 1.9, JCR Service supports REST services
+    <para>Starting from version 1.9, JCR service supports REST services
     creation on <ulink url="http://groovy.codehaus.org">Groovy
     script</ulink>.</para>
 

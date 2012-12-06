@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.NodeScopeIndex">
-  <title>Exclusion from Node Scope Index</title>
+  <title>Exclusion from node scope index</title>
 
   <para>In this example, we will exclude some 'text' property of
   nt:unstructured node from indexing. And, therefore, node will not be found
@@ -22,7 +22,7 @@
 
   <note>
     <para>See <link linkend="JCR.SearchConfiguration">Search
-    Configuration</link></para>
+    configuration</link></para>
   </note>
 
   <para xml:id="JCR.NodeScopeIndex.RepositoryStructure">

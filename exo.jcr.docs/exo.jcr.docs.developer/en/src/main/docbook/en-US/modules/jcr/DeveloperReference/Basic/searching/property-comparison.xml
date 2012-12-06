@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.PropertyComparison">
-  <title>Property Comparison</title>
+  <title>Property comparison</title>
 
   <para>Find all nodes with 'mix:title' mixin type where the 'prop_pagecount'
   property contains a value less than 90. Only select the title of each

@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.IndexBoostRule">
-  <title>Index Boost Value</title>
+  <title>Index boost value</title>
 
   <para>In this example, we will set different boost values for predefined
   nodes, and will check effect by selecting those nodes and order them by
@@ -14,7 +14,7 @@
 
   <note>
     <para>See <link
-    linkend="JCR.SearchConfiguration">Search Configuration</link>.</para>
+    linkend="JCR.SearchConfiguration">Search configuration</link>.</para>
   </note>
 
   <para xml:id="JCR.IndexBoostRule.IndexingConfiguration">

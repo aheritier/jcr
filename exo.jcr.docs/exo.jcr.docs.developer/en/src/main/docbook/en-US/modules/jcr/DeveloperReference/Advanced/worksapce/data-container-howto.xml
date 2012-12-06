@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.HowToImplementWorkspaceDataContainer">
-  <title>How to implement Workspace Data Container</title>
+  <title>How to implement workspace data container</title>
 
   <para xml:id="JCR.JDBCDataContainerConfig.Single-databaseConfiguration.DynamicWorkspaceCreation">
     <citetitle>

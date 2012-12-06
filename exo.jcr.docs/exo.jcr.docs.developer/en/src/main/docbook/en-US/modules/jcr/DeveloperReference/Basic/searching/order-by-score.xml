@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.OrderByScore">
-  <title>Order by Score</title>
+  <title>Order by score</title>
 
   <para>Select all nodes with the mixin type 'mix:title' containing any word
   from the set {'brown','fox','jumps'}. Then, sort result by the score in
@@ -68,7 +68,7 @@ SELECT * FROM nt:base ORDER BY jcr:score()[ASC|DESC]
 
   <para xml:id="JCR.OrderByScore.QueryExecution">
     <citetitle>
-      <emphasis role="bold">Query Execution</emphasis>
+      <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
   <itemizedlist>

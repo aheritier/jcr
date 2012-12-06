@@ -2,14 +2,14 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.DatePropertyComparison">
-  <title>Date Property Comparison</title>
+  <title>Date property comparison</title>
 
   <para>Find all nodes of the "nt:resource" primary type whose "jcr:lastModified"
   property value is greater than 2006-06-04 and less than 2008-06-04.</para>
 
   <para xml:id="JCR.DatePropertyComparison.RepositoryStructure">
     <citetitle>
-      <emphasis role="bold">Repository Structure</emphasis>
+      <emphasis role="bold">Repository structure</emphasis>
     </citetitle>
   </para>
 
@@ -60,7 +60,7 @@
 
   <para xml:id="JCR.DatePropertyComparison.QueryExecution">
     <citetitle>
-      <emphasis role="bold">Query Execution</emphasis>
+      <emphasis role="bold">Query execution</emphasis>
     </citetitle>
   </para>
 

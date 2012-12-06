@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.IgnoreAccentSymbols">
-  <title>Set new Analyzer and Ignore Accent symbols</title>
+  <title>Set new analyzer and ignore accent symbols</title>
 
   <para>In this example, we will create new Analyzer, set it in QueryHandler
   configuration, and make query to check it.</para>
@@ -18,7 +18,7 @@
     <listitem>
       <para>The first way: Create descendant class of SearchIndex with new
       Analyzer (see <link linkend="JCR.SearchConfiguration">Search
-      Configuration</link>);</para>
+      configuration</link>);</para>
     </listitem>
   </itemizedlist>
 

@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.Extensions">
-    <title>JCR Service</title>
+    <title>JCR service</title>
 
       <para>eXo JCR supports <emphasis role="bold">observation</emphasis>
       (JSR-170 8.3), which enables applications to register interest in events
@@ -41,12 +41,12 @@
   <itemizedlist>
     <listitem>
       <para>
-        <link linkend="JCR.AccessControlExtension">Access Control system</link>
+        <link linkend="JCR.AccessControlExtension">Access control system</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="JCR.RegistryService">Registry Service</link>
+        <link linkend="JCR.RegistryService">Registry service</link>
       </para>
     </listitem>
     <listitem>

@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.SpellChecker">
-  <title>Spell Checking</title>
+  <title>Spell checking</title>
 
   <para>Check the correct spelling of phrase 'quik OR (-foo bar)' according to
   data already stored in index.</para>

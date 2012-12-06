@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.SearchingRepositoryContent" role="NotInToc">
-  <title>Search Repository Content</title>
+  <title>Search repository content</title>
     <para>JCR supports two query languages - JCR and XPath. A query, whether
     XPath or SQL, specifies a subset of nodes within a workspace, called the
     result set. The result set constitutes all the nodes in the workspace that
@@ -12,7 +12,7 @@
 
   <para xml:id="JCR.SearchingRepositoryContent.QueryLifecycle.QueryCreationAndExecution">
     <citetitle>
-      <emphasis role="bold">Create and Execute a query</emphasis>
+      <emphasis role="bold">Create and execute a query</emphasis>
     </citetitle>
   </para>
   <itemizedlist>
@@ -46,7 +46,7 @@
 
   <para xml:id="JCR.SearchingRepositoryContent.QueryLifecycle.QueryResultProcessing">
     <citetitle>
-      <emphasis role="bold">Query Result Processing</emphasis>
+      <emphasis role="bold">Query result processing</emphasis>
     </citetitle>
   </para>
   <programlisting language="java">// fetch query result
@@ -91,11 +91,11 @@
   <para>jcr:score counted in next way - (lucene score)*1000f.</para>
 
   <para>Score may be increased for specified nodes, see
-    <link linkend="JCR.IndexBoostRule">Index Boost Value</link>.
+    <link linkend="JCR.IndexBoostRule">Index boost value</link>.
   </para>
 
   <para>Also, see an example
-    <link linkend="JCR.OrderByScore">Order by Score</link>.
+    <link linkend="JCR.OrderByScore">Order by score</link>.
   </para>
 
   <xi:include href="query-usecases.xml"

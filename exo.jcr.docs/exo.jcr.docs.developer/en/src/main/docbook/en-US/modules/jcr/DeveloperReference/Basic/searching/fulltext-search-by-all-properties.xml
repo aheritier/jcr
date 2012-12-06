@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.FulltextSearchByAllProperties">
-  <title>Fulltext Search by All Properties</title>
+  <title>Fulltext search by all properties</title>
 
   <para>Find nodes with the 'mix:title' mixin type where any property contains
   'break' string.</para>
