@@ -4,7 +4,7 @@
 <section id="JCR.FindNodesByMixinType">
   <title>Find all nodes by mixin type</title>
 
-  <para>Find all nodes in repository, that contain a "mix:title" mixin type.</para>
+  <para>Find all nodes in repository that contains a "mix:title" mixin type.</para>
 
   <para xml:id="JCR.FindNodesByMixinType.RepositoryStructure">
     <citetitle>
@@ -83,7 +83,7 @@ if(it.hasNext())
 
     <para>The NodeIterator will return "document1" and "document3".</para>
 
-    <para>We can also get a table:</para>
+    <para>You can also get a table:</para>
 
     <programlisting language="java">String[] columnNames = result.getColumnNames();
 RowIterator rit = result.getRows();

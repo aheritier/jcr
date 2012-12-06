@@ -20,28 +20,28 @@
       </listitem>
       <listitem>
         <para>
-          <emphasis role="bold"><link linkend="JCR.Namespaces">Namespace</link></emphasis>
+          <emphasis role="bold"><link linkend="JCR.Namespaces">Namespaces</link></emphasis>
         </para>
-        <para>Instructions on how to define and alter namespace.</para>
+        <para>Instructions on how to define and alter namespaces.</para>
       </listitem>
       <listitem>
         <para>
           <emphasis role="bold"><link linkend="JCR.SearchingRepositoryContent">Search repository content</link></emphasis>
         </para>
-        <para>Instructions on how to use the searching function for repository content by providing with the detailed information on query lifecycle,
+        <para>Instructions on how to use the searching function for repository content by providing with details of query lifecycle,
         query usecases, and XPath queries containing node names starting with a number.</para>
       </listitem>
       <listitem>
         <para>
           <emphasis role="bold"><link linkend="JCR.UseFulltextSearch">Use fulltext search</link></emphasis>
         </para>
-        <para>Instructions on how to use fulltext search in eXo JCR.</para>
+        <para>Instructions on how to use fulltext search in JCR.</para>
       </listitem>
       <listitem>
         <para>
           <emphasis role="bold"><link linkend="JCR.DeveloperReference.Basic.FAQs">Frequently asked questions</link></emphasis>
         </para>
-        <para>A list of FAQs related to basic development.</para>
+        <para>A list of FAQs that are very helpful for basic development.</para>
       </listitem>
     </itemizedlist>
   </highlights>

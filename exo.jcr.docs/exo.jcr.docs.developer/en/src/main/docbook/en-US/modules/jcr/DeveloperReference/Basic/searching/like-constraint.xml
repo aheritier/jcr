@@ -9,7 +9,7 @@
 
   <note>
     <para>See also the article about "<link linkend="JCR.NOTConstraint">Find
-    all mix:title nodes where jcr:title does NOT start with 'P'</link>"</para>
+    all mix:title nodes where jcr:title does NOT start with 'P'</link>".</para>
   </note>
 
   <para xml:id="JCR.LIKEConstraint.RepositoryStructure">
@@ -94,7 +94,7 @@ if(it.hasNext())
 
     <para>The NodeIterator will return "document2" and "document3".</para>
 
-    <para>We can also get a table:</para>
+    <para>You can also get a table:</para>
 
     <programlisting language="java">String[] columnNames = result.getColumnNames();
 RowIterator rit = result.getRows();

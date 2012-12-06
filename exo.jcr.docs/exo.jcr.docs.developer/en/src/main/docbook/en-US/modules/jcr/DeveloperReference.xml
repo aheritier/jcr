@@ -4,7 +4,7 @@
 <chapter id="chapter_DeveloperReference">
   <title>Developer Reference</title>
 	<abstract>
-		<para>This chapter provides developers with the reference knowledge for using and developing eXo JCR via two main topics:</para>
+		<para>This chapter provides developers with the reference knowledge for using and developing JCR via two main topics:</para>
 		<itemizedlist>
 			<listitem>
 				<para><emphasis role="bold"><link linkend="JCR.DeveloperReference.Basic">Basic usage</link></emphasis> </para>
@@ -12,7 +12,7 @@
 			</listitem>
 			<listitem>
 				<para><emphasis role="bold"><link linkend="JCR.DeveloperReference.Advanced">Advanced usage</link></emphasis> </para>
-				<para>Details of advanced usages in eXo JCR, including Extensions, Workspace data container, Binary values processing, and Link producer service.</para>
+				<para>Details of advanced usages in JCR, including Extensions, Workspace data container, Binary values processing, and Link producer service.</para>
 			</listitem>
 		</itemizedlist>
 	</abstract>

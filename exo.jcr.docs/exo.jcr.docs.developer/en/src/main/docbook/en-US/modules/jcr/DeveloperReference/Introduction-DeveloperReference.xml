@@ -40,7 +40,7 @@
   <para>Node is intended to support the data hierarchy. It is of type
     using namespaced names which allow the content to be structured in
     accordance with standardized constraints. A node may be versioned
-    through an associated version graph (optional feature)
+    through an associated version graph (optional).
   </para>
 
   <para>Property stored data are values of predefined types (String,
@@ -48,13 +48,11 @@
   </para>
 
 <note>
-  <para>The data model for the interface (the
-    repository model) is rarely the same as the data models used by the
+  <para>The data model for the interface (repository model) is rarely the same as the data models used by the
     repository's underlying storage subsystems. The repository knows how to
-    make the client's changes persistent because that is part of the
+    make the client's changes persistent because that is a part of the
     repository configuration, rather than part of the application
     programming task.
   </para>
 </note>
 </simplesect>
-

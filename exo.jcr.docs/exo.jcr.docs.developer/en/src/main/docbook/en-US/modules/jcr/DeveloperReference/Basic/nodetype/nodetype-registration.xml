@@ -352,12 +352,11 @@ public void setReadOnly(boolean readOnly);</programlisting>
 
   <section id="JCR.NodeTypeRegistration.RegistrationMethods">
     <title>Registration methods</title>
-    <para>eXo JCR implementation supports various methods of the node-type
-    registration.</para>
+    <para>The JCR implementation supports various methods of the node type registration.</para>
 
     <para xml:id="JCR.NodeTypeRegistration.NodeTypeRegistration.RunTimeRegistrationFromXmlFile">
       <citetitle>
-        <emphasis role="bold">Run time registration from xml file</emphasis>
+        <emphasis role="bold">Run time registration from <filename>.xml</filename> file</emphasis>
       </citetitle>
     </para>
 
@@ -476,27 +475,24 @@ nodeTypeManager.registerNodeType(myNodeTypeValue, ExtendedNodeTypeManager.REPLAC
     </para>
 
 	<note>
-      <para>The existing data must be consistent before changing or removing a existing definition. JCR
+      <para>The existing data must be consistent before you change or remove any existing definition. JCR
       <emphasis role="bold">does not allow</emphasis> you to change the node
       type in the way in which the existing data would be incompatible
       with a new node type. But if these changes are needed, you can do it in
       several phases, consistently changing the node type and the existing
       data.</para>
 	</note>
-      <para>For example:</para>
-      <para>Add a  new residual property definition with name &quot;downloadCount&quot; to
-      the existing node type &quot;myNodeType&quot;.</para>
-      <para>There are two limitations that do not allow us to make the task
-      with a single call of registerNodeType method.</para>
+      <example>
+      <title>Add a  new residual property definition with name &quot;downloadCount&quot; to
+      the existing node type &quot;myNodeType&quot;.</title>
+      <para>There are two limitations that do not allow you to make the task with a single call of <parameter>registerNodeType</parameter> method.</para>
       <itemizedlist>
         <listitem>
-          <para>Existing nodes of the type &quot;myNodeType&quot;, which does not
-          contain properties &quot;downloadCount&quot; that conflicts with node type
-          what we need.</para>
+          <para>Existing nodes of the &quot;myNodeType&quot; type, which does not
+          contain the &quot;downloadCount&quot; property that conflict with your needed node type.</para>
         </listitem>
         <listitem>
-          <para>Registered node type &quot;myNodeType&quot; will not allow us to add
-          properties &quot;downloadCount&quot; because it has no such specific
+          <para>Registered node type &quot;myNodeType&quot; will not allow you to add the &quot;downloadCount&quot;  property because it has no such specific
           properties.</para>
         </listitem>
       </itemizedlist>
@@ -504,16 +500,16 @@ nodeTypeManager.registerNodeType(myNodeTypeValue, ExtendedNodeTypeManager.REPLAC
       <procedure>
         <step>
           <para>Change the existing node type &quot;myNodeType&quot; by adding the 
-          mandatory property &quot;downloadCount&quot;.</para>
+          mandatory &quot;downloadCount&quot; property.</para>
         </step>
         <step>
-          <para>Add  the node type &quot;myNodeType&quot; with the property &quot;downloadCount&quot; to all the existing node types.</para>
+          <para>Add  the node type &quot;myNodeType&quot; with the &quot;downloadCount&quot; property to all the existing node types.</para>
         </step>
         <step>
-          <para>Change the definition of the property &quot;downloadCount&quot; of the
-          node type &quot;myNodeType&quot; to mandatory.</para>
+          <para>Change the definition of the &quot;downloadCount&quot; property of the node type &quot;myNodeType&quot; to mandatory.</para>
         </step>
       </procedure>
+	</example>
 
     <para xml:id="JCR.NodeTypeRegistration.PracticalHowto.ChangingListOfSuperTypes">
       <citetitle>

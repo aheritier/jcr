@@ -123,7 +123,7 @@ if(it.hasNext())
     <para>NodeIterator will return nodes in the following order -
     "node3","node2" and "node1".</para>
 
-    <para>We can also get a table:</para>
+    <para>You can also get a table:</para>
 
     <programlisting language="java">String[] columnNames = result.getColumnNames();
 RowIterator rit = result.getRows();

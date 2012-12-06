@@ -97,10 +97,10 @@ if(it.hasNext())
 }</programlisting>
 
     <para>NodeIterator will return "folder1",
-    "folder2","document1","document2","document3", and each other nodes in
+    "folder2","document1","document2","document3", and another nodes in
     workspace if they are here.</para>
 
-    <para>We can also get a table:</para>
+    <para>You can also get a table:</para>
 
     <programlisting language="java">String[] columnNames = result.getColumnNames();
 RowIterator rit = result.getRows();

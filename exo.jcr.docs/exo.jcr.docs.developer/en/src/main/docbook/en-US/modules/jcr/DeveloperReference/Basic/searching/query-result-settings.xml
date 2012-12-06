@@ -14,31 +14,27 @@
   <itemizedlist>
     <listitem>
   <para xml:id="JCR.SetOffsetandSetLimit.CommonInfo">
-    <emphasis role="bold">Common info</emphasis>
+    <emphasis role="bold">Common info</emphasis>: The QueryImpl class has two methods: one to indicate how many results
+    shall be returned at most, and another to fix the starting position.
   </para>
-
-    <para>QueryImpl class has two methods: one to indicate how many results
-    shall be returned at most, and another to fix the starting
-    position.</para>
 
     <itemizedlist>
       <listitem>
-        <para>setOffset(long offset) - Sets the start offset of the result
+        <para>setOffset(long offset): Set the start offset of the result
         set.</para>
       </listitem>
 
       <listitem>
-        <para>setLimit(long position) - Sets the maximum size of the result
+        <para>setLimit(long position): Set the maximum size of the result
         set.</para>
       </listitem>
     </itemizedlist>
      </listitem>
     <listitem>
   <para xml:id="JCR.SetOffsetandSetLimit.RepositoryStructure">
-    <emphasis role="bold">Repository structure</emphasis>
+    <emphasis role="bold">Repository structure</emphasis>: Repository contains mix:title nodes where jcr:title has different
+    values.
   </para>
-    <para>Repository contains mix:title nodes, where jcr:title has different
-    values.</para>
 
     <itemizedlist>
       <listitem>

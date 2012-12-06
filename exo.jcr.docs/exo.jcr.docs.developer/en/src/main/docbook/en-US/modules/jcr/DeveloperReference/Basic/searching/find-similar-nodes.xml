@@ -148,7 +148,7 @@ if(it.hasNext())
 
     <para>As you see the base node are also in result set.</para>
 
-    <para>We can also get a table:</para>
+    <para>You can also get a table:</para>
 
     <programlisting language="java">String[] columnNames = result.getColumnNames();
 RowIterator rit = result.getRows();

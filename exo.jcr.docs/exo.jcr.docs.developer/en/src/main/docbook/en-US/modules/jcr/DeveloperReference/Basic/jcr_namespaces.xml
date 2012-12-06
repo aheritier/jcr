@@ -11,11 +11,11 @@
       <emphasis role="bold">Namespaces definition</emphasis>
     </citetitle>
   </para>
-  <para>Default namespaces are registered by repository at the start-up time.</para>
+  <para>The default namespaces are registered by repository at the start-up time.</para>
 
-  <para>Your custom service can extend a set of namespaces with some
-    application specific ones, declaring it in service's configuration file
-    thanks to eXo component plugin mechanism, described as follows:
+  <para>Your custom service can be extended with a set of namespaces with some
+    specific applications, declaring it in the service's configuration file
+    thanks to the eXo component plugin mechanism as described below:
   </para>
 
 <programlisting language="xml">&lt;component-plugin&gt;
@@ -35,7 +35,7 @@
     <emphasis role="bold">Namespaces altering</emphasis>
   </citetitle>
   </para>
-  <para>Since version 1.11, eXo JCR implementation supports namespaces altering.</para>
+  <para>Since version 1.11, the JCR implementation supports the namespaces altering.</para>
 
   <itemizedlist>
     <listitem>

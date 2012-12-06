@@ -52,11 +52,11 @@
   <programlisting language="java">// fetch query result
     QueryResult result = query.execute();</programlisting>
 
-  <para>Now we can get result in an iterator of nodes:</para>
+  <para>Now you can get results in an iterator of nodes:</para>
 
   <programlisting language="java">NodeIterator it = result.getNodes();</programlisting>
 
-  <para>or we get the result in a table:</para>
+  <para>Or, get the result in a table:</para>
 
   <programlisting language="java">// get column names
     String[] columnNames = result.getColumnNames();

@@ -107,7 +107,7 @@ if(it.hasNext())
 
     <para>The NodeIterator will return "folder3" and "folder5".</para>
 
-    <para>We can also get a table:</para>
+    <para>You can also get a table:</para>
 
     <programlisting language="java">String[] columnNames = result.getColumnNames();
 RowIterator rit = result.getRows();

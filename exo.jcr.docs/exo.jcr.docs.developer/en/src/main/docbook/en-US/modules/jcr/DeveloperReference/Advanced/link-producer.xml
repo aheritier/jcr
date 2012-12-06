@@ -31,9 +31,8 @@
   <para>The name of the .lnk file can be any. But for the best compatibility
   it must be the same as the name of the JCR resource.</para>
 
-  <para>Here is a step by step sample of a use case of the link producer... At
-  first, type valid reference to the resource, using the link producer in your
-  browser's adress field:</para>
+  <para>Here is a step-by-step sample of a usecase of the link producer. First, type the valid reference to the resource using the link producer in your
+  browser's address field:</para>
 
   <mediaobject>
     <imageobject>
@@ -41,8 +40,7 @@
     </imageobject>
   </mediaobject>
 
-  <para>Internet Explorer will give a dialog window requesting to Open a file
-  or to Save it. Click on the Open button</para>
+  <para>Internet Explorer will give a dialog window requesting to <emphasis role="bold">Open a file</emphasis> or to <emphasis role="bold">Save it</emphasis>. Click the <guibutton>Open</guibutton> button.</para>
 
   <mediaobject>
     <imageobject>

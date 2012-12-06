@@ -5,7 +5,7 @@
   <title>NOT constraint</title>
 
   <para>Find all nodes with a 'mix:title' mixin type and where the 'jcr:title' property
-  does NOT start with a 'P' symbol</para>
+  does NOT start with a 'P' symbol.</para>
 
   <para xml:id="JCR.NOTConstraint.RepositoryStructure">
     <citetitle>
@@ -14,8 +14,7 @@
   </para>
 
 
-  <para>The repository contains a mix:title nodes, where the jcr:title has
-    different values.</para>
+  <para>The repository contains a mix:title node where the jcr:title has different values.</para>
 
     <itemizedlist>
       <listitem>
@@ -87,7 +86,7 @@ if(it.hasNext())
 
     <para>NodeIterator will return "document1".</para>
 
-    <para>We can also get a table:</para>
+    <para>You can also get a table:</para>
 
     <programlisting language="java">String[] columnNames = result.getColumnNames();
 RowIterator rit = result.getRows();

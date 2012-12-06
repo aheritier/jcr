@@ -98,7 +98,7 @@ if(it.hasNext())
 
     <para>NodeIterator will return "document2".</para>
 
-    <para>We can also get a table:</para>
+    <para>You can also get a table:</para>
 
     <programlisting language="java">String[] columnNames = result.getColumnNames();
 RowIterator rit = result.getRows();

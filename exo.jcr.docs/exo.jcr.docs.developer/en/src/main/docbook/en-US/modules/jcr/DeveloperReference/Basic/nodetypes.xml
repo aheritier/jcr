@@ -17,8 +17,7 @@
     <para>Your custom service can register some neccessary predefined node
     types at the start-up time. The node definition should be placed in a
     special XML file (see DTD below) and declared in the service's
-    configuration file thanks to eXo component plugin mechanism, described as
-    follows:</para>
+    configuration file thanks to the eXo component plugin mechanism as described below:</para>
 
 <programlisting language="xml">&lt;external-component-plugins&gt;
 	&lt;target-component&gt;org.exoplatform.services.jcr.RepositoryService&lt;/target-component&gt;
@@ -46,7 +45,7 @@
 			&lt;/init-params&gt;
 		&lt;/component-plugin&gt;</programlisting>
 
-    <para>There are two types of registration. The first type is the
+    <para>There are two registration types. The first type is the
     registration of node types in all created repositories, it is configured
     in values-param with the name <emphasis
     role="bold">autoCreatedInNewRepository</emphasis>. The second type is
