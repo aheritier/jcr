@@ -6,7 +6,7 @@
   <abstract>
     <para>
       Java Content Repository API as well as other Java language related standards is created within the Java Community Process (http://jcp.org/) as a result of collaboration of an expert group and the Java community. It is known as <ulink url="http://www.jcp.org/en/jsr/detail?id=170">JSR-170</ulink> (Java Specification Request).
-	  This chapter is for people new to eXo JCR. It walks you through an overview of outstanding advantages of JCR. Especially, you will also learn about the following core topics:
+	  This chapter is for people new to eXo JCR that walks you through an overview of outstanding advantages of JCR. Especially, you will also learn about the following core topics:
     </para>
 	<itemizedlist>
 		<listitem>
@@ -26,34 +26,31 @@
   </citetitle>
 </para>
     
-    <para>How do you know the data of your website are stored? The images are
-    probably in a file system, the meta data are in some dedicated files -
-    maybe in XML - the text documents and PDFs are stored in different folders
-    with the meta data in an other place (a database?) and in a proprietary
-    structure. How do you manage to update these data and how do you manage
-    the access rights? If your boss asks you to manage different versions of
-    each document or not? The larger your website is, the more you need a
+    <para>Do you know how your website data are stored? Images can be 
+    stored in a file system, and metadata are in some dedicated files, for example, in <filename>.xml</filename> files, and 
+	text documents and PDFs are stored in different folders
+    with metadata in another repositories and in a proprietary
+    structure. How do you manage updating these data and access rights? 
+	Where and how do u start if your leader asks you to manage different versions of
+    each document? The larger your website is, the more you need a
     <ulink url="http://en.wikipedia.org/wiki/Content_management_system">Content
     Management Systems</ulink> (CMS) which tackles all these issues.</para> 
 
-    <para>These CMS solutions are sold by different vendors and each vendor
+    <para>These CMS solutions are provided by different vendors and each vendor
     provides its own API for interfacing the proprietary content repository.
-    The developers have to deal with this and need to learn the
-    vendor-specific API. If in the future you wish to switch to a different
-    vendor, everything will be different and you will have a new
-    implementation, a new interface, etc.</para>
+    The developers MUST deal with this and need to learn about the
+    vendor-specific API. If you intend to switch to a different
+    vendor in future, everything will be different, for example, you need a new
+    implementation or a new interface.</para>
 
-    <para>JCR provides a unique java interface for interacting with both text
-    and binary data, for dealing with any kind and amount of meta data your
-    documents might have. JCR supplies methods for storing, updating, deleting
-    and retrieving your data, independent of the fact if this data is stored
-    in a RDBMS, in a file system or as an XML document - you just don't need
-    to care about. The JCR interface is also defined as classes and methods
-    for searching, versioning, access control, locking, and
-    observation.</para>
+    <para>JCR provides a unique Java interface that allows you to interact with both text
+    and binary data, and to deal with any kind and amount of metadata of your
+    documents. JCR supplies methods for storing, updating, deleting
+    and retrieving your data without being dependent on the fact that the data is stored
+    in a RDBMS, in a file system or as an XML document. The JCR interface is also defined as classes and methods
+    for searching, versioning, access control, locking and observation.</para>
 
-    <para>Furthermore, an export and import functionality is specified so that
-    a switch to a different vendor is always possible.</para>  
+    <para>Furthermore, the export and import functionality is specified so that a switch to a different vendor is always possible.</para>  
 
 <para xml:id="JCRref.Introduction.WhateXodo">
   <citetitle>
@@ -62,16 +59,15 @@
 </para>
 
     <para>eXo fully complies with <ulink url="http://jcp.org/en/jsr/detail?id=170">JSR 170</ulink>; therefore with
-    eXo JCR you can use a vendor-independent API. It means that you could switch any time to a different vendor. Using the standard lowers your 
-    lifecycle cost and reduces your long term risk.</para>
+    eXo JCR you can use a vendor-independent API. It means that you could switch to a different vendor whenever. By using the standard, you can reduce your 
+    lifecycle cost and long-term risk.</para>
 
-    <para>Of course eXo does not only offer JCR, but also the complete
-    solution for ECM (Enterprise Content Management) and for WCM (Web Content
-    Management).</para>
-
-    
-    <!-- Glossary -->  
-    <!-- JCR Architecture -->
+    <note>
+		<para>eXo offers not only JCR, but also the complete solution for ECM (Enterprise Content Management) and for WCM (Web Content Management).</para>
+	</note>
+	
+	<!--1.1. JCR architecture -->
     <xi:include href="Introduction/jcr-architecture.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<!--1.2. Compatibility levels -->
 	<xi:include href="Introduction/jcr-compatibility-levels.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 </chapter>

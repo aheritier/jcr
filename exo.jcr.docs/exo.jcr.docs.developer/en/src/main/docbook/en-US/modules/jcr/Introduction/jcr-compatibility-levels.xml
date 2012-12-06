@@ -21,17 +21,17 @@
     <para xml:id="JCR.CompatibilityLevels.Level1"><emphasis role="bold">Level 1</emphasis></para>
   </citetitle>
 
-    <para>Level 1 includes read-only functionality for very simple
+    <para>Level 1 includes the read-only functionality for very simple
     repositories. It is useful to port an existing data repository and convert
     it to a more advanced form step by step. JCR uses a well-known Session
-    abstraction to access the repository data (similar to the sessions we have
-    in OS, web, etc).</para>
+    abstraction to access the repository data (similar to the sessions you have
+    in OS, web, and more).</para>
 
     <para>The features of level 1:</para>
 
     <itemizedlist>
       <listitem>
-        <para>Initiating a session calling login method with the name of
+        <para>Initiating a session calling the login method with the name of
         desired workspace and client credentials. It involves some security
         mechanisms (JAAS) to authenticate the client and in case the client is
         authorized to use the data from a particular workspace, he can
@@ -86,7 +86,7 @@
         delimited by a single ':' (colon) character that indicates the
         namespace of this name. It is patterned after XML namespaces, prefix
         is mapped to URI to minimize names collisions. In Level 1, a prefix
-        can be temporary overridden by another prefix in the scope of a
+        can be temporarily overridden by another prefix in the scope of a
         session.</para>
       </listitem>
     </itemizedlist>
@@ -101,7 +101,7 @@
     <para xml:id="JCR.CompatibilityLevels.Level2"><emphasis role="bold">Level 2</emphasis></para>
   </citetitle>
 
-    <para>JCR level 2 includes reading/ writing content functionality,
+    <para>JCR level 2 includes reading/writing content functionality,
     importing other sources and managing content definition and structuring
     using extensible node types.</para>
 
