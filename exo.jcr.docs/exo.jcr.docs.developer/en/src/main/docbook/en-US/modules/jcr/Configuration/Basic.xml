@@ -33,14 +33,14 @@
     container and the second option is to use a Standalone container. The main
     difference between these container types is that the first one is intended
     to be used in a Portal (Web) environment, while the second one can be used
-    standalone (see the comprehensive page <link
+    standalone (see <link
     linkend="Kernel.ServiceConfigurationforBeginners">Service Configuration
     for Beginners</link> for more details).</para>
 
     <para>The following setup procedure is used to obtain a Standalone
-    configuration (see more in <link
+    configuration (see <link
     linkend="Kernel.ContainerConfiguration">Container
-    configuration</link>):<itemizedlist>
+    configuration</link> for more details):<itemizedlist>
         <listitem>
           <para>Configuration that is set explicitly using <parameter>StandaloneContainer.addConfigurationURL(String url)</parameter> or
           <parameter>StandaloneContainer.addConfigurationPath(String path)</parameter> before <parameter>getInstance()</parameter>.</para>

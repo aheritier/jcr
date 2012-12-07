@@ -8,9 +8,7 @@
     </citetitle>
   </para>  
 
-    <para>Service configuration may be placed in
-    <filename>jar:/conf/standalone/exo-jcr-config.xml</filename> for standalone mode. For portal
-    mode, it is located in the portal web application <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>.
+    <para>The service configuration is located in <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename> in the portal web application.
     </para>
     <itemizedlist>
         <listitem>
