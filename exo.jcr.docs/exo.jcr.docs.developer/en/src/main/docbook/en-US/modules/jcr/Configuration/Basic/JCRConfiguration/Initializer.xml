@@ -5,19 +5,19 @@
     <note><para>This configuration is optional.</para></note>
     <itemizedlist>
         <listitem>
-            <para><emphasis role="bold">class</emphasis>: Initializer implementation
+            <para><parameter>class</parameter>: Initializer implementation
             class.</para>
         </listitem>
         <listitem>
-            <para><emphasis role="bold">properties</emphasis>: The list of properties
+            <para><parameter>properties</parameter>: The list of properties
             (name-value pairs). Properties are supported.</para>
         </listitem>
         <listitem>
-            <para><emphasis role="bold">root-nodetype</emphasis>: The node type for
+            <para><parameter>root-nodetype</parameter>: The node type for
             root node initialization.</para>
         </listitem>
         <listitem>
-            <para><emphasis role="bold">root-permissions</emphasis>: Default
+            <para><parameter>root-permissions</parameter>: Default
             permissions of the root node. It is defined as a set of
             semicolon-delimited permissions containing a group of space-delimited
             identities (user, group etc, see Organization service documentation for

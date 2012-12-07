@@ -54,20 +54,16 @@
     </para>
     <itemizedlist>
       <listitem>
-        <para>Numbers formats: K,KB - kilobytes, M,MB - megabytes, G,GB -
-        gigabytes, T,TB - terabytes. Examples: 100.5 - digit 100.5, 200k - 200
-        Kbytes, 4m - 4 Mbytes, 1.4G - 1.4 Gbytes, 10T - 10 Tbytes</para>
+        <para>Numbers formats: K, KB - kilobytes; M, MB - megabytes; G, GB - gigabytes; T,TB - terabytes. For examples: 100.5 - digit 100.5, 200k - 200
+        Kbytes, 4m - 4 Mbytes, 1.4G - 1.4 Gbytes, 10T - 10 Tbytes.</para>
       </listitem>
     </itemizedlist>
     <itemizedlist>
       <listitem>
-        <para>Time format endings: ms - milliseconds, m - minutes, h - hours,
-        d - days, w - weeks.</para>
+        <para>Time format endings: ms - milliseconds; m - minutes; h - hours; d - days; w - weeks.</para>
       </listitem>
         <listitem>
-        <para>No ending - seconds: 500ms - 500
-        milliseconds, 20 - 20 seconds, 30m - 30 minutes, 12h - 12 hours, 5d -
-        5 days, 4w - 4 weeks.</para>
+        <para>No ending - seconds: 500ms - 500 milliseconds; 20 - 20 seconds; 30m - 30 minutes; 12h - 12 hours; 5d - 5 days; 4w - 4 weeks.</para>
         </listitem>
     </itemizedlist>
 	<para>The elements in the above configuration file are detailed in the following sections:</para>

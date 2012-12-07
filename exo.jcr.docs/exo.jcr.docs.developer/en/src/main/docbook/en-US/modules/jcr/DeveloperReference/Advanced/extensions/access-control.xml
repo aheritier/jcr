@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
+<!--3.2.1.2. Access control-->
 <section id="JCR.AccessControl">
   <title>Access control</title>
   <para>eXo JCR is a complete implementation of the standard <ulink url="http://jcp.org/en/jsr/detail?id=170">

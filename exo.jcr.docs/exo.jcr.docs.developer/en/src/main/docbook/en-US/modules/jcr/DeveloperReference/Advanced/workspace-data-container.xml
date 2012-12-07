@@ -2,6 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
         "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 
+<!--3.2.2. Workspace data container-->
 <section id="JCR.DeveloperReference.Advanced.WorkspaceDataContainer" role="NotInToc">
   <title>Workspace data container</title>
   <para>Before going through Workspace Data Container, you need to learn about the following concepts:</para>

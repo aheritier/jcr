@@ -399,8 +399,7 @@
       <citetitle><emphasis role="bold">Configuration without DataSource</emphasis></citetitle>
     </para>
 
-      <para>Repository configuration without using of the
-      <classname>javax.sql.DataSource</classname> bounded in JNDI.</para>
+      <para>Repository configuration without using the <classname>javax.sql.DataSource</classname> bounded in JNDI.</para>
 
       <para>This case may be usable if you have a dedicated JDBC driver
       implementation with special features like XA transactions,

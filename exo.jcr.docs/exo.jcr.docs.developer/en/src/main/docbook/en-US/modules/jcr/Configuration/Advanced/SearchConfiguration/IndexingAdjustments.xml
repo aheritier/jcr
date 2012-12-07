@@ -5,8 +5,7 @@
       in JCR allows you to control which properties of a node are indexed. You
       also can define different analyzers for different nodes.</para>
 
-      <para>The configuration parameter is called indexingConfiguration and
-      per default is not set. This means all properties of a node are
+      <para>The configuration parameter is called indexingConfiguration and its default value is not set. This means all properties of a node are
       indexed.</para>
 
       <para>If you wish to configure the indexing behavior, you need to add a
@@ -141,7 +140,7 @@
       <para xml:id="JCR.SearchConfiguration.Indexing_Adjustments.Indexing_Rules.Exclusion_Node_Scope_Index">
         <citetitle><emphasis role="bold">Exclusion from the node scope index</emphasis></citetitle>
       </para>
-        <para>Per default all configured properties are fulltext indexed if
+        <para>All configured properties of each default value are fulltext indexed if
         they are of type STRING and included in the node scope index. A node
         scope search finds normally all nodes of an index. That is, the select
         jcr:contains(., 'foo') returns all nodes that have a string property

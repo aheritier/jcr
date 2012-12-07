@@ -6,5 +6,9 @@
       the values will be stored as BLOBs inside the database.</para>
       <para>See <link linkend="JCR.ExternalValueStorages">External Value Storages</link> for advanced configuration of Value Storage Plugin.</para>
     </note>
-        <para><emphasis role="bold">value-storage</emphasis>: Optional value Storage plugin definition.</para>
+		<itemizedlist>
+			<listitem>
+				<para><parameter>value-storage</parameter>: Optional value Storage plugin definition.</para>
+			</listitem>
+		</itemizedlist>
 </section>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<!--3.2.1.3. JCR API-->
 <section id="JCR.APIExtensions">
   <title>JCR API</title>
 
@@ -28,6 +29,7 @@
       implementation specific issue typical for "lazy-pattern".</para>
     </note>
 
+	<!--3.2.1.3.1. Usage-->
     <section id="JCR.APIExtensions.API_and_Usage">
       <title>Usage</title>
 
@@ -67,6 +69,7 @@
       to be used as a production solution.</para>
     </section>
 
+	<!--3.2.1.3.2. Configuration-->
     <section id="JCR.APIExtensions.Configuration">
       <title>Configuration</title>
 

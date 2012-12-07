@@ -3,18 +3,15 @@
     <title>Query Handler</title>
     	<itemizedlist>
     		<listitem>
-			    <para><emphasis role="bold">class</emphasis>: A Query Handler class
+			    <para><parameter>class</parameter>: A Query Handler class
 			    name.</para>
 		    </listitem>
 		    <listitem>
-			    <para><emphasis role="bold">properties</emphasis>: The list of properties
+			    <para><parameter>properties</parameter>: The list of properties
 			    (name-value pairs) for a Query Handler (indexDir).</para>
-		    </listitem>
-		    <listitem>
-			    <para>Properties and advanced features described in <link
-			    linkend="JCR.SearchConfiguration">Search Configuration</link>.</para>
-		    </listitem>
+		    </listitem> 
 	    </itemizedlist>
+<para>Properties and advanced features described in <link linkend="JCR.SearchConfiguration">Search Configuration</link>.</para>
 	<note>
 		<para>See <link linkend="JCR.QueryHandlerConfiguration">QueryHandler configuration</link> for advanced configuration of QueryHandler.</para>
 	</note>

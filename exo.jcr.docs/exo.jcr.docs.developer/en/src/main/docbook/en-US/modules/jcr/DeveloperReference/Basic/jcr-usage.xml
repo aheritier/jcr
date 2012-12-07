@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<!--3.1.1. Use JCR-->
 <section id="JCR.UsingJCR" role="NotInToc">
   <title>Use JCR</title>
 
@@ -16,13 +17,13 @@
             <para>Do not use <emphasis role="bold">System session</emphasis>
             from the <emphasis role="bold">user</emphasis> related code
             because a system session has <emphasis role="bold">unlimited
-            rights</emphasis>. Call ManageableRepository.getSystemSession()
+            rights</emphasis>. Call <parameter>ManageableRepository.getSystemSession()</parameter>
             from <emphasis role="bold">process</emphasis> related code
             only.</para>
           </listitem>
 
           <listitem>
-            <para>Call Session.logout() explicitly to <emphasis
+            <para>Call <parameter>Session.logout()</parameter> explicitly to <emphasis
             role="bold">release resources</emphasis> assigned to the
             session.</para>
           </listitem>
@@ -37,7 +38,8 @@
           </listitem>
         </itemizedlist>
     </note>
-
+	
+	<!--3.1.1.1. Obtain repository object-->
     <section id="JCR.UsingJCR.ObtainingRepositoryObject">
       <title>Obtain repository object</title>
 
@@ -45,7 +47,7 @@
       <itemizedlist>
           <listitem>
             <para>Using the eXo Container "native" mechanism. All repositories
-            are kept with a single RepositoryService component. So it can be
+            are kept with a single <parameter>RepositoryService</parameter> component. So it can be
             obtained from eXo Container as described below:</para>
           </listitem>
       </itemizedlist>
@@ -71,7 +73,7 @@
       <itemizedlist>
           <listitem>
             <para>Using JNDI as specified in <ulink url="http://jcp.org/en/jsr/detail?id=170">JSR-170</ulink>. This way you have to
-            configure the reference (see eXo <link
+            configure the reference is as follow. (see eXo <link
             linkend="Kernel.JNDINaming">JNDI Naming configuration</link>).</para>
           </listitem>
       </itemizedlist>      
@@ -80,6 +82,7 @@
   Repository repository =(Repository) ctx.lookup("repositoryName");</programlisting> 
     </section>
 
+  <!--3.1.1.2. JCR application practices-->
   <section id="JCR.UsingJCR.JCRApplicationPractices">
     <title>JCR application practices</title>
 
@@ -208,13 +211,12 @@ Session session = sessionProvider.getSession("workspaceName", repository);
         </tgroup>
       </table>
 
-      <para>For any implementation, your code should follow the following
-      sequence:</para>
+      <para>For any implementation, your code should follow the following sequence:</para>
 
       <itemizedlist>
         <listitem>
           <para>Call <parameter>SessionProviderService.setSessionProvider(Object key, SessionProvider sessionProvider)</parameter> at the beginning of a business
-          request for Stateless application or application's session for Statefull policy.</para>
+          request for Stateless application or application's session for the Statefull policy.</para>
         </listitem>
 
         <listitem>
@@ -224,7 +226,7 @@ Session session = sessionProvider.getSession("workspaceName", repository);
         <listitem>
           <para>Call <parameter>SessionProviderService.removeSessionProvider(Object key)</parameter>
           at the end of a business request for Stateless application or
-          application's session for Statefull policy.</para>
+          application's session for the Statefull policy.</para>
         </listitem>
       </itemizedlist>
     </section>

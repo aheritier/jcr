@@ -1,16 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- This document was created with Syntext Serna Free. --><!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
+<!--3.1.2.2. Node type registration-->
 <section id="JCR.NodeTypeRegistration">
 <title>Node type registration</title>
   <para>The eXo JCR implementation supports two ways of Nodetypes registration:</para>
   <itemizedlist>
     <listitem>
-      <para>From a NodeTypeValue POJO</para>
+      <para>From a NodeTypeValue POJO.</para>
     </listitem>
     <listitem>
-      <para>From an XML document (stream)</para>
+      <para>From an XML document (stream).</para>
     </listitem>
   </itemizedlist>
+
+  <!--3.1.2.2.1. Interfaces and methods-->
   <section id="JCR.NodeTypeRegistration.InterfacesAndMethods">
     <title>Interfaces and methods</title>
 
@@ -350,6 +353,7 @@ public boolean isReadOnly();
 public void setReadOnly(boolean readOnly);</programlisting>
   </section>
 
+  <!--3.1.2.2.2. Registration methods-->
   <section id="JCR.NodeTypeRegistration.RegistrationMethods">
     <title>Registration methods</title>
     <para>The JCR implementation supports various methods of the node type registration.</para>
@@ -394,6 +398,8 @@ testNValue.setDeclaredPropertyDefinitionValues(props);
 
 nodeTypeManager.registerNodeType(testNValue, ExtendedNodeTypeManager.FAIL_IF_EXISTS);</programlisting>
     </section>
+  
+  <!--3.1.2.2.3. Change/Remove a node type-->
   <section id="JCR.NodeTypeRegistration.ChangeRemoveNodeType">
     <title>Change/Remove a node type</title>
 
@@ -424,6 +430,7 @@ nodeTypeManager.registerNodeTypes(is,ExtendedNodeTypeManager.REPLACE_IF_EXISTS )
     </note>
 <programlisting language="java">nodeTypeManager.unregisterNodeType(&quot;myNodeType&quot;);</programlisting>
   </section>
+  <!--3.1.2.2.4. More How-tos-->
   <section id="JCR.NodeTypeRegistration.PracticalHowto">
     <title>More How-tos</title>
     <para xml:id="JCR.NodeTypeRegistration.PracticalHowto.AddingNewPropertyDefinition">

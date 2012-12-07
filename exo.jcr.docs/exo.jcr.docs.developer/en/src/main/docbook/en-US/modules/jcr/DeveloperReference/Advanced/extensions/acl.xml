@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- This document was created with Syntext Serna Free. --><!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
+<!--3.2.1.2.1. eXo access control-->
 <section id="JCR.AccessControl.eXoAccessControl">
     <title>eXo access control</title>
     <para>The <ulink url="http://jcp.org/en/jsr/detail?id=170">JSR 170</ulink> specification does not define how permissions are managed

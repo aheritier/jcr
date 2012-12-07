@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<!--3.1.5. Use fulltext search-->
 <section id="JCR.UseFulltextSearch" role="NotInToc">
   <title>Use fulltext search</title>
 
@@ -10,6 +11,7 @@
 		more information about index configuration.</para>
 	</note>
 
+  <!--3.1.5.1. Bi-directional RangeIterator-->
   <section id="JCR.UseFulltextSearch.Bi-directionalRangeIterator">
     <title>Bi-directional RangeIterator</title>
 
@@ -56,6 +58,7 @@ while (iter.hasNext()) {
 }</programlisting>
   </section>
 
+  <!--3.1.5.2. Fuzzy searches-->
   <section id="JCR.UseFulltextSearch.FuzzySearches">
     <title>Fuzzy searches</title>
 
@@ -71,6 +74,7 @@ Query q = qman.createQuery("select * from nt:base where contains(field, 'ccccc~'
 QueryResult res = q.execute();</programlisting>
   </section>
 
+  <!--3.1.5.3. SynonymSearch-->
   <section id="JCR.UseFulltextSearch.SynonymProvider">
     <title>SynonymSearch</title>
 
@@ -121,6 +125,7 @@ public interface SynonymProvider {
 }</programlisting>
   </section>
 
+  <!--3.1.5.4. High-lighting-->
   <section id="JCR.UseFulltextSearch.Highlighting">
     <title>High-lighting</title>
 
@@ -226,6 +231,7 @@ for (RowIterator it = result.getRows(); it.hasNext(); ) {
 }</programlisting>
   </section>
 
+  <!--3.1.5.5. SpellChecker-->
   <section id="JCR.UseFulltextSearch.SpellChecker">
     <title>SpellChecker</title>
 
@@ -323,6 +329,7 @@ if (v == null) {
 }</programlisting>
   </section>
 
+  <!--3.1.5.6. Similarity-->
   <section id="JCR.UseFulltextSearch.Similarity">
     <title>Similarity</title>
 

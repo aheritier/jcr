@@ -11,32 +11,27 @@
   </para>  
     <itemizedlist>
       <listitem>
-        <para><emphasis role="bold">name</emphasis>: The name of a
+        <para><parameter>name</parameter>: The name of a
         workspace.</para>
       </listitem>
       <listitem>
-        <para><emphasis role="bold">auto-init-root-nodetype</emphasis>: DEPRECATED
-        in JCR 1.9 (use initializer). The node type for root node
-        initialization.</para>
+        <para><parameter>auto-init-root-nodetype</parameter>: DEPRECATED
+        in JCR 1.9 (use initializer). The node type for root node initialization.</para>
       </listitem>
       <listitem>
-        <para><emphasis role="bold">container</emphasis>: Workspace data container
-        (physical storage) configuration.</para>
+        <para><parameter>container</parameter>: Workspace data container (physical storage) configuration.</para>
       </listitem>
       <listitem>
-        <para><emphasis role="bold">initializer</emphasis>: Workspace initializer
-        configuration.</para>
+        <para><parameter>initializer</parameter>: Workspace initializer configuration.</para>
       </listitem>
       <listitem>
-        <para><emphasis role="bold">cache</emphasis>: Workspace storage cache
-        configuration.</para>
+        <para><parameter>cache</parameter>: Workspace storage cache configuration.</para>
       </listitem>
       <listitem>
-        <para><emphasis role="bold">query-handler</emphasis>: Query handler
-        configuration.</para>
+        <para><parameter>query-handler</parameter>: Query handler configuration.</para>
       </listitem>
       <listitem>
-        <para><emphasis role="bold">auto-init-permissions</emphasis>: DEPRECATED
+        <para><parameter>auto-init-permissions</parameter>: DEPRECATED
         in JCR 1.9 (use initializer). Default permissions of the root node. It is
         defined as a set of semicolon-delimited permissions containing a group of
         space-delimited identities (user, group, etc, see Organization service
@@ -58,7 +53,7 @@
     
     <itemizedlist>
       <listitem>
-        <para><parameter>class:</parameter> A workspace data container
+        <para><parameter>class</parameter>: A workspace data container
         class name.</para>
       </listitem>
 	  <listitem>
@@ -72,7 +67,7 @@
           <tgroup cols="2">
             <tbody>
               <row>
-                <entry>trigger_events_for_descendents_on_rename</entry>
+                <entry><parameter>trigger_events_for_descendents_on_rename</parameter></entry>
 
                 <entry>Indicate if it is needed to trigger events for descendants on
                 rename or not. It allows to increase the performance on rename
@@ -81,7 +76,7 @@
               </row>
 
               <row>
-                <entry>lazy-node-iterator-page-size</entry>
+                <entry><parameter>lazy-node-iterator-page-size</parameter></entry>
 
                 <entry>The page size for lazy iterator. Indicates how many nodes
                 can be retrieved from storage per request. The default value is
@@ -89,14 +84,14 @@
               </row>
 
               <row>
-                <entry>acl-bloomfilter-false-positive-probability</entry>
+                <entry><parameter>acl-bloomfilter-false-positive-probability</parameter></entry>
 
                 <entry>ACL Bloom filters desired false positive probability. Range
                 is between [0..1] and the default value "0.1d" (see the note below).</entry>
               </row>
 
               <row>
-                <entry>acl-bloomfilter-elements-number</entry>
+                <entry><parameter>acl-bloomfilter-elements-number</parameter></entry>
 
                 <entry>Expected number of ACL-elements in the Bloom-filter.
                 Default value 1000000 (see the note below).</entry>

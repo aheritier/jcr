@@ -42,16 +42,14 @@
     linkend="Kernel.ContainerConfiguration">Container
     configuration</link>):<itemizedlist>
         <listitem>
-          <para>Configuration that is set explicitly using
-          StandaloneContainer.addConfigurationURL(String url) or
-          StandaloneContainer.addConfigurationPath(String path) before
-          getInstance()</para>
+          <para>Configuration that is set explicitly using <parameter>StandaloneContainer.addConfigurationURL(String url)</parameter> or
+          <parameter>StandaloneContainer.addConfigurationPath(String path)</parameter> before <parameter>getInstance()</parameter>.</para>
         </listitem>
 
         <listitem>
           <para>Configuration from <filename>$base:directory/exo-configuration.xml</filename> or
           <filename>$base:directory/conf/exo-configuration.xml</filename> file where
-          $base:directory is either AS's home directory in case of J2EE AS
+          <parameter>$base:directory</parameter> is either AS's home directory in case of J2EE AS
           environment or just the current directory in case of a standalone
           application.</para>
         </listitem>
@@ -61,11 +59,10 @@
         </listitem>
 
         <listitem>
-          <para>Configuration from
-          $service_jar_file/conf/portal/configuration.xml.</para>
+          <para>Configuration from <filename>$service_jar_file/conf/portal/configuration.xml</filename>.</para>
 		<warning>
 			<para>
-				Do not rely on some concrete jar's configuration if you have more than one jar containing conf/portal/configuration.xml file. In this case, choosing a configuration is unpredictable.
+				Do not rely on some concrete jar's configurations if you have more than one jar containing the <filename>conf/portal/configuration.xml</filename> file. In this case, choosing a configuration is unpredictable.
 			</para>
 		</warning>
         </listitem>
@@ -100,14 +97,19 @@
   &lt;/init-params&gt;
 &lt;/component&gt;</programlisting>
     <itemizedlist>
-    <listitem><para><emphasis role="bold">conf-path</emphasis>: a path to a RepositoryService JCR Configuration.</para></listitem>
-    <listitem><para><emphasis role="bold">max-backup-files</emphasis>: max number of backup files. This option lets you specify the number of stored backups. 
-    Number of backups can not exceed this value. File which will exceed the limit will replace the oldest file.</para></listitem>
-    <listitem><para><emphasis role="bold">working-conf</emphasis>: optional; <link linkend="JCR.ConfigurationPersister">JCR configuration persister</link> configuration. If there is not a working-conf, the persister will be disabled.</para></listitem>
+		<listitem>
+			<para><parameter>conf-path</parameter>: A path to a RepositoryService JCR Configuration.</para>
+		</listitem>
+		<listitem>
+			<para><parameter>max-backup-files</parameter>: The maximum number of backup files. This option lets you specify the number of stored backups. 
+		Number of backups can not exceed this value. File which will exceed the limit will replace the oldest file.</para>
+		</listitem>
+		<listitem>
+			<para><parameter>working-conf</parameter>: This is optional. See <link linkend="JCR.ConfigurationPersister">JCR configuration persister</link> for more details. If there is not a <parameter>working-conf</parameter>, the persister will be disabled.</para>
+		</listitem>
     </itemizedlist>
     <para>The JCR Core implementation contains a persister which stores the
-    repository configuration in the relational database using JDBC calls -
-    <classname>org.exoplatform.services.jcr.impl.config.JDBCConfigurationPersister</classname>.
+    repository configuration in the related database using JDBC calls - <parameter>org.exoplatform.services.jcr.impl.config.JDBCConfigurationPersister</parameter>.
     The implementation will create and use table JCR_CONFIG in the
     provided database. But the developer can implement his own persister for his particular
     usecase.</para>

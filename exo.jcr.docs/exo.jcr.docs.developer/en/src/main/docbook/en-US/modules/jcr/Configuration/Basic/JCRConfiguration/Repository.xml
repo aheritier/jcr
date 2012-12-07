@@ -10,16 +10,15 @@
 
     <para>Service configuration may be placed in
     <filename>jar:/conf/standalone/exo-jcr-config.xml</filename> for standalone mode. For portal
-    mode, it is located in the portal web application
-        <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml.</filename>
+    mode, it is located in the portal web application <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>.
     </para>
     <itemizedlist>
         <listitem>
-            <para><emphasis role="bold">default-repository</emphasis>: The name of a
+            <para><parameter>default-repository</parameter>: The name of a
             default repository (one returned by RepositoryService.getRepository()).</para>
         </listitem>
         <listitem>
-            <para><emphasis role="bold">repositories</emphasis>: The list of repositories.</para>
+            <para><parameter>repositories</parameter>: The list of repositories.</para>
         </listitem>
     </itemizedlist>
     <!-- Repository configuration -->  
@@ -28,46 +27,52 @@
     </para> 
     <itemizedlist>
         <listitem>
-            <para><emphasis role="bold">name</emphasis>: The name of a
+            <para><parameter>name</parameter>: The name of a
             repository.</para>
         </listitem>
         <listitem>
-            <para><emphasis role="bold">default-workspace</emphasis>: The name of a
-            workspace obtained using Session's login() or login(Credentials) methods
+            <para><parameter>default-workspace</parameter>: The name of a
+            workspace obtained using <parameter>Session's login()</parameter> or <parameter>login(Credentials)</parameter> methods
             (ones without an explicit workspace name).</para>
         </listitem>
         <listitem>
-            <para><emphasis role="bold">system-workspace</emphasis>: The name of
-            workspace where <emphasis role="bold">/jcr:system</emphasis> node is
+            <para><parameter>system-workspace</parameter>: The name of
+            workspace where <parameter>/jcr:system</parameter> node is
             placed.</para>
         </listitem>
         <listitem>
-            <para><emphasis role="bold">security-domain</emphasis>: The name of a
+            <para><parameter>security-domain</parameter>: The name of a
             security domain for JAAS authentication.</para>
         </listitem>
         <listitem>
-            <para><emphasis role="bold">access-control</emphasis>: The name of an
-            access control policy. There can be 3 types:</para>
-                <para> optional - ACL is created on-demand (default)</para>
-                <para>disable - no access control</para>
-                <para>mandatory - an ACL is created for each added node (not supported yet).</para>
+            <para><parameter>access-control</parameter>: The name of an
+            access control policy. There may be 3 types:</para>
+				<itemizedlist>
+					<listitem>
+						<para>optional - ACL is created on demand (default).</para>
+					</listitem>
+					<listitem>
+						<para>disable - No access control.</para>
+					</listitem>
+					<listitem>
+						<para>mandatory - An ACL is created for each added node (not supported yet).</para>
+					</listitem>
+				</itemizedlist>
         </listitem>
         <listitem>
-            <para><emphasis role="bold">authentication-policy</emphasis>: The name of
-            an authentication policy class.</para>
+            <para><parameter>authentication-policy</parameter>: The name of an authentication policy class.</para>
         </listitem>
         <listitem>
-            <para><emphasis role="bold">workspaces</emphasis>: The list of
+            <para><parameter>workspaces</parameter>: The list of
             workspaces.</para>
         </listitem>
         <listitem>
-            <para><emphasis role="bold">session-max-age</emphasis>: The time after
+            <para><parameter>session-max-age</parameter>: The time after
             which an idle session will be removed (called logout). If session-max-age
             is not set up, idle session will never be removed.</para>
         </listitem>
         <listitem>
-            <para id="JCR.eXoJCRconfiguration.LockRemoverMaxThreads"><emphasis
-            role="bold">lock-remover-max-threads</emphasis>: Number of threads that
+            <para id="JCR.eXoJCRconfiguration.LockRemoverMaxThreads"><parameter>lock-remover-max-threads</parameter>: Number of threads that
             can serve LockRemover tasks. The default value is "1". A repository may have many
             workspaces, each workspace have own LockManager. JCR supports Locks with
             defined lifetime and these locks removed as it becomes expired by LockRemovers. However, LockRemovers is not an independent
@@ -78,4 +83,4 @@
 	<note>
 		<para>See <link linkend="JCR.RepositoryCreationService">RepositoryCreationService</link> if you want to learn about how to create repositories in runtime.</para>
 	</note>
-  </section>
+</section>

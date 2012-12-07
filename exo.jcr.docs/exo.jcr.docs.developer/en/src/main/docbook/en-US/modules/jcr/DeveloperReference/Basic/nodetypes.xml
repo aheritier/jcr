@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<!--3.1.2. Node types-->
 <section id="JCR.NodeTypes" role="NotInToc">
   <title>Node types</title>
 	<note>
@@ -51,6 +52,7 @@
     role="bold">autoCreatedInNewRepository</emphasis>. The second type is
     registration of node types in specified repository and it is configured in
     values-param with the name of repository.</para>
+
    <xi:include href="nodetype/nodetype-definition.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
