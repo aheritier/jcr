@@ -6,16 +6,16 @@
   <highlights>
 	<itemizedlist>
 		<listitem>
-			<para><emphasis role="bold"><link linkend="JCR.SessionLeakDetected">Session Leak Detector</link></emphasis></para>
+			<para><emphasis role="bold"><link linkend="JCR.SessionLeakDetected">Session leak detector</link></emphasis></para>
 			<para>All necessary information about this tool, including activation and report.</para>
 		</listitem>
 		<listitem>
-			<para><emphasis role="bold"><link linkend="JCR.RepositoryCheckController">Consistency Checker</link></emphasis></para>
+			<para><emphasis role="bold"><link linkend="JCR.RepositoryCheckController">Consistency checker</link></emphasis></para>
 			<para>Details of consistency checker, and Recommendations on how to fix corrupted JCR.</para>
 		</listitem>
 		<listitem>
 			<para><emphasis role="bold"><link linkend="JCR.Statistics">JCR statistics</link></emphasis></para>
-			<para>Instructions on how to get and manage statistics on Database Access Layer and on JCR API accesses, and statistics Manager.</para>
+			<para>Instructions on how to get and manage statistics on database access layer and on JCR API accesses, and statistics manager.</para>
 		</listitem>
 	</itemizedlist>
   </highlights>

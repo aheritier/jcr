@@ -27,8 +27,8 @@
       <para>The value of the command channel port. The value '21' is
       default.</para>
 
-      <para>When you have already some FTP server installed in your system ,
-      this parameter needs to be changed (2121 for example) to avoid conflicts
+      <para>When you have already some FTP servers installed in your system ,
+      this parameter needs to be changed (e.g. 2121) to avoid conflicts
       or if the port is protected.</para>
     </listitem>
 

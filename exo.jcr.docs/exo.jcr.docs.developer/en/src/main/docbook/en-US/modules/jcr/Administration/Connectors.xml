@@ -7,15 +7,15 @@
 	<itemizedlist>
 		<listitem>
 			<para><emphasis role="bold"><link linkend="JCR.WebDAV">WebDAV</link></emphasis></para>
-			<para>All necessary information about WebDAV, including configuration, examples, commands and restrictions. Also, this part also provides a set of frequently asked questions.</para>
+			<para>All necessary information about WebDAV, including configuration, examples, commands, and restrictions. Also, this part also provides a set of frequently asked questions.</para>
 		</listitem>
 		<listitem>
 			<para><emphasis role="bold"><link linkend="JCR.WebDAV">FTP</link></emphasis></para>
-			<para>Details of configuration parameters of FTP, for example: command-port, data-min-port and data-max-port, system, and client-side-encoding.</para>
+			<para>Details of configuration parameters of FTP, such as command-port, data-min-port and data-max-port, system, and client-side-encoding.</para>
 		</listitem>
 		<listitem>
 			<para><emphasis role="bold"><link linkend="JCR.JCA">JCA Resource Adapter</link></emphasis></para>
-			<para>Details of SessionFactory, configuration and deployment.</para>
+			<para>Details of SessionFactory, configuration, and deployment.</para>
 		</listitem>
 	</itemizedlist>
 	</highlights>

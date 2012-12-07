@@ -5,19 +5,15 @@
   <title>DBCleanService</title>
 
     <para>It is a special service for data removal from database. The section
-    shortly describes the principles of work <emphasis>DBCleaner</emphasis> under all
+    shortly describes the working principles of <emphasis>DBCleaner</emphasis> under all
     databases.</para>
 
-    <para>It is special service for data removal from database. The article
-    shortly describes the principles of work DBCleaner under all
-    databases</para>
-	
 	<itemizedlist>
     <listitem>
       <para xml:id="JCR.DBCleanerService.Methods_of_DBCleanerService"><emphasis role="bold">Methods of DBCleanerService</emphasis></para>
      <note>
       <para>Code that invokes the methods of DBCleanService must have
-      JCRRuntimePermissions.MANAGE_REPOSITORY_PERMISSION permission.</para>
+      the <emphasis>JCRRuntimePermissions.MANAGE_REPOSITORY_PERMISSION</emphasis> permission.</para>
     </note>
 
     <para>There are several methods of <emphasis>DBCleanerService</emphasis> :</para>
@@ -117,14 +113,14 @@ connection.commit();</programlisting></entry>
           <row>
             <entry><parameter>executeCleanScripts()</parameter></entry>
 
-            <entry>removing all records from the database. Foreign key of
+            <entry>Remove all records from the database. Foreign key of
             JCR_SITEM table is also removed</entry>
           </row>
 
           <row>
             <entry><parameter>executeCommitScripts()</parameter></entry>
 
-            <entry>adding foreign key</entry>
+            <entry>Add foreign key</entry>
           </row>
 
           <row>
@@ -198,22 +194,22 @@ connection.commit();</programlisting></entry>
           <row>
             <entry>executeCleanScripts()</entry>
 
-            <entry>renaming current tables, initializing new tables without
-            foreign key of JCR_MITEM table, adding root node, removing indexes
-            for some databases</entry>
+            <entry>Rename the current tables, initialize new tables without
+            the foreign key of the JCR_MITEM table, add root node, and remove indexes
+            for some databases.</entry>
           </row>
 
           <row>
             <entry>executeCommitScripts()</entry>
 
-            <entry>renaming tables, adding indexes</entry>
+            <entry>Rename tables, and add indexes.</entry>
           </row>
 
           <row>
             <entry>executeRollbackScripts()</entry>
 
-            <entry>removing previously renamed tables, adding indexes, adding
-            foreign key</entry>
+            <entry>Remove the previously renamed tables, add indexes, and add
+            foreign key.</entry>
           </row>
         </tbody>
       </tgroup>
@@ -223,8 +219,8 @@ connection.commit();</programlisting></entry>
   <listitem>
     <para xml:id="JCR.DBCleanerService.Clean_Whole_Reposistory"><emphasis role="bold">Need to clean the whole repository</emphasis></para>
 
-    <para>In case of single-db all workspaces will be processed simultaneously
-    as in case of single workspace multi-db configuration. For multi-db every
+    <para>In case of single-db, all workspaces will be processed simultaneously
+    as in case of single workspace multi-db configuration. For multi-db, every
     workspace will be processed separately as in case of single workspace
     multi-db configuration.</para>
   </listitem>

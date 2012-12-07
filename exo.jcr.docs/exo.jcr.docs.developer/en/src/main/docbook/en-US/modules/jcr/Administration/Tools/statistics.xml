@@ -150,7 +150,7 @@
     <parameter>exo:service=statistic, view=jcr</parameter>.</para>
 
   <section id="JCR.Statistics.Database_access_layer">
-    <title>Statistics on Database Access Layer</title>
+    <title>Statistics on database access layer</title>
 
     <para>In order to have a better idea of the time spent into the database
     access layer, it can be interesting to get some statistics on that part of
@@ -339,18 +339,18 @@
   <section id="JCR.Statistics.Statistics_On_JCR_API_Accesses">
     <title>Statistics on JCR API accesses</title>
 
-    <para>In order to know exactly how your application uses eXo JCR, it can
+    <para>In order to know exactly how your application uses JCR, it can
     be interesting to register all the JCR API accesses in order to easily
     create real life test scenario based on pure JCR calls and also to tune
-    your eXo JCR to better fit your requirements.</para>
+    your JCR to better fit your requirements.</para>
 
-    <para>In order to allow you to specify the configuration which part of eXo
+    <para>In order to allow you to specify the configuration which part of
     JCR needs to be monitored without applying any changes in your code
-    and/or building anything, we choose to rely on the Load-time Weaving
+    and/or building anything, choose to rely on the Load-time Weaving
     proposed by AspectJ.</para>
 
-    <para>To enable this feature, you will have to add in your classpath the
-    following jar files:</para>
+    <para>To enable this feature, you will have to add the
+    following jar files to your classpath:</para>
 
     <itemizedlist>
       <listitem>
@@ -367,13 +367,13 @@
       </listitem>
     </itemizedlist>
 
-    <para>You will also need to get aspectjweaver-1.6.8.jar from the main
+    <para>You will also need to get <filename>aspectjweaver-1.6.8.jar </filename> from the main
     maven repository <ulink
     url="http://repo2.maven.org/maven2/org/aspectj/aspectjweaver">http://repo2.maven.org/maven2/org/aspectj/aspectjweaver</ulink>.
     At this stage, to enable the statistics on the JCR API accesses, you will
     need to add the JVM parameter
     <emphasis>-javaagent:${pathto}/aspectjweaver-1.6.8.jar</emphasis> to your
-    command line, for more details please refer to <ulink
+    command line. For more details, refer to <ulink
     url="http://www.eclipse.org/aspectj/doc/released/devguide/ltw-configuration.html">http://www.eclipse.org/aspectj/doc/released/devguide/ltw-configuration.html</ulink>.</para>
 
     <para>By default, the configuration will collect statistics on all the
@@ -381,7 +381,7 @@
     <parameter>org.exoplatform.services.jcr.core.ExtendedSession</parameter> and
     <parameter>org.exoplatform.services.jcr.core.ExtendedNode</parameter>, and
     the JCR API interface <parameter>javax.jcr.Property</parameter>. To add
-    and/or remove some interfaces to monitor, you have two configuration files
+    and/or remove some interfaces to/from monitor, you have two configuration files
     to change that are bundled into the <filename>exo.jcr.component.statistics-X.Y.Z.jar</filename>, which are 
     <filename>conf/configuration.xml</filename> and <filename>META-INF/aop.xml</filename>.</para>
 
@@ -412,8 +412,8 @@
     add and/or remove the full qualified name of the interfaces to monitor,
     into the expression filter of the pointcut called
     <parameter>JCRAPIPointcut</parameter>. As you can see below, by default only
-    JCR API calls from the exoplatform packages are took into account, don't
-    hesistate to modify this filter to add your own package names.</para>
+    JCR API calls from the exoplatform packages are took into account, do not
+    hesitate to modify this filter to add your own package names.</para>
 
 <programlisting language="xml">&lt;aspectj&gt;
   &lt;aspects&gt;
@@ -432,16 +432,16 @@
     for more details about how the csv files are managed, please refer to the
     section dedicated to the statistics manager.</para>
 
-    <para>The format of each column header is ${method-alias}-${metric-alias}.
-    The method alias will be of type ${method-name}(list of parameter types
-    separeted by ; to be compatible with the CSV format).</para>
+    <para>The format of each column header is <parameter>${method-alias}-${metric-alias}</parameter>.
+    The method alias will be of the <parameter>${method-name}</parameter> type (a list of parameter types
+    separated by semicolon (;) to be compatible with the CSV format).</para>
 
     <para>The metric alias are described in the statistics manager
     section.</para>
 
     <para>The name of the category of statistics corresponding to these
     statistics is the simple name of the monitored interface (e.g.
-    ExtendedSession for org.exoplatform.services.jcr.core.ExtendedSession),
+    <parameter>ExtendedSession</parameter> for <filename>org.exoplatform.services.jcr.core.ExtendedSession</filename>),
     this name is mostly needed to access to the statistics through JMX.</para>
 
     <note>

@@ -8,7 +8,7 @@
 	<itemizedlist>
 		<listitem>
 			<para><emphasis role="bold"><link linkend="chapter-Administration-Connectors">Connectors</link></emphasis></para>
-			<para>Details of WebDAV, FTP and JCA Resource Adapter, including configuration, parameters and examples.</para>
+			<para>Details of WebDAV, FTP and JCA resource adapter, including configuration, parameters and examples.</para>
 		</listitem>
 		<listitem>
 			<para><emphasis role="bold"><link linkend="chapter-Administration-Database">Database</link></emphasis></para>
@@ -16,11 +16,11 @@
 		</listitem>
 		<listitem>
 			<para><emphasis role="bold"><link linkend="chapter-Administration-Tools">Tools</link></emphasis></para>
-			<para>Necessary information about Session Leak Detector, Consistency Checker, and Statistics.</para>
+			<para>Necessary information about Session leak detector, Consistency checker, and Statistics.</para>
 		</listitem>
 		<listitem>
-			<para><emphasis role="bold"><link linkend="chapter-Administration-PerformanceTuning">Performance Tuning</link></emphasis></para>
-			<para>Instructions on JBoss AS Tuning, JCR Cache Tuning, Clustering, JVM parameters, and Force Query Hints.</para>
+			<para><emphasis role="bold"><link linkend="chapter-Administration-PerformanceTuning">Performance tuning</link></emphasis></para>
+			<para>Instructions on JBoss AS tuning, JCR cache tuning, Clustering, JVM parameters, and Force query hints.</para>
 		</listitem>
 	</itemizedlist>
 </abstract>

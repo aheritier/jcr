@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="chapter-Administration-PerformanceTuning">
-  <title>Performance Tuning</title>
+  <title>Performance tuning</title>
 
     <para>This section will show you possible ways of improving JCR.</para>
 
@@ -76,13 +76,13 @@
       <para xml:id="JCR.PerformanceTuningGuide.PerformanceTuningGuide.Clustering"><emphasis role="bold">Clustering</emphasis></para>
   </citetitle>
 	
-      <para>For performance it is better to have loadbalacer, DB server and
+      <para>For performance, it is better to have loadbalacer, DB server and
       shared NFS on different computers. If in some reasons you see that one
       node gets more load than others you can decrease this load using load
       value in load balancer.</para>
 	<itemizedlist>
 	  <listitem>
-		<para><emphasis role="bold">JGroups configuration</emphasis>: It's recommended to use "multiplexer stack" feature present in
+		<para><emphasis role="bold">JGroups configuration</emphasis>: It is recommended to use "multiplexer stack" feature present in
 		JGroups. It is set by default in eXo JCR and offers higher performance
 		in cluster, using less network connections also. If there are two or
 		more clusters in your network, please check that they use different

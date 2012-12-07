@@ -7,8 +7,8 @@
   <qandaset>
   <qandaentry xml:id="JCR.FAQ.JCR.WebDAV.UploadFileToWebDAVServer">
     <question>
-      <para>I uploaded a file to WebDAV server using Mac OS Finder, but the
-            file size is '0', what is wrong?
+      <para><emphasis role="bold">>I uploaded a file to the WebDAV server using Mac OS Finder, but the
+            file size is '0', what is wrong?</emphasis>
       </para>
     </question>
     <answer>
@@ -28,16 +28,16 @@
   <qandaentry xml:id="JCR.FAQ.JCR.WebDAV.ManageCacheControlValue" >
     <question>
       <para>
-          <emphasis role="bold">Can I manage 'cache-control' value for different media-types
+          <emphasis role="bold">Can I manage the '<parameter>cache-control</parameter>' value for different media-types
             from server configuration?
           </emphasis>
       </para>
     </question>
     <answer>
-      <para>Use "cache-control" configuration parameter.</para>
+      <para>Use the "<parameter>cache-control</parameter>" configuration parameter.</para>
 
-      <para>The value of this parameter must contain colon-separated pairs
-        "MediaType:cache-control value"
+      <para>The value of this parameter must contain colon-separated pairs of the
+        "<parameter>MediaType:cache-control</parameter>" value.
       </para>
 
       <para>For example, if you need to cache all text/xml and text/plain
@@ -64,24 +64,21 @@
       </para>
     </question>
     <answer>
-      <para>Simple Requests</para>
+      <para><emphasis role="bold">Simple Requests</emphasis>:</para>
 
-      <para>For simple request such as: GET, HEAD, MKCOL, COPY, MOVE,
-        DELETE, CHECKIN, CHECKOUT, UNCHECKOUT, LOCK, UNLOCK, VERSIONCONTROL,
-        OPTIONS
+      <para>For simple requests, such as GET, HEAD, MKCOL, COPY, MOVE,
+        DELETE, CHECKIN, CHECKOUT, UNCHECKOUT, LOCK, UNLOCK, VERSIONCONTROL,and
+        OPTIONS, perform:
       </para>
-
-      <para>perform:</para>
-
       <programlisting>curl -i -u 'user:pass' -X 'METHOD_NAME' 'resource_url'</programlisting>
 
-      <para>for example to create a folder named test perform:</para>
+      <para>For example, to create a folder named "<emphasis>test</emphasis>", perform as follows:</para>
 
       <programlisting>curl -i -u 'root:exo' -X MKCOL 'http://localhost:8080/rest/jcr/repository/production/test
       </programlisting>
 
-      <para>to PUT a test.txt file from your current folder to "test "folder
-        on server perform:
+      <para>To PUT the <filename>test.txt</filename> file from your current folder to the "<emphasis>test</emphasis>" folder
+        on the server, perform as follows:
       </para>
 
       <programlisting>curl -i -u 'root:exo' -X PUT 'http://localhost:8080/rest/jcr/repository/production/test/test.txt'
@@ -89,27 +86,21 @@
         @test.txt
       </programlisting>
 
-      <para>Requests with XML body</para>
+      <para><emphasis role="bold">Requests with XML body</emphasis>: </para>
 
-      <para>For requests which contains xml body such as: ORDER, PROPFIND,
-        PROPPATCH, REPORT, SEARCH
-      </para>
-
-      <para>add
+      <para>For requests which contain the XML body, such as ORDER, PROPFIND,
+        PROPPATCH, REPORT, and SEARCH, add
         <emphasis role="bold">-d 'xml_body text'</emphasis>
         or
-        <emphasis role="bold">-d @body.xml</emphasis>
-      </para>
-
-      <para>(body.xml must contain a valid xml request bidy.) to you
+        <emphasis role="bold">-d @body.xml</emphasis> to your
         curl-command:
       </para>
 
       <programlisting>curl -i -u 'user:pass' -X 'METHOD_NAME' -H 'Headers' 'resource_url' -d 'xml_body text'
       </programlisting>
+      <note><para><filename>body.xml</filename> must contain a valid xml request body.</para></note>
 
-      <para>For example about finding all files containing "test"
-        perform:
+      <para>For example, to find all files containing "test", perform as follows:
       </para>
 
       <programlisting>curl -i -u "root:exo" -X "SEARCH" "http://192.168.0.7:8080/rest/jcr/repository/production/" -d
@@ -119,7 +110,7 @@
         &lt;/D:searchrequest&gt;"
       </programlisting>
 
-      <para>If you need to add some headers to your request, use \-H
+      <para>If you need to add some headers to your request, use <emphasis role="bold">\-H</emphasis>
         key.
       </para>
 
@@ -140,20 +131,20 @@
       </para>
     </question>
     <answer>
-      <para>OS client (Windows, Linux etc) doesn't set an encoding in a
-        request. But eXo JCR WebDAV server looks for an encoding in a
-        Content-Type header and set it to jcr:encoding. See
+      <para>OS client (Windows, Linux and more) does not set an encoding in a
+        request, but the JCR WebDAV server looks for an encoding in a
+        <emphasis>Content-Type</emphasis> header and set it to <emphasis>jcr:encoding</emphasis>. See
         <ulink url="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">
           http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
         </ulink>
         14.17 Content-Type (e.g. Content-Type: text/html; charset=ISO-8859-4).
-        So, if a client will set Content-Type header, e.g. JS code from a
-        page, it will works for a text file as expected.
+        So, if a client set the <emphasis>Content-Type</emphasis> header, for example, <emphasis>JS code</emphasis> from a
+        page, it will work for a text file as expected.
       </para>
 
-      <para>If WebDAV request doesn't contain a content encoding, it's
+      <para>If WebDAV request does not contain a content encoding, it is
         possible to write a dedicated action in a customer application. The
-        action will set jcr:encoding using its own logic, e.g. based on IP or
+        action will set <emphasis>jcr:encoding</emphasis> using its own logic, for example, based on IP or
         user preferences.
       </para>
     </answer>

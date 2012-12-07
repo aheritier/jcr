@@ -10,7 +10,7 @@
         <para><emphasis role="bold">Which database server is better for eXo JCR?</emphasis></para>
       </question>
       <answer>
-        <para>If the question is a performance, it's difficult question, as
+        <para>If the question is a performance, it is difficult question, as
           each database can be configured to be more (and more) faster for each
           special case. MySQL with MyISAM engine will be faster. But MySQL has
           limitations for indexes for multilingual columns (Item names

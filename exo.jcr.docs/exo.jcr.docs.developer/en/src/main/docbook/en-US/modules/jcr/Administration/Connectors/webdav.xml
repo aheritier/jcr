@@ -16,9 +16,8 @@
     necessary documents. You can search by using two languages: SQL and
     XPATH.</para>
 
-    <para>In eXo JCR, we plug in the WebDAV layer - based on the code taken
-    from the extension modules of the reference implementation - on the top of
-    our JCR implementation so that it is possible to browse a workspace using
+    <para>In JCR, you plug in the WebDAV layer on the top of your JCR implementation, based on the code taken
+    from the extension modules of the reference implementation, so it is possible to browse a workspace using
     the third party tools (it can be Windows folders or Mac ones as well as a
     Java WebDAV client, such as DAVExplorer or IE using File-&gt;Open as a Web
     Folder).</para>
@@ -27,23 +26,18 @@
     server ready, you must deploy the REST application. Then, you can access
     any workspaces of your repository by using the following URL:</para>
 	<itemizedlist>
-		<listitem>
-			<para><emphasis role="bold">Standalone mode:</emphasis></para>
-			<para><uri>http://host:port/rest/jcr/{RepositoryName}/{WorkspaceName}/{Path}</uri></para>
-		</listitem>
-		<listitem>
-			<para><emphasis role="bold">Portal mode:</emphasis></para>
-			<para><uri>http://host:port/portal/rest/private/jcr/{RepositoryName}/{WorkspaceName}/{Path}</uri></para>
+				<listitem>
+					<para><uri>http://host:port/portal/rest/private/jcr/{RepositoryName}/{WorkspaceName}/{Path}</uri></para>
 		</listitem>
 	</itemizedlist>
 
-    <para>When accessing the WebDAV server with the URL: <uri>http://localhost:8080/rest/jcr/repository/production</uri>, you
-    might also use "collaboration" (instead of "production") which is the
-    default workspace in eXo products. You will be asked to enter your login
+  <para>For example, when accessing the WebDAV server with the URL<uri>
+    http://localhost:8080/portal/rest/jcr/repository/collaboration</uri>, you will be asked to enter your login
     and password. Those will then be checked by using the organization service
     that can be implemented thanks to an InMemory (dummy) module or a DB
     module or an LDAP one and the JCR user session will be created with the
-    correct JCR Credentials.</para>
+    correct JCR Credentials.
+  </para>
 
     <note>
       <para>If you try the "in ECM" option, add "@ecm" to the user's password.
@@ -166,7 +160,7 @@
   <section id="JCR.WebDAV.Examples">
     <title>Examples</title>
 
-    <para>At present, the eXo JCR WebDav server is tested by using MS Internet
+    <para>At present, the JCR WebDav server is tested by using MS Internet
     Explorer, <ulink url="http://www.ics.uci.edu/~webdav">Dav
     Explorer</ulink>, <ulink
     url="http://www.xythos.com/home/xythos/products/xythos_drive.html">Xythos
@@ -174,7 +168,7 @@
 
 	<itemizedlist>
     <listitem>
-      <para xml:id="JCR.WebDAV.Screenshots.MSInternetExplorer"><emphasis role="bold">MS Internet Explorer</emphasis>: Click <emphasis role="bold">File -&gt; Open as Web Folder</emphasis>.</para>
+      <para xml:id="JCR.WebDAV.Screenshots.MSInternetExplorer"><emphasis role="bold">MS Internet Explorer</emphasis>: Click <menuchoice><guimenu>File</guimenu><guisubmenu>eXo JCR WebDav </guisubmenu></menuchoice>.</para>
 
       <mediaobject>
         <imageobject>
@@ -205,7 +199,7 @@
     </listitem>
 
     <listitem>
-      <para xml:id="JCR.WebDAV.Screenshots.MicrosoftOffice2003"><emphasis role="bold">Microsoft Office 2003</emphasis>(as client): Select <emphasis role="bold">File-&gt;Open</emphasis> with typing http://... href in the file name box.</para>
+      <para xml:id="JCR.WebDAV.Screenshots.MicrosoftOffice2003"><emphasis role="bold">Microsoft Office 2003</emphasis> (as client): Select <menuchoice><guimenu>File</guimenu><guisubmenu>Open</guisubmenu></menuchoice> with typing http://... href in the file name box.</para>
       <mediaobject>
         <imageobject>
           <imagedata fileref="images/protocols/webdav_msoffice2003.jpg" />
@@ -372,19 +366,18 @@
 	</citetitle>
       <para>When you try to set up a web folder by “adding a network location”
       or “map a network drive” through My Computer, you can get an error
-      message saying that either “The folder you entered does not appear to be
-      valid. Please choose another” or “Windows cannot access… Check the
-      spelling of the name. Otherwise, there might be…”. These errors may
+      message saying that either “<emphasis>The folder you entered does not appear to be
+      valid. Please choose another</emphasis>” or “<emphasis>Windows cannot access… Check the
+      spelling of the name. Otherwise, there might be…</emphasis>”. These errors may
       appear when you are using SSL or non-SSL.</para>
 	  <para>To fix this problem, do the following steps:</para>
 	  <procedure>
         <step>
-			<para>Go to Windows Registry Editor.</para>
+			<para>Go to <emphasis role="bold">Windows Registry Editor</emphasis>. </para>
         </step>
         <step>
-          <para>Find a key:
-          \HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlset\services\WebClient\Parameters\BasicAuthLevel
-          .</para>
+          <para>Find a key: <emphasis role="bold">\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlset\services\WebClient\Parameters\BasicAuthLevel</emphasis>
+          </para>
         </step>
         <step>
           <para>Change the value to 2.</para>
@@ -421,25 +414,26 @@
       <para>To enable the Basic authentication on the client computer, do as follows:</para>
 	<procedure>
         <step>
-          <para>Click Start, type regedit in the Start Search box, and then
-          press Enter.</para>
+          <para>Click <emphasis role="bold">Start</emphasis>, type <emphasis role="bold">regedit</emphasis> in the <emphasis role="bold">Start Search</emphasis> box, and then
+          press <emphasis role="bold">Enter</emphasis>.</para>
         </step>
         <step>
           <para>Locate and then click the following registry subkey:</para>
-          <para>HKEY_CURRENT_USER\Software\Microsoft\Office\14.0\Common\Internet</para>
+          <para>
+          <emphasis role="bold">HKEY_CURRENT_USER\Software\Microsoft\Office\14.0\Common\Internet</emphasis></para>
         </step>
         <step>
-          <para>On the Edit menu, point to New, and then click DWORD
-          Value.</para>
+          <para>On the <emphasis role="bold">Edit</emphasis> menu, point to <emphasis role="bold">New</emphasis>, and then click <emphasis role="bold">DWORD
+          Value</emphasis>.</para>
         </step>
         <step>
-          <para>Type BasicAuthLevel, and then press Enter.</para>
+          <para>Type <emphasis role="bold">BasicAuthLevel</emphasis>, and then press <emphasis role="bold">Enter</emphasis>. </para>
         </step>
         <step>
-          <para>Right-click BasicAuthLevel, and then click Modify.</para>
+          <para>Right-click <emphasis role="bold">BasicAuthLevel</emphasis>, and then click <emphasis role="bold">Modify</emphasis>. </para>
         </step>
         <step>
-          <para>In the Value data box, type 2, and then click OK.</para>
+          <para>In the <emphasis role="bold">Value</emphasis> data box, type 2, and then click <emphasis role="bold">OK</emphasis>. </para>
         </step>
 	 </procedure>
   </section>

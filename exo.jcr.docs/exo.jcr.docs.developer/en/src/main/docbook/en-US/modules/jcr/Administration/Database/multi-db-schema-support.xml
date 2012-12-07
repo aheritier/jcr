@@ -6,18 +6,17 @@
   instance?</title>
 
     <para>Frequently, a single database instance must be shared by several
-    other applications. But some of our customers have also asked for a way to
-    host several JCR instances in the same database instance. To fulfill this
-    need, we had to review our queries and scope them to the current schema;
+    other applications, but you can host several JCR instances in the same database instance. To fulfill this
+    need, you have to review your queries and scope them to the current schema;
     it is now possible to have one JCR instance per DB schema instead of per DB
-    instance. To benefit of the work done for this feature you will need to
+    instance. Also, you will need to
     apply the configuration changes described below.</para>
 
 <itemizedlist>
   <listitem>
     <para xml:id="JCR.MultiDBSchemaSupport.LockManager_Config"><emphasis role="bold">LockManager configuration</emphasis></para>
 
-    <para>To enable this feature you need to replace <parameter>org.jboss.cache.loader.JDBCCacheLoader</parameter> with
+    <para>To enable this feature, you need to replace <parameter>org.jboss.cache.loader.JDBCCacheLoader</parameter> with
     <parameter>org.exoplatform.services.jcr.impl.core.lock.jbosscache.JDBCCacheLoader</parameter> in the JBossCache configuration file.</para>
 
     <para>Here is an example of this very part of the configuration:</para>
@@ -59,7 +58,7 @@
    &lt;/loaders&gt;
 &lt;/jbosscache&gt;</programlisting>
 
-    <para>You can also obtain file exmaple from <ulink
+    <para>You can also obtain file example from <ulink
     url="http://svn.jboss.org/repos/exo-jcr/jcr/trunk/exo.jcr.component.core/src/test/resources/conf/standalone/cluster/test-jbosscache-lock.xml">svn</ulink>.</para>
   </listitem>
 
@@ -67,9 +66,9 @@
     <para xml:id="JCR.MultiDBSchemaSupport.HibernateService_Configuration"><emphasis role="bold">HibernateService configuration</emphasis></para>
 
     <para>If you use <parameter>HibernateService</parameter> for JDBC connections management, you will
-    need to specify explicitly the default schema by setting
-    "hibernate.default_schema" property in the configuration of
-    HibernateService.</para>
+    need to specify explicitly the default schema by setting the
+    "<parameter>hibernate.default_schema</parameter>" property in the configuration of
+    <parameter>HibernateService</parameter>.</para>
 
     <para>Here is an example:</para>
 
