@@ -4,8 +4,9 @@
 <!--3.1.5. Use fulltext search-->
 <section id="JCR.UseFulltextSearch" role="NotInToc">
   <title>Use fulltext search</title>
-
-	<note>
+   <para>In this section, you will discover all features (such as how to activate and use them)  around the <emphasis role="bold">full text search</emphasis> provided out of the box into the product.
+   </para>
+  	<note>
 		<para>You can find the JCR configuration file at
 		<filename>.../portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>. Read <link linkend="JCR.SearchConfiguration">Search Configuration</link> for
 		more information about index configuration.</para>
@@ -15,12 +16,12 @@
   <section id="JCR.UseFulltextSearch.Bi-directionalRangeIterator">
     <title>Bi-directional RangeIterator</title>
 
-    <para><parameter>QueryResult.getNodes()</parameter> will return bi-directional NodeIterator
+    <para><parameter>QueryResult.getNodes()</parameter> will return bi-directional <parameter>NodeIterator</parameter>
     implementation.</para>
 
     <note>
-      <para>Bi-directional NodeIterator is <emphasis role="bold">not
-      supported</emphasis> in two cases:</para>
+      <para>Bi-directional <parameter>NodeIterator</parameter> is <emphasis role="bold">not
+      supported</emphasis> in two following cases:</para>
 
       <itemizedlist>
         <listitem>
@@ -33,7 +34,7 @@
       </itemizedlist>
     </note>
 
-    <para>TwoWayRangeIterator interface:</para>
+    <para><parameter>TwoWayRangeIterator</parameter> interface:</para>
 
     <programlisting language="java">/**
  * Skip a number of elements in the iterator.
@@ -63,7 +64,7 @@ while (iter.hasNext()) {
     <title>Fuzzy searches</title>
 
     <para>JCR supports such features as Lucene Fuzzy Searches <ulink
-    url="http://lucene.apache.org/java/2_3_2/queryparsersyntax.html">Apache
+    url="http://lucene.apache.org/core/old_versioned_docs/versions/2_9_4/queryparsersyntax.html">Apache
     Lucene - Query Parser Syntax</ulink>.</para>
 
     <para>To use it, you have to form a query like the one described
@@ -78,17 +79,18 @@ QueryResult res = q.execute();</programlisting>
   <section id="JCR.UseFulltextSearch.SynonymProvider">
     <title>SynonymSearch</title>
 
-    <para>Searching with synonyms is integrated in the jcr:contains() function
+    <para>Searching with synonyms is integrated in the <parameter>jcr:contains()</parameter> function
     and uses the same syntax as synonym searches in Google. If a search term
-    is prefixed by a tilde symbol ( ~ ), also synonyms of the search term are
-    taken into consideration. For example:</para>
+    is prefixed by a tilde symbol ( ~ ), synonyms of the search term are
+    taken into consideration.</para>
+    <para>For example:</para>
 
     <programlisting>SQL: select * from nt:resource where contains(., '~parameter')
 
 XPath: //element(*, nt:resource)[jcr:contains(., '~parameter')</programlisting>
 
     <para>This feature is disabled by default and you need to add a
-    configuration parameter to the query-handler element in your jcr
+    configuration parameter to the <parameter>query-handler</parameter> element in your JCR
     configuration file to enable it.</para>
 
     <programlisting language="xml">&lt;param  name="synonymprovider-config-path" value="..you path to configuration file....."/&gt;
@@ -133,17 +135,16 @@ public interface SynonymProvider {
     result and marks up the words in the text that match the query
     terms.</para>
 
-    <para>By default highlighting words matched the query is disabled because
+    <para>By default, highlighting words matched the query is disabled because
     this feature requires that additional information is written to the search
     index. To enable this feature, you need to add a configuration parameter
-    to the query-handler element in your jcr configuration file to enable
-    it.</para>
+    to the <parameter>query-handler</parameter> element in your JCR configuration file.</para>
 
     <programlisting language="xml">&lt;param name="support-highlighting" value="true"/&gt;</programlisting>
 
     <para>Additionally, there is a parameter that controls the format of the
     excerpt created. In JCR 1.9, the default is set to
-    org.exoplatform.services.jcr.impl.core.query.lucene.DefaultHTMLExcerpt.
+    <parameter>org.exoplatform.services.jcr.impl.core.query.lucene.DefaultHTMLExcerpt</parameter>.
     The configuration parameter for this setting is:</para>
 
     <programlisting language="xml">&lt;param name="excerptprovider-class" value="org.exoplatform.services.jcr.impl.core.query.lucene.DefaultXMLExcerpt"/&gt;</programlisting>
@@ -194,8 +195,8 @@ public interface SynonymProvider {
       </citetitle>
     </para>
 
-      <para>If you are using XPath, you must use the rep:excerpt() function in
-      the last location step, just like you would select properties:</para>
+      <para>If you are using XPath, you must use the <parameter>rep:excerpt()</parameter> function in
+      the last location step:</para>
 
       <programlisting language="java">QueryManager qm = session.getWorkspace().getQueryManager();
 Query q = qm.createQuery("//*[jcr:contains(., 'exoplatform')]/(@Title|rep:excerpt(.))", Query.XPATH);
@@ -206,21 +207,21 @@ for (RowIterator it = result.getRows(); it.hasNext(); ) {
    Value excerpt = r.getValue("rep:excerpt(.)");
 }</programlisting>
 
-      <para>The above code searches for nodes that contain the word
-      exoplatform and then gets the value of the Title property and an excerpt
+      <para>The above code searches for nodes that contain the <emphasis role="bold">exoplatform</emphasis> word
+       and then gets the value of the <parameter>Title</parameter> property and an excerpt
       for each result node.</para>
 
       <para>It is also possible to use a relative path in the call
-      Row.getValue() while the query statement still remains the same. Also,
+      <parameter>Row.getValue()</parameter> while the query statement still remains the same. Also,
       you may use a relative path to a string property. The returned value
       will then be an excerpt based on string value of the property.</para>
 
       <para>Both available excerpt provider will create fragments of about 150
       characters and up to 3 fragments.</para>
 
-      <para>In SQL, the function is called excerpt() without the rep prefix,
-      but the column in the RowIterator will nonetheless be labled
-      rep:excerpt(.)!</para>
+      <para>In SQL, the function is called <parameter>excerpt()</parameter> without the <parameter>rep</parameter> prefix,
+      but the column in the <parameter>RowIterator</parameter> will nonetheless be labelled
+      <parameter>rep:excerpt(.)</parameter>.</para>
 
       <programlisting language="java">QueryManager qm = session.getWorkspace().getQueryManager();
 Query q = qm.createQuery("select excerpt(.) from nt:resource where contains(., 'exoplatform')", Query.SQL);
@@ -239,7 +240,7 @@ for (RowIterator it = result.getRows(); it.hasNext(); ) {
     spell checker mechanism. By default, spell checking is not available and
     you have to configure it first. See the <parameter>spellCheckerClass</parameter> parameter on page
     <link linkend="JCR.SearchConfiguration">Search Configuration.</link> JCR
-    currently provides an implementation class, which uses the <ulink
+    currently providing an implementation class, which uses the <ulink
     url="http://wiki.apache.org/jakarta-lucene/SpellChecker">lucene-spellchecker</ulink>
     to contribute. The dictionary is derived from the fulltext indexed
     content of the workspace and updated periodically. You can configure the
@@ -277,10 +278,8 @@ for (RowIterator it = result.getRows(); it.hasNext(); ) {
     </itemizedlist>
 
     <para>For example, if you want a refresh interval of six hours, the class
-    name is:
-    org.exoplatform.services.jcr.impl.core.query.lucene.spell.LuceneSpellChecker$SixHoursRefreshInterval.
-    If you use
-    org.exoplatform.services.jcr.impl.core.query.lucene.spell.LuceneSpellChecker,
+    name is <parameter>org.exoplatform.services.jcr.impl.core.query.lucene.spell.LuceneSpellChecker$SixHoursRefreshInterval</parameter>.
+    If you use <parameter> org.exoplatform.services.jcr.impl.core.query.lucene.spell.LuceneSpellChecker</parameter>,
     the refresh interval will be one hour.</para>
 
     <para>The spell checker dictionary is stored as a lucene index under
@@ -333,7 +332,7 @@ if (v == null) {
   <section id="JCR.UseFulltextSearch.Similarity">
     <title>Similarity</title>
 
-    <para>Starting with version, 1.12 JCR allows you to search for nodes that
+    <para>JCR allows you to search for nodes that
     are similar to an existing node.</para>
 
     <para>Similarity is determined by looking up terms that are common to
@@ -356,19 +355,26 @@ if (v == null) {
       </listitem>
     </itemizedlist>
 
-    <para>Note: The similarity functionality requires that the support
-    Highlighting is enabled. Please make sure that you have the following
-    parameter set for the query handler in your workspace.xml.</para>
+    <note>The similarity functionality requires that the <emphasis role="bold">Highlighting</emphasis> support
+    is enabled. Make sure that you have the following
+    parameter set for the query handler in your <filename>workspace.xml</filename> file.</note>
 
     <programlisting language="xml">&lt;param name="support-highlighting" value="true"/&gt;</programlisting>
 
-    <para>The functions are called rep:similar() (in XPath) and similar() (in
+    <para>The functions are called <parameter>rep:similar()</parameter> (in XPath) and <parameter>similar()</parameter> (in
     SQL) and have two arguments:</para>
-
-    <para>relativePath: a relative path to a descendant node or . for the
-    current node. absoluteStringPath: a string literal that contains the path
-    to the node for which to find similar nodes.</para>
-
+    <itemizedlist>
+      <listitem>
+        <para><parameter>relativePath</parameter>: a relative path for a descendant node or for the
+          current node.
+        </para>
+      </listitem>
+      <listitem>
+        <para><parameter>absoluteStringPath</parameter>: a string literal that contains the path
+          to the node for which to find similar nodes.
+        </para>
+      </listitem>
+    </itemizedlist>
     <warning>
       <para>Relative path is not supported yet.</para>
     </warning>

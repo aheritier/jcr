@@ -24,11 +24,11 @@
   </para>
 
   <programlisting language="java">// get QueryManager
-    QueryManager queryManager = workspace.getQueryManager(); 
-    // make SQL query
-    Query query = queryManager.createQuery("SELECT * FROM nt:base ", Query.SQL);
-    // execute query
-    QueryResult result = query.execute();</programlisting>
+QueryManager queryManager = workspace.getQueryManager();
+// make SQL query
+Query query = queryManager.createQuery("SELECT * FROM nt:base ", Query.SQL);
+// execute query
+QueryResult result = query.execute();</programlisting>
    </listitem>
 
     <listitem>
@@ -37,11 +37,11 @@
   </para>
 
   <programlisting language="java">// get QueryManager
-    QueryManager queryManager = workspace.getQueryManager();
-    // make XPath query
-    Query query = queryManager.createQuery("//element(*,nt:base)", Query.XPATH);
-    // execute query
-    QueryResult result = query.execute();</programlisting>
+QueryManager queryManager = workspace.getQueryManager();
+// make XPath query
+Query query = queryManager.createQuery("//element(*,nt:base)", Query.XPATH);
+// execute query
+QueryResult result = query.execute();</programlisting>
    </listitem>
   </itemizedlist>
 
@@ -85,7 +85,7 @@
 
   <para>eXo JCR Scoring is a mapping of Lucene scoring. For more
     in-depth understanding, see <ulink
-            url="http://lucene.apache.org/java/2_4_1/scoring.html">Lucene
+            url="http://lucene.apache.org/core/old_versioned_docs/versions/2_9_4/scoring.html">Lucene
       documentation</ulink>.
   </para>
 

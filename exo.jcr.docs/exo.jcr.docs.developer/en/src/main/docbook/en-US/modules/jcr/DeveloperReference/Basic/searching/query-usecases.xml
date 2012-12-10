@@ -5,7 +5,10 @@
 <!--3.1.4.1. Query usecases-->
 <section id="JCR.SearchingRepositoryContent.QueryUsecases">
   <title>Query usecases</title>
-
+  <para>The section shows you the different usecases of query. Through these usercases, you will know how the repository
+    structure is, and how to create and execute a query, how to
+    iterate over the result set and according to the query what kind of results you will get.
+  </para>
   <xi:include href="query-result-settings.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude"/>
   <xi:include href="type-constraints.xml"

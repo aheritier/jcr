@@ -27,28 +27,28 @@
             <entry><parameter>public static void cleanWorkspaceData(WorkspaceEntry
             wsEntry)</parameter></entry>
 
-            <entry>Clean workspace data from database</entry>
+            <entry>Clean workspace data from database.</entry>
           </row>
 
           <row>
             <entry><parameter>public static void cleanRepositoryData(RepositoryEntry
             repoEntry)</parameter></entry>
 
-            <entry>Clean up repository data from database</entry>
+            <entry>Clean up repository data from database.</entry>
           </row>
 
           <row>
             <entry><parameter>public static DBCleaner getWorkspaceDBCleaner(Connection
             jdbcConn, WorkspaceEntry wsEntry)</parameter></entry>
 
-            <entry>Returns database cleaner of workspace.</entry>
+            <entry>Return database cleaner of workspace.</entry>
           </row>
 
           <row>
             <entry><parameter>public static DBCleaner getRepositoryDBCleaner(Connection
             jdbcConn, RepositoryEntry repoEntry)</parameter></entry>
 
-            <entry>Returns database cleaner of repository. Returns null in
+            <entry>Return database cleaner of repository. Returns null in
             case of multi-db configuration.</entry>
           </row>
         </tbody>
@@ -73,7 +73,7 @@
           <row>
             <entry><parameter>restore</parameter></entry>
 
-            <entry>does nothing with DBCleaner</entry>
+            <entry>Does nothing with DBCleaner.</entry>
           </row>
 
           <row>
@@ -114,13 +114,13 @@ connection.commit();</programlisting></entry>
             <entry><parameter>executeCleanScripts()</parameter></entry>
 
             <entry>Remove all records from the database. Foreign key of
-            JCR_SITEM table is also removed</entry>
+            JCR_SITEM table is also removed.</entry>
           </row>
 
           <row>
             <entry><parameter>executeCommitScripts()</parameter></entry>
 
-            <entry>Add foreign key</entry>
+            <entry>Add the foreign key.</entry>
           </row>
 
           <row>
@@ -168,15 +168,15 @@ connection.commit();</programlisting></entry>
           <row>
             <entry>executeCleanScripts()</entry>
 
-            <entry>removing tables JCR_MVALUE, JCR_MREF, JCR_MITEM,
-            initializing new tables without foreign key of JCR_MITEM table,
-            adding root</entry>
+            <entry>Remove the tables JCR_MVALUE, JCR_MREF, JCR_MITEM,
+            initialize new tables without the foreign key of JCR_MITEM table,
+            add root.</entry>
           </row>
 
           <row>
             <entry>executeCommitScripts()</entry>
 
-            <entry>adding foreign key</entry>
+            <entry>Add the foreign key.</entry>
           </row>
 
           <row>

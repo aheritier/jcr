@@ -16,13 +16,12 @@
       <para>You can use <parameter>maxThreads</parameter> parameter to
       increase maximum amount of threads that can be launched in AS instance.
       This can improve performance if you need a high level of concurrency.
-      also you can use <code>-XX:+UseParallelGC</code> java directory to use
-      paralel garbage collector.</para>
+      Also, you can use the <code>-XX:+UseParallelGC</code> java directory to use
+      parallel garbage collector.</para>
 
       <tip>
         <para>Beware of setting <parameter>maxThreads</parameter> too big,
-        this can cause <exceptionname>OutOfMemoryError</exceptionname>. We've
-        got it with <code>maxThreads=1250</code> on such machine:
+        this can cause <exceptionname>OutOfMemoryError</exceptionname>. There is <code>maxThreads=1250</code> on the machine:
         <itemizedlist>
 		  <listitem>
 			<para>7.5 GB memory</para>
@@ -63,23 +62,23 @@
       </listitem>
 	  <listitem>
 		<para><emphasis role="bold">Eviction</emphasis>: Manipulations with eviction <parameter>wakeUpInterval</parameter>
-		value doestn't affect on performance. Performance results with values
+		value does not affect on performance. Performance results with values
 		from 500 up to 3000 are approximately equal.</para>
       </listitem>
 	  <listitem>
 		<para><emphasis role="bold">Transaction Timeout</emphasis>: Using short timeout for long transactions such as Export/Import,
 		removing huge subtree defined timeout may cause <exceptionname>TransactionTimeoutException</exceptionname>. [TODO] put
-		recomended timeout value.</para>
+		recommended timeout value.</para>
       </listitem>
 	</itemizedlist>
   <citetitle>
       <para xml:id="JCR.PerformanceTuningGuide.PerformanceTuningGuide.Clustering"><emphasis role="bold">Clustering</emphasis></para>
   </citetitle>
 	
-      <para>For performance, it is better to have loadbalacer, DB server and
-      shared NFS on different computers. If in some reasons you see that one
-      node gets more load than others you can decrease this load using load
-      value in load balancer.</para>
+      <para>For performance, it is better to have <parameter>loadbalacer</parameter>, the DB server, and
+      shared NFS on different computers. If for some reasons you see that one
+      node gets more load than others, you can decrease this load by using the load
+      value in the load balancer.</para>
 	<itemizedlist>
 	  <listitem>
 		<para><emphasis role="bold">JGroups configuration</emphasis>: It is recommended to use "multiplexer stack" feature present in
@@ -133,13 +132,13 @@
   </citetitle>
 
     <para>Some databases supports hints to increase query performance (like
-    Oracle, MySQL, etc). eXo JCR have separate Complex Query implementation
+    Oracle, MySQL, and more). eXo JCR have separate Complex Query implementation
     for Orcale dialect, that uses query hints to increase performance for few
     important queries.</para>
 
     <itemizedlist>
 		<listitem>
-			<para>To enable this option put next configuration property:</para>
+			<para>To enable this option, put next configuration property:</para>
 
     <programlisting language="xml">&lt;workspace name="ws" auto-init-root-nodetype="nt:unstructured"&gt;
   &lt;container class="org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer"&gt;
@@ -152,7 +151,7 @@
 			<para>The Query hints are enabled by default.</para>
 		</listitem>
 		<listitem>
-			<para>eXo JCR uses query hints only for Complex Query Oracle dialect. For all other dialects this parameter is ignored.</para>
+			<para>eXo JCR uses query hints only for Complex Query Oracle dialect. For all other dialects, this parameter is ignored.</para>
 		</listitem>
 	</itemizedlist>
 </section>

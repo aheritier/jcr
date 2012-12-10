@@ -4,6 +4,12 @@
 <!--3.2.1. Extensions-->
 <section id="JCR.DeveloperReference.Advanced.Extensions" role="NotInToc">
   <title>Extensions</title>
+  <para>eXo JCR fully covers the specification <ulink url="http://jcp.org/en/jsr/detail?id=170">JSR 170</ulink>, but also
+    provided a set of extensions out of the box that can be very
+    helpful to better fulfill with some requirements that cannot be managed by what the specification itself proposes.
+  </para>
+  <para>The sub-sections below will show you how to use the extensions, consisting of JCR service, Access control, JCR API, Registry Service,
+  and Groovy REST service.</para>
   <xi:include href="extensions/jcr-extensions.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude"/>
   <xi:include href="extensions/access-control.xml"
