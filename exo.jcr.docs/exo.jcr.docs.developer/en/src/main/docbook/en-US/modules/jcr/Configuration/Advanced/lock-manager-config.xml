@@ -116,7 +116,7 @@
       <programlisting language="xml">&lt;lock-manager class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.CacheableLockManagerImpl"&gt;
    &lt;properties&gt;
      &lt;property name="time-out" value="15m" /&gt;
-     &lt;property name="jbosscache-configuration" value="conf/standalone/cluster/test-jbosscache-lock-config.xml" /&gt;
+     &lt;property name="jbosscache-configuration" value="${gatein.conf.dir}/jcr/jbosscache/${gatein.jcr.config.type}/lock-config.xmll" /&gt;
    &lt;/properties&gt;
 &lt;/lock-manager&gt;</programlisting>
         <itemizedlist>

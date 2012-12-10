@@ -226,7 +226,7 @@
 
           <listitem>
             <para><parameter>jbosscache-cl-cache.jdbc.datasource</parameter>: Name of
-              configured in Container datasource, where you want to store
+              the datasource configured in Container datasource, where you want to store
               locks. The best idea is to use the same as for
               workspace.
             </para>

@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.FulltextSearchAndSettings">
-  <title>Fulltext Search And Affecting Settings</title>
+  <title>Fulltext Search</title>
   <!-- property content indexing -->
   <para id="JCR.FulltextSearchAndSettings.Property_content_indexing">
     <citetitle><emphasis role="bold">Property content indexing</emphasis></citetitle>
