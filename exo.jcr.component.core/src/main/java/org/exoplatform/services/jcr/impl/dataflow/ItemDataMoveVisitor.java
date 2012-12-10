@@ -31,8 +31,6 @@ import org.exoplatform.services.jcr.datamodel.QPath;
 import org.exoplatform.services.jcr.datamodel.ValueData;
 import org.exoplatform.services.jcr.impl.Constants;
 import org.exoplatform.services.jcr.impl.core.SessionDataManager;
-import org.exoplatform.services.jcr.impl.dataflow.persistent.ChangedSizeHandler;
-import org.exoplatform.services.jcr.impl.dataflow.persistent.ReadOnlyChangedSizeHandler;
 import org.exoplatform.services.jcr.util.IdGenerator;
 
 import java.util.ArrayList;
@@ -91,9 +89,9 @@ public class ItemDataMoveVisitor extends ItemDataTraversingVisitor
    protected QPath ancestorToSave = null;
 
    /** 
-    * Trigger events for descendents. 
+    * Trigger events for descendants. 
    */
-   protected boolean triggerEventsForDescendents;
+   protected boolean triggerEventsForDescendants;
 
    /**
     * Creates an instance of this class.
@@ -108,14 +106,14 @@ public class ItemDataMoveVisitor extends ItemDataTraversingVisitor
     *          - Source data manager
     * @param keepIdentifiers
     *          - Is it necessity to keep <code>Identifiers</code>
-    * @param triggerEventsForDescendents 
-    *          - Trigger events for descendents.          
+    * @param triggerEventsForDescendants 
+    *          - Trigger events for descendants.          
     */
    public ItemDataMoveVisitor(NodeData parent, InternalQName dstNodeName, NodeData srcParent,
       NodeTypeDataManager nodeTypeManager, SessionDataManager srcDataManager, boolean keepIdentifiers,
-      boolean triggerEventsForDescendents)
+      boolean triggerEventsForDescendants)
    {
-      super(srcDataManager, triggerEventsForDescendents ? INFINITE_DEPTH : 0);
+      super(srcDataManager, triggerEventsForDescendants ? INFINITE_DEPTH : 0);
       this.keepIdentifiers = keepIdentifiers;
       this.ntManager = nodeTypeManager;
       this.destNodeName = dstNodeName;
@@ -123,7 +121,7 @@ public class ItemDataMoveVisitor extends ItemDataTraversingVisitor
       this.parents = new Stack<NodeData>();
       this.parents.add(parent);
       this.srcParent = srcParent;
-      this.triggerEventsForDescendents = triggerEventsForDescendents;
+      this.triggerEventsForDescendants = triggerEventsForDescendants;
    }
 
    /** 
@@ -134,7 +132,7 @@ public class ItemDataMoveVisitor extends ItemDataTraversingVisitor
     * @param nodeTypeManager - The NodeTypeManager 
     * @param srcDataManager - Source data manager 
     * @param keepIdentifiers - Is it necessity to keep <code>Identifiers</code> 
-    * @param skipEventsForDescendents - Don't generate events for the 
+    * @param skipEventsForDescendants - Don't generate events for the 
     *          descendants. 
     */
    public ItemDataMoveVisitor(NodeData parent, InternalQName dstNodeName, NodeData srcParent,
@@ -274,7 +272,7 @@ public class ItemDataMoveVisitor extends ItemDataTraversingVisitor
       addStates.add(new ItemState(newNode, ItemState.RENAMED, level == 0, ancestorToSave, false, level == 0));
       deleteStates.add(new ItemState(node, ItemState.DELETED, level == 0, ancestorToSave, false, false));
 
-      if (!triggerEventsForDescendents)
+      if (!triggerEventsForDescendants)
       {
          addStates.add(new ItemState(newNode, ItemState.PATH_CHANGED, false, ancestorToSave, false, false, node
             .getQPath()));
