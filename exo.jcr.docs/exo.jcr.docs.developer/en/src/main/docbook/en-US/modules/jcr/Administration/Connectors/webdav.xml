@@ -64,8 +64,8 @@
     <title>Configuration</title>
     <para>The following code snippet represents the configuration of the WebDAV component.</para>
     <programlisting language="xml">&lt;component&gt;
-  &lt;key&gt;org.exoplatform.services.webdav.WebDavServiceImpl&lt;/key&gt;
-  &lt;type&gt;org.exoplatform.services.webdav.WebDavServiceImpl&lt;/type&gt;
+  &lt;key&gt;org.exoplatform.services.jcr.webdav.WebDavServiceImpl&lt;/key&gt;
+  &lt;type&gt;org.exoplatform.services.jcr.webdav.WebDavServiceImpl&lt;/type&gt;
   &lt;init-params&gt;
 
     &lt;!-- this parameter indicates the default login and password values

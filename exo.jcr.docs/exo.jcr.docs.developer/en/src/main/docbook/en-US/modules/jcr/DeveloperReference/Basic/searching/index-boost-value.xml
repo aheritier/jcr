@@ -4,9 +4,9 @@
 <section id="JCR.IndexBoostRule">
   <title>Index boost value</title>
 
-  <para>In this example, we will set different boost values for predefined
-  nodes, and will check effect by selecting those nodes and order them by
-  jcr:score.</para>
+  <para>In this example, you will set different boost values for predefined
+  nodes, and check effect by selecting those nodes and order them by
+  <parameter>jcr:score</parameter>.</para>
 
   <para>The default boost value is 1.0. Higher boost values (a reasonable
   range is 1.0 - 5.0) will yield a higher score value and appear as more
@@ -23,7 +23,7 @@
     </citetitle>
   </para>
 
-    <para>In the <filename>indexing-config.xml</filename>, we will set boost values for nt:ustructured
+    <para>In the <filename>indexing-config.xml</filename>, set boost values for <parameter>nt:ustructured</parameter>
     nodes 'text' property.</para>
 
 <programlisting language="xml">&lt;!-- 
@@ -56,8 +56,8 @@ Set boost value as 3.0 for 'text' property in nt:unstructured nodes where proper
     </citetitle>
   </para>
 
-    <para>Repository contains many nodes with the "nt:unstructured" primary type.
-    Each node contains the 'text' property and the 'rule' property with different
+    <para>Repository contains many nodes with the "<parameter>nt:unstructured</parameter>" primary type.
+    Each node contains the '<parameter>text</parameter>' property and the '<parameter>rule</parameter>' property with different
     values.</para>
 
     <itemizedlist>

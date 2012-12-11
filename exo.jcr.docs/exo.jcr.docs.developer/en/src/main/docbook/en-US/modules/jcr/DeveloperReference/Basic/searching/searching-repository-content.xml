@@ -4,7 +4,7 @@
 <!--3.1.4. Search repository content-->
 <section id="JCR.SearchingRepositoryContent" role="NotInToc">
   <title>Search repository content</title>
-    <para>JCR supports two query languages - JCR and XPath. A query, whether
+    <para>eXo Platform supports two query languages - SQL and XPath. A query, whether
     XPath or SQL, specifies a subset of nodes within a workspace, called the
     result set. The result set constitutes all the nodes in the workspace that
     meet the constraints stated in the query.</para>
@@ -89,7 +89,7 @@ QueryResult result = query.execute();</programlisting>
       documentation</ulink>.
   </para>
 
-  <para>jcr:score counted in next way - (lucene score)*1000f.</para>
+  <para><parameter>jcr:score</parameter> is counted in the next way - (lucene score)*1000f.</para>
 
   <para>Score may be increased for specified nodes, see
     <link linkend="JCR.IndexBoostRule">Index boost value</link>.

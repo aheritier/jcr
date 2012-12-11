@@ -9,31 +9,31 @@
   <emphasis role="bold">SetOffset and SetLimit</emphasis>
     </citetitle>
   </para>
-  <para>Select all nodes with primary type 'nt:unstructured' and returns only
+  <para>Select all nodes with the '<parameter>nt:unstructured</parameter>' primary type and returns only
   3 nodes starting with the second node in the list.</para>
 
   <itemizedlist>
     <listitem>
   <para xml:id="JCR.SetOffsetandSetLimit.CommonInfo">
-    <emphasis role="bold">Common info</emphasis>: The QueryImpl class has two methods: one to indicate how many results
+    <emphasis role="bold">Common info</emphasis>: The <parameter>QueryImpl</parameter> class has two methods: one to indicate how many results
     shall be returned at most, and another to fix the starting position.
   </para>
 
     <itemizedlist>
       <listitem>
-        <para>setOffset(long offset): Set the start offset of the result
+        <para><parameter>setOffset(long offset)</parameter>: Set the start offset of the result
         set.</para>
       </listitem>
 
       <listitem>
-        <para>setLimit(long position): Set the maximum size of the result
+        <para><parameter>setLimit(long position)</parameter>: Set the maximum size of the result
         set.</para>
       </listitem>
     </itemizedlist>
      </listitem>
     <listitem>
   <para xml:id="JCR.SetOffsetandSetLimit.RepositoryStructure">
-    <emphasis role="bold">Repository structure</emphasis>: Repository contains mix:title nodes where jcr:title has different
+    <emphasis role="bold">Repository structure</emphasis>: Repository contains mix:title nodes where <parameter>jcr:title</parameter> has different
     values.
   </para>
 
@@ -102,8 +102,8 @@ if(it.hasNext())
    Node findedNode = it.nextNode();
 }</programlisting>
 
-    <para>In usual case (without using setOffset and setLimit methods), Node
-    iterator returns all nodes (node1...node6). But in our case NodeIterator
+    <para>In usual case (without using the <parameter>setOffset</parameter> and <parameter>setLimit</parameter> methods), Node
+    iterator returns all nodes (node1...node6). But in this case, NodeIterator
     will return "node2","node3" and "node4".</para>
 
     <para>\[node1 <emphasis role="bold">node2</emphasis> <emphasis

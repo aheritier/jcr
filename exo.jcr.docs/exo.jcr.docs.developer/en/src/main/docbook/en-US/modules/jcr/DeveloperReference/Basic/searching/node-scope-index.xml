@@ -4,11 +4,11 @@
 <section id="JCR.NodeScopeIndex">
   <title>Exclusion from node scope index</title>
 
-  <para>In this example, we will exclude some 'text' property of
-  nt:unstructured node from indexing. And, therefore, node will not be found
+  <para>This example will exclude some 'text' property of the
+  <parameter>nt:unstructured</parameter> node from indexing. Therefore, node will not be found
   by the content of this property, even if it accepts all constraints.</para>
 
-  <para>First of all, add rules to indexing-configuration.xml:</para>
+  <para>First of all, add rules to the <filename>indexing-configuration.xml</filename> file:</para>
 
   <programlisting language="xml">&lt;index-rule nodeType="nt:unstructured" condition="@rule='nsiTrue'"&gt;
     &lt;!-- default value for nodeScopeIndex is true --&gt;
@@ -31,8 +31,8 @@
     </citetitle>
   </para>
 
-    <para>Repository contains the "nt:unstructured" nodes, with same 'text' property
-    and different 'rule' properties (even null)</para>
+    <para>Repository contains the "<parameter>nt:unstructured</parameter>" nodes with the same 'text' property
+    and different 'rule' properties (even null).</para>
 
     <itemizedlist>
       <listitem>
@@ -97,7 +97,7 @@ QueryResult result = query.execute();</programlisting>
     </citetitle>
   </para>
 
-    <para>Let's get nodes:</para>
+    <para>Get nodes:</para>
 
     <programlisting language="java">NodeIterator it = result.getNodes();
 
@@ -109,7 +109,7 @@ if(it.hasNext())
     <para>NodeIterator will return "node1" and "node3". Node2, as you see, is
     not in result set.</para>
 
-    <para>Also, we can get a table:</para>
+    <para>Also, you can get a table:</para>
 
     <programlisting language="java">String[] columnNames = result.getColumnNames();
 RowIterator rit = result.getRows();

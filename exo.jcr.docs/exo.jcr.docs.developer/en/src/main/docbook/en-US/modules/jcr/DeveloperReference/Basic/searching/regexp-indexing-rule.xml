@@ -4,10 +4,10 @@
 <section id="JCR.RegexpIndexingRule">
   <title>Regular expressions as property name in indexing rule</title>
 
-  <para>In this example, we want to configure indexing in the next way. All
-  properties of nt:unstructured nodes must be excluded from search, except
-  properties whoes names ends with 'Text' string. First of all, add rules to
-  indexing-configuration.xml:</para>
+  <para>This example explains how to configure indexing in the next way. All
+  properties of <parameter>nt:unstructured</parameter> nodes must be excluded from search, except
+  properties whoes names end with the 'Text' string. First of all, add rules to
+  the <filename>indexing-configuration.xml</filename> file:</para>
 
   <programlisting language="xml">&lt;index-rule nodeType="nt:unstructured""&gt;
    &lt;property isRegexp="true"&gt;.*Text&lt;/property&gt;
@@ -18,8 +18,8 @@
     Configuration</link></para>
   </note>
 
-  <para>Now, let's check this rule with simple query - select all nodes with
-  primary type 'nt:unstructured' and containing 'quick' string (fulltext
+  <para>Now, check this rule with a simple query by selecting all nodes with the <parameter>'nt:unstructured'</parameter>
+  primary type and with the '<parameter>quick'</parameter> string (fulltext
   search by full node).</para>
 
   <para xml:id="JCR.RegexpIndexingRule.RepositoryStructure">
@@ -28,8 +28,8 @@
     </citetitle>
   </para>
 
-    <para>Repository contains "nt:unstructured" nodes, with different
-    'text'-like named properties</para>
+    <para>Repository contains the "<parameter>nt:unstructured</parameter>" nodes with different
+    'text'-like named properties.</para>
 
     <itemizedlist>
       <listitem>
@@ -94,7 +94,7 @@ QueryResult result = query.execute();</programlisting>
     </citetitle>
   </para>
 
-  <para>Let's get nodes:</para>
+  <para>Get nodes:</para>
 
     <programlisting language="java">NodeIterator it = result.getNodes();
 
@@ -106,7 +106,7 @@ if(it.hasNext())
     <para>NodeIterator will return "node1" and "node2". "node3", as you see,
     is not in result set.</para>
 
-    <para>Also, we can get a table:</para>
+    <para>Also, you can get a table:</para>
 
     <programlisting language="java">String[] columnNames = result.getColumnNames();
 RowIterator rit = result.getRows();

@@ -8,7 +8,7 @@
     <itemizedlist>
       <listitem>
         <para>
-          <emphasis role="bold"><link linkend="JCR.UsingJCR">Use JCR</link></emphasis>
+          <emphasis role="bold"><link linkend="JCR.UsingJCR">Using JCR</link></emphasis>
         </para>
         <para>Instructions on how to use JCR, such as how to obtain a Repository object, JCR Session common considerations and
         JCR Application practices.</para>

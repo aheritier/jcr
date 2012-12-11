@@ -10,7 +10,7 @@
   Repository</link>).</para>
 
   <para>The goal of this query is to find words "eXo" and "implementation"
-  with fulltext search and high-light this words in result value.</para>
+  with fulltext search and high-light these words in the result value.</para>
 
   <para xml:id="JCR.SearchResultHighlighting.BaseInfo">
     <citetitle>
@@ -18,8 +18,8 @@
     </citetitle>
   </para>
 
-    <para>High-lighting is not default feature so we must set it in
-    jcr-config.xml, also excerpt provider must be defined:</para>
+    <para>High-lighting is not the default feature so you must set it in
+    <filename>jcr-config.xml</filename>, also excerpt provider must be defined:</para>
 
     <programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
    &lt;properties&gt;
@@ -30,13 +30,13 @@
    &lt;properties&gt;
 &lt;/query-handler&gt;</programlisting>
 
-    <para>Also, remember that we can make indexing rules, as in the example
+    <para>Also, remember that you can make indexing rules as in the example
     below:</para>
 
-    <para>Let's write rule for all nodes with primary node type
-    'nt:unstructed' where property 'rule' equal to "excerpt" string. For those
-    nodes, we will exclude property "title" from high-lighting and set "text"
-    property as highlightable. Indexing-configuration.xml must containt the
+    <para>Write rules for all nodes with the <parameter>'nt:unstructed'</parameter> primary node type
+    where '<parameter>rule</parameter>' property equals to the "<parameter>excerpt</parameter>" string. For those
+    nodes, you will exclude the "<parameter>title</parameter>" property from high-lighting and set the "<parameter>text</parameter>"
+    property as highlightable. <filename>Indexing-configuration.xml</filename> must contain the
     next rule:</para>
 
     <programlisting language="xml">&lt;index-rule nodeType="nt:unstructured" condition="@rule='excerpt'"&gt;
@@ -50,7 +50,7 @@
     </citetitle>
   </para>
 
-    <para>We have single node with primary type 'nt:unstructured'</para>
+    <para>You have a single node with the <parameter>'nt:unstructured'</parameter> primary type.</para>
 
     <itemizedlist>
       <listitem>
@@ -110,7 +110,7 @@ QueryResult result = query.execute();</programlisting>
     </citetitle>
   </para>
 
-    <para>Now let's see on the result table:</para>
+    <para>Now, see on the result table:</para>
 
     <programlisting language="java">String[] columnNames = result.getColumnNames();
 RowIterator rit = result.getRows();
@@ -151,9 +151,9 @@ while (rit.hasNext())
       </tgroup>
     </table>
 
-    <para>As you see, words "eXo" and "implementation" is highlighted.</para>
+    <para>As you see, words "eXo" and "implementation" are highlighted.</para>
 
-    <para>Also, we can get exactly "rep:excerpt" value:</para>
+    <para>Also, you can get exactly the "<parameter>rep:excerpt</parameter>" value:</para>
 
     <programlisting language="java">RowIterator rows = result.getRows();
 Value excerpt = rows.nextRow().getValue("rep:excerpt(.)");

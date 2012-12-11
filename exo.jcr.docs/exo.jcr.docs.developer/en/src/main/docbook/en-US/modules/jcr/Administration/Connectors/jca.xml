@@ -79,8 +79,7 @@
             <entry>In case of the portal mode, if no portal container can be
             found in the context of the request, the adapter will use the
             value of this parameter to get the name of the expected portal
-            container to create the JCR sessions. In case of a standalone
-            mode, this parameter is not used. This parameter is optional. By
+            container to create the JCR sessions. This parameter is optional. By
             default, the default portal container will be used.</entry>
           </row>
 

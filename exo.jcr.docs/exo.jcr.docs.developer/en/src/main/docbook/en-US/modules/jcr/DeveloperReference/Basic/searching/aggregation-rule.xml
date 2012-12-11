@@ -4,19 +4,19 @@
 <section id="JCR.AggregationRule">
   <title>Find nt:file document by content of child jcr:content node</title>
 
-  <para>The node type nt:file represents a file. It requires a single child
-  node, called jcr:content. This node type represents images and other binary
-  content in a JCRWiki entry. The node type of jcr:conent is nt:resource which
+  <para>The <parameter>nt:file</parameter> node type represents a file. It requires a single child
+  node called <parameter>jcr:content</parameter>. This node type represents images and other binary
+  content in a JCRWiki entry. The node type of <parameter>jcr:content</parameter> is <parameter>nt:resource</parameter> which
   represents the actual content of a file.</para>
 
-  <para>Find node with the primary type is 'nt:file' and which whose
-  'jcr:content' child node contains "cats".</para>
+  <para>Find node with the primary type is '<parameter>nt:file</parameter>' and which whose
+  '<parameter>jcr:content</parameter>' child node contains "cats".</para>
 
-  <para>Normally, we can't find nodes (in our case) using just JCR SQL or
-  XPath queries. But we can configure indexing so that nt:file aggregates
-  jcr:content child node.</para>
+  <para>Normally, you cannot find nodes (in this case) using just JCR SQL or
+  XPath queries. But you can configure indexing so that <parameter>nt:file</parameter> aggregates
+  <parameter>jcr:content</parameter> child node.</para>
 
-  <para>So, change indexing-configuration.xml:</para>
+  <para>So, change <filename>indexing-configuration.xml</filename>:</para>
 
   <programlisting language="xml">&lt;?xml version="1.0"?&gt;
 &lt;!DOCTYPE configuration SYSTEM "http://www.exoplatform.org/dtd/indexing-configuration-1.2.dtd"&gt;
@@ -29,10 +29,10 @@
     &lt;/aggregate&gt;
 &lt;/configuration&gt;</programlisting>
 
-  <para>Now the content of 'nt:file' and 'jcr:content' ('nt:resource') nodes
-  are concatenated in a single Lucene document. Then, we can make a fulltext
-  search query by content of 'nt:file'; this search includes the content of
-  child 'jcr:content' node.</para>
+  <para>Now the content of '<parameter>nt:file</parameter>' and '<parameter>jcr:content</parameter>' ('<parameter>nt:resource</parameter>') nodes
+  are concatenated in a single Lucene document. Then, you can make a fulltext
+  search query by content of '<parameter>nt:file</parameter>'. This search includes the content of
+ '<parameter>jcr:content</parameter>' child node.</para>
 
   <para xml:id="JCR.AggregationRule.RepositoryStructure">
     <citetitle>
@@ -40,7 +40,7 @@
     </citetitle>
   </para>
 
-    <para>Repository contains different nt:file nodes.</para>
+    <para>Repository contains different <parameter>nt:file</parameter> nodes.</para>
 
     <itemizedlist>
       <listitem>

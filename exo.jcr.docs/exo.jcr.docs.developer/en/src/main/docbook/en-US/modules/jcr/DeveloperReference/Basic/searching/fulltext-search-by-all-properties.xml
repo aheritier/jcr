@@ -4,7 +4,7 @@
 <section id="JCR.FulltextSearchByAllProperties">
   <title>Fulltext search by all properties</title>
 
-  <para>Find nodes with the 'mix:title' mixin type where any property contains
+  <para>Find nodes with the 'mix:title' mixin type where any property contains the
   'break' string.</para>
 
   <para xml:id="JCR.FulltextSearchByAllProperties.RepositoryStructure">

@@ -58,19 +58,19 @@
       <para><parameter>session.checkPermission(&quot;/Groups/organization&quot;,
         &quot;add_node,set_property&quot;)</parameter> will check if the session is allowed to add a
         child node to &quot;organization&quot; and to modify its properties. If one of
-        the two permissions is denied, an AccessDeniedException is
+        the two permissions is denied, an <parameter>AccessDeniedException</parameter> is
         thrown.
       </para>
     </listitem>
     <listitem>
       <para><parameter>session.checkPermission(&quot;/Groups/organization/exo:name&quot;,
         &quot;read,set_property&quot;)</parameter> will check if the session is allowed to read and
-        change the &quot;exo:name&quot; property of the &quot;organization&quot; node.
+        change the &quot;<parameter>exo:name</parameter>&quot; property of the &quot;<parameter>organization</parameter>&quot; node.
       </para>
     </listitem>
     <listitem>
       <para><parameter>session.checkPermission(&quot;/Groups/organization/exo:name&quot;,
-        &quot;remove&quot;)</parameter> will check if the session allowed to remove &quot;exo:name&quot;
+        &quot;remove&quot;)</parameter> will check if the session allows removing the &quot;<parameter>exo:name</parameter>&quot;
         property or node.
       </para>
     </listitem>

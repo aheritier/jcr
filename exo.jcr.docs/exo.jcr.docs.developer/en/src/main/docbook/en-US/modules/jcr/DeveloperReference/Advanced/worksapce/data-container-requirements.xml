@@ -16,7 +16,7 @@
 
       <itemizedlist>
         <listitem>
-          <para>Read ItemData from the storage by item identifier.</para>
+          <para>Read <parameter>ItemData</parameter> from the storage by item identifier.</para>
         </listitem>
       </itemizedlist>
 
@@ -25,7 +25,7 @@
 
       <itemizedlist>
         <listitem>
-          <para>Read ItemData from the storage by using the parent and name of
+          <para>Read <parameter>ItemData </parameter> from the storage by using the parent and name of
           the item, related to the parent location.</para>
         </listitem>
       </itemizedlist>
@@ -35,7 +35,7 @@
 
       <itemizedlist>
         <listitem>
-          <para>Read List of NodeData from the storage by using the parent
+          <para>Read <parameter>List</parameter> of <parameter>NodeData</parameter> from the storage by using the parent
           location of the item.</para>
         </listitem>
       </itemizedlist>
@@ -45,7 +45,7 @@
 
       <itemizedlist>
         <listitem>
-          <para>Reads List of PropertyData from the storage by using the
+          <para>Read <parameter>List</parameter> of <parameter>PropertyData</parameter> from the storage by using the
           parent location of the item.</para>
         </listitem>
       </itemizedlist>
@@ -55,12 +55,12 @@
 
       <itemizedlist>
         <listitem>
-          <para>Reads List of PropertyData with empty ValueData from the
+          <para>Read <parameter>List</parameter> of <parameter>PropertyData</parameter> with the empty <parameter>ValueData</parameter> from the
           storage by using the parent location of the item.</para>
         </listitem>
       </itemizedlist>
 
-      <para>This methiod specially dedicated for non-content modification
+      <para>This method specially dedicated for non-content modification
       operations (e.g. Items delete).</para>
 
       <programlisting language="java">List&lt;PropertyData&gt; listChildPropertiesData(NodeData parent) throws RepositoryException, IllegalStateException;
@@ -68,13 +68,13 @@
 
       <itemizedlist>
         <listitem>
-          <para>Reads List of PropertyData from the storage by using the
+          <para>Read <parameter>List</parameter> of <parameter>PropertyData </parameter> the storage by using the
           parent location of the item.</para>
         </listitem>
       </itemizedlist>
 
-      <para>It's REFERENCE type: Properties referencing Node with given
-      nodeIdentifier. See more in javax.jcr.Node.getReferences()</para>
+      <para>It is the REFERENCE type: Properties referencing Node with the given
+      <parameter>nodeIdentifier</parameter>. See more in <parameter>javax.jcr.Node.getReferences()</parameter></para>
 
       <programlisting language="java">List&lt;PropertyData&gt; getReferencesData(String nodeIdentifier) throws RepositoryException,IllegalStateException,UnsupportedOperationException;
 </programlisting>
@@ -87,7 +87,7 @@
 
       <itemizedlist>
         <listitem>
-          <para>Add single NodeData.</para>
+          <para>Add single <parameter>NodeData</parameter>.</para>
         </listitem>
       </itemizedlist>
 
@@ -96,7 +96,7 @@
 
       <itemizedlist>
         <listitem>
-          <para>Add single PropertyData.</para>
+          <para>Add single <parameter>PropertyData</parameter>.</para>
         </listitem>
       </itemizedlist>
 
@@ -105,7 +105,7 @@
 
       <itemizedlist>
         <listitem>
-          <para>Update NodeData.</para>
+          <para>Update <parameter>NodeData</parameter>.</para>
         </listitem>
       </itemizedlist>
 
@@ -114,7 +114,7 @@
 
       <itemizedlist>
         <listitem>
-          <para>Update PropertyData.</para>
+          <para>Update <parameter>PropertyData</parameter>.</para>
         </listitem>
       </itemizedlist>
 
@@ -123,7 +123,7 @@
 
       <itemizedlist>
         <listitem>
-          <para>Rename NodeData by using Node identifier and new name and
+          <para>Rename <parameter>NodeData</parameter> by using a Node identifier, a new name and
           indexing from the data.</para>
         </listitem>
       </itemizedlist>
@@ -133,7 +133,7 @@
 
       <itemizedlist>
         <listitem>
-          <para>Delete NodeData.</para>
+          <para>Delete <parameter>NodeData</parameter>.</para>
         </listitem>
       </itemizedlist>
 
@@ -142,7 +142,7 @@
 
       <itemizedlist>
         <listitem>
-          <para>Delete PropertyData.</para>
+          <para>Delete <parameter>PropertyData</parameter>.</para>
         </listitem>
       </itemizedlist>
 
@@ -152,7 +152,7 @@
       <itemizedlist>
         <listitem>
           <para>Persist changes and closes connection. It can be database
-          transaction commit for instance etc.</para>
+          transaction commit for instance.</para>
         </listitem>
       </itemizedlist>
 
@@ -162,16 +162,16 @@
       <itemizedlist>
         <listitem>
           <para>Refuse persistent changes and closes connection. It can be
-          database transaction rollback for instance etc.</para>
+          database transaction rollback for instance.</para>
         </listitem>
       </itemizedlist>
 
       <programlisting language="java">void rollback() throws IllegalStateException, RepositoryException;
 </programlisting>
 
-      <para>All methods throw IllegalStateException if connection is closed.
-      UnsupportedOperationException if the method is not supported (e.g. JCR
-      Level 1 implementation etc). RepositoryException if some errors occur
+      <para>All methods throw <parameter>IllegalStateException</parameter> if connection is closed,
+      <parameter>UnsupportedOperationExceptio</parameter> if the method is not supported (e.g. JCR
+      Level 1 implementation etc) and <parameter>RepositoryException</parameter> if some errors occur
       during preparation, validation or persistence.</para>
 
     <para xml:id="JCR.Architecture.Requirements.StateOperations">
@@ -196,7 +196,7 @@
       </para>
 
       <para>Container has to care about storage consistency (JCR constraints)
-      on write operations: (InvalidItemStateException should be thrown
+      on write operations: (<parameter>InvalidItemStateException</parameter> should be thrown
       according the spec). At least, the following checks should be
       performed:</para>
 
@@ -233,7 +233,7 @@
             </listitem>
 
             <listitem>
-              <para>Can not delete parent till children exists.</para>
+              <para>Cannot delete parent till children exists.</para>
             </listitem>
           </itemizedlist>
         </listitem>
@@ -249,7 +249,7 @@
             </listitem>
 
             <listitem>
-              <para>Item already exists with higher Version. Condition: ID,
+              <para>Item already exists with the higher Version. Condition: ID,
               Version (Some Session had updated Item with ID prior this
               update).</para>
             </listitem>
@@ -269,6 +269,6 @@
       role="bold">before</emphasis> the future <emphasis
       role="bold">Commit</emphasis> and another next operation <emphasis
       role="bold">fails</emphasis>. <emphasis role="bold">It should be
-      possible to</emphasis> rollback applied changes using <emphasis
+      possible to</emphasis> rollback applied changes using the <emphasis
       role="bold">Rollback</emphasis> command.</para>
 </section>

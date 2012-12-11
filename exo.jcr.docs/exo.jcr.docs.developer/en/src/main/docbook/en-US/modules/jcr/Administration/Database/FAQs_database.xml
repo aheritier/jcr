@@ -127,7 +127,7 @@
         <para>Order by jcr:path</para>
         <para>If no order specification is supplied in the query statement,
           implementations may support document order on the result nodes (see
-          6.6.4.2 Document Order), and it is sorted by order number.
+          6.6.4.2 Document Order of <ulink url="http://jcp.org/en/jsr/detail?id=170">JSR-170</ulink>), and it is sorted by order number.
         </para>
         <para>By default, (if query does not contain any ordering statements)
           result nodes are sorted by the document order.

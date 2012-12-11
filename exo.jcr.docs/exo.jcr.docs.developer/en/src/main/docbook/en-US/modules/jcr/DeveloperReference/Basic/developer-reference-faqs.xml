@@ -28,22 +28,22 @@
         <para><emphasis role="bold">What should I use to check if an Item exists before getting the Value?</emphasis></para>
       </question>
       <answer>
-        <para>Use Session.itemExists(String absPath), Node.hasNode(String
-          relPath) or Property.hasProperty(String name). It's also possible
-          to check Node.hasNodes() and Node.hasProprties().
+        <para>Use <parameter>Session.itemExists(String absPath)</parameter>, <parameter>Node.hasNode(String
+          relPath)</parameter> or <parameter>Property.hasProperty(String name)</parameter>. It is also possible
+          to check <parameter>Node.hasNodes()</parameter> and <parameter>Node.hasProprties()</parameter>.
         </para>
       </answer>
     </qandaentry>
 
   <qandaentry xml:id="JCR.FAQ.JCR.Core.UsegetNodeByUUID">
       <question>
-            <para><emphasis role="bold">Does it make sense to have all the node referencable to use getNodeByUUID all the time?</emphasis></para>
+            <para><emphasis role="bold">Does it make sense to have all the nodes referable to use <parameter>getNodeByUUID</parameter> all the time?</emphasis></para>
       </question>
 
       <answer>
-        <para>Until it's applicable for a business logic it can be. But take
+        <para>Until it is applicable for a business logic, it can be. But take
           in account the paths are human readable and lets you think in
-          hierarchy. If it's important a location based approach is
+          hierarchy. If it is important, a location based approach is
           preferable.
         </para>
       </answer>
@@ -51,19 +51,19 @@
 
   <qandaentry xml:id="JCR.FAQ.JCR.Core.Session.getNodeByUUIDOrSession.getItem">
       <question>
-        <para><emphasis role="bold">Is it better to use Session.getNodeByUUID or Session.getItem?</emphasis></para>
+        <para><emphasis role="bold">Is it better to use <parameter>Session.getNodeByUUID</parameter> or <parameter>Session.getItem</parameter>?</emphasis></para>
       </question>
 
       <answer>
-        <para>Session.getNodeByUUID() about 2.5 times faster of
-          Session.getItem(String) and only 25% faster of Node.getNode(String).
-          See the daily tests results for such comparisons, e.g.
+        <para><parameter>Session.getNodeByUUID()</parameter> about 2.5 times faster of
+          <parameter>Session.getItem(String)</parameter> and only 25% faster of <parameter>Node.getNode(String)</parameter>.
+          See the daily test results for such comparisons in the following link for an example.
         </para>
 
         <para>
           <ulink
-                  url="http://tests.exoplatform.org/JCR/1.12.2-GA/rev.2442/daily-performance-testing-results/jcr.core./index.html">
-            http://tests.exoplatform.org/JCR/1.12.2-GA/rev.2442/daily-performance-testing-results/jcr.core./index.html
+                  url="http://tests.exoplatform.org/jcr.html">
+            http://tests.exoplatform.org/jcr.html
           </ulink>
         </para>
       </answer>
@@ -74,18 +74,18 @@
 		<para><emphasis role="bold">How to use Observation properly?</emphasis></para>
       </question>
       <answer>
-        <para>JCR Observation's a way to listen on persistence changes of a
+        <para>JCR Observation is a way to listen on persistence changes of a
           Repository. It provides several options to configure the listener for
-          an interesting only changes. To use properly, it's important to
+          an interesting only changes. To use properly, it is important to
           understand concept of events filtering for a registered EventListener
-          (8.3.3 Observation Manager). An often confusing part, it's the
-          <emphasis role="bold">absPath</emphasis>, it's an associated parent of
-          a location you want to observe events on. I.e. it's a parent of child
+          (8.3.3 Observation Manager). An often confusing part, it is the
+          <emphasis role="bold">absPath</emphasis>, it is an associated parent of
+          a location you want to observe events on. For example, it is a parent of child
           node(s) or this parent property(ies); if
           <emphasis
                   role="bold">isDeep
           </emphasis>
-          is true then you'll get events of all
+          is true, then you will get events of all
           the subtree of child nodes also. The same actual for
           <emphasis
                   role="bold">uuid
@@ -95,7 +95,7 @@
                   role="bold">nodeTypeName
           </emphasis>
           parameters of
-          ObservationManager.addEventListener() method.
+          the <parameter>ObservationManager.addEventListener()</parameter> method.
         </para>
       </answer>
     </qandaentry>
@@ -103,8 +103,8 @@
   <qandaentry xml:id="JCR.FAQ.JCR.Core.WhatDefaultQueryOrdering">
       <question><para><emphasis role="bold">What is default query ordering?</emphasis></para></question>
       <answer>
-        <para>By default (if query do not contains any ordering statements)
-          result nodes is sorted by document order.
+        <para>By default, (if query does not contain any ordering statements)
+          result nodes are sorted by document order.
         </para>
       </answer>
   </qandaentry>
@@ -113,10 +113,10 @@
          <para><emphasis role="bold">How eXo JCR indexer uses content encoding?</emphasis></para>
       </question>
       <answer>
-        <para>1. Indexer uses jcr:encoding property of nt:resource node (used
-          as jcr:content child node of nt:file).
+        <para>1. Indexer uses the <parameter>jcr:encoding</parameter> property of the <parameter>nt:resource</parameter> node (used
+          as the <parameter>jcr:content</parameter> child node of <parameter>nt:file</parameter>).
 		</para>
-		<para>2. If no jcr:encoding property
+		<para>2. If no <parameter>jcr:encoding</parameter> property
           set the Document Service will use the one configured in the service
           (defaultEncoding).
 		</para>
@@ -131,7 +131,7 @@
       </question>
       <answer>
         <para>No. Any instance of Session or Node (acquired through session)
-          shouldn't be used after logging out anymore. At least, it is highly
+          should not be used after logging out anymore. At least, it is highly
           recommended not to use.
         </para>
       </answer>

@@ -5,8 +5,8 @@
 <section id="JCR.Extensions">
     <title>JCR service</title>
 
-      <para>eXo JCR supports <emphasis role="bold">observation</emphasis>
-      (JSR-170 8.3), which enables applications to register interest in events
+      <para>eXo JCR supports <emphasis role="bold">observation</emphasis>,
+     which enables applications to register interest in events
       that describe changes to a workspace, and then monitor and respond to
       those events. The standard observation feature allows dispatching events
       when <emphasis role="bold">persistent change</emphasis> to the workspace
@@ -17,17 +17,17 @@
       <emphasis role="bold">transient session level change</emphasis>,
       performed by a client. In other words, the event is triggered when a
       client's program invokes some updating methods in a session or a
-      workspace (such as: Session.addNode(), Session.setProperty(),
-      Workspace.move() etc.</para>
+      workspace, such as <parameter>Session.addNode()</parameter>, <parameter>Session.setProperty()</parameter>,
+      <parameter>Workspace.move()</parameter> and more.</para>
 
       <para>One important recommendation should be applied for an extension
       action implementation. Each action will add its own execution time to
-      standard JCR methods (Session.addNode(), Session.setProperty(),
-      Workspace.move() etc.) execution time. As a consequence, it's necessary
-      to minimize Action.execute(Context) body execution time.</para>
+      standard JCR methods (<parameter>Session.addNode()</parameter>, <parameter>Session.setProperty()</parameter>,
+      <parameter>Workspace.move()</parameter>, and more.) execution time. As a consequence, it is necessary
+      to minimize the <parameter>Action.execute(Context)</parameter> body execution time.</para>
 
       <para>To make the rule, you can use the dedicated Thread in
-      Action.execute(Context) body for a custom logic. But if your application
+      the <parameter>Action.execute(Context)</parameter> body for a custom logic. But if your application
       logic requires the action to add items to a created/updated item and you
       save these changes immediately after the JCR API method call is
       returned, the suggestion with Thread is not applicable for you in this
@@ -81,19 +81,17 @@
 
       <para>Add a <emphasis role="bold">SessionActionCatalog</emphasis>
       service and an appropriate <emphasis
-      role="bold">AddActionsPlugin</emphasis> (see the example below)
+      role="bold">AddActionsPlugin</emphasis>
       configuration to your eXo Container configuration. As usual, the plugin
-      can be configured as in-component-place, which is the case for a
-      Standalone Container or externally, which is a usual case for
+      can be configured as in-component-place which is a usual case for
       Root/Portal Container configuration).</para>
 
       <para>Each Action entry is exposed as
-      org.exoplatform.services.jcr.impl.ext.action. <emphasis
-      role="bold">ActionConfiguration</emphasis> of actions collection of
-      org.exoplatform.services.jcr.impl.ext.action.AddActionsPlugin$ActionsConfig
-      (see an example below). The mandatory field named <emphasis
+      <parameter>org.exoplatform.services.jcr.impl.ext.action.ActionConfiguration</parameter> of the actions collection of
+      <parameter>org.exoplatform.services.jcr.impl.ext.action.AddActionsPlugin$ActionsConfig</parameter>.
+      The mandatory field named <emphasis
       role="bold">actionClassName</emphasis> is the fully qualified name of
-      org.exoplatform.services.command.action.Action implementation - the
+      <parameter>org.exoplatform.services.command.action.Action</parameter> implementation - the
       command will be launched in case the current event matches the <emphasis
       role="bold">criteria</emphasis>. All other fields are criteria. The
       criteria are *AND*ed together. In other words, for a particular item to
@@ -105,7 +103,7 @@
 			</listitem>
 
 			<listitem>
-				<para><parameter>eventTypes</parameter>: A comma delimited (ORed) <emphasis role="bold">list of event names</emphasis> (see below)
+				<para><parameter>eventTypes</parameter>: A comma delimited (ORed) <emphasis role="bold">list of event names</emphasis>
 				to be listened to. This is the only mandatory field, others are optional
 				and if they are missing they are interpreted as ANY.</para>
 			</listitem>
@@ -116,8 +114,8 @@
 			</listitem>
 			<listitem>
 				<para><parameter>nodeTypes</parameter>: A comma delimited (ORed) list of the <emphasis role="bold">current NodeType</emphasis>.
-				Since version 1.6.1 JCR supports the functionalities of nodeType and
-			parentNodeType. This parameter has different semantics, depending on the
+				JCR supports the functionality of <parameter>nodeType</parameter> and
+			<parameter>parentNodeType</parameter>. This parameter has different semantics, depending on the
 			type of the current item and the operation performed.</para>
 				<itemizedlist>
 					<listitem>
@@ -156,7 +154,7 @@
       <listitem>
         <para>
           <emphasis role="bold">isDeep=false</emphasis>
-          means<emphasis role="bold">node,
+          means <emphasis role="bold">node,
           node properties and child nodes</emphasis>.
         </para>
       </listitem>
@@ -165,7 +163,7 @@
 
       <para>The list of supported Event names: <emphasis role="bold">addNode,
       addProperty, changeProperty, removeProperty, removeNode, addMixin,
-      removeMixin, lock, unlock, checkin, checkout, read.</emphasis></para>
+      removeMixin, lock, unlock, checkin, checkout, read</emphasis>.</para>
 
 <programlisting language="xml">&lt;component&gt;
    &lt;type&gt;org.exoplatform.services.jcr.impl.ext.action.SessionActionCatalog&lt;/type&gt;

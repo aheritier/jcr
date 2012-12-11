@@ -31,8 +31,8 @@
     </citetitle>
   </para>
 
-    <para>Repository contains node, with string property "The quick brown fox
-    jumps over the lazy dog."</para>
+    <para>Repository contains node with the "<emphasis>The quick brown fox
+    jumps over the lazy dog</emphasis>" string property.</para>
 
     <itemizedlist>
       <listitem>
@@ -53,7 +53,7 @@
     </citetitle>
   </para>
 
-    <para>Query looks only for root node, because spell checker looks for
+    <para>Query looks for the root node only, because spell checker looks for
     suggestions by full index. So complicated query is redundant.</para>
 
     <itemizedlist>

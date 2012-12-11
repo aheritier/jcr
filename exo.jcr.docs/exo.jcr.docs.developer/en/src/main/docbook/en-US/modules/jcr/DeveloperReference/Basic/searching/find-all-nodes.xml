@@ -111,7 +111,7 @@ while (rit.hasNext())
    Value[] values = row.getValues();
 }</programlisting>
 
-    <para>Table content is</para>
+    <para>Table content is:</para>
 
     <table>
       <title>Table content</title>

@@ -12,6 +12,8 @@
       <para>From an XML document (stream).</para>
     </listitem>
   </itemizedlist>
+  <para>This section shows you how to define and register a node type via different manners. Also, you will know how to
+  change and remove a node type and more other instructions.</para>
 
   <!--3.1.2.2.1. Interfaces and methods-->
   <section id="JCR.NodeTypeRegistration.InterfacesAndMethods">
@@ -23,7 +25,7 @@
         <emphasis role="bold">ExtendedNodeTypeManager</emphasis>
       </citetitle>
     </para>
-      <para>The <parameter>ExtendedNodeTypeManager</parameter> (from JCR 1.11) interface provides the
+      <para>The <parameter>ExtendedNodeTypeManager</parameter> interface provides the
       following methods related to registering node types:</para>
 <programlisting language="java">public static final int IGNORE_IF_EXISTS  = 0;
 
@@ -167,7 +169,7 @@ public void setDeclaredPropertyDefinitionValues(List&lt;PropertyDefinitionValue&
       <para>The <parameter>NodeDefinitionValue</parameter> interface extends <parameter>ItemDefinitionValue</parameter> with
       the addition of writing methods, enabling the characteristics of a child
       node definition to be set, after that, the <parameter>NodeDefinitionValue</parameter> is added
-      to a NodeTypeValue.</para>
+      to a <parameter>NodeTypeValue</parameter>.</para>
 <programlisting language="java">/**
  * @return Returns the declaredSupertypeNames.
  */
@@ -251,10 +253,10 @@ public void setDeclaredPropertyDefinitionValues(List&lt;PropertyDefinitionValue&
       </citetitle>
     </para>
 
-      <para>The <parameter>PropertyDefinitionValue</parameter> interface extends ItemDefinitionValue
+      <para>The <parameter>PropertyDefinitionValue</parameter> interface extends <parameter>ItemDefinitionValue</parameter>
       with the addition of writing methods, enabling the characteristics of a
       child property definition to be set, after that, the
-      <parameter>PropertyDefinitionValue</parameter> is added to a NodeTypeValue.</para>
+      <parameter>PropertyDefinitionValue</parameter> is added to a <parameter>NodeTypeValue</parameter>.</para>
 
 <programlisting language="java">/**
  * @return Returns the defaultValues.
@@ -490,30 +492,30 @@ nodeTypeManager.registerNodeType(myNodeTypeValue, ExtendedNodeTypeManager.REPLAC
       data.</para>
 	</note>
       <example>
-      <title>Add a  new residual property definition with name &quot;downloadCount&quot; to
-      the existing node type &quot;myNodeType&quot;.</title>
-      <para>There are two limitations that do not allow you to make the task with a single call of <parameter>registerNodeType</parameter> method.</para>
+      <title>Add a  new residual property definition with the &quot;downloadCount&quot; name to
+      the &quot;myNodeType&quot; existing node type.</title>
+      <para>There are two limitations that do not allow you to make the task with a single call of the <parameter>registerNodeType</parameter> method.</para>
       <itemizedlist>
         <listitem>
-          <para>Existing nodes of the &quot;myNodeType&quot; type, which does not
-          contain the &quot;downloadCount&quot; property that conflict with your needed node type.</para>
+          <para>Existing nodes of the &quot;<parameter>myNodeType</parameter>&quot; type, which does not
+          contain the &quot;<parameter>downloadCount</parameter>&quot; property that conflicts with your needed node type.</para>
         </listitem>
         <listitem>
-          <para>Registered node type &quot;myNodeType&quot; will not allow you to add the &quot;downloadCount&quot;  property because it has no such specific
+          <para>The &quot;<parameter>myNodeType></parameter>&quot; registered node type will not allow you to add the &quot;<parameter>downloadCount</parameter>&quot; property because it has no such specific
           properties.</para>
         </listitem>
       </itemizedlist>
       <para>To complete the task, you need to do the following steps:</para>
       <procedure>
         <step>
-          <para>Change the existing node type &quot;myNodeType&quot; by adding the 
-          mandatory &quot;downloadCount&quot; property.</para>
+          <para>Change the &quot;<parameter>myNodeType</parameter>&quot; existing node type by adding the
+          mandatory &quot;<parameter>downloadCoun</parameter>&quot; property.</para>
         </step>
         <step>
-          <para>Add  the node type &quot;myNodeType&quot; with the &quot;downloadCount&quot; property to all the existing node types.</para>
+          <para>Add the &quot;<parameter>myNodeType</parameter>&quot; node type with the &quot;<parameter>downloadCount</parameter>&quot; property to all the existing node types.</para>
         </step>
         <step>
-          <para>Change the definition of the &quot;downloadCount&quot; property of the node type &quot;myNodeType&quot; to mandatory.</para>
+          <para>Change the definition of the &quot;<parameter>downloadCount</parameter>&quot; property of the node type &quot;<parameter>myNodeType</parameter>&quot; to mandatory.</para>
         </step>
       </procedure>
 	</example>

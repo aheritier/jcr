@@ -12,7 +12,7 @@
     Content</link>.</para>
   </note>
 
-  <para>The synonym provider must be configured in <filename>indexing-configuration.xml</filename>:</para>
+  <para>The synonym provider must be configured in the <filename>indexing-configuration.xml</filename> file:</para>
 
   <programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
    &lt;properties&gt;
@@ -23,7 +23,7 @@
    &lt;/properties&gt;
 &lt;/query-handler&gt;</programlisting>
 
-  <para>The <filename>synonym.properties</filename> file contains next synonyms list:</para>
+  <para>The <filename>synonym.properties</filename> file contains the next synonyms list:</para>
 
   <programlisting>ASF=Apache Software Foundation
 quick=fast
@@ -35,7 +35,7 @@ sluggish=lazy</programlisting>
     </citetitle>
   </para>
 
-    <para>Repository contains mix:title nodes, where jcr:title has different
+    <para>Repository contains <parameter>mix:title</parameter> nodes, where <parameter>jcr:title</parameter> has different
     values.</para>
 
     <itemizedlist>
@@ -83,7 +83,7 @@ QueryResult result = query.execute();</programlisting>
     </citetitle>
   </para>
 
-    <para>Let's get nodes:</para>
+    <para>Get nodes:</para>
 
     <programlisting language="java">NodeIterator it = result.getNodes();
 

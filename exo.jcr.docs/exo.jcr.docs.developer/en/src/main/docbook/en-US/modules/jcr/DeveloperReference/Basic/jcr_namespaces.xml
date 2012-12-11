@@ -36,7 +36,7 @@
     <emphasis role="bold">Namespaces altering</emphasis>
   </citetitle>
   </para>
-  <para>Since version 1.11, the JCR implementation supports the namespaces altering.</para>
+  <para>The JCR implementation supports the namespaces altering.</para>
 
   <itemizedlist>
     <listitem>

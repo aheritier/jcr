@@ -5,30 +5,30 @@
   <title>Order by path or name</title>
 
   <warning>
-    <para>Ordering by jcr:path or jcr:name does not supported.</para>
+    <para>Ordering by <paramter>jcr:path</paramter> or <paramter>jcr:name</paramter> does not supported.</para>
   </warning>
 
-  <para>There is two ways to order results, when path may be used as
+  <para>There are two ways to order results, when path may be used as
   criteria:</para>
 
   <itemizedlist>
     <listitem>
-      <para>Order by property with value type NAME or PATH (jcr supports
+      <para>Order by property with the NAME or PATH value type (JCR supports
       it)</para>
     </listitem>
 
     <listitem>
-      <para>Order by jcr:path or jcr:name - sort by exact path or name of node
-      (jcr do not supports it)</para>
+      <para>Order by <paramter>jcr:path </paramter> or <paramter>jcr:name</paramter> - sort by the exact path or name of node
+      (JCR does not support it).</para>
     </listitem>
   </itemizedlist>
 
   <para>If no order specification is supplied in the query statement,
-  implementations may support document order on the result nodes (see jsr-170
-  / 6.6.4.2 Document Order). And it's sorted by order number.</para>
+  implementations may support document order on the result nodes (see
+ the 6.6.4.2 Document Order section of <ulink url="http://www.jcp.org/en/jsr/detail?id=170">JSR-170</ulink>), and it is sorted by order number.</para>
 
-  <para>By default, (if query do not contains any ordering statements) result
-  nodes is sorted by document order.</para>
+  <para>By default, (if query does not contain any ordering statements) result
+  nodes are sorted by document order.</para>
 
   <programlisting>SELECT * FROM nt:unstructured WHERE jcr:path LIKE 'testRoot/%'</programlisting>
 </section>

@@ -50,42 +50,35 @@
       </listitem>
 
       <listitem>
-        <para>Start a new implementation project pom.xml with
+        <para>Start a new implementation project <filename>pom.xml</filename> with
         <emphasis>org.exoplatform.jcr</emphasis> parent. It is not required, but will ease the development.</para>
       </listitem>
 
       <listitem>
-        <para>Update sources of JCR Core and read JavaDoc on <emphasis
-        role="bold">org.exoplatform.services.jcr.storage.WorkspaceDataContainer</emphasis>
-        and <emphasis
-        role="bold">org.exoplatform.services.jcr.storage.WorkspaceStorageConnection</emphasis>
-        interfaces. They are the main part for the implemenation.</para>
+        <para>Update sources of JCR Core and read JavaDoc on <parameter>org.exoplatform.services.jcr.storage.WorkspaceDataContainer</parameter>
+        and <parameter>org.exoplatform.services.jcr.storage.WorkspaceStorageConnection</parameter>
+        interfaces. They are the main part for the implementation.</para>
       </listitem>
 
       <listitem>
-        <para>Look at <emphasis
-        role="bold">org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspacePersistentDataManager</emphasis>
+        <para>Look at <parameter>org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspacePersistentDataManager</parameter>
         sourcecode, check how data menager uses container and its connections
-        (see in save() method)</para>
+        (see in the <parameter>save()</parameter> method)</para>
       </listitem>
 
       <listitem>
-        <para>Create <emphasis
-        role="bold">WorkspaceStorageConnection</emphasis> dummy implementation
-        class. It's freeform class, but to be close to the eXo JCR, check how
-        to implement JDBC or SimpleDB containers ( <emphasis
-        role="bold">org.exoplatform.services.jcr.impl.storage.jdbc.JDBCStorageConnection</emphasis>
-        and <emphasis
-        role="bold">org.exoplatform.services.jcr.aws.storage.sdb.SDBWorkspaceStorageConnection</emphasis>).
-        Take in account usage of <emphasis
-        role="bold">ValueStoragePluginProvider</emphasis> in both
-        implementations.Value storage is an useful option for production
-        versions. But leave it to the end of implementation work.</para>
+        <para>Create <parameter>WorkspaceStorageConnection</parameter> dummy implementation
+        class. It is a freeform class, but to be close to the eXo JCR, check how
+        to implement JDBC or SimpleDB containers ( <parameter>org.exoplatform.services.jcr.impl.storage.jdbc.JDBCStorageConnection</parameter>
+        and <parameter>org.exoplatform.services.jcr.aws.storage.sdb.SDBWorkspaceStorageConnection</parameter>).
+        Take in account usage of <parameter>ValueStoragePluginProvider</parameter> in both
+        implementations. Value storage is an useful option for production
+        versions, but leave it to the end of the implementation work.</para>
       </listitem>
 
       <listitem>
         <para>Create the connection implementation unit tests to play TTD.
-        (optional, but takes many benefits for the process)</para>
+        (it is optional, but takes many benefits for the process).</para>
       </listitem>
 
       <listitem>
@@ -95,21 +88,21 @@
       </listitem>
 
       <listitem>
-        <para>When all methods of the connection done start <emphasis
+        <para>When all methods of the connection are done, start <emphasis
         role="bold">WorkspaceDataContainer</emphasis>. Container class is very
-        simple, it's like a factory for the connections only.</para>
+        simple, it is like a factory for the connections only.</para>
       </listitem>
 
       <listitem>
-        <para>Care about container reuseConnection(WorkspaceStorageConnection)
-        method logic. For some backends, it cab be same as openConnection(),
-        but for some others, it's important to reuse physical backend
+        <para>Care about the <parameter>reuseConnection(WorkspaceStorageConnection)</parameter>
+        logic container method. For some backends, it can be same as <parameter>openConnection()</parameter>,
+        but for some others, it is important to reuse physical backend
         connection, e.g. to be in the same transaction - see JDBC
         container.</para>
       </listitem>
 
       <listitem>
-        <para>It's almost ready to use in data manager. Start another test and
+        <para>It is almost ready to use in data manager. Start another test and
         go on.</para>
       </listitem>
     </orderedlist>
@@ -118,8 +111,7 @@
     (e.g. for this level testing), it should be configured in Repository
     configuration.</para>
 
-    <para>Assuming that our new implementation class name is <emphasis
-    role="bold">org.project.jcr.impl.storage.MyWorkspaceDataContainer</emphasis>.</para>
+    <para>Assuming that the new implementation class name is <parameter>org.project.jcr.impl.storage.MyWorkspaceDataContainer</parameter>.</para>
 
     <programlisting language="xml">  &lt;repository-service default-repository="repository"&gt;
   &lt;repositories&gt;
@@ -181,8 +173,8 @@ ValueData vdata = channel.read(propertyData.getIdentifier(),  orderNumber,  maxB
     <note>
           <para>After a sequence of write and/or delete operations on the storage
       channel, the channel should be committed (or rolled back on an error).
-      See <emphasis role="bold">ValueIOChannel.commit()</emphasis> and
-      <emphasis role="bold">ValueIOChannel.rollback()</emphasis> and how those
+      See <parameter>ValueIOChannel.commit()</parameter> and
+      <parameter>ValueIOChannel.rollback()</parameter> and how those
       methods are used in the JDBC container.</para>
     </note>
 </section>

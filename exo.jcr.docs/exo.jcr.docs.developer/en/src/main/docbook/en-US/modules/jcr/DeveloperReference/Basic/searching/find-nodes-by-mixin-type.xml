@@ -94,7 +94,7 @@ while (rit.hasNext())
    Value[] values = row.getValues();
 }</programlisting>
 
-    <para>Table content is <table>
+    <para>Table content is:<table>
         <title>Table content</title>
 
         <tgroup cols="4">

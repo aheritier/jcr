@@ -3,7 +3,7 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <!--3.1.1. Use JCR-->
 <section id="JCR.UsingJCR" role="NotInToc">
-  <title>Use JCR</title>
+  <title>Using JCR</title>
 
 <note xml:id="JCR.UsingJCR.JCRSessionCommonConsiderations">
       <title>JCR Session common considerations</title>
@@ -132,7 +132,7 @@
 
       <para>The SessionProvider is a request or user object, depending on your policy. Create it with your application before performing JCR
       operations, then use it to obtain the Sessions and close at the end of an
-      application session(request). See the following example:</para>
+      application session (request). See the following example:</para>
 
 <programlisting language="groovy">// (1) obtain current javax.jcr.Credentials, for example get it from AuthenticationService
 Credentials cred = ....
@@ -174,8 +174,8 @@ Session session = sessionProvider.getSession("workspaceName", repository);
 }</programlisting>
 
       <para>Using this service is pretty straightforward, the main contract of
-      an implemented component is getting a SessionProvider by key. eXo
-      provides two implementations:</para>
+      an implemented component is getting a SessionProvider by key. eXo Platform
+      provides the following implementation:</para>
 
       <table>
         <title>SessionProvider implementations</title>
@@ -192,18 +192,10 @@ Session session = sessionProvider.getSession("workspaceName", repository);
           </thead>
 
           <tbody>
-            <row>
-              <entry><parameter>org.exoplatform.services.jcr.ext.app.MapStoredSessionProviderService</parameter></entry>
-
-              <entry>per-user style: Keep objects in a Map.</entry>
-
-              <entry>per-user: The usual practice uses a user's name or Credentials as a key.</entry>
-            </row>
-
-            <row>
+             <row>
               <entry><parameter>org.exoplatform.services.jcr.ext.app.ThreadLocalSessionProviderService</parameter></entry>
 
-              <entry>per-request style: Keep a single SessionProvider in a static ThreadLocal variable.</entry>
+              <entry>per-request style: Keep a single <parameter>SessionProvider</parameter> in a static <parameter>ThreadLocal</parameter> variable.</entry>
 
               <entry>Always use null for the key.</entry>
             </row>
@@ -211,7 +203,7 @@ Session session = sessionProvider.getSession("workspaceName", repository);
         </tgroup>
       </table>
 
-      <para>For any implementation, your code should follow the following sequence:</para>
+      <para>For the implementation, your code should follow the following sequence:</para>
 
       <itemizedlist>
         <listitem>
@@ -220,7 +212,7 @@ Session session = sessionProvider.getSession("workspaceName", repository);
         </listitem>
 
         <listitem>
-          <para>Call <parameter>SessionProviderService.getSessionProvider(Object key)</parameter> for obtaining a SessionProvider object.</para>
+          <para>Call <parameter>SessionProviderService.getSessionProvider(Object key)</parameter> for obtaining a <parameter>SessionProvider</parameter> object.</para>
         </listitem>
 
         <listitem>

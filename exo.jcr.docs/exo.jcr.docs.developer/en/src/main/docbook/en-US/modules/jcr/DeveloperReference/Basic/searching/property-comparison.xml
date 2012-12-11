@@ -4,7 +4,7 @@
 <section id="JCR.PropertyComparison">
   <title>Property comparison</title>
 
-  <para>Find all nodes with 'mix:title' mixin type where the 'prop_pagecount'
+  <para>Find all nodes with the 'mix:title' mixin type where the 'prop_pagecount'
   property contains a value less than 90. Only select the title of each
   node.</para>
 

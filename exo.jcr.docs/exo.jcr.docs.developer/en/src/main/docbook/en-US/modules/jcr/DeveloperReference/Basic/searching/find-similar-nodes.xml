@@ -4,11 +4,11 @@
 <section id="JCR.FindSimilarNodes">
   <title>Find similar nodes</title>
 
-  <para>Find similar nodes to node by path '/baseFile/jcr:content'.</para>
+  <para>Find similar nodes to node by the '<parameter>/baseFile/jcr:content'</parameter> path.</para>
 
-  <para>In our example, baseFile will contain text where "terms" word happens
-  many times. That's a reason why the existence of this word will be used as a
-  criteria of node similarity (for node baseFile).</para>
+  <para>In this example, the <parameter>baseFile</parameter> node will contain text where "terms" word happens
+  many times. That is a reason why the existence of this word will be used as a
+  criteria of node similarity (for the <parameter>baseFile</parameter> node).</para>
 
   <note>
     <para>See also Similarity and configuration in <link
@@ -16,8 +16,8 @@
     Content</link>.</para>
   </note>
 
-  <para>Highlighting support must be added to configuration.
-  test-jcr-config.xml:</para>
+  <para>Highlighting support must be added to the <filename>test-jcr-config.xml</filename> configuration.
+  file:</para>
 
   <programlisting language="java">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
    &lt;properties&gt;
@@ -33,7 +33,7 @@
     </citetitle>
   </para>
 
-    <para>Repository contains many "nt:file" nodes:</para>
+    <para>Repository contains many "<parameter>nt:file</parameter>" nodes:</para>
 
     <itemizedlist>
       <listitem>
@@ -45,18 +45,29 @@
 
             <itemizedlist>
               <listitem>
-                <para>jcr:content (nt:resource) jcr:data="Similarity is
+                <para><parameter>jcr:content</parameter> (<parameter>nt:resource</parameter>) jcr:data="Similarity" is
                 determined by looking up <emphasis
                 role="bold">terms</emphasis> that are common to nodes. There
                 are some conditions that must be met for a <emphasis
                 role="bold">term</emphasis> to be considered. This is required
                 to limit the number possibly relevant <emphasis
-                role="bold">terms</emphasis>. Only <emphasis
+                role="bold">terms</emphasis>.</para>
+                <itemizedlist>
+                  <listitem>
+                    <para>Only <emphasis
                 role="bold">terms</emphasis> with at least 4 characters are
-                considered. Only <emphasis role="bold">terms</emphasis> that
-                occur at least 2 times in the source node are considered. Only
+                considered.</para>
+                  </listitem>
+                  <listitem>
+                    <para>Only <emphasis role="bold">terms</emphasis> that
+                occur at least 2 times in the source node are considered.</para>
+                  </listitem>
+                  <listitem>
+                    <para> Only
                 <emphasis role="bold">terms</emphasis> that occur in at least
                 5 nodes are considered."</para>
+                  </listitem>
+                </itemizedlist>
               </listitem>
             </itemizedlist>
           </listitem>

@@ -4,43 +4,38 @@
 <section id="JCR.IgnoreAccentSymbols">
   <title>Set new analyzer and ignore accent symbols</title>
 
-  <para>In this example, we will create new Analyzer, set it in QueryHandler
+  <para>In this example, you will create a new Analyzer, set it in the QueryHandler
   configuration, and make query to check it.</para>
 
-  <para>Standard analyzer does not normalize accents like é,è,à. So, a word
-  like 'tréma' will be stored to index as 'tréma'. But if we want to normalize
-  such symbols or not? We want to store 'tréma' word as 'trema'.</para>
+  <para>Standard analyzer does not normalize accents like é,è,à; therefore, a word
+  like 'tréma' will be stored to index as 'tréma'. In case you want to normalize
+  such symbols and want to store 'tréma' word as 'trema', you can do it.</para>
 
-  <para>There is two ways of setting up new Analyzer (no matter standards or
-  our):</para>
+  <para>There are two ways of setting up new Analyzer:</para>
 
   <itemizedlist>
     <listitem>
-      <para>The first way: Create descendant class of SearchIndex with new
+      <para>The first way: Create a descendant class of SearchIndex with a new
       Analyzer (see <link linkend="JCR.SearchConfiguration">Search
       configuration</link>);</para>
     </listitem>
   </itemizedlist>
 
-  <para>There is only one way - create new Analyzer (if there is no previously
-  created and accepted for our needs) and set it in Search index.</para>
+  <para>There is only one way to create a new Analyzer (if there is no previously
+  created and accepted for your needs) and set it in Search index.</para>
 
   <itemizedlist>
     <listitem>
-      <para>The second way: Register new Analyzer in QueryHandler
-      configuration (this one accepted since 1.12 version);</para>
+      <para>The second way: Register a new Analyzer in the QueryHandler
+      configuration;</para>
     </listitem>
   </itemizedlist>
 
-  <para>We will use the last one:</para>
-
-  <itemizedlist>
-    <listitem>
-      <para>Create new MyAnalyzer</para>
-    </listitem>
-  </itemizedlist>
-
-  <programlisting language="java">public class MyAnalyzer extends Analyzer
+  <para>You will use the last one:</para>
+   <procedure>
+           <step>
+       <para>Create new MyAnalyzer</para>
+     <programlisting language="java">public class MyAnalyzer extends Analyzer
 {
    @Override
    public TokenStream tokenStream(String fieldName, Reader reader)
@@ -57,12 +52,9 @@
       return result;
    }
 }</programlisting>
-
-  <itemizedlist>
-    <listitem>
-      <para>Then, register new MyAnalyzer in configuration</para>
-    </listitem>
-  </itemizedlist>
+   </step>
+  <step>
+        <para>Register the new MyAnalyzer in the configuration.</para>
 
   <programlisting language="xml">&lt;workspace name="ws"&gt;
    ...
@@ -74,12 +66,14 @@
    &lt;/query-handler&gt;
    ...
 &lt;/workspace&gt;</programlisting>
+  </step>
+  <step>
+  <para>Check it with query:</para>
 
-  <para>After that, check it with query:</para>
-
-  <para>Find node with mixin type 'mix:title' where 'jcr:title' contains
+  <para>Find nodes with the 'mix:title' mixin type where 'jcr:title' contains the
   "tréma" and "naïve" strings.</para>
-
+    </step>
+  </procedure>
   <para xml:id="JCR.IgnoreAccentSymbols.RepositoryStructure">
     <citetitle>
       <emphasis role="bold">Repository structure</emphasis>
@@ -87,7 +81,7 @@
   </para>
 
     <para>Repository filled by nodes with the 'mix:title' mixin type and different
-    values of 'jcr:title' property.</para>
+    values of the 'jcr:title' property.</para>
 
     <itemizedlist>
       <listitem>

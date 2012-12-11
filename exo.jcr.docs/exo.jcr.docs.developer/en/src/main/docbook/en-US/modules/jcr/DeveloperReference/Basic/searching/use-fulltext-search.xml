@@ -4,7 +4,7 @@
 <!--3.1.5. Use fulltext search-->
 <section id="JCR.UseFulltextSearch" role="NotInToc">
   <title>Use fulltext search</title>
-   <para>In this section, you will discover all features (such as how to activate and use them)  around the <emphasis role="bold">full text search</emphasis> provided out of the box into the product.
+   <para>In this section, you will discover all features around the <emphasis role="bold">full text search</emphasis> provided out of the box into the product.
    </para>
   	<note>
 		<para>You can find the JCR configuration file at
@@ -143,7 +143,7 @@ public interface SynonymProvider {
     <programlisting language="xml">&lt;param name="support-highlighting" value="true"/&gt;</programlisting>
 
     <para>Additionally, there is a parameter that controls the format of the
-    excerpt created. In JCR 1.9, the default is set to
+    excerpt created. In JCR, the default is set to
     <parameter>org.exoplatform.services.jcr.impl.core.query.lucene.DefaultHTMLExcerpt</parameter>.
     The configuration parameter for this setting is:</para>
 
@@ -179,15 +179,15 @@ public interface SynonymProvider {
       form:</para>
 
       <programlisting language="html">&lt;div&gt;
-        &lt;span&gt;
-        &lt;strong&gt;exoplatform&lt;/strong&gt; implements both the mandatory XPath
-        and optional SQL &lt;strong&gt;query&lt;/strong&gt; syntax.
-        &lt;/span&gt;
-        &lt;span&gt;
-        Before parsing the XPath &lt;strong&gt;query&lt;/strong&gt; in
-        &lt;strong&gt;exoplatform&lt;/strong&gt;, the statement is surrounded
-        &lt;/span&gt;
-        &lt;/div&gt;</programlisting>
+  &lt;span&gt;
+     &lt;strong&gt;exoplatform&lt;/strong&gt; implements both the mandatory XPath
+     and optional SQL &lt;strong&gt;query&lt;/strong&gt; syntax.
+  &lt;/span&gt;
+  &lt;span&gt;
+     Before parsing the XPath &lt;strong&gt;query&lt;/strong&gt; in
+     &lt;strong&gt;exoplatform&lt;/strong&gt;, the statement is surrounded
+  &lt;/span&gt;
+&lt;/div&gt;</programlisting>
 
     <para xml:id="JCR.UseFulltextSearch.Highlighting.HowToUseIt">
       <citetitle>
@@ -211,8 +211,8 @@ for (RowIterator it = result.getRows(); it.hasNext(); ) {
        and then gets the value of the <parameter>Title</parameter> property and an excerpt
       for each result node.</para>
 
-      <para>It is also possible to use a relative path in the call
-      <parameter>Row.getValue()</parameter> while the query statement still remains the same. Also,
+      <para>It is also possible to use a relative path in the
+      <parameter>Row.getValue()</parameter> call while the query statement still remains the same. Also,
       you may use a relative path to a string property. The returned value
       will then be an excerpt based on string value of the property.</para>
 
@@ -279,7 +279,7 @@ for (RowIterator it = result.getRows(); it.hasNext(); ) {
 
     <para>For example, if you want a refresh interval of six hours, the class
     name is <parameter>org.exoplatform.services.jcr.impl.core.query.lucene.spell.LuceneSpellChecker$SixHoursRefreshInterval</parameter>.
-    If you use <parameter> org.exoplatform.services.jcr.impl.core.query.lucene.spell.LuceneSpellChecker</parameter>,
+    If you use <parameter>org.exoplatform.services.jcr.impl.core.query.lucene.spell.LuceneSpellChecker</parameter>,
     the refresh interval will be one hour.</para>
 
     <para>The spell checker dictionary is stored as a lucene index under
@@ -383,7 +383,7 @@ if (v == null) {
 
     <programlisting>//element(*, nt:resource)[rep:similar(., '/parentnode/node.txt/jcr:content')]</programlisting>
 
-    <para>Finds nt:resource nodes, which are similar to node by path
-    /parentnode/node.txt/jcr:content.</para>
+    <para>Finds <parameter>nt:resource</parameter> nodes, which are similar to node by the
+    <parameter>/parentnode/node.txt/jcr:content</parameter> path.</para>
   </section>
 </section>

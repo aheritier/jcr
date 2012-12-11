@@ -15,7 +15,7 @@
 	<para>Node type registration extension is declared in the 
     <parameter>org.exoplatform.services.jcr.core.nodetype.ExtendedNodeTypeManager</parameter> interface.</para>
 
-    <para>Your custom service can register some neccessary predefined node
+    <para>Your custom service can register some necessary predefined node
     types at the start-up time. The node definition should be placed in a
     special XML file (see DTD below) and declared in the service's
     configuration file thanks to the eXo component plugin mechanism as described below:</para>

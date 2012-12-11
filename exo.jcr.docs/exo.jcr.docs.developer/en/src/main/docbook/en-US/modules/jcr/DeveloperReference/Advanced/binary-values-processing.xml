@@ -17,9 +17,8 @@
     <para>Binary large object (BLOB) properties can be stored in two ways in
     the eXo JCR: in the database with items information or in an external
     storage on host file system. These options can be configured at workspace
-    in the repository configuration file (repository-configuration.xml in
-    portal and exo-jcr-config.xml in standalone mode). The database storage
-    can't be completely disabled.</para>
+    in the <filename>repository-configuration.xml</filename> repository configuration file. The database storage
+    cannot be completely disabled.</para>
 
     <para>The first case is optimal for most of cases which you do not use
     very large values or/and do not have too many BLOBs. The configuration of
@@ -50,9 +49,9 @@
     <title>Usage</title>
 
     <para>In both of the cases, a developer can set/update the binary Property
-    via Node.setProperty(String, InputStream), Property.setValue(InputStream)
+    via <parameter>Node.setProperty(String, InputStream)</parameter>, <parameter>Property.setValue(InputStream)</parameter>
     as described in the spec JSR-170. Also, there is the setter with a ready
-    Value object (obtainer from ValueFactory.createValue(InputStream)).</para>
+    Value object (obtaining from <parameter>ValueFactory.createValue(InputStream)</parameter>).</para>
 
     <para>An example of a specification usage.</para>
 
@@ -84,14 +83,16 @@ InputStream newStream = updatedBinProp.getStream();</programlisting>
     storage of the property content while writing/reading during
     runtime.</para>
 
-    <para>According to the spec JSR-170, Value interface provides the state of
-    property that can't be changed (edited). The eXo JCR core provides
-    ReadableBinaryValue and EditableBinaryValue interfaces which themselves
-    extend JCR Value. The interfaces allow the user to partially read and
-    change a value content.</para>
+    <para>According to the spec <ulink url="http://www.jcp.org/en/jsr/detail?id=170">JSR-170</ulink>, Value interface
+      provides the state of
+      property that cannot be changed (edited). The eXo JCR core provides the
+      <parameter>ReadableBinaryValue</parameter> and <parameter>EditableBinaryValue</parameter> interfaces which themselves
+      extend JCR value. The interfaces allow the user to partially read and
+      change a value content.
+    </para>
 
-    <para>ReadableBinaryValue value can be casted from any value, i.e. String,
-    Binary, Date etc.</para>
+    <para>The <parameter>ReadableBinaryValue</parameter> value can be casted from any values, such as String,
+    Binary, Date and more.</para>
 
     <programlisting language="java">// get the property value of type PropertyType.STRING 
 ReadableBinaryValue extValue = (ReadableBinaryValue) node.getProperty("LargeText").getValue();
@@ -99,9 +100,13 @@ ReadableBinaryValue extValue = (ReadableBinaryValue) node.getProperty("LargeText
 OutputStream destStream = new FileOutputStream("MyTextFile.txt");
 extValue.read(destStream, 200, 1024);</programlisting>
 
-    <para>But EditableBinaryValue can be applied only to properties of type
-    PropertyType.BINARY. In other cases, a cast to EditableBinaryValue will
-    fail.</para>
+    <para>But
+      <parameter>EditableBinaryValue</parameter>
+      can be applied only to properties of the
+      <parameter>PropertyType.BINARY</parameter>
+      type. In other cases, a cast to EditableBinaryValue will
+      fail.
+    </para>
 
     <para>After the value has been edited, the EditableBinaryValue value can
     be applied to the property using the standard setters

@@ -5,11 +5,11 @@
 <section id="JCR.RESTServicesOnGroovy">
   <title>Groovy REST services</title>
 
-    <para>Starting from version 1.9, JCR service supports REST services
+    <para>JCR service supports REST services
     creation on <ulink url="http://groovy.codehaus.org">Groovy
     script</ulink>.</para>
 
-    <para>The feature bases on RESTful framework and uses ResourceContainer concept.</para>
+    <para>The feature bases on RESTful framework and uses the <emphasis role="bold">ResourceContainer</emphasis> concept.</para>
 
   <para xml:id="JCR.RESTServicesOnGroovy.Usage">
     <citetitle>
@@ -17,9 +17,9 @@
     </citetitle>
   </para>
     <para>Scripts should extend ResourceContainer and should be stored in JCR
-    as a node of type exo:groovyResourceContainer.</para>
+    as a node of the <parameter>exo:groovyResourceContainer</parameter> type.</para>
 
-    <para>Component configuration enables Groovy services loader:</para>
+    <para>The component configuration enables Groovy services loader:</para>
 
     <programlisting language="xml">&lt;component&gt;
   &lt;type&gt;org.exoplatform.services.jcr.ext.script.groovy.GroovyScript2RestLoader&lt;/type&gt;

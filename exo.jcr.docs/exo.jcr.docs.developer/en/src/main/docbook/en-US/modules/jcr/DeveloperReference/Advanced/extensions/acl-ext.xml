@@ -37,14 +37,14 @@
     </citetitle>
   </para>
 
-    <para>SetAccessControlContextAction implements Action and may be called by
-    SessionActionInterceptor as a reaction of some events - usually before
-    writing methods and after reading (getNode(), getProperty() etc). This
-    SetAccessControlContextAction calls the
-    AccessManager.setContext(InvocationContext context) method which sets the
+    <para><parameter>SetAccessControlContextAction</parameter> implements Action and may be called by
+    <parameter>SessionActionInterceptor</parameter> as a reaction of some events - usually before
+    writing methods and after reading (<parameter>getNode(), getProperty()</parameter>, and  more). This
+    <parameter>SetAccessControlContextAction</parameter> calls the
+    <parameter>AccessManager.setContext(InvocationContext context)</parameter> method which sets the
     ThreadLocal invocation context for the current call.</para>
 
-    <para>Action's Configuration may look like as the following:</para>
+    <para>Action's configuration may look like as the following:</para>
 
     <programlisting language="xml">&lt;value&gt;
   &lt;object type="org.exoplatform.services.jcr.impl.ext.action.ActionConfiguration"&gt;
@@ -61,7 +61,7 @@
   </para>
 
     <para>The <emphasis role="bold">InvocationContext</emphasis> contains the
-    current Item, the current ExoContainer and the current EventType is like
+    current Item, the current <parameter>ExoContainer</parameter> and the current <parameter>EventType</parameter> is like
     below:</para>
 
     <programlisting language="java">public interface InvocationContext extends ContextBase {
@@ -79,13 +79,11 @@
     </citetitle>
   </para>
 
-    <para>By default, all Workspaces share an AccessManager instance, created
-    by RepositoryService at the startup (DefaultAccessManagerImpl) which
+    <para>By default, all workspaces share an <parameter>AccessManager</parameter> instance, created
+    by <parameter>RepositoryService</parameter> at the startup (<parameter>DefaultAccessManagerImpl</parameter>) which
     supports default access control policy as described in the <emphasis
-    role="bold">Access Control</emphasis> section. Custom Access Control
-    policy can be applied to certain Workspace configuring <emphasis
-    role="bold">access-manager</emphasis> element inside <emphasis
-    role="bold">workspace</emphasis> as follows:</para>
+    role="bold"><link linkend="JCR.AccessControl">Access Control</link></emphasis> section. Custom Access Control
+    policy can be applied to certain Workspace configuring <parameter>access-manager</parameter> element inside <parameter>workspace</parameter> as follows:</para>
 
     <programlisting language="xml">&lt;workspace name="ws"&gt;        
    ...
@@ -99,15 +97,14 @@
   ...
 &lt;/workspace&gt;</programlisting>
 
-    <para>When implementing AccessManager, hasPermission() method has to be
-    overriden so it uses the current invocation context at its discretion. For
+    <para>When implementing <parameter>AccessManager</parameter>, the <parameter>hasPermission()</parameter> method has to be
+    overridden so it uses the current invocation context at its discretion. For
     instance, it may get the current node's metadata and make a decision if
     the current User has appropriate permissions. Use Invocation Context's
-    runtime properties to make a decision about current Session's privileges
-    (see the Example below)</para>
+    runtime properties to make a decision about current Session's privileges.
+    </para>
 
-    <para>Simplified Sequence diagram for the Session.getNode() method (as an
-    Example):</para>
+    <para>For example: The following is a simplified Sequence diagram for the <parameter>Session.getNode()</parameter> method:</para>
 
     <mediaobject>
       <imageobject>
@@ -121,15 +118,15 @@
     </citetitle>
   </para>
 
-    <para>The sample CustomAccessManagerImpl below extends the default access
-    manager and uses some DecisionMakingService in the overloaded
-    hasPermission method to find out if a current user has permission to use
+    <para>The sample <parameter>CustomAccessManagerImpl</parameter> below extends the default access
+    manager and uses some <parameter>DecisionMakingService</parameter> in the overloaded
+    <parameter>hasPermission</parameter> method to find out if a current user has permission to use
     current <emphasis role="bold">item, event type, user</emphasis> and some
-    parameter of AccessManager. To make this Access manager work, it is
-    necessary to configure it in jcr configuration as mentioned in <emphasis
-    role="bold">Custom Extended Access Manager</emphasis> and
-    SetAccessControlContextAction should be configured in the way mentioned in
-    <emphasis role="bold">Access Context Action.</emphasis></para>
+    parameters of <parameter>AccessManager</parameter>. To make this Access manager work, it is
+    necessary to configure it in the JCR configuration as mentioned in <emphasis
+    role="bold"><link linkend="JCR.AccessControlExtension.CustomExtendedAccessManager"> Extended Access Manager</link></emphasis> and
+    <parameter>SetAccessControlContextAction</parameter> should be configured in the way mentioned in
+    <emphasis role="bold"><link linkend="JCR.AccessControlExtension.AccessContextAction">Access Context Action</link></emphasis>.</para>
 
     <programlisting language="java">public class CustomAccessManagerImpl extends AccessManager {
 

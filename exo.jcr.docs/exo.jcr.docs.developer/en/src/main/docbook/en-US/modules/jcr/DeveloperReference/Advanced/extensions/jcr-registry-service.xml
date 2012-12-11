@@ -6,15 +6,14 @@
   <title>Registry service</title>
 
     <para>The Registry Service is one of the key parts of the infrastructure
-    built around eXo JCR. Each JCR that is based on service, applications, etc
+    built around eXo JCR. Each JCR that is based on service, applications, and more
     may have its own configuration, settings data and other data that have to
     be stored persistently and used by the appropriate service or application.
-    ( We call it "<emphasis role="bold">Consumer</emphasis>").</para>
+    (called "<emphasis role="bold">Consumer</emphasis>").</para>
 
     <para>The service acts as a centralized collector (Registry) for such
     data. Naturally, a registry storage is JCR based i.e. stored in some JCR
-    workspace (one per Repository) as an Item tree under <emphasis
-    role="bold">/exo:registry</emphasis> node.</para>
+    workspace (one per Repository) as an Item tree under <parameter>/exo:registry</parameter> node.</para>
 
     <para>Despite the fact that the structure of the tree is well defined (see
     the scheme below), it is not recommended for other services to manipulate
@@ -40,9 +39,9 @@
 
     <para>Each upper level eXo Service may store its configuration in eXo
     Registry. At first, start from xml-config (in jar etc) and then from
-    Registry. In configuration file, you can add force-xml-configuration
-    parameter to component to ignore reading parameters initialization from
-    RegistryService and to use file instead:</para>
+    Registry. In configuration file, you can add the <parameter>force-xml-configuration</parameter>
+    parameter to the component to ignore reading parameters initialization from
+    <parameter>RegistryService</parameter> and to use the file instead:</para>
 
     <programlisting language="xml">&lt;value-param&gt;
   &lt;name&gt;force-xml-configuration&lt;/name&gt;
@@ -90,15 +89,15 @@
       String groupName, String entryName) throws RepositoryException;</programlisting>
 
     <para>As you can see it looks like a simple CRUD interface for the
-    RegistryEntry object which wraps registry data for some Consumer as a
+    <parameter>RegistryEntry</parameter> object which wraps registry data for some Consumer as a
     Registry Entry. The Registry Service itself knows nothing about the
     wrapping data, it is Consumer's responsibility to manage and use its data
     in its own way.</para>
 
-    <para>To create an Entity Consumer you should know how to serialize the
+    <para>To create an Entity Consumer, you should know how to serialize the
     data to some XML structure and then create a RegistryEntry from these data
     at once or populate them in a RegistryEntry object (using
-    RegistryEntry(String entryName) constructor and then obtain and fill a DOM
+    the <parameter>RegistryEntry(String entryName)</parameter> constructor and then obtain and fill a DOM
     document).</para>
 
     <para>Example of RegistryService using:</para>
@@ -119,13 +118,12 @@
   <section id="JCR.RegistryService.Configuration">
     <title>Configuration</title>
 
-    <para>RegistryService has two optional params: value parameter <emphasis
-    role="bold">mixin-names</emphasis> and properties parameter <emphasis
-    role="bold">locations</emphasis>. The mixin-names is used for adding
-    additional mixins to nodes exo:registry, exo:applications, exo:services,
-    exo:users and exo:groups of RegistryService. This allows the top level
-    applications to manage these nodes in special way. Locations is used to
-    mention where exo:registry is placed for each repository. The name of each
+    <para><parameter>RegistryService</parameter> has two optional params: the <parameter>mixin-names</parameter> value parameter and the
+      <parameter>locations</parameter> properties parameter. The <parameter>mixin-names</parameter> is used for adding
+    additional mixins to the <parameter>exo:registry</parameter>, <parameter>exo:applications</parameter>, <parameter>exo:services</parameter>,
+    <parameter>exo:users</parameter> and <parameter>exo:groups</parameter> nodes of <parameter>RegistryService</parameter>. This allows the top level
+    applications to manage these nodes in a special way. Locations is used to
+    mention where <parameter>exo:registry</parameter> is placed for each repository. The name of each
     property is interpreted as a repository name and its value as a workspace
     name (a system workspace by default).</para>
 

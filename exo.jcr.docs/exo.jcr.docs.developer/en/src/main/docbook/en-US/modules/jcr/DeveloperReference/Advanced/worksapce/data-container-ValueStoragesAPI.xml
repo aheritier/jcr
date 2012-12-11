@@ -11,15 +11,15 @@
       </citetitle>
     </para>
 
-      <para>Container implementation obtains Values Storages option via
-      ValueStoragePluginProvider component. Provider acts as a factory of
+      <para>Container implementation obtains Values Storages option via the
+      <parameter>ValueStoragePluginProvider</parameter> component. Provider acts as a factory of
       Value channels (ValueIOChannel) and has two methods for this
       purpose:</para>
 
       <itemizedlist>
         <listitem>
-          <para>Return ValueIOChannel matched this property and
-          valueOrderNumer. Null will be returned if no channel matches.</para>
+          <para>Return <parameter>ValueIOChannel</parameter> matched this property and
+          <parameter>valueOrderNumer</parameter>. Null will be returned if no channel matches.</para>
         </listitem>
       </itemizedlist>
 
@@ -28,15 +28,15 @@
 
       <itemizedlist>
         <listitem>
-          <para>Return ValueIOChannel associated with given storageId.</para>
+          <para>Return <parameter> ValueIOChannel</parameter> associated with given <parameter>storageId</parameter>.</para>
         </listitem>
       </itemizedlist>
 
       <programlisting language="java">ValueIOChannel getChannel(String storageId) throws IOException, ValueStorageNotFoundException;
 </programlisting>
 
-      <para>There is also method for consistency check, but this method
-      doesn't used anywhere and storage implementations has it empty.</para>
+      <para>There is also a method for consistency check, but this method
+      is not used anywhere and storage implementations has it empty.</para>
 
     <para xml:id="JCR.Architecture.ValueStoragesAPI.ValueStoragePlugin">
       <citetitle>
@@ -44,7 +44,7 @@
       </citetitle>
     </para>
 
-      <para>Provider implementation should use ValueStoragePlugin abstract
+      <para>Provider implementation should use the <parameter>ValueStoragePlugin</parameter> abstract
       class as a base for all storage implementations. Plugin provides support
       for provider implementation methods. Plugin's methods should be
       implemented:</para>
@@ -52,7 +52,7 @@
       <itemizedlist>
         <listitem>
           <para>Initialize this plugin. Used at start time in
-          ValueStoragePluginProvider.</para>
+          <parameter>ValueStoragePluginProvider</parameter>.</para>
         </listitem>
       </itemizedlist>
 
@@ -61,9 +61,9 @@
 
       <itemizedlist>
         <listitem>
-          <para>Open ValueIOChannel.Used in
-          ValueStoragePluginProvider.getApplicableChannel(PropertyData, int)
-          and getChannel(String)</para>
+          <para>Open <parameter>ValueIOChannel.Used</parameter> in
+         <parameter> ValueStoragePluginProvider.getApplicableChannel(PropertyData, int)</parameter>
+          and <parameter>getChannel(String)</parameter>.</para>
         </listitem>
       </itemizedlist>
 
@@ -72,7 +72,7 @@
 
       <itemizedlist>
         <listitem>
-          <para>Return true if this storage has the same storageId.</para>
+          <para>Return true if this storage has the same <parameter>storageId</parameter>.</para>
         </listitem>
       </itemizedlist>
 
@@ -85,7 +85,7 @@
       </citetitle>
     </para>
 
-      <para>Channel should implement ValueIOChannel interface. CRUD operation
+      <para>Channel should implement the <parameter>ValueIOChannel</parameter> interface. CRUD operation
       for Value Storage:</para>
 
       <itemizedlist>

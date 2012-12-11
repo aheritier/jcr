@@ -6,8 +6,8 @@
     <para>The <ulink url="http://jcp.org/en/jsr/detail?id=170">JSR 170</ulink> specification does not define how permissions are managed
     or checked. So eXo JCR has implemented its own proprietary extension to
     manage and check permissions on nodes. In essence, this extension uses an
-    <ulink url="http://en.wikipedia.org/wiki/Access_control_list">Access Control List (ACL)</ulink> policy model applied to eXo Organization model
-    (see eXo Platform Organization Service).</para>
+    <ulink url="http://en.wikipedia.org/wiki/Access_control_list">Access Control List (ACL)</ulink> policy model applied to eXo Organization model.
+  </para>
 
   <para xml:id="JCR.AccessControl.eXoAccessControl.PrincipalAndIdentity">
     <citetitle>
@@ -105,7 +105,7 @@
         </para>
             <para>A privilegeable node defines the permissions required for
         actions on this node. For this purpose, it contains an ACL.</para>
-        <para>At JCR level, this is implemented by an <emphasis role="bold">exo:privilegeable</emphasis> mixin.</para>
+        <para>At JCR level, this is implemented by an <parameter>exo:privilegeable</parameter> mixin.</para>
         <programlisting language="xml">&lt;nodeType name=&quot;exo:privilegeable&quot; isMixin=&quot;true&quot; hasOrderableChildNodes=&quot;false&quot; primaryItemName=&quot;&quot;&gt;
    &lt;propertyDefinitions&gt;
       &lt;propertyDefinition name=&quot;exo:permissions&quot; requiredType=&quot;Permission&quot; autoCreated=&quot;true&quot; mandatory=&quot;true&quot;
@@ -114,7 +114,7 @@
       &lt;/propertyDefinition&gt;        
    &lt;/propertyDefinitions&gt;  
 &lt;/nodeType&gt;</programlisting>
-        <para>A privilegeable node can have multiple exo:permissions values.
+        <para>A privilegeable node can have multiple <parameter>exo:permissions</parameter> values.
         The type of these values is the eXo JCR specific Permission type. The
         Permission type contains a list of ACL.</para>
         <para>The possible values are corresponding to JCR standard
@@ -146,7 +146,7 @@
 
         <para>An ownable node defines an owner identity. The <emphasis role="bold">owner</emphasis> has always <emphasis role="bold">full privileges</emphasis>. These privileges are independent of the
         permissions set by exo:permissions. At JCR level, the ownership is
-        implemented by an <emphasis role="bold">exo:owneable</emphasis> mixin.
+        implemented by an <parameter>exo:owneable</parameter> mixin.
         This mixin holds an owner property.</para>
         <programlisting language="xml">&lt;nodeType name=&quot;exo:owneable&quot; isMixin=&quot;true&quot; hasOrderableChildNodes=&quot;false&quot; primaryItemName=&quot;&quot;&gt;
    &lt;propertyDefinitions&gt;
@@ -160,7 +160,7 @@
         string value. There might be a long list of different permissions for
         different identities (user or groups). All permissions are always
         positive permissions; denials are not possible. When checking a
-        permission of an action, it&apos;s therefore perfectly sufficient that the
+        permission of an action, it is therefore perfectly sufficient that the
         principal of a session belongs to the groups to which the
         concerned action is granted.</para>
 
@@ -243,22 +243,22 @@ exo:summary=&quot;Dogs&quot;
 exo:text=&quot;&quot; exo:title=&quot;Dogs_x0020_are_x0020_friends&quot; /&gt;
 
 &lt;/Politics&gt;</programlisting>
-        <para>The &quot;Politics&quot; node is <emphasis role="bold">exo:owneable</emphasis> and <emphasis role="bold">exo:privilegeable</emphasis>. It has both an <emphasis role="bold">exo:owner</emphasis> property and  an <emphasis role="bold">exo:permissions</emphasis> property. There is an <emphasis role="bold">exo:owner=&quot;root&quot;</emphasis> property so that the user root
+        <para>The &quot;Politics&quot; node is <parameter>exo:owneable</parameter> and <parameter>exo:privilegeable</parameter>. It has both an <parameter>exo:owner</parameter> property and  an <parameter>exo:permissions</parameter> property. There is an <parameter>exo:owner=&quot;root&quot;</parameter> property so that the user root
         is the owner. In the exo:permissions value, you can see the ACL that is a list
         of access controls. In this example, the group <emphasis role="bold">*:/platform/administrators</emphasis> has all rights on
         this node (remember that the &quot;<emphasis role="bold">*</emphasis>&quot; means any kind of membership).
          <emphasis role="bold">any</emphasis>  means that any users also have the read
         permission.s</para>
-        <para>As you see in the jcr:mixinTypes property, the &quot;Cats&quot; node is
-        <emphasis role="bold">exo:owneable</emphasis> and there is an
-        <emphasis role="bold">exo:owner=&quot;marry&quot;</emphasis> property so that
-        the user marry is the owner. The &quot;Cats&quot; node is <emphasis role="bold">not exo:privilegeable</emphasis> and has <emphasis role="bold">no exo:permissions</emphasis>. In this case, we can see the <emphasis role="bold">inheritance mechanism</emphasis> here is that the
+        <para>As you see in the <parameter>jcr:mixinTypes</parameter> property, the &quot;Cats&quot; node is
+        <parameter>exo:owneable</parameter> and there is an
+        <parameter>exo:owner=&quot;marry&quot;</parameter> property so that
+        the user marry is the owner. The &quot;Cats&quot; node is <emphasis role="bold">not exo:privilegeable</emphasis> and has <emphasis role="bold">no exo:permissions</emphasis>. In this case, you can see the <emphasis role="bold">inheritance mechanism</emphasis> here is that the
         &quot;Cats&quot; node has the same permissions as &quot;Politics&quot; node.</para>
         <para>Finally, the &quot;Dogs&quot; node is also a child node of &quot;Politics&quot;.
-        This node is <emphasis role="bold">not</emphasis> <emphasis role="bold">exo:owneable</emphasis> and
+        This node is <emphasis role="bold">not</emphasis> <parameter>exo:owneable</parameter> and
         inherits the owner of the &quot;Politics&quot; node (which is the user root).
-        Otherwise, &quot;Dogs&quot; is <emphasis role="bold">exo:privilegeable</emphasis> and therefore, it has its own
-        <emphasis role="bold">exo:permissions</emphasis>. That means only the
+        Otherwise, &quot;Dogs&quot; is <parameter>exo:privilegeable</parameter> and therefore, it has its own
+        <parameter>exo:permissions</parameter>. That means only the
         users having a &quot;manager&quot; role in the group &quot;/organization&quot; and the
         user &quot;root&quot; have the rights to access this node.</para>
 
@@ -329,7 +329,7 @@ exo:text=&quot;&quot; exo:title=&quot;Dogs_x0020_are_x0020_friends&quot; /&gt;
             and &quot;set_property&quot; permission on &quot;subnode&quot;.</para>
           </listitem>
         </itemizedlist>
-        <note>
+        <!--note>
           <para>The behavior of the permission &quot;remove&quot; and &quot;add mixin&quot; validation
           has changed since JCR 1.12.6-GA. The old behavior is:</para>
           <para><itemizedlist>
@@ -346,7 +346,7 @@ exo:text=&quot;&quot; exo:title=&quot;Dogs_x0020_are_x0020_friends&quot; /&gt;
                 the &quot;add_node&quot; and &quot;set_property&quot; permission on &quot;node1&quot;.</para>
               </listitem>
             </itemizedlist></para>
-        </note>
+        </note-->
 
     <para xml:id="JCR.AccessControl.eXoAccessControl.JavaAPI">
       <citetitle>
@@ -354,7 +354,7 @@ exo:text=&quot;&quot; exo:title=&quot;Dogs_x0020_are_x0020_friends&quot; /&gt;
       </citetitle>
     </para>
 
-      <para>eXo JCR&apos;s ExtendedNode interface which extends javax.jcr.Node
+      <para>eXo JCR&apos;s <parameter>ExtendedNode</parameter> interface which extends <parameter>javax.jcr.Node</parameter>
       interface provides additional methods for Access Control
       management.</para>
       <table>
@@ -398,8 +398,8 @@ exo:text=&quot;&quot; exo:title=&quot;Dogs_x0020_are_x0020_friends&quot; /&gt;
           </tbody>
         </tgroup>
       </table>
-      <para>The &quot;identity&quot; parameter is a user or a group name. The
+      <para>The &quot;<parameter>identity</parameter>&quot; parameter is a user or a group name. The
       permissions are the literal strings of the standard action permissions
-      (add_node, set_property, remove, read).</para>
+      (add_node, set_property, remove, and read).</para>
   </section>
 </section>
