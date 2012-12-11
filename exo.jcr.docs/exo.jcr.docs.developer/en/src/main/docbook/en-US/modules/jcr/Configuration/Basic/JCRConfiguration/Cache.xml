@@ -6,62 +6,19 @@
                 <para><parameter>enabled</parameter>: If workspace cache is enabled or not.</para>
             </listitem>
             <listitem>
-                <para><parameter>class</parameter>: Cache implementation class,
-                optional from JCR 1.9. Default value is <parameter>org.exoplatform.services.jcr.impl.dataflow.persistent.LinkedWorkspaceStorageCacheImpl</parameter>.</para>
-            </listitem>
-            <listitem>
-                <para>Cache can be configured to use concrete implementation of
-                WorkspaceStorageCache interface. JCR core has two implementations to be used:</para>
-
-                <itemizedlist>
-                  <listitem>
-                    <para><parameter>LinkedWorkspaceStorageCacheImpl</parameter>: The default implementation with configurable
-                    read behavior and statistic.</para>
-                  </listitem>
-
-                  <listitem>
-                    <para><parameter>WorkspaceStorageCacheImpl</parameter>: This implementation still can be used before JCR 1.9.</para>
-                  </listitem>
-                </itemizedlist>
+                <para><parameter>class</parameter>: Cache implementation class. Default value is <parameter>org.exoplatform.services.jcr.impl.dataflow.persistent.LinkedWorkspaceStorageCacheImpl</parameter>.</para>
             </listitem>
             <listitem>
                 <para><parameter>properties</parameter>: The list of properties
                 (name-value pairs) for Workspace cache.</para>
             </listitem>
             <listitem>
-                <para><parameter>max-size</parameter>: Cache maximum size
-                (maxSize prior to JCR 1.9).</para>
+                <para><parameter>max-size</parameter>: Cache maximum size.
+                </para>
             </listitem>
             <listitem>
-                <para><parameter>live-time</parameter>: Cached item live time
-                (liveTime prior to JCR 1.9).</para>
-            </listitem>
-            <listitem>
-                <para>From JCR 1.9, LinkedWorkspaceStorageCacheImpl supports additional
-                optional parameters.</para>
-            </listitem>
-            <listitem>
-                <para><parameter>statistic-period</parameter>: Period (time
-                format) of cache statistic thread execution. The default value is 5 minutes.</para>
-            </listitem>
-            <listitem>
-                <para><parameter>statistic-log</parameter>: If true, cache
-                statistic will be printed to default logger (log.info). This is set to false by default
-                or not.</para>
-            </listitem>
-            <listitem>
-                <para><parameter>statistic-clean</parameter>: If the value is set to "true", The cache
-                statistic will be cleaned after gathered, false by default or
-                not.</para>
-            </listitem>
-            <listitem>
-                <para><parameter>cleaner-period</parameter>: Period of the
-                eldest items remover execution, 20 minutes by default.</para>
-            </listitem>
-            <listitem>
-                <para><parameter>blocking-users-count</parameter>: Number of
-                concurrent users allowed to read cache storage, 0 - unlimited by
-                default.</para>
+                <para><parameter>live-time</parameter>: Cached item live time.
+                </para>
             </listitem>
         </itemizedlist>
   </section>

@@ -53,7 +53,6 @@
 
             <entry>Description</entry>
 
-            <entry>Since</entry>
           </row>
         </thead>
 
@@ -64,7 +63,7 @@
             <entry>none</entry>
 
             <entry>The location of the index directory. This parameter is
-            mandatory. Up to JCR 1.9, this parameter called "indexDir"</entry>
+            mandatory.</entry>
 
             <entry>1.0</entry>
           </row>
@@ -76,7 +75,6 @@
 
             <entry>Advise Lucene to use compound files for the index files.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -86,7 +84,7 @@
 
             <entry>Minimum number of nodes in an index until segments are merged.</entry>
 
-            <entry>1.9</entry>
+
           </row>
 
           <row>
@@ -97,7 +95,6 @@
             <entry>Idle time in seconds until the volatile index part is moved
             to a persistent index even though minMergeDocs is not reached.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -106,9 +103,8 @@
             <entry>Integer.MAX_VALUE</entry>
 
             <entry>Maximum number of nodes in segments that will be merged.
-            The default value changed in JCR 1.9 to Integer.MAX_VALUE.</entry>
+            </entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -118,7 +114,6 @@
 
             <entry>Determine how often segment indices are merged.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -129,7 +124,6 @@
             <entry>The number of words that are fulltext indexed at most per
             property.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -139,7 +133,6 @@
 
             <entry>Size of the document number cache. This cache maps uuids to Lucene document numbers.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -150,7 +143,6 @@
             <entry>Run a consistency check on every startup. If false, a
             consistency check is only performed when the search index detects a prior forced shutdown.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -160,7 +152,6 @@
 
             <entry>Errors detected by a consistency check are automatically repaired. If false, errors are only written to the log.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -170,7 +161,6 @@
 
             <entry>Class name that implements the <parameter>javax.jcr.query.Query</parameter> interface. This class must also extend from the <parameter>org.exoplatform.services.jcr.impl.core.query.AbstractQueryImpl</parameter> class.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -183,7 +173,6 @@
             performance when queries return a lot of nodes, set this parameter to
             'false'.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -194,7 +183,6 @@
             <entry>The number of results when a query is executed. Default
             value: Integer.MAX_VALUE (-&gt; all).</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -207,7 +195,6 @@
             and should be used for the rep:excerpt() function in a
             query.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -218,7 +205,6 @@
             <entry>If set to true additional information is stored in the
             index to support highlighting using the <parameter>rep:excerpt()</parameter> function.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -230,7 +216,6 @@
             <parameter>org.exoplatform.services.jcr.impl.core.query.lucene.SynonymProvider</parameter>.
             The default value is null (not set).</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -246,7 +231,6 @@
             provider implementation. The default value is null (-&gt; not
             set).</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -256,7 +240,6 @@
 
             <entry>The path to the indexing configuration file.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -266,7 +249,6 @@
 
             <entry>The name of the class that implements <parameter>org.exoplatform.services.jcr.impl.core.query.lucene.IndexingConfiguration</parameter>.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -278,7 +260,6 @@
             depending on the <parameter>forceConsistencyCheck</parameter> parameter. If setting to
             false, no consistency check is performed on startup, even if a redo log had been applied.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -288,7 +269,6 @@
 
             <entry>The name of a class that implements <parameter>org.exoplatform.services.jcr.impl.core.query.lucene.SpellChecker</parameter>.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -302,7 +282,6 @@
             in dictionary), or spellchecker will return the most close suggested
             word.</entry>
 
-            <entry>1.10</entry>
           </row>
 
           <row>
@@ -312,7 +291,6 @@
 
             <entry>Minimal distance between checked word and the proposed suggested word.</entry>
 
-            <entry>1.10</entry>
           </row>
 
           <row>
@@ -322,7 +300,6 @@
 
             <entry>The default size of error log file in Kb.</entry>
 
-            <entry>1.9</entry>
           </row>
 
           <row>
@@ -331,18 +308,14 @@
             <entry>false</entry>
 
             <entry>Allows JCR to convert an existing index into the new
-            format. Also, it is possible to set this property via system
-            property, for example: -Dupgrade-index=true Indexes before JCR
-            1.12 will not run with JCR 1.12. Hence you have to run an
+            format. You have to run an
             automatic migration: Start JCR with -Dupgrade-index=true. The old
             index format is then converted in the new index format. After the
             conversion, the new format is used. On the next start, you do not
             need this option anymore. As the old index is replaced and a back
             conversion is not possible, you should take a backup of the
-            index before. (Only for migrations from JCR 1.9 and
-            later.)</entry>
+            index before.</entry>
 
-            <entry>1.12</entry>
           </row>
 
           <row>
@@ -351,8 +324,6 @@
             <entry>org.apache.lucene.analysis.standard.StandardAnalyzer</entry>
 
             <entry>Class name of a lucene analyzer to use for fulltext indexing of text.</entry>
-
-            <entry>1.12</entry>
           </row>
         </tbody>
       </tgroup>

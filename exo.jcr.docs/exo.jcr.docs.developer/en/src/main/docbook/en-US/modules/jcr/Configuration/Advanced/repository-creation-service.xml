@@ -159,7 +159,7 @@
   <!-- 2.2.5.2 RepositoryCreationService Interface -->
   <section id="JCR.RepositoryCreationService.RepositoryCreationServiceInterface">
     <title>RepositoryCreationService interface</title>
-	<para>See the RepositoryCreationService Interface as follows:</para>
+	<para>The following code shows all methods proposed by RepositoryCreationService that is used to create a new repository:</para>
 <programlisting language="java">public interface RepositoryCreationService
 {
    /**

@@ -28,8 +28,7 @@
   <para>Properties are Container specific parameters:</para>
 
   <para><emphasis role="bold">source-name</emphasis>: JDBC data source name,
-  registered in JDNI by InitialContextInitializer. ( <emphasis
-  role="bold">sourceName</emphasis> prior v.1.9)</para>
+  registered in JDNI by InitialContextInitializer.</para>
 
   <para><emphasis role="bold">dialect</emphasis>: Database dialect, one of
   "hsqldb", "mysql", "mysql-utf8", "pgsql", "oracle", "oracle-oci", "mssql",

@@ -8,15 +8,18 @@
         Workspace configuration
       </emphasis>
     </citetitle>
-  </para>  
+  </para>
+    <para>
+        The service configuration is located in <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename> in the portal web application.
+    </para>
     <itemizedlist>
       <listitem>
         <para><parameter>name</parameter>: The name of a
         workspace.</para>
       </listitem>
       <listitem>
-        <para><parameter>auto-init-root-nodetype</parameter>: DEPRECATED
-        in JCR 1.9 (use initializer). The node type for root node initialization.</para>
+        <para><parameter>auto-init-root-nodetype</parameter>: DEPRECATED.
+        The node type for root node initialization.</para>
       </listitem>
       <listitem>
         <para><parameter>container</parameter>: Workspace data container (physical storage) configuration.</para>
@@ -32,7 +35,7 @@
       </listitem>
       <listitem>
         <para><parameter>auto-init-permissions</parameter>: DEPRECATED
-        in JCR 1.9 (use initializer). Default permissions of the root node. It is
+        .Default permissions of the root node. It is
         defined as a set of semicolon-delimited permissions containing a group of
         space-delimited identities (user, group, etc, see Organization service
         documentation for details) and the type of permission. For example, any

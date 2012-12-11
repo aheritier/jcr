@@ -10,7 +10,9 @@
     component checks if a configuration persister was configured. In that
     case, it uses the provided <classname>ConfigurationPersister</classname>
     implementation class to instantiate the persister object.</para>
-
+    <para>The configuration file is located in
+        <filename>portal/WEB-INF/conf/jcr/jcr-configuration.xml</filename>
+        in the portal web application. </para>
     <para>Configuration with persister:</para>
     
 <programlisting language="xml">&lt;component&gt;
@@ -36,7 +38,7 @@
         <listitem>
           <para><parameter>source-name</parameter>: JNDI source name
           configured in <classname>InitialContextInitializer</classname>
-          component. (<parameter>sourceName</parameter> prior v.1.9.) Find
+          component. Find
           more in <link linkend="JCR.JDBCDataContainerConfig">database
           configuration</link>.</para>
         </listitem>
@@ -51,8 +53,7 @@
         <listitem>
           <para><parameter>persister-class-name</parameter> - Class name of
           <classname>ConfigurationPersister</classname> interface
-          implementation. (<parameter>persisterClassName</parameter> prior
-          v.1.9.)</para>
+          implementation.</para>
         </listitem>
       </itemizedlist>
 

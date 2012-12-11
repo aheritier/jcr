@@ -26,7 +26,7 @@
     </itemizedlist>  
   </highlights>  
     <para>Like other eXo services, JCR can be configured and used in the
-    portal or embedded mode (as a service embedded in eXo Portal) and in
+    portal or embedded mode as a service embedded in eXo Portal) and in
     standalone mode.</para>
 
     <para>In Embedded mode, JCR services are registered in the Portal
@@ -36,37 +36,6 @@
     standalone (see <link
     linkend="Kernel.ServiceConfigurationforBeginners">Service Configuration
     for Beginners</link> for more details).</para>
-
-    <para>The following setup procedure is used to obtain a Standalone
-    configuration (see <link
-    linkend="Kernel.ContainerConfiguration">Container
-    configuration</link> for more details):<itemizedlist>
-        <listitem>
-          <para>Configuration that is set explicitly using <parameter>StandaloneContainer.addConfigurationURL(String url)</parameter> or
-          <parameter>StandaloneContainer.addConfigurationPath(String path)</parameter> before <parameter>getInstance()</parameter>.</para>
-        </listitem>
-
-        <listitem>
-          <para>Configuration from <filename>$base:directory/exo-configuration.xml</filename> or
-          <filename>$base:directory/conf/exo-configuration.xml</filename> file where
-          <parameter>$base:directory</parameter> is either AS's home directory in case of J2EE AS
-          environment or just the current directory in case of a standalone
-          application.</para>
-        </listitem>
-
-        <listitem>
-          <para><filename>/conf/exo-configuration.xml</filename> in the current classloader (for example, war, ear archive).</para>
-        </listitem>
-
-        <listitem>
-          <para>Configuration from <filename>$service_jar_file/conf/portal/configuration.xml</filename>.</para>
-		<warning>
-			<para>
-				Do not rely on some concrete jar's configurations if you have more than one jar containing the <filename>conf/portal/configuration.xml</filename> file. In this case, choosing a configuration is unpredictable.
-			</para>
-		</warning>
-        </listitem>
-      </itemizedlist></para>
 
     <para>The JCR service configuration looks like:</para>
 

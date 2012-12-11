@@ -1,6 +1,9 @@
 <!-- 2.1.1.6 Query handler -->
 <section id="JCR.eXoJCRconfiguration.QueryHandlerConfiguration" role="NotInToc">
     <title>Query Handler</title>
+    <para>The service configuration is located in
+        <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>
+        in the portal web application. </para>
     	<itemizedlist>
     		<listitem>
 			    <para><parameter>class</parameter>: A Query Handler class

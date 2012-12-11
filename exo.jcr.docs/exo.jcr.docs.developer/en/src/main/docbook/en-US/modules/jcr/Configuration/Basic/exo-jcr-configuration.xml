@@ -1,8 +1,10 @@
 <!-- 2.1.1 JCR Configuration -->
 <section id="JCR.eXoJCRconfiguration.JCRConfiguration" role="NotInToc">
     <title>JCR configuration</title>
-
-    <para>The JCR Configuration is defined in an <filename>.xml</filename> file as below:</para>
+    <para>
+        In this section you will learn how to configure all basic configuration by configuring the Repository, Workspace, Value storage plugin, Initializer, Cache, Query Handler and Lock Manager of JCR .
+    </para>
+    <para>The JCR Configuration is defined in an <filename>.xml</filename> file, see the DTD below:</para>
     <programlisting language="xml">&lt;!ELEMENT repository-service (repositories)&gt;
 &lt;!ATTLIST repository-service default-repository NMTOKEN #REQUIRED&gt;
 &lt;!ELEMENT repositories (repository)&gt;

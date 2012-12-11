@@ -243,8 +243,7 @@
     <itemizedlist>
       <listitem>
         <para><parameter>source-name</parameter>: A javax.sql.DataSource name
-        configured in InitialContextInitializer component (was
-        <parameter>sourceName</parameter> prior JCR 1.9);</para>
+        configured in InitialContextInitializer component.</para>
       </listitem>
 
       <listitem>
@@ -275,10 +274,10 @@
     persisted in two different databases (ws in HSQLDB, ws1 in MySQL).</para>
 
     <note>
-      <para>Starting from v.1.9 <link
+      <para>The <link
       linkend="JCR.eXoJCRconfiguration">repository configuration</link>
-      parameters supports human-readable formats of values (e.g. 200K - 200
-      Kbytes, 30m - 30 minutes etc)</para>
+      parameters supports human-readable formats of values (for example: 200K - 200
+      Kbytes, 30m - 30 minutes, etc)</para>
     </note>
 </section>
 <!-- Single-database configuration -->

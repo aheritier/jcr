@@ -1,6 +1,10 @@
 <!-- 2.1.1.7 Lock Manager -->
 <section id="JCR.eXoJCRconfiguration.LockManagerConfiguration" role="NotInToc">
     <title>Lock Manager</title>
+    <para>The service configuration is located in
+        <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>
+        in the portal web application.
+    </para>
       <itemizedlist>
         <listitem>
           <para><parameter>time-out</parameter>: Time after which the

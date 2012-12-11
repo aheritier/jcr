@@ -1,7 +1,7 @@
 <!-- 2.2.1.3 Indexing tuning-->
 <section id="JCR.SearchConfiguration.Indexing_Adjustments">
     <title>Indexing tuning</title>
-      <para>Starting with JCR 1.9, the default search index implementation
+      <para>The default search index implementation
       in JCR allows you to control which properties of a node are indexed. You
       also can define different analyzers for different nodes.</para>
 
