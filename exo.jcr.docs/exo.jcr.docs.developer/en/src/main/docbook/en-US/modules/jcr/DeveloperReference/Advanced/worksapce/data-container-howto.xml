@@ -46,7 +46,7 @@
     <orderedlist>
       <listitem>
         <para>Read a bit about the <link
-        linkend="JCR.Architecture">contract</link>.</para>
+        linkend="JCRref.Introduction.JCRArchitecture">contract</link>.</para>
       </listitem>
 
       <listitem>
@@ -62,7 +62,7 @@
 
       <listitem>
         <para>Look at <parameter>org.exoplatform.services.jcr.impl.dataflow.persistent.WorkspacePersistentDataManager</parameter>
-        sourcecode, check how data menager uses container and its connections
+        sourcecode, check how data manager uses container and its connections
         (see in the <parameter>save()</parameter> method)</para>
       </listitem>
 
@@ -71,18 +71,18 @@
         class. It is a freeform class, but to be close to the eXo JCR, check how
         to implement JDBC or SimpleDB containers ( <parameter>org.exoplatform.services.jcr.impl.storage.jdbc.JDBCStorageConnection</parameter>
         and <parameter>org.exoplatform.services.jcr.aws.storage.sdb.SDBWorkspaceStorageConnection</parameter>).
-        Take in account usage of <parameter>ValueStoragePluginProvider</parameter> in both
-        implementations. Value storage is an useful option for production
+        Take into account usage of <parameter>ValueStoragePluginProvider</parameter> in both
+        implementations. Value storage is a useful option for production
         versions, but leave it to the end of the implementation work.</para>
       </listitem>
 
       <listitem>
         <para>Create the connection implementation unit tests to play TTD.
-        (it is optional, but takes many benefits for the process).</para>
+        This step is optional but brings many benefits for the process.</para>
       </listitem>
 
       <listitem>
-        <para>Implement CRUD starting from the read to write etc. Test the
+        <para>Implement CRUD starting from, for example, the read to write. Test the
         methods by using the external implementation ways of data read/write
         in your backend.</para>
       </listitem>
@@ -95,21 +95,20 @@
 
       <listitem>
         <para>Care about the <parameter>reuseConnection(WorkspaceStorageConnection)</parameter>
-        logic container method. For some backends, it can be same as <parameter>openConnection()</parameter>,
+        logic container method. For some backends, it can be same as <parameter>openConnection()</parameter>;
         but for some others, it is important to reuse physical backend
-        connection, e.g. to be in the same transaction - see JDBC
+        connection, for example, to be in the same transaction - see JDBC
         container.</para>
       </listitem>
 
       <listitem>
-        <para>It is almost ready to use in data manager. Start another test and
-        go on.</para>
+        <para>It is almost ready to use in data manager. Start another test.</para>
       </listitem>
     </orderedlist>
 
-    <para>When the container will be ready to run as JCR persistence storage
-    (e.g. for this level testing), it should be configured in Repository
-    configuration.</para>
+  <para>When the container is ready to run as JCR persistence storage (for example, for this level testing), it should
+    be configured in Repository configuration.
+  </para>
 
     <para>Assuming that the new implementation class name is <parameter>org.project.jcr.impl.storage.MyWorkspaceDataContainer</parameter>.</para>
 
@@ -144,8 +143,8 @@
     storage usage principles.</para>
 
     <para>If the container has <emphasis
-    role="bold">ValueStoragePluginProvider</emphasis> (e.g. via constructor),
-    it's just a few methods to manipulate external Values data.</para>
+    role="bold">ValueStoragePluginProvider</emphasis> (for example, via constructor),
+    it is just a method to manipulate external Values data.</para>
 
     <programlisting language="java">// get channel for ValueData write (add or update)
 ValueIOChannel channel = valueStorageProvider.getApplicableChannel(data,  i);

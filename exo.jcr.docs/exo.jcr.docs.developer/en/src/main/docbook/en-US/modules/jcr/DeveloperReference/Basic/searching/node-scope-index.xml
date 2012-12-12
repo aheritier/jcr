@@ -22,7 +22,7 @@
 
   <note>
     <para>See <link linkend="JCR.SearchConfiguration">Search
-    configuration</link></para>
+    configuration.</link></para>
   </note>
 
   <para xml:id="JCR.NodeScopeIndex.RepositoryStructure">

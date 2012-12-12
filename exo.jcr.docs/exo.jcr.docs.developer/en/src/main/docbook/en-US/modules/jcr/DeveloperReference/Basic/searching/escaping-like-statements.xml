@@ -8,7 +8,7 @@
   starts with 'P%ri'.</para>
 
   <para>As you see "P%rison break" contains the symbol '%'. This symbol is
-  reserved for LIKE comparisons. So what can we do?</para>
+  reserved for LIKE comparisons.</para>
 
   <para>Within the LIKE pattern, literal instances of percent ("%") or
   underscore ("_") must be escaped. The SQL ESCAPE clause allows the
@@ -19,7 +19,7 @@
   <programlisting>SELECT * FROM mytype WHERE a LIKE 'foo\%' ESCAPE '\'</programlisting>
 
   <para>XPath does not have any specification for defining escape symbols, so
-  we must use the default escape character (' \').</para>
+  you must use the default escape character (' \').</para>
 
   <para xml:id="JCR.EscapinginLIKEStatements.RepositoryStructure">
     <citetitle>
@@ -27,7 +27,7 @@
     </citetitle>
   </para>
 
-    <para>The repository contains mix:title nodes, where jcr:title can have
+    <para>The repository contains <parameter>mix:title</parameter> nodes, where <parameter>jcr:title</parameter> can have
     different values.</para>
 
     <itemizedlist>

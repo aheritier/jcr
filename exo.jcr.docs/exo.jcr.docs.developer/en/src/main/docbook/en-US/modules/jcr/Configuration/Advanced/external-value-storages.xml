@@ -10,16 +10,16 @@
     container, which can be extremely helpful to keep Binary Large Objects
     (BLOBs) for instance.</para>
 
-    <para>Value storage configuration is a part of Repository configuration,
-    find more details <link
-    linkend="JCR.ConfigurationPersister.ValueStoragePlugin">there</link>.</para>
+    <para>Value storage configuration is a part of Repository configuration. See
+    more details <link
+    linkend="JCR.ConfigurationPersister.ValueStoragePlugin">here</link>.</para>
 
     <para>Tree-based storage is recommended for most of cases. Simple 'flat' storage is good in speed of creation/deletion
-    of values, it might be a compromise for a small storages.</para>
+    of values, it might be a compromise for a small storage.</para>
 
     <note>
-      <para id="JCR.ExternalValueStorages.DisablingValueStorage">JCR allows to disable value storage by adding property into
-      configuration. For internal usage and testing purpose only.
+      <para id="JCR.ExternalValueStorages.DisablingValueStorage">JCR allows disabling the value storage by adding
+       the property below into the configuration for the internal usage and testing purpose only:
       <programlisting language="xml">&lt;property name="enabled" value="false" /&gt;</programlisting>
 	  </para>
       <para>Be careful, all stored values will be unaccessible.</para>
@@ -32,7 +32,7 @@
     <para>Holds Values in tree-like FileSystem files. The <property>path</property> property points to the root directory to store
     the files.</para>
 
-    <para>This is a recommended type of external storage, it can contain large
+    <para>This is a recommended type of external storage, it can contain a large
     amount of files limited only by disk/volume free space.</para>
 
     <para>A disadvantage is that it is a higher time on Value deletion due to
@@ -69,12 +69,12 @@
     large values in file value storage only.</para>
 
     <para>Another example shows a value storage with different locations for
-    large files (<property>min-value-size</property> a 20Mb-sized filter). A
+    large files (<property>min-value-size</property>: a 20Mb-sized filter). A
     value storage uses ORed logic in the process of filter selection. That
     means the first filter in the list will be asked first and if not matched
-    the next will be called etc. Here a value matches the 20 MB-sized filter
-    <property>min-value-size</property> and will be stored in the path
-    "data/20Mvalues", all other in "data/values".</para>
+    the next will be called. Here is a value which matches with the <property>min-value-size</property> 20 MB-sized filter
+    and will be stored in the
+    "<parameter>data/20Mvalues</parameter>" path, all others in "<parameter>data/values</parameter>".</para>
 
 <programlisting language="xml">&lt;value-storages&gt;
 	&lt;value-storage id="Storage #1" class="org.exoplatform.services.jcr.impl.storage.value.fs.TreeFileValueStorage"&gt;
@@ -107,8 +107,8 @@
       may be useful for you as it will increase the speed of Value removal.</para>
     </note>
 
-    <para>Hold Values in flat FileSystem files. <property>path</property>
-    property points to root directory in order to store files.</para>
+    <para>Hold Values in flat FileSystem files. The <property>path</property>
+    property points to the root directory to store files.</para>
 
 <programlisting language="xml">&lt;value-storage id="Storage #1" class="org.exoplatform.services.jcr.impl.storage.value.fs.SimpleFileValueStorage"&gt;
 	&lt;properties&gt;
@@ -154,12 +154,17 @@
     content.</para>
 
     <para>The storage calculates Value content address each time the property
-    was changed. CAS write operations are much more expensive compared to the
+    is changed. CAS write operations are much more expensive compared to the
     non-CAS storages.</para>
 
-    <para>Content address calculation based on java.security.MessageDigest
-    hash computation and tested with <abbrev>MD5</abbrev> and
-    <abbrev>SHA1</abbrev> algorithms.</para>
+    <para>Content address calculation is based on the
+      <parameter>java.security.MessageDigest</parameter>
+      hash computation and tested with the
+      <abbrev>MD5</abbrev>
+      and
+      <abbrev>SHA1</abbrev>
+      algorithms.
+    </para>
 
     <note>
       <para>CAS storage works most efficiently on data that does not change
@@ -172,7 +177,13 @@
 
     <para>To enable CAS support, just configure it in JCR Repositories
     configuration as you do for other Value Storages.</para>
-
+<programlistingco>
+        <areaspec>
+          <area coords="17" id="area-JCR.ExternalValueStorages.ContentAddressableValueStorageSupport.digest-algo"/>
+          <area coords="18" id="area-JCR.ExternalValueStorages.ContentAddressableValueStorageSupport.vcas-type"/>
+          <area coords="19" id="area-JCR.ExternalValueStorages.ContentAddressableValueStorageSupport.jdbc-source-name"/>
+          <area coords="20" id="area-JCR.ExternalValueStorages.ContentAddressableValueStorageSupport.jdbc-dialect"/>
+        </areaspec>
 <programlisting language="xml">&lt;workspaces&gt;
     &lt;workspace name="ws"&gt;
 		&lt;container class="org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer"&gt;
@@ -199,28 +210,36 @@
 			&lt;/filters&gt;
 		&lt;/value-storage&gt;
 	&lt;/value-storages&gt;</programlisting>
-
-	<itemizedlist>
-		<listitem>
-			<para><parameter>digest-algo</parameter>: Digest hash algorithm (MD5 and SHA1 were tested).</para>
-		</listitem>
-		<listitem>
-			<para><parameter>vcas-type</parameter>: Value CAS internal data
-        type, JDBC backed is currently implemented
-        org.exoplatform.services.jcr.impl.storage.value.cas.JDBCValueContentAddressStorageImpl.</para>
-		</listitem>
-		<listitem>
-			<para><parameter>jdbc-source-name</parameter>:
-        JDBCValueContentAddressStorageImpl specific parameter, database will
-        be used to save CAS metadata. It is simple to use same as in workspace
-        container.</para>
-		</listitem>
-		<listitem>
-			<para><parameter>jdbc-dialect</parameter>:
-        JDBCValueContentAddressStorageImpl specific parameter, database
-        dialect. It is simple to use the same as in workspace
-        container.</para>
-		</listitem>
-	</itemizedlist>
+    <calloutlist>
+      <callout arearefs="area-JCR.ExternalValueStorages.ContentAddressableValueStorageSupport.digest-algo">
+        <para><parameter>digest-algo</parameter>: Digest hash algorithm (MD5 and SHA1 were tested).
+        </para>
+      </callout>
+      <callout arearefs="area-JCR.ExternalValueStorages.ContentAddressableValueStorageSupport.vcas-type">
+        <para><parameter>vcas-type</parameter>: Value CAS internal data
+          type, JDBC backed is currently implemented
+          <parameter>org.exoplatform.services.jcr.impl.storage.value.cas.JDBCValueContentAddressStorageImpl</parameter>.
+        </para>
+      </callout>
+      <callout arearefs="area-JCR.ExternalValueStorages.ContentAddressableValueStorageSupport.jdbc-source-name">
+        <para><parameter>jdbc-source-name</parameter>:
+          the
+          <parameter>JDBCValueContentAddressStorageImpl</parameter>
+          specific parameter, database will
+          be used to save CAS metadata. It is simple to use the same as in workspace
+          container.
+        </para>
+      </callout>
+      <callout arearefs="area-JCR.ExternalValueStorages.ContentAddressableValueStorageSupport.jdbc-dialect">
+        <para><parameter>jdbc-dialect</parameter>:
+          the
+          <parameter>JDBCValueContentAddressStorageImpl</parameter>
+          specific parameter, database
+          dialect. It is simple to use the same as in workspace
+          container.
+        </para>
+      </callout>
+    </calloutlist>
+</programlistingco>
   </section>
 </section>

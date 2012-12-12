@@ -9,25 +9,24 @@
 
     <itemizedlist>
       <listitem>
-        <para>Specifically configured custom <emphasis
-        role="bold">ExtendedAccessManager</emphasis> which is called by eXo
-        JCR internals to check if user's Session (user) has some privilege to
-        perform some operation or not.</para>
+        <para>Specifically configured custom <parameter>ExtendedAccessManager</parameter> which is called by eXo
+        JCR internals to check if user's Session (user) has some privileges to
+        perform some operations or not.</para>
       </listitem>
 
       <listitem>
         <para>The <emphasis role="bold">Action</emphasis> sets a thread local
-        <emphasis role="bold">InvocationContext</emphasis> at runtime, the
-        InvocationContext instance is then used by the ExtendedAccessManager
+        <parameter>InvocationContext</parameter> at runtime, the
+        InvocationContext instance is then used by the <parameter>ExtendedAccessManager</parameter>
         in handling permissions of the current Session.</para>
       </listitem>
 
       <listitem>
-        <para><emphasis role="bold">InvocationContext</emphasis> is a
+        <para><parameter>InvocationContext</parameter> is a
         collection of properties which reflect the state of a current Session.
         At present, it contains: the type of the current operation on Session
         (event), current Item (javax.jcr.Item) on which this operation is
-        performed and the current eXo Container</para>
+        performed and the current eXo Container.</para>
       </listitem>
     </itemizedlist>
 
@@ -61,7 +60,7 @@
   </para>
 
     <para>The <emphasis role="bold">InvocationContext</emphasis> contains the
-    current Item, the current <parameter>ExoContainer</parameter> and the current <parameter>EventType</parameter> is like
+    current Item, the current <parameter>ExoContainer</parameter> and the current <parameter>EventType</parameter> look like
     below:</para>
 
     <programlisting language="java">public interface InvocationContext extends ContextBase {

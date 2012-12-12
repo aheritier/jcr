@@ -34,7 +34,7 @@
   <para>You will use the last one:</para>
    <procedure>
            <step>
-       <para>Create new MyAnalyzer</para>
+       <para>Create a new MyAnalyzer.</para>
      <programlisting language="java">public class MyAnalyzer extends Analyzer
 {
    @Override
@@ -149,10 +149,9 @@ if(it.hasNext())
 }</programlisting>
 
     <para>NodeIterator will return "node1" and "node2". How is it possible?
-    Remember that our MyAnalyzer transforms 'tréma' word to 'trema'. So node2
-    accepts our constraints to.</para>
+    Remember that the MyAnalyzer transforms 'tréma' word to 'trema', so node2 accepts the constraints too.</para>
 
-    <para>Also, we can get a table:</para>
+    <para>Also, you can get a table:</para>
 
     <programlisting language="java">String[] columnNames = result.getColumnNames();
 RowIterator rit = result.getRows();

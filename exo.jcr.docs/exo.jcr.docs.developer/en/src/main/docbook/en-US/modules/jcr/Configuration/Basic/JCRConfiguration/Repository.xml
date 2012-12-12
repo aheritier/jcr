@@ -1,5 +1,5 @@
 <!-- 2.1.1.1 Repository -->
-<section id="JCR.eXoJCRconfiguration.Repository" role="NotInToc">
+<section id="JCR.eXoJCRconfiguration.Repository">
     <title>Repository</title>
   <!-- Repository service configuration (JCR repositories configuration) -->
   <para id="JCR.eXoJCRconfiguration.RepositoryServiceConfiguration">
@@ -8,12 +8,12 @@
     </citetitle>
   </para>  
 
-    <para>The service configuration is located in <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename> in the portal web application.
+    <para>The service configuration is located at <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename> in the portal web application.
     </para>
     <itemizedlist>
         <listitem>
             <para><parameter>default-repository</parameter>: The name of a
-            default repository (one returned by RepositoryService.getRepository()).</para>
+            default repository (one returned by <parameter>RepositoryService.getRepository()</parameter>).</para>
         </listitem>
         <listitem>
             <para><parameter>repositories</parameter>: The list of repositories.</para>
@@ -69,14 +69,19 @@
             which an idle session will be removed (called logout). If session-max-age
             is not set up, idle session will never be removed.</para>
         </listitem>
-        <listitem>
-            <para id="JCR.eXoJCRconfiguration.LockRemoverMaxThreads"><parameter>lock-remover-max-threads</parameter>: Number of threads that
-            can serve LockRemover tasks. The default value is "1". A repository may have many
-            workspaces, each workspace have own LockManager. JCR supports Locks with
-            defined lifetime and these locks removed as it becomes expired by LockRemovers. However, LockRemovers is not an independent
-            timer-threads, it is a task that executed each 30 seconds. Such task is
-            served by ThreadPoolExecutor which may use different number of threads.</para>
-        </listitem>
+      <listitem>
+        <para id="JCR.eXoJCRconfiguration.LockRemoverMaxThreads"><parameter>lock-remover-max-threads</parameter>: Number
+          of threads that
+          can serve LockRemover tasks. The default value is "1". A repository may have many
+          workspaces, each workspace have own LockManager. JCR supports Locks with
+          defined lifetime and these locks removed as it becomes expired by LockRemovers. However,
+          <parameter>LockRemovers</parameter>
+          is not an independent
+          timer-thread, it is a task that executes each 30 seconds. Such a task is served by
+          <parameter>ThreadPoolExecutor</parameter>
+          which may use various threads.
+        </para>
+      </listitem>
     </itemizedlist>
 	<note>
 		<para>See <link linkend="JCR.RepositoryCreationService">RepositoryCreationService</link> if you want to learn about how to create repositories in runtime.</para>

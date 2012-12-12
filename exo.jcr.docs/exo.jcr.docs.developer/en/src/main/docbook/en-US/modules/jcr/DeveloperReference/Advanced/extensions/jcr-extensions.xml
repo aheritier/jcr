@@ -7,9 +7,9 @@
 
       <para>eXo JCR supports <emphasis role="bold">observation</emphasis>,
      which enables applications to register interest in events
-      that describe changes to a workspace, and then monitor and respond to
+      that describe changes on a workspace, and then monitor and respond to
       those events. The standard observation feature allows dispatching events
-      when <emphasis role="bold">persistent change</emphasis> to the workspace
+      when <emphasis role="bold">persistent change</emphasis> on the workspace
       is made.</para>
 
       <para>eXo JCR also offers a proprietary <emphasis role="bold">Extension
@@ -23,7 +23,7 @@
       <para>One important recommendation should be applied for an extension
       action implementation. Each action will add its own execution time to
       standard JCR methods (<parameter>Session.addNode()</parameter>, <parameter>Session.setProperty()</parameter>,
-      <parameter>Workspace.move()</parameter>, and more.) execution time. As a consequence, it is necessary
+      <parameter>Workspace.move()</parameter>, and more.) execution time. As a result, you need
       to minimize the <parameter>Action.execute(Context)</parameter> body execution time.</para>
 
       <para>To make the rule, you can use the dedicated Thread in
@@ -33,46 +33,19 @@
       returned, the suggestion with Thread is not applicable for you in this
       case.</para>
 
-  <para>
-    <citetitle>
-      <emphasis role="bold">Related Pages</emphasis>
-    </citetitle>
-  </para>
-
-  <itemizedlist>
-    <listitem>
-      <para>
-        <link linkend="JCR.AccessControlExtension">Access control system</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="JCR.RegistryService">Registry service</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="JCR.RESTServicesOnGroovy">REST Groovy
-          services
-        </link>
-      </para>
-    </listitem>
-  </itemizedlist>
-
-  <para xml:id="JCR.Extensions.Implementation">
+    <para xml:id="JCR.Extensions.Implementation">
     <citetitle>
       <emphasis role="bold">Implementation</emphasis>
     </citetitle>
   </para>
+   <para>The JCR Service’s implementation may be illustrated in the following interceptor framework class diagram.</para>
       <mediaobject>
         <imageobject>
           <imagedata align="center" fileref="images/concepts/interceptor.jpg" />
         </imageobject>
       </mediaobject>
 
-      <para>Interceptor framework class diagram</para>
-
-  <para xml:id="JCR.Extensions.Configuration">
+       <para xml:id="JCR.Extensions.Configuration">
     <citetitle>
       <emphasis role="bold">Configuration</emphasis>
     </citetitle>
@@ -83,8 +56,7 @@
       service and an appropriate <emphasis
       role="bold">AddActionsPlugin</emphasis>
       configuration to your eXo Container configuration. As usual, the plugin
-      can be configured as in-component-place which is a usual case for
-      Root/Portal Container configuration).</para>
+      can be configured as in-component-place.</para>
 
       <para>Each Action entry is exposed as
       <parameter>org.exoplatform.services.jcr.impl.ext.action.ActionConfiguration</parameter> of the actions collection of
@@ -99,7 +71,7 @@
 	
 		<itemizedlist>
 			<listitem>
-				<para><parameter>workspace</parameter>: A comma delimited (ORed) list of workspaces</para>
+				<para><parameter>workspace</parameter>: A comma delimited (ORed) list of workspaces.</para>
 			</listitem>
 
 			<listitem>

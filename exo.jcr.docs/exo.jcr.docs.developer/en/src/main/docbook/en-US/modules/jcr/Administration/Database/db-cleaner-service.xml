@@ -16,7 +16,7 @@
       the <emphasis>JCRRuntimePermissions.MANAGE_REPOSITORY_PERMISSION</emphasis> permission.</para>
     </note>
 
-    <para>There are several methods of <emphasis>DBCleanerService</emphasis> :</para>
+    <para>There are several methods of <emphasis>DBCleanerService</emphasis>:</para>
 
     <table>
       <title>API</title>
@@ -27,7 +27,7 @@
             <entry><parameter>public static void cleanWorkspaceData(WorkspaceEntry
             wsEntry)</parameter></entry>
 
-            <entry>Clean workspace data from database.</entry>
+            <entry>Clean up workspace data from database.</entry>
           </row>
 
           <row>
@@ -48,8 +48,7 @@
             <entry><parameter>public static DBCleaner getRepositoryDBCleaner(Connection
             jdbcConn, RepositoryEntry repoEntry)</parameter></entry>
 
-            <entry>Return database cleaner of repository. Returns null in
-            case of multi-db configuration.</entry>
+            <entry>Return database cleaner of repository. The "null" value is returned in case of the multi-db configuration.</entry>
           </row>
         </tbody>
       </tgroup>
@@ -102,36 +101,11 @@ connection.commit();</programlisting></entry>
   <listitem>
     <para xml:id="JCR.DBCleanerService.Clean_Only_Single_Workspace"><emphasis role="bold">Need to clean only single workspace</emphasis></para>
 
-    <para>Simple cleaning records from JCR table is used in case of single-db
+    <para>Simple records cleaning from JCR table is used in case of single-db
     configuration. </para>
 
-    <table>
-      <title>PostgreSQL, DB2 and MSSQL </title>
-
-      <tgroup cols="2">
-        <tbody>
-          <row>
-            <entry><parameter>executeCleanScripts()</parameter></entry>
-
-            <entry>Remove all records from the database. Foreign key of
-            JCR_SITEM table is also removed.</entry>
-          </row>
-
-          <row>
-            <entry><parameter>executeCommitScripts()</parameter></entry>
-
-            <entry>Add the foreign key.</entry>
-          </row>
-
-          <row>
-            <entry><parameter>executeRollbackScripts()</parameter></entry>
-          </row>
-        </tbody>
-      </tgroup>
-    </table>
-
-    <table>
-      <title>Oracle, Sybase, HSQLDB, MySQL</title>
+     <table>
+      <title>PostgreSQL, DB2 and MSSQLL</title>
 
       <tgroup cols="2">
         <tbody>
@@ -157,34 +131,8 @@ connection.commit();</programlisting></entry>
       </tgroup>
     </table>
 
-    <para>Either removing or renaming JCR tables are used in case of mult-db
+    <para>Either removing or renaming JCR tables is used in case of the mult-db
     configuration.</para>
-
-    <table>
-      <title>PostgreSQL, DB2 and MSSQL</title>
-
-      <tgroup cols="2">
-        <tbody>
-          <row>
-            <entry>executeCleanScripts()</entry>
-
-            <entry>Remove the tables JCR_MVALUE, JCR_MREF, JCR_MITEM,
-            initialize new tables without the foreign key of JCR_MITEM table,
-            add root.</entry>
-          </row>
-
-          <row>
-            <entry>executeCommitScripts()</entry>
-
-            <entry>Add the foreign key.</entry>
-          </row>
-
-          <row>
-            <entry>executeRollbackScripts()</entry>
-          </row>
-        </tbody>
-      </tgroup>
-    </table>
 
     <table>
       <title>Oracle, Sybase, HSQLDB, MySQL</title>

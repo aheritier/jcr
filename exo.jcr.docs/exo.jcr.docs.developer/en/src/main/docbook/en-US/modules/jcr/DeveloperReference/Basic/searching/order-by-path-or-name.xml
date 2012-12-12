@@ -5,7 +5,7 @@
   <title>Order by path or name</title>
 
   <warning>
-    <para>Ordering by <paramter>jcr:path</paramter> or <paramter>jcr:name</paramter> does not supported.</para>
+    <para>Ordering by <parameter>jcr:path</parameter> or <parameter>jcr:name</parameter> does not supported.</para>
   </warning>
 
   <para>There are two ways to order results, when path may be used as
@@ -18,7 +18,7 @@
     </listitem>
 
     <listitem>
-      <para>Order by <paramter>jcr:path </paramter> or <paramter>jcr:name</paramter> - sort by the exact path or name of node
+      <para>Order by <parameter>jcr:path </parameter> or <parameter>jcr:name</parameter> - sort by the exact path or name of node
       (JCR does not support it).</para>
     </listitem>
   </itemizedlist>

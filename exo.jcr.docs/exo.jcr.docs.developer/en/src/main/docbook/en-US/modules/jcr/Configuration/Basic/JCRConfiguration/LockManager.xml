@@ -1,7 +1,7 @@
 <!-- 2.1.1.7 Lock Manager -->
-<section id="JCR.eXoJCRconfiguration.LockManagerConfiguration" role="NotInToc">
+<section id="JCR.eXoJCRconfiguration.LockManagerConfiguration">
     <title>Lock Manager</title>
-    <para>The service configuration is located in
+    <para>The service configuration is located at
         <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>
         in the portal web application.
     </para>
@@ -25,7 +25,7 @@
 			<para>See <link linkend="JCR.LockManagerConfiguration">LockManager configuration</link> for advanced configuration of LockManager.</para>
 		</listitem>
 		<listitem>
-			<para>Also see <link linkend="JCR.eXoJCRconfiguration.LockRemoverMaxThreads">lock-remover-max-threads</link> repository configuration parameter.</para>
+			<para>Also see <link linkend="JCR.eXoJCRconfiguration.LockRemoverMaxThreads">lock-remover-max-threads</link>.</para>
 		</listitem>
 	  </itemizedlist>
     </note>

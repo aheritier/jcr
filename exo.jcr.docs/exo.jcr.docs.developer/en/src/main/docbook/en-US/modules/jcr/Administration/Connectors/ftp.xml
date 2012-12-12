@@ -24,11 +24,10 @@
    &lt;value&gt;21&lt;/value&gt;
 &lt;/value-param&gt;</programlisting>
 
-      <para>The value of the command channel port. The value '21' is
-      default.</para>
+      <para>The value of the command channel port. The value '21' is set by default.</para>
 
-      <para>When you have already some FTP servers installed in your system ,
-      this parameter needs to be changed (e.g. 2121) to avoid conflicts
+      <para>When you have already some FTP servers installed in your system,
+      this parameter needs to be changed (for example, 2121) to avoid conflicts
       or if the port is protected.</para>
     </listitem>
 
@@ -46,10 +45,11 @@
 &lt;/value-param&gt;</programlisting>
 
       <para>These two parameters indicate the minimal and maximal values of
-      the range of ports, used by the server. The usage of the additional data
-      channel is required by the FTP - protocol, which is used to transfer the
-      contents of files and the listing of catalogues. This range of ports
-      should be free from listening by other server-programs.</para>
+        the range of ports respectively, used by the server. The usage of the additional data
+        channel is required by the FTP - protocol, which is used to transfer the file content and the categories list.
+        This range of ports
+        should be free from listening by other server-programs.
+      </para>
     </listitem>
 
     <listitem>
@@ -103,7 +103,7 @@
    &lt;value&gt;nt:file&lt;/value&gt;
 &lt;/value-param&gt;</programlisting>
 
-      <para>This parameter specifies the type of a node, when an FTP - file is
+      <para>This parameter specifies the type of a node, when an FTP file is
       created.</para>
     </listitem>
 
@@ -115,8 +115,8 @@
    &lt;value&gt;application/zip&lt;/value&gt;
 &lt;/value-param&gt;</programlisting>
 
-      <para>The mime type of a created file is chosen by using its file
-      extention. In case, a server cannot find the corresponding mime type,
+      <para>The MIME type of a created file is chosen by using its file
+      extention. In case a server cannot find the corresponding mime type,
       this value is used.</para>
     </listitem>
 

@@ -1,12 +1,12 @@
 <!-- 2.1.1.5 Cache -->
-<section id="JCR.eXoJCRconfiguration.CacheConfiguration" role="NotInToc">
+<section id="JCR.eXoJCRconfiguration.CacheConfiguration">
     <title>Cache</title>
         <itemizedlist>
             <listitem>
-                <para><parameter>enabled</parameter>: If workspace cache is enabled or not.</para>
+                <para><parameter>enabled</parameter>: Define if workspace cache is enabled or not.</para>
             </listitem>
             <listitem>
-                <para><parameter>class</parameter>: Cache implementation class. Default value is <parameter>org.exoplatform.services.jcr.impl.dataflow.persistent.LinkedWorkspaceStorageCacheImpl</parameter>.</para>
+                <para><parameter>class</parameter>: Cache implementation class. The default value is <parameter>org.exoplatform.services.jcr.impl.dataflow.persistent.LinkedWorkspaceStorageCacheImpl</parameter>.</para>
             </listitem>
             <listitem>
                 <para><parameter>properties</parameter>: The list of properties

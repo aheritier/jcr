@@ -17,7 +17,7 @@
           actually). So, with long Item names (larger ofOracle or PostgreSQL
           also are good for performance. DB2 and MSSQL are slower in default
           configurations. Default configuration of Sybase leader of slowness.
-          But in this question, take the database server maintenance in account.
+          But in this question, take the database server maintenance into account.
           MySQL and PostgreSQL are simple in installation and can work even on
           limited hardware. Oracle, DB2, MSSQL or Sybase need more efforts. The
           same actual for maintenance during the work. Note for Sybase:
@@ -140,19 +140,19 @@
           <listitem>
             <para>SQL no matter ascending or descending - query returns result
               nodes in random order:</para>
-            <programlsiting>SELECT * FROM nt:unstructured WHERE
-              jcr:path LIKE 'testRoot/%' ORDER BY jcr:path</programlsiting>
+            <programlisting>SELECT * FROM nt:unstructured WHERE
+              jcr:path LIKE 'testRoot/%' ORDER BY jcr:path</programlisting>
           </listitem>
         </itemizedlist>
         <itemizedlist>
           <listitem>
             <para>XPath - jcr:path order construction is ignored (so result is
               not sorted according to the path):</para>
-            <programlsiting>/testRoot/*
+            <programlisting>/testRoot/*
               <ulink
                       url="@jcr:primaryType='nt:unstructured'">@jcr:primaryType='nt:unstructured'
               </ulink>
-              order by jcr:path</programlsiting>
+              order by jcr:path</programlisting>
           </listitem>
         </itemizedlist>
       </answer>

@@ -1,7 +1,7 @@
 <!-- 2.1.1.6 Query handler -->
-<section id="JCR.eXoJCRconfiguration.QueryHandlerConfiguration" role="NotInToc">
+<section id="JCR.eXoJCRconfiguration.QueryHandlerConfiguration">
     <title>Query Handler</title>
-    <para>The service configuration is located in
+    <para>The service configuration is located at
         <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename>
         in the portal web application. </para>
     	<itemizedlist>
@@ -14,7 +14,6 @@
 			    (name-value pairs) for a Query Handler (indexDir).</para>
 		    </listitem> 
 	    </itemizedlist>
-<para>Properties and advanced features described in <link linkend="JCR.SearchConfiguration">Search Configuration</link>.</para>
 	<note>
 		<para>See <link linkend="JCR.QueryHandlerConfiguration">QueryHandler configuration</link> for advanced configuration of QueryHandler.</para>
 	</note>

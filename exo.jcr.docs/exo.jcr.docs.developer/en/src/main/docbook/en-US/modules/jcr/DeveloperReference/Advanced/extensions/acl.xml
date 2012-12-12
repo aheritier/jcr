@@ -24,16 +24,16 @@
       JCR:</para>
       <itemizedlist>
         <listitem>
-          <para><emphasis role="bold">any</emphasis>: represents any
+          <para><emphasis role="bold">any</emphasis>: represent any
           authenticated session.</para>
         </listitem>
         <listitem>
-          <para><emphasis role="bold">anonim</emphasis>: represents a
-          principal for non authenticated sessions. (No error, it&apos;s really
+          <para><emphasis role="bold">anonim</emphasis>: represent a
+          principal for non-authenticated sessions. (No error, it&apos;s really
           &quot;\_\_anonim&quot;.)</para>
         </listitem>
         <listitem>
-          <para><emphasis role="bold">system</emphasis>: represents a
+          <para><emphasis role="bold">system</emphasis>: represent a
           principal for system sessions, typically used for administrative
           purposes. System session has full access (all permissions) to all
           nodes; therefore be careful when working with system
@@ -48,7 +48,7 @@
       and
       <emphasis role="bold">exo:privilegeable</emphasis>
       nodetypes only, not for their
-      subtypes! So you cannot extend those nodetypes.
+      subtypes. So, you cannot extend those nodetypes.
     </para>
     <para>
       <emphasis role="bold">Autocreation:</emphasis>
@@ -63,7 +63,7 @@
       or/and
       <emphasis role="bold">exo:owneable</emphasis>
       thanks to eXo&apos;s JCR interceptors
-      extension (see<link linkend="JCR.Extensions">JCR Extensions</link>)
+      extension (see <link linkend="JCR.Extensions">JCR Extensions</link>.
     </para>
     <para><emphasis role="bold">OR-based Privilege Inheritance</emphasis>:
       Note, that eXo&apos;s Access Control implementation supports a privilege
@@ -87,7 +87,7 @@
         <listitem>
           <para><emphasis role="bold">Privilegeable</emphasis>: Means that
           the user or group (also called principal) needs the appropriate
-          privileges to access to this node. The privileges are defined as
+          privileges to access this node. The privileges are defined as
           (positive) permissions that are granted to users or groups.</para>
         </listitem>
         <listitem>
@@ -158,7 +158,7 @@
 &lt;/nodeType&gt;</programlisting>
         <para>The exo:owner property value contains exactly one identity
         string value. There might be a long list of different permissions for
-        different identities (user or groups). All permissions are always
+        different identities (users or groups). All permissions are always
         positive permissions; denials are not possible. When checking a
         permission of an action, it is therefore perfectly sufficient that the
         principal of a session belongs to the groups to which the
@@ -197,13 +197,14 @@
         </para>
 
         <para>When no matching ACL is found in the ancestor hierarchy, the
-        system may end up looking at the root node&apos;s ACL. As ACL are optional,
-        even for the root node, if the root node has no ACL, the following
-        rule is ultimately applied to resolve privileges:</para>
+          system may end up looking at the root node&apos;s ACL. As ACL is optional, even for the root node. If
+          the root node has no ACL, the following
+          rule is ultimately applied to resolve privileges:
+        </para>
         <itemizedlist>
           <listitem>
             <para><emphasis role="bold">any</emphasis> identity (any
-            authenticated session) is granted all permissions</para>
+            authenticated session) is granted all permissions.</para>
           </listitem>
         </itemizedlist>
       </section>
@@ -294,7 +295,7 @@ exo:text=&quot;&quot; exo:title=&quot;Dogs_x0020_are_x0020_friends&quot; /&gt;
             permission exactly on &quot;subnode&quot;.</para>
           </listitem>
           <listitem>
-            <para><emphasis role="bold">read property</emphasis> : Check the read
+            <para><emphasis role="bold">read property</emphasis>: Check the read
             permission on a parent node.</para>
             <para>For example: Read /<emphasis role="bold">node1</emphasis>/myprop - JCR will check the &quot;read&quot;
             permission on &quot;node1&quot;.</para>
@@ -393,7 +394,7 @@ exo:text=&quot;&quot; exo:title=&quot;Dogs_x0020_are_x0020_friends&quot; /&gt;
             </row>
             <row>
               <entry><parameter>void checkPermission(String actions)</parameter></entry>
-              <entry>Check Permission (AccessDeniedException will be thrown if denied).</entry>
+              <entry>Check Permission (<parameter>AccessDeniedException</parameter> will be thrown if being denied).</entry>
             </row>
           </tbody>
         </tgroup>

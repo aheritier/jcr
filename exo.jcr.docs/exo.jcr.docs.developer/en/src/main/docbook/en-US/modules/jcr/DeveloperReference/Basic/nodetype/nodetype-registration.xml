@@ -168,7 +168,7 @@ public void setDeclaredPropertyDefinitionValues(List&lt;PropertyDefinitionValue&
 
       <para>The <parameter>NodeDefinitionValue</parameter> interface extends <parameter>ItemDefinitionValue</parameter> with
       the addition of writing methods, enabling the characteristics of a child
-      node definition to be set, after that, the <parameter>NodeDefinitionValue</parameter> is added
+      node definition to be set. After that, the <parameter>NodeDefinitionValue</parameter> is added
       to a <parameter>NodeTypeValue</parameter>.</para>
 <programlisting language="java">/**
  * @return Returns the declaredSupertypeNames.

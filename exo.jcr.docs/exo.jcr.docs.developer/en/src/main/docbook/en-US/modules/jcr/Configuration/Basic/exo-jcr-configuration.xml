@@ -46,7 +46,44 @@
 &lt;!ELEMENT properties (property+)&gt;
 &lt;!ELEMENT property EMPTY&gt;
 </programlisting>
-
+  <para>The elements in the above configuration file are detailed in the following sections:</para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <link linkend="JCR.eXoJCRconfiguration.Repository">Repository</link>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link linkend="JCR.eXoJCRconfiguration.workspace">Workspace</link>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link linkend="JCR.ConfigurationPersister.ValueStoragePlugin">Value Storage Plugin for Data Container</link>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link linkend="JCR.eXoJCRconfiguration.InitializerConfiguration">Initializer</link>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link linkend="JCR.eXoJCRconfiguration.CacheConfiguration">Cache</link>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link linkend="JCR.eXoJCRconfiguration.QueryHandlerConfiguration">Query Handler</link>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link linkend="JCR.eXoJCRconfiguration.LockManagerConfiguration">Lock Manager</link>
+      </para>
+    </listitem>
+  </itemizedlist>
     <para>
       JCR Service can use multiple <emphasis role="bold">Repositories</emphasis> and each repository can have multiple
     <emphasis role="bold">Workspaces</emphasis>.
@@ -68,30 +105,6 @@
         <para>No ending - seconds: 500ms - 500 milliseconds; 20 - 20 seconds; 30m - 30 minutes; 12h - 12 hours; 5d - 5 days; 4w - 4 weeks.</para>
         </listitem>
     </itemizedlist>
-	<para>The elements in the above configuration file are detailed in the following sections:</para>
-	<itemizedlist>
-		<listitem>
-			<para><link linkend="JCR.eXoJCRconfiguration.Repository">Repository</link></para>
-		</listitem>
-		<listitem>
-			<para><link linkend="JCR.eXoJCRconfiguration.workspace">Workspace</link></para>
-		</listitem>
-		<listitem>
-			<para><link linkend="JCR.ConfigurationPersister.ValueStoragePlugin">Value Storage Plugin for Data Container</link></para>
-		</listitem>
-		<listitem>
-			<para><link linkend="JCR.eXoJCRconfiguration.InitializerConfiguration">Initializer</link></para>
-		</listitem>
-		<listitem>
-			<para><link linkend="JCR.eXoJCRconfiguration.CacheConfiguration">Cache</link></para>
-		</listitem>
-		<listitem>
-			<para><link linkend="JCR.eXoJCRconfiguration.QueryHandlerConfiguration">Query Handler</link></para>
-		</listitem>
-		<listitem>
-			<para><link linkend="JCR.eXoJCRconfiguration.LockManagerConfiguration">Lock Manager</link></para>
-		</listitem>
-	</itemizedlist>
 
 <xi:include href="JCRConfiguration/Repository.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 <xi:include href="JCRConfiguration/Workspace.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> 

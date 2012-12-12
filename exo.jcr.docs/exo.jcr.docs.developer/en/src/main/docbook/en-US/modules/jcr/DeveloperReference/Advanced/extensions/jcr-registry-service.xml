@@ -8,12 +8,12 @@
     <para>The Registry Service is one of the key parts of the infrastructure
     built around eXo JCR. Each JCR that is based on service, applications, and more
     may have its own configuration, settings data and other data that have to
-    be stored persistently and used by the appropriate service or application.
+    be stored persistently and used by the appropriate service or application
     (called "<emphasis role="bold">Consumer</emphasis>").</para>
 
     <para>The service acts as a centralized collector (Registry) for such
     data. Naturally, a registry storage is JCR based i.e. stored in some JCR
-    workspace (one per Repository) as an Item tree under <parameter>/exo:registry</parameter> node.</para>
+    workspaces (one per Repository) as an Item tree under <parameter>/exo:registry</parameter> node.</para>
 
     <para>Despite the fact that the structure of the tree is well defined (see
     the scheme below), it is not recommended for other services to manipulate
@@ -37,7 +37,7 @@
        Consumer data    (exo:registryEntry)
      ...</programlisting>
 
-    <para>Each upper level eXo Service may store its configuration in eXo
+    <para>At each upper level, eXo Service may store its configuration in eXo
     Registry. At first, start from xml-config (in jar etc) and then from
     Registry. In configuration file, you can add the <parameter>force-xml-configuration</parameter>
     parameter to the component to ignore reading parameters initialization from
@@ -118,8 +118,8 @@
   <section id="JCR.RegistryService.Configuration">
     <title>Configuration</title>
 
-    <para><parameter>RegistryService</parameter> has two optional params: the <parameter>mixin-names</parameter> value parameter and the
-      <parameter>locations</parameter> properties parameter. The <parameter>mixin-names</parameter> is used for adding
+    <para><parameter>RegistryService</parameter> has two optional parameters: the <parameter>mixin-names</parameter> and the
+      <parameter>locations</parameter>. The <parameter>mixin-names</parameter> is used for adding
     additional mixins to the <parameter>exo:registry</parameter>, <parameter>exo:applications</parameter>, <parameter>exo:services</parameter>,
     <parameter>exo:users</parameter> and <parameter>exo:groups</parameter> nodes of <parameter>RegistryService</parameter>. This allows the top level
     applications to manage these nodes in a special way. Locations is used to

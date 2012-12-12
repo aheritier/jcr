@@ -9,7 +9,7 @@
     creation on <ulink url="http://groovy.codehaus.org">Groovy
     script</ulink>.</para>
 
-    <para>The feature bases on RESTful framework and uses the <emphasis role="bold">ResourceContainer</emphasis> concept.</para>
+    <para>The feature is based on RESTful framework and uses the <emphasis role="bold">ResourceContainer</emphasis> concept.</para>
 
   <para xml:id="JCR.RESTServicesOnGroovy.Usage">
     <citetitle>

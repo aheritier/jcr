@@ -12,7 +12,7 @@
   <para id="JCR.JBossCacheConfigurationTemplates.JBoss_Cache_Config_for_Indexer">
     <citetitle><emphasis role="bold">For indexer, lock manager and data container</emphasis></citetitle>
   </para>
-    <para>Each mentioned components uses instances of JBoss Cache product for
+    <para>Each mentioned component uses instances of JBoss Cache product for
     caching in clustered environment. So every element has its own transport
     and has to be configured in a proper way. As usual, workspaces have
     similar configuration but with different cluster-names and maybe some
@@ -22,13 +22,12 @@
     <programlisting language="xml">&lt;property name="jbosscache-configuration" value="conf/standalone/test-jbosscache-lock-db1-ws1.xml" /&gt;</programlisting>
 
     <para>However, if there are few workspaces, configuring them in such a way can
-    be painful and hard to manageJCR offers a template-based
-    configuration for JBoss Cache instances. You can have one template for
+    be painful and hard to manage JCR which offers a template-based configuration for JBoss Cache instances. You can have one template for
     Lock Manager, one for Indexer and one for data container and use them in
     all the workspaces, defining the map of substitution parameters in a main
-    configuration file. Just simply define ${jbosscache-&lt;parameter
-    name&gt;} inside xml-template and list correct value in JCR configuration
-    file just below "jbosscache-configuration", as shown:</para>
+    configuration file. Just simply define <parameter>${jbosscache-&lt;parameter
+    name&gt;}</parameter> inside <parameter>xml-template</parameter> and list correct values in the JCR configuration
+    file just below "<parameter>jbosscache-configuration</parameter>", as shown:</para>
 
 	<itemizedlist>
 		<listitem>
@@ -65,11 +64,11 @@
     default, each cluster should perform multi-casts on a separate port. This
     configuration leads to much unnecessary overhead on cluster. That is why
     JGroups offers multiplexer feature, providing the ability to use one single
-    channel for set of clusters. This feature reduces network overheads and
+    channel for a set of clusters. This feature reduces network overheads and
     increase performance and stability of application.</para>
     <para> To enable multiplexer
-    stack, you should define appropriate configuration file (upd-mux.xml is
-    pre-shipped one with JCR) and set "jgroups-multiplexer-stack" to
+    stack, you should define appropriate configuration file (<filename>upd-mux.xml</filename> is
+    pre-shipped one with JCR) and set "<parameter>jgroups-multiplexer-stack</parameter>" to
     "true".</para>
 
     <programlisting language="xml">&lt;property name="jgroups-configuration" value="jar:/conf/portal/udp-mux.xml" /&gt;
@@ -90,10 +89,9 @@
 &lt;property name="jgroups-multiplexer-stack" value="false" /&gt;</programlisting>  
   <!-- Allow to share JBoss Cache instances  -->
   <para id="JCR.JBossCacheConfigurationTemplates.Allow_to_share_JBOSS_Cache_Instances">
-    <citetitle><emphasis role="bold">Allow to share JBoss Cache instances</emphasis></citetitle>
+    <citetitle><emphasis role="bold">Allow sharing JBoss Cache instances</emphasis></citetitle>
   </para>
-    <para>A JBoss Cache instance is quite resource consuming and by default we
-    will have 3 JBoss Cache instances (one instance for the indexer, one for
+    <para>A JBoss Cache instance is quite resource consuming and there are three JBoss Cache instances by default (one instance for the indexer, one for
     the lock manager and one for the data container) for each workspace, so if
     you intend to have a lot of workspaces, it could make sense to decide to
     share one JBoss Cache instance with several cache instances of the same
@@ -226,7 +224,7 @@
 
           <tbody>
             <row>
-              <entry><parameter>jbosscache-cluster-name</parameter>parameter></entry>
+              <entry><parameter>jbosscache-cluster-name</parameter></entry>
             </row>
 
             <row>

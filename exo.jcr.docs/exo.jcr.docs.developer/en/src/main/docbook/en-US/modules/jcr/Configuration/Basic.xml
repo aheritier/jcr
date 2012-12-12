@@ -37,8 +37,13 @@
     linkend="Kernel.ServiceConfigurationforBeginners">Service Configuration
     for Beginners</link> for more details).</para>
 
-    <para>The JCR service configuration looks like:</para>
-
+  <para>The JCR service configuration looks like:</para>
+  <programlistingco>
+    <areaspec>
+      <area coords="10" id="area-JCRref.Configuration.BasicConfiguration.confPath"/>
+      <area coords="15" id="area-JCRref.Configuration.BasicConfiguration.maxBackupFiles"/>
+      <area coords="19" id="JCRref.Configuration.BasicConfiguration.WorkingConf"/>
+    </areaspec>
     <programlisting language="xml">&lt;component&gt;
   &lt;key&gt;org.exoplatform.services.jcr.RepositoryService&lt;/key&gt;
   &lt;type&gt;org.exoplatform.services.jcr.impl.RepositoryServiceImpl&lt;/type&gt;
@@ -65,19 +70,26 @@
     &lt;/properties-param&gt;
   &lt;/init-params&gt;
 &lt;/component&gt;</programlisting>
-    <itemizedlist>
-		<listitem>
-			<para><parameter>conf-path</parameter>: A path to a RepositoryService JCR Configuration.</para>
-		</listitem>
-		<listitem>
-			<para><parameter>max-backup-files</parameter>: The maximum number of backup files. This option lets you specify the number of stored backups. 
-		Number of backups can not exceed this value. File which will exceed the limit will replace the oldest file.</para>
-		</listitem>
-		<listitem>
-			<para><parameter>working-conf</parameter>: This is optional. See <link linkend="JCR.ConfigurationPersister">JCR configuration persister</link> for more details. If there is not a <parameter>working-conf</parameter>, the persister will be disabled.</para>
-		</listitem>
-    </itemizedlist>
-    <para>The JCR Core implementation contains a persister which stores the
+      <calloutlist>
+        <callout arearefs="area-JCRref.Configuration.BasicConfiguration.confPath">
+          <para><parameter>conf-path</parameter>: A path to a RepositoryService JCR Configuration.
+          </para>
+        </callout>
+        <callout arearefs="area-JCRref.Configuration.BasicConfiguration.maxBackupFiles">
+          <para><parameter>max-backup-files</parameter>: The maximum number of backup files. This option lets you
+            specify the number of stored backups.
+            Number of backups can not exceed this value. File which will exceed the limit will replace the oldest file.
+          </para>
+        </callout>
+        <callout arearefs="JCRref.Configuration.BasicConfiguration.WorkingConf">
+          <para><parameter>working-conf</parameter>: This is optional. See
+            <link linkend="JCR.ConfigurationPersister">JCR configuration persister</link>
+            for more details. If there is not a<parameter>working-conf</parameter>, the persister will be disabled.
+          </para>
+        </callout>
+      </calloutlist>
+    </programlistingco>
+       <para>The JCR Core implementation contains a persister which stores the
     repository configuration in the related database using JDBC calls - <parameter>org.exoplatform.services.jcr.impl.config.JDBCConfigurationPersister</parameter>.
     The implementation will create and use table JCR_CONFIG in the
     provided database. But the developer can implement his own persister for his particular

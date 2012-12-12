@@ -15,7 +15,7 @@
 
   <note>
     <para>See <link linkend="JCR.SearchConfiguration">Search
-    Configuration</link></para>
+    Configuration.</link></para>
   </note>
 
   <para>Now, check this rule with a simple query by selecting all nodes with the <parameter>'nt:unstructured'</parameter>

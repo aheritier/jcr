@@ -53,7 +53,7 @@
     database.</para>
 
     <para>Both implementations support to remove Expired Locks.
-    LockRemover separates threads, that periodically ask LockManager to remove
+    LockRemover separates threads that periodically ask LockManager to remove
     Locks that live so long. So, the timeout for LockRemover may be set as
     follows (the default value is 30m).</para>
 
@@ -67,7 +67,7 @@
 
       <para>Replication requirements are the same for Cache.</para>
 
-      <para>You can see a full JCR configuration example at <link
+      <para>You can see a full JCR configuration example <link
       linkend="JCR.ClusterConfig.JCRExternalConfig">here</link>.</para>
 
       <tip>
@@ -84,16 +84,18 @@
 
           <listitem>
             <para><parameter>cache.jdbc.fqn.type</parameter> and
-            cache.jdbc.node.type must be configured according to your
+            <parameter>cache.jdbc.node.type</parameter> must be configured basing on your
             database.</para>
           </listitem>
         </itemizedlist>
       </tip>
-      <para>There are a few ways to configure CacheableLockManagerImpl, and
-      all of them configure JBoss-cache and JDBCCacheLoader.</para>
+      <para>There are a few ways to configure<parameter>CacheableLockManagerImpl</parameter>, and all of them configure
+        <parameter>JBoss-cache</parameter>
+        and <parameter>JDBCCacheLoade</parameter>.
+      </para>
 
       <para>See <ulink
-      url="http://community.jboss.org/wiki/JBossCacheJDBCCacheLoader">http://community.jboss.org/wiki/JBossCacheJDBCCacheLoader</ulink></para>
+      url="http://community.jboss.org/wiki/JBossCacheJDBCCacheLoader">http://community.jboss.org/wiki/JBossCacheJDBCCacheLoader</ulink> for more information.</para>
     </listitem>
 
     <listitem id="JCR.LockManagerConfiguration.CacheableLockManagerImpl.SimpleJbossCacheConfiguration">
@@ -170,7 +172,7 @@
           <listitem>
             <para><parameter>cache.jdbc.node.type</parameter> and
             <parameter>cache.jdbc.fqn.type</parameter>: must be configured
-            according to your database.</para>
+            basing on your database.</para>
 
             <note>
               <para>To prevent any consistency issue regarding the lock data, ensure that your cache loader is
@@ -258,13 +260,14 @@
           <listitem>
             <para><parameter>jbosscache-cl-cache.jdbc.fqn.column</parameter>
             and <parameter>jbosscache-cl-cache.jdbc.node.type</parameter> is
-            the same as cache.jdbc.fqn.type and cache.jdbc.node.type in
+            the same as <parameter>cache.jdbc.fqn.type</parameter> and <parameter>cache.jdbc.node.type</parameter> in
             JBoss-Cache configuration. You can set those data types according
             to your database type or set it as AUTO (or do not set at all) and
             data type will be detected automatically.</para>
           </listitem>
 
           <listitem>
+
             <para>As you see, jgroups-configuration is moved to separate the
             configuration file - udp-mux.xml. In this case, the udp-mux.xml
             file is a common JGroup configuration for all components

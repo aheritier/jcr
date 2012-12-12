@@ -13,9 +13,14 @@
     <para>The configuration file is located in
         <filename>portal/WEB-INF/conf/jcr/jcr-configuration.xml</filename>
         in the portal web application. </para>
-    <para>Configuration with persister:</para>
-    
-<programlisting language="xml">&lt;component&gt;
+  <para>Configuration with persister:</para>
+  <programlistingco>
+  <areaspec>
+    <area coords="13" id="area-JCR.ConfigurationPersister.source-name"/>
+    <area coords="14" id="area-JCR.ConfigurationPersister.dialect"/>
+    <area coords="15" id="area-JCR.ConfigurationPersister.persister-class-name"/>
+  </areaspec>
+  <programlisting language="xml">&lt;component&gt;
 &lt;key&gt;org.exoplatform.services.jcr.config.RepositoryServiceConfiguration&lt;/key&gt;
 &lt;type&gt;org.exoplatform.services.jcr.impl.config.RepositoryServiceConfigurationImpl&lt;/type&gt;
 &lt;init-params&gt;
@@ -33,31 +38,35 @@
   &lt;/properties-param&gt;
 &lt;/init-params&gt;
 &lt;/component&gt;</programlisting>
-
-    <itemizedlist>
-        <listitem>
-          <para><parameter>source-name</parameter>: JNDI source name
-          configured in <classname>InitialContextInitializer</classname>
-          component. Find
-          more in <link linkend="JCR.JDBCDataContainerConfig">database
-          configuration</link>.</para>
-        </listitem>
-
-        <listitem>
-          <para><parameter>dialect</parameter>: SQL dialect which will be used
-          with database from <parameter>source-name</parameter>. Find more in
-          <link linkend="JCR.JDBCDataContainerConfig">database
-          configuration</link>.</para>
-        </listitem>
-
-        <listitem>
-          <para><parameter>persister-class-name</parameter> - Class name of
-          <classname>ConfigurationPersister</classname> interface
-          implementation.</para>
-        </listitem>
-      </itemizedlist>
-
-    <para>If you want to customize, you can implement ConfigurationPersister interface as follows:</para>
+  <calloutlist>
+    <callout arearefs="area-JCR.ConfigurationPersister.source-name">
+      <para><parameter>source-name</parameter>: JNDI source name
+        configured in
+        <classname>InitialContextInitializer</classname>
+        component. Find
+        more in<link linkend="JCR.JDBCDataContainerConfig">database
+          configuration</link>.
+      </para>
+    </callout>
+    <callout arearefs="area-JCR.ConfigurationPersister.dialect">
+      <para><parameter>dialect</parameter>: SQL dialect which will be used
+        with database from<parameter>source-name</parameter>. Find more in
+        <link linkend="JCR.JDBCDataContainerConfig">database
+          configuration</link>.
+      </para>
+    </callout>
+    <callout arearefs="area-JCR.ConfigurationPersister.persister-class-name">
+      <para>
+        <parameter>persister-class-name</parameter>
+        - Class name of
+        <classname>ConfigurationPersister</classname>
+        interface
+        implementation.
+      </para>
+    </callout>
+  </calloutlist>
+  </programlistingco>
+    <para>If you want to customize, you can implement <parameter>ConfigurationPersister</parameter> interface as follows:</para>
     
     <programlisting language="java">/**
    * Init persister.

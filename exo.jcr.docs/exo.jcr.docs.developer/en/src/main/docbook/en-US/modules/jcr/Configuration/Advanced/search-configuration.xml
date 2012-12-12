@@ -44,7 +44,7 @@
     <table>
       <title></title>
 
-      <tgroup cols="4">
+      <tgroup cols="3">
         <thead>
           <row>
             <entry>Parameter</entry>
@@ -65,7 +65,6 @@
             <entry>The location of the index directory. This parameter is
             mandatory.</entry>
 
-            <entry>1.0</entry>
           </row>
 
           <row>
@@ -180,8 +179,8 @@
 
             <entry>Integer.MAX_VALUE</entry>
 
-            <entry>The number of results when a query is executed. Default
-            value: Integer.MAX_VALUE (-&gt; all).</entry>
+            <entry>The number of results when a query is executed. The default
+            value is <parameter>Integer.MAX_VALUE</parameter>.</entry>
 
           </row>
 
@@ -191,8 +190,8 @@
             <entry>DefaultXMLExcerpt</entry>
 
             <entry>The name of the class that implements
-            org.exoplatform.services.jcr.impl.core.query.lucene.ExcerptProvider
-            and should be used for the rep:excerpt() function in a
+            <parameter>org.exoplatform.services.jcr.impl.core.query.lucene.ExcerptProvider</parameter>
+            and should be used for the <parameter>rep:excerpt()</parameter> function in a
             query.</entry>
 
           </row>
@@ -228,8 +227,7 @@
             path element inside the <parameter>SearchIndex</parameter> element, then this path is
             interpreted and relative to the root path of the path. Whether
             this parameter is mandatory or not, it depends on the synonym
-            provider implementation. The default value is null (-&gt; not
-            set).</entry>
+            provider implementation. The default value is null.</entry>
 
           </row>
 
@@ -307,9 +305,9 @@
 
             <entry>false</entry>
 
-            <entry>Allows JCR to convert an existing index into the new
+            <entry>Allow JCR to convert an existing index into the new
             format. You have to run an
-            automatic migration: Start JCR with -Dupgrade-index=true. The old
+            automatic migration: Start JCR with <parameter>-Dupgrade-index=true</parameter>. The old
             index format is then converted in the new index format. After the
             conversion, the new format is used. On the next start, you do not
             need this option anymore. As the old index is replaced and a back

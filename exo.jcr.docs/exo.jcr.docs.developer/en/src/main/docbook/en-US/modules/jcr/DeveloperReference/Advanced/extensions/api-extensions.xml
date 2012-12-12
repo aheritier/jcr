@@ -5,7 +5,7 @@
 <section id="JCR.APIExtensions">
   <title>JCR API</title>
 
-      <para>eXo JCR implementation offers new extended feature beyond JCR
+      <para>eXo JCR implementation offers a new extended feature beyond the JCR
       specification. Sometimes one JCR Node has hundreds or
       even thousands of child nodes. This situation is highly not recommended
        for content repository data storage, but sometimes it occurs. They can be iterated in a "lazy" manner by giving
@@ -16,13 +16,13 @@
 
       <para>Current "lazy" child nodes iterator supports caching, when pages
       are cached atomically in safe and optimized way. Cache is always kept in
-      consistent state using invalidation if child list changed. Take in
+      consistent state using invalidation if child list changed. Take into
       account the following difference in <parameter>getNodes</parameter> and <parameter>getNodesLazily</parameter>.
-      Specification defined <parameter>getNode</parameter> method reads the whole list of nodes, so
-      child items added after invocation will never be in results.
+      Specification which defines the <parameter>getNode</parameter> method reads the whole list of nodes,
+       so child items added after invocation will never be in results.
       <parameter>GetNodesLazily</parameter> does not acquire full list of nodes, so child items added
       after iterator creation can be found in result. So <parameter>getNodesLazily</parameter> can
-      represent some kind of "real-time" results. But it is highly depend on
+      represent some types of "real-time" results. But it is highly dependent on
       numerous conditions and should not be used as a feature, it more likely
       implementation specific issue typical for "lazy-pattern".</para>
     </note>

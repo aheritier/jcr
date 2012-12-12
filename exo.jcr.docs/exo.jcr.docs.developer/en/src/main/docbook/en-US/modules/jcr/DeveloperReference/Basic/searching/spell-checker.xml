@@ -9,7 +9,7 @@
 
   <note>
     <para>See also SpellChecker configuration in <link
-    linkend="JCR.SearchingRepositoryContent">Searching Repository
+    linkend="JCR.SearchingRepositoryContent">Search Repository
     Content</link>.</para>
   </note>
 
@@ -87,7 +87,7 @@ QueryResult result = query.execute();</programlisting>
     </citetitle>
   </para>
 
-    <para>Get suggestion of correct spelling our phrase:</para>
+    <para>Get suggestion of the correct spelling as follows:</para>
 
     <programlisting language="java">RowIterator it = result.getRows();
 Row r = rows.nextRow();

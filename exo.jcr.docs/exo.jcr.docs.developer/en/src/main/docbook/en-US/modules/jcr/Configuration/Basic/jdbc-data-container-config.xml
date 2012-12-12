@@ -53,9 +53,18 @@
     resources (DataSources) for data containers.</para>
 
     <para>For example, the configuration for two data containers
-    <parameter>jdbcjcr</parameter> - local HSQLDB,
-    <parameter>jdbcjcr1</parameter> - remote MySQL) in standalone mode is as follows :</para>
-
+    (<parameter>jdbcjcr</parameter> - local HSQLDB,
+    <parameter>jdbcjcr1</parameter> - remote MySQL) is as follows :</para>
+<programlistingco>
+        <areaspec>
+			<area coords="25" id="area-JCR.JDBCDataContainerConfig.driverClassName" />
+			<area coords="26" id="area-JCR.JDBCDataContainerConfig.Url" />
+			<area coords="27" id="area-JCR.JDBCDataContainerConfig.Username" />
+			<area coords="28" id="area-JCR.JDBCDataContainerConfig.Password" />
+      <area coords="56" id="area-JCR.JDBCDataContainerConfig.maxActive" />
+			<area coords="57" id="area-JCR.JDBCDataContainerConfig.maxIdle" />
+			<area coords="58" id="area-JCR.JDBCDataContainerConfig.initialSize" />
+			</areaspec>
 <programlisting language="xml">&lt;component&gt;
     &lt;key&gt;org.exoplatform.services.naming.InitialContextInitializer&lt;/key&gt;
     &lt;type&gt;org.exoplatform.services.naming.InitialContextInitializer&lt;/type&gt;
@@ -125,57 +134,63 @@
       &lt;/value-param&gt;
     &lt;/init-params&gt;
 &lt;/component&gt;</programlisting>
-
-    <para>Configure the database connection parameters:<itemizedlist>
-        <listitem>
-          <para><parameter>driverClassName</parameter>, e.g.
-          "org.hsqldb.jdbcDriver", "com.mysql.jdbc.Driver",
-          "org.postgresql.Driver"</para>
-        </listitem>
-
-        <listitem>
-          <para><parameter>url</parameter>, e.g.
-          "jdbc:hsqldb:file:target/temp/data/portal",
-          "jdbc:mysql://exoua.dnsalias.net/jcr"</para>
-        </listitem>
-
-        <listitem>
-          <para><parameter>username</parameter>, e.g. "sa", "exoadmin"</para>
-        </listitem>
-
-        <listitem>
-          <para><parameter>password</parameter>, e.g. "", "exo12321"</para>
-        </listitem>
-      </itemizedlist></para>
-
-    <para>There can be connection pool configuration parameters
-    (org.apache.commons.dbcp.BasicDataSourceFactory):<itemizedlist>
-        <listitem>
-          <para><parameter>maxActive</parameter>, e.g. 50</para>
-        </listitem>
-
-        <listitem>
-          <para><parameter>maxIdle</parameter>, e.g. 5</para>
-        </listitem>
-
-        <listitem>
-          <para><parameter>initialSize</parameter>, e.g. 5</para>
-        </listitem>
-
-        <listitem>
-          <para>and other according to <ulink
-          url="http://jakarta.apache.org/commons/dbcp/configuration.html">Apache
-          DBCP configuration</ulink></para>
-        </listitem>
-      </itemizedlist></para>
-
-    <para>When the data container configuration is done, we can configure the
-    repository service. Each workspace will be configured for its own data
-    container.</para>
+  <calloutlist>
+    <callout arearefs="area-JCR.JDBCDataContainerConfig.driverClassName">
+      <para><parameter>driverClassName</parameter>, e.g.
+        "org.hsqldb.jdbcDriver", "com.mysql.jdbc.Driver",
+        "org.postgresql.Driver"
+      </para>
+    </callout>
+    <callout arearefs="area-JCR.JDBCDataContainerConfig.Url">
+      <para><parameter>url</parameter>, e.g.
+        "jdbc:hsqldb:file:target/temp/data/portal",
+        "jdbc:mysql://exoua.dnsalias.net/jcr"
+      </para>
+    </callout>
+    <callout arearefs="area-JCR.JDBCDataContainerConfig.Username">
+      <para><parameter>username</parameter>, e.g. "sa", "exoadmin"
+      </para>
+    </callout>
+    <callout arearefs="area-JCR.JDBCDataContainerConfig.Password">
+      <para><parameter>password</parameter>, e.g. "", "exo12321"
+      </para>
+    </callout>
+    <callout arearefs="area-JCR.JDBCDataContainerConfig.maxActive">
+      <para><parameter>maxActive</parameter>, e.g. 50
+      </para>
+    </callout>
+    <callout arearefs="area-JCR.JDBCDataContainerConfig.maxIdle">
+      <para><parameter>maxIdle</parameter>, e.g. 5
+      </para>
+    </callout>
+    <callout arearefs="area-JCR.JDBCDataContainerConfig.initialSize">
+      <para><parameter>initialSize</parameter>, e.g. 5
+      </para>
+      <para>There are also some other connection pool configuration parameters
+        (org.apache.commons.dbcp.BasicDataSourceFactory) according to
+        <ulink
+                url="http://jakarta.apache.org/commons/dbcp/configuration.html">Apache
+          DBCP configuration.
+        </ulink>
+      </para>
+    </callout>
+  </calloutlist>
+</programlistingco>
+  <para>When the data container configuration is done, you can configure the repository service. Each workspace will be
+    configured for its own data
+    container.
+  </para>
 
     <para>For example (two workspaces <parameter>ws</parameter> - jdbcjcr,
     <parameter>ws1</parameter> - jdbcjcr1):</para>
-
+    <programlistingco>
+      <areaspec>
+        <area coords="5" id="area-JCR.JDBCDataContainerConfig.source-name"/>
+        <area coords="6" id="area-JCR.JDBCDataContainerConfig.dialect"/>
+        <area coords="7" id="area-JCR.JDBCDataContainerConfig.multi-db"/>
+        <area coords="8" id="area-JCR.JDBCDataContainerConfig.max-buffer-size"/>
+        <area coords="9" id="area-JCR.JDBCDataContainerConfig.swap-directory"/>
+      </areaspec>
     <programlisting language="xml">&lt;workspaces&gt;
   &lt;workspace name="ws" auto-init-root-nodetype="nt:unstructured"&gt;
     &lt;container class="org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer"&gt;
@@ -238,44 +253,48 @@
     &lt;/lock-manager&gt;
   &lt;/workspace&gt;
 &lt;/workspaces&gt;
-</programlisting>
+    </programlisting>
+      <calloutlist>
+        <callout arearefs="area-JCR.JDBCDataContainerConfig.source-name">
+          <para><parameter>source-name</parameter>: A javax.sql.DataSource name
+            configured in InitialContextInitializer component.
+          </para>
+        </callout>
+        <callout arearefs="area-JCR.JDBCDataContainerConfig.dialect">
+          <para><parameter>dialect</parameter>: A database dialect, one of
+            "hsqldb", "mysql", "mysql-utf8", "pgsql", "oracle", "oracle-oci",
+            "mssql", "sybase", "derby", "db2", "db2v8" or "auto" for dialect
+            autodetection;
+          </para>
+        </callout>
+        <callout arearefs="area-JCR.JDBCDataContainerConfig.multi-db">
+          <para><parameter>multi-db</parameter>: Enable multi-database container
+            with this parameter (set value "true");
+          </para>
+        </callout>
+        <callout arearefs="area-JCR.JDBCDataContainerConfig.max-buffer-size">
+          <para>
+            <parameter>max-buffer-size: A</parameter>
+            threshold (in bytes)
+            after which a javax.jcr. Value content will be swapped to a file in a
+            temporary storage. For example: swap for pending changes.
+          </para>
+        </callout>
+        <callout arearefs="area-JCR.JDBCDataContainerConfig.swap-directory">
+          <para><parameter>swap-directory</parameter>: A path in the file system
+            used to swap the pending changes.
+          </para>
+        </callout>
+      </calloutlist>
+    </programlistingco>
 
-    <itemizedlist>
-      <listitem>
-        <para><parameter>source-name</parameter>: A javax.sql.DataSource name
-        configured in InitialContextInitializer component.</para>
-      </listitem>
-
-      <listitem>
-        <para><parameter>dialect</parameter>: A database dialect, one of
-        "hsqldb", "mysql", "mysql-utf8", "pgsql", "oracle", "oracle-oci",
-        "mssql", "sybase", "derby", "db2", "db2v8" or "auto" for dialect
-        autodetection;</para>
-      </listitem>
-
-      <listitem>
-        <para><parameter>multi-db</parameter>: Enable multi-database container
-        with this parameter (set value "true");</para>
-      </listitem>
-
-      <listitem>
-        <para><parameter>max-buffer-size: A</parameter> a threshold (in bytes)
-        after which a javax.jcr. Value content will be swapped to a file in a
-        temporary storage. For example: swap for pending changes.</para>
-      </listitem>
-
-      <listitem>
-        <para><parameter>swap-directory</parameter>: A path in the file system
-        used to swap the pending changes.</para>
-      </listitem>
-    </itemizedlist>
-
-    <para>In this way, we have configured two workspace which will be
-    persisted in two different databases (ws in HSQLDB, ws1 in MySQL).</para>
+  <para>In this way, you have configured two workspaces which will be persisted in two different database (ws in HSQLDB,
+    ws1 in MySQL).
+  </para>
 
     <note>
       <para>The <link
-      linkend="JCR.eXoJCRconfiguration">repository configuration</link>
+      linkend="JCR.eXoJCRconfiguration.Repository">repository configuration</link>
       parameters supports human-readable formats of values (for example: 200K - 200
       Kbytes, 30m - 30 minutes, etc)</para>
     </note>
@@ -285,7 +304,7 @@
 <section id="JCR.JDBCDataContainerConfig.Single-databaseConfiguration">
     <title>Single-database configuration</title>
 
-    <para>It is simpler to configure a single-database data container. We
+    <para>It is simpler to configure a single-database data container. You
     have to configure one naming resource.</para>
 
     <para>For example (embedded mode for <parameter>jdbcjcr</parameter> data
@@ -329,8 +348,8 @@
     with this one database. Parameter "multi-db" must be switched off (set
     value "false").</para>
 
-    <para>For example (two workspaces <parameter>ws</parameter> - jdbcjcr,
-    <parameter>ws1</parameter> - jdbcjcr):</para>
+    <para>For example: two workspaces <parameter>ws</parameter> - jdbcjcr, and
+    <parameter>ws1</parameter> - jdbcjcr:</para>
 
     <programlisting language="xml">&lt;workspaces&gt;
   &lt;workspace name="ws" auto-init-root-nodetype="nt:unstructured"&gt;

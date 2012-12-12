@@ -17,7 +17,7 @@ QueryManager queryManager = workspace.getQueryManager();
 // make XPath query
 Query query = queryManager.createQuery("/jcr:root/Documents/Publie/2010//element(*, exo:article)", Query.XPATH);</programlisting>
 
-  <para>You will have an error : "Invalid request". This happens because XML
+  <para>You will have an error: "<emphasis>Invalid request</emphasis>". This happens because XML
   does not allow names starting with a number - and XPath is part of XML:
   <ulink
   url="http://www.w3.org/TR/REC-xml/#NT-Name">http://www.w3.org/TR/REC-xml/#NT-Name</ulink></para>
@@ -33,19 +33,9 @@ Query query = queryManager.createQuery("/jcr:root/Documents/Publie/2010//element
     </listitem>
 
     <listitem>
-      <para>Use escaping:</para>
+      <para>Use escaping.</para>
     </listitem>
   </itemizedlist>
-    </listitem>
-    <listitem>
-      <para>
-        <emphasis role="bold">XPath</emphasis>
-      </para>
-
-      <programlisting language="java">// get QueryManager
-QueryManager queryManager = workspace.getQueryManager(); 
-// make XPath query
-Query query = queryManager.createQuery("/jcr:root/Documents/Publie/_x0032_010//element(*, exo:article)", Query.XPATH);</programlisting>
     </listitem>
   </itemizedlist>
 </section>

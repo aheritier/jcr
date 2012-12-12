@@ -26,7 +26,7 @@
     </listitem>
     <listitem>
       <para>actions: eXo JCR interprets this string as a comma separated
-        the list of individual action names, such as the 4 types defined in JSR
+        the list of individual action names, such as 4 types defined in JSR
         170:</para>
       <itemizedlist>
         <listitem>
@@ -56,16 +56,16 @@
   <itemizedlist>
     <listitem>
       <para><parameter>session.checkPermission(&quot;/Groups/organization&quot;,
-        &quot;add_node,set_property&quot;)</parameter> will check if the session is allowed to add a
-        child node to &quot;organization&quot; and to modify its properties. If one of
+        &quot;add_node,set_property&quot;)</parameter> will check if the session allows adding a
+        child node to &quot;organization&quot; and modifying its properties. If one of
         the two permissions is denied, an <parameter>AccessDeniedException</parameter> is
         thrown.
       </para>
     </listitem>
     <listitem>
       <para><parameter>session.checkPermission(&quot;/Groups/organization/exo:name&quot;,
-        &quot;read,set_property&quot;)</parameter> will check if the session is allowed to read and
-        change the &quot;<parameter>exo:name</parameter>&quot; property of the &quot;<parameter>organization</parameter>&quot; node.
+        &quot;read,set_property&quot;)</parameter> will check if the session allows reading and
+        changing the &quot;<parameter>exo:name</parameter>&quot; property of the &quot;<parameter>organization</parameter>&quot; node.
       </para>
     </listitem>
     <listitem>

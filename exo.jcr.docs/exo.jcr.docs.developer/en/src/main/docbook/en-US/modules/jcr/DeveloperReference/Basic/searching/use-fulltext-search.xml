@@ -25,11 +25,11 @@
 
       <itemizedlist>
         <listitem>
-          <para>SQL query: select * from nt:base</para>
+          <para>SQL query: select * from nt:base.</para>
         </listitem>
 
         <listitem>
-          <para>XPath query: //* .</para>
+          <para>XPath query: //*.</para>
         </listitem>
       </itemizedlist>
     </note>
@@ -216,7 +216,7 @@ for (RowIterator it = result.getRows(); it.hasNext(); ) {
       you may use a relative path to a string property. The returned value
       will then be an excerpt based on string value of the property.</para>
 
-      <para>Both available excerpt provider will create fragments of about 150
+      <para>Both available excerpt providers will create fragments of about 150
       characters and up to 3 fragments.</para>
 
       <para>In SQL, the function is called <parameter>excerpt()</parameter> without the <parameter>rep</parameter> prefix,
@@ -237,10 +237,10 @@ for (RowIterator it = result.getRows(); it.hasNext(); ) {
     <title>SpellChecker</title>
 
     <para>The Lucene-based query handler implementation supports a pluggable
-    spell checker mechanism. By default, spell checking is not available and
+    spellchecker mechanism. By default, spell checking is not available and
     you have to configure it first. See the <parameter>spellCheckerClass</parameter> parameter on page
     <link linkend="JCR.SearchConfiguration">Search Configuration.</link> JCR
-    currently providing an implementation class, which uses the <ulink
+    currently provides an implementation class which uses the <ulink
     url="http://wiki.apache.org/jakarta-lucene/SpellChecker">lucene-spellchecker</ulink>
     to contribute. The dictionary is derived from the fulltext indexed
     content of the workspace and updated periodically. You can configure the
@@ -294,7 +294,7 @@ for (RowIterator it = result.getRows(); it.hasNext(); ) {
       </citetitle>
     </para>
 
-      <para>You can spell check a fulltext statement either with an XPath or a
+      <para>You can do a spelling check of a fulltext statement either with an XPath or a
       SQL query:</para>
 
       <programlisting language="java">// rep:spellcheck('explatform') will always evaluate to true
@@ -355,9 +355,17 @@ if (v == null) {
       </listitem>
     </itemizedlist>
 
-    <note>The similarity functionality requires that the <emphasis role="bold">Highlighting</emphasis> support
-    is enabled. Make sure that you have the following
-    parameter set for the query handler in your <filename>workspace.xml</filename> file.</note>
+    <note>
+      <para>
+        The similarity functionality requires that the
+        <emphasis role="bold">Highlighting</emphasis>
+        support
+        is enabled. Make sure that you have the following
+        parameter set for the query handler in your
+        <filename>workspace.xml</filename>
+        file.
+      </para>
+    </note>
 
     <programlisting language="xml">&lt;param name="support-highlighting" value="true"/&gt;</programlisting>
 

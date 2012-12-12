@@ -188,10 +188,7 @@
 
     <programlisting>SELECT * FROM nt:resource WHERE CONTAINS(jcr:data, 'some string')</programlisting>
 
-    <para>Because,  BINARY is not searchable by fulltext search on exact
-    property.</para>
-
-    <para>But, next query will return result (in case the node has searched data):</para>
+    <para>BINARY is not searchable by fulltext search on the exact property, but the next query will return result if the node has searched data.</para>
 
     <programlisting>SELECT * FROM nt:resource WHERE CONTAINS( * , 'some string')</programlisting>
 

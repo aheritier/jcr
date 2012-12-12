@@ -5,10 +5,9 @@
 <section id="JCR.LinkProducerService" role="NotInToc">
   <title>Link producer service</title>
 
-  <para>Link Producer Service - a simple service, which generates an <filename>.lnk</filename>
-  file, that is compatible with the Microsoft link file format. It is an
+  <para>Link Producer Service - a simple service, generates an <filename>.lnk</filename> file that is compatible with the Microsoft link file format. It is an
   extension of the REST Framework library and is included into the WebDav
-  service. On dispatching a GET request the service generates the content of
+  service. On dispatching a GET request, the service generates the content of
   an <filename>.lnk</filename> file, which points to a JCR resource via WebDav.</para>
 
   <para>Link Producer has a simple configuration as described below:</para>
@@ -18,11 +17,10 @@
   &lt;type&gt;org.exoplatform.services.webdav.lnkproducer.LnkProducer&lt;/type&gt;
 &lt;/component&gt;</programlisting>
 
-  <para>When using JCR the resource can be addressed by WebDav reference
-  (href) like
-  <uri>http://host:port/rest/jcr/repository/workspace/somenode/somefile.extention</uri>
-  , the link servlet must be called for this resource by several hrefs, like
-  <uri>http://localhost:8080/rest/lnkproducer/openit.lnk?path=/repository/workspace/somenode/somefile.extention</uri>
+  <para>When JRS is used, the resource can be addressed by WebDav reference (href) like
+  <uri>http://host:port/rest/jcr/repository/workspace/somenode/somefile.extension.</uri>
+  The link servlet must be called for this resource by several hrefs, like
+  <uri>http://localhost:8080/rest/lnkproducer/openit.lnk?path=/repository/workspace/somenode/somefile.extension.</uri>
   </para>
 
   <note>
@@ -31,8 +29,10 @@
   <uri>http://localhost:8080/portal/rest/...</uri></para>
  </note>
 
-  <para>The name of the <filename>.lnk</filename> file can be any. But for the best compatibility,
-  it must be the same as the name of the JCR resource.</para>
+  <para>To have the best compatibility, the name of the
+    <filename>.lnk</filename>
+    file must be the same as that of the JCR resource.
+  </para>
 
   <para>Here is a step-by-step sample of a usecase of the link producer. First, type the valid reference to the resource using the link producer in your
   browser's address field:</para>
@@ -74,10 +74,10 @@
   <para>The Link Producer is necessary for opening/editing and then saving the
   remote files in Microsoft Office Word without any further updates.</para>
 
-  <para>Also, the Link Producer can be referenced to from an HTML page. If page
-  contains code like:</para>
+  <para>Also, the Link Producer can be referenced from an HTML page. If page
+  contains a code snippet like:</para>
 
-  <programlisting language="html">&lt;a href="http://localhost:8080/rest/lnkproducer/openit.lnk?path=/repository/workspace/somenode/somefile.extention"&gt;somefile.extention&lt;/a&gt;</programlisting>
+  <programlisting language="html">&lt;a href="http://localhost:8080/rest/lnkproducer/openit.lnk?path=/repository/workspace/somenode/somefile.extension"&gt;somefile.extention&lt;/a&gt;</programlisting>
 
-  <para>The <filename>somefile.extention</filename> file will open directly.</para>
+  <para>The <filename>somefile.extension</filename> file will be opened directly.</para>
 </section>

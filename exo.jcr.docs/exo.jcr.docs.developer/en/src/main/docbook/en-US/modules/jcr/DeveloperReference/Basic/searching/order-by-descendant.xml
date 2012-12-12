@@ -9,7 +9,7 @@
   '/a/b'.</para>
 
   <note>
-    <para>This ORDER BY construction only works in XPath!</para>
+    <para>This ORDER BY construction only works in XPath.</para>
   </note>
 
    <para xml:id="JCR.OrderByDescendant.RepositoryStructure">

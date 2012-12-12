@@ -11,16 +11,16 @@
     DeltaV is an extension of the WebDav protocol that allows managing
     document versioning. Locking guarantees protection against multiple access
     when writing resources. The ordering support allows changing the position
-    of the resource in the list and sort the directory to make the directory
-    tree viewed conveniently. The full-text search makes it easy to find the
+    of the resource in the list and sorts the directory to make the directory tree viewed conveniently.
+    The fulltext search makes it easy to find the
     necessary documents. You can search by using two languages: SQL and
     XPATH.</para>
 
     <para>In JCR, you plug in the WebDAV layer on the top of your JCR implementation, based on the code taken
     from the extension modules of the reference implementation, so it is possible to browse a workspace using
     the third party tools (it can be Windows folders or Mac ones as well as a
-    Java WebDAV client, such as DAVExplorer or IE using File-&gt;Open as a Web
-    Folder).</para>
+    Java WebDAV client, such as DAVExplorer or IE using <menuchoice><guimenu>File</guimenu> <guimenuitem>Open as a Web
+    Folder</guimenuitem></menuchoice>).</para>
 
     <para>Now WebDav is an extension of the REST service. To get the WebDav
     server ready, you must deploy the REST application. Then, you can access
@@ -364,11 +364,11 @@
 	<citetitle>
       <para xml:id="JCR.WebDAV.Restrictions.Windows7"><emphasis role="bold">Windows 7</emphasis></para>
 	</citetitle>
-      <para>When you try to set up a web folder by “adding a network location”
-      or “map a network drive” through My Computer, you can get an error
-      message saying that either “<emphasis>The folder you entered does not appear to be
-      valid. Please choose another</emphasis>” or “<emphasis>Windows cannot access… Check the
-      spelling of the name. Otherwise, there might be…</emphasis>”. These errors may
+      <para>When you try to set up a web folder by "adding a network location"
+      or "mapping a network drive" through My Computer, you can get an error
+      message saying that either "<emphasis>The folder you entered does not appear to be
+      valid. Please choose another</emphasis>" or "<emphasis>Windows cannot access… Check the
+      spelling of the name. Otherwise, there might be…</emphasis>". These errors may
       appear when you are using SSL or non-SSL.</para>
 	  <para>To fix this problem, do the following steps:</para>
 	  <procedure>
@@ -376,7 +376,7 @@
 			<para>Go to <emphasis role="bold">Windows Registry Editor</emphasis>. </para>
         </step>
         <step>
-          <para>Find a key: <emphasis role="bold">\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlset\services\WebClient\Parameters\BasicAuthLevel</emphasis>
+          <para>Find a key: <emphasis role="bold">\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlset\services\WebClient\Parameters\BasicAuthLevel</emphasis>.
           </para>
         </step>
         <step>
@@ -388,14 +388,13 @@
 		<para xml:id="JCR.WebDAV.Restrictions.MicrosoftOffice2010"><emphasis role="bold">Microsoft Office 2010</emphasis></para>
 	  </citetitle>
 
-      <para>If you have Microsoft Office 2010 applications or Microsoft Office
-      2007 applications installed on a client computer. From that client
-      computer, you try to access an Office file that is stored on a web
-      server that is configured for Basic authentication. The connection
+    <para>If you have Microsoft Office 2010 or Microsoft Office 2007 applications installed on a client computer, try to
+      access an Office file that is stored on a web server that is configured for Basic authentication from the client
+      computer. The connection
       between your computer and the web server does not use Secure Sockets
       Layer (SSL). When you try to open or to download the file, you
-      experience the following symptoms: 
-		<itemizedlist>
+      experience the following symptoms:
+      <itemizedlist>
           <listitem>
             <para>The Office file does not open or download.</para>
           </listitem>

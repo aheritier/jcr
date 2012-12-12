@@ -45,7 +45,7 @@ $ db2start</programlisting>
           <para>MyISAM is not supported due to its lack of transaction support
           and integrity check. Use it only if you do not expect any support
           and if performances in read accesses are more important than the
-          consistency in your use-case. Therefore, the <emphasis>mysql-myisam</emphasis>
+          consistency in your usecase. Therefore, the <emphasis>mysql-myisam</emphasis>
           and <emphasis>mysql-myisam-utf8</emphasis> dialects are only dedicated to the community.</para>
 		</listitem>
 		<listitem>
@@ -65,7 +65,7 @@ $ db2start</programlisting>
 		<listitem>
 			<para>When using RDBMS for reindexing, need to set
           "<parameter>enable_seqscan</parameter>" to "<parameter>off</parameter>" or "<parameter>default_statistics_target</parameter>" at least
-          "50"</para>
+          "50".</para>
 		</listitem>
 		<listitem>
           <para>Though the PostgreSQL server performs query optimization
@@ -86,9 +86,8 @@ ANALYZE JCR_SVALUE</programlisting>
           a case sensitive collation. Microsoft SQL Server both 2005 and 2008
           customers must configure their server with collation corresponding
           to personal needs and requirements, but obligatorily case sensitive.
-          For more information please refer to Microsoft SQL Server
-          documentation page "Selecting a SQL Server Collation" <ulink
-          url="http://msdn.microsoft.com/en-us/library/ms144250.aspx">here</ulink>.</para>
+          Refer <ulink
+          url="http://msdn.microsoft.com/en-us/library/ms144250.aspx">here</ulink> for more information on selecting SQL Server Collation.</para>
 		</listitem>
 		<listitem>
           <para>MS SQL DB server's optimizer automatically processes queries
@@ -115,8 +114,8 @@ UPDATE STATISTICS JCR_SVALUE</programlisting>
           url="http://en.wikipedia.org/wiki/Transact-SQL">Transact-SQL</ulink>
           by the '<ulink
           url="http://manuals.sybase.com/onlinebooks/group-as/asg1250e/sqlug/@Generic__BookTextView/37166;pt=37125">update
-          statistics</ulink>' command which in very few situations may increase
-          performance.</para>
+          statistics</ulink>' command which may increase
+          performance in very few situations.</para>
       <para> For example:</para>
           <programlisting>update statistics JCR_SITEM
 update statistics JCR_SVALUE</programlisting>

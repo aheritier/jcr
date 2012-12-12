@@ -88,7 +88,7 @@ if(it.hasNext())
     <para>The NodeIterator will return the node whose fn:name equals
     "document".</para>
 
-    <para>Also we can get a table:</para>
+    <para>Also, you can get a table:</para>
 
     <programlisting language="java">String[] columnNames = result.getColumnNames();
 RowIterator rit = result.getRows();

@@ -12,11 +12,11 @@
 
   <note>
     <para>See also Similarity and configuration in <link
-    linkend="JCR.SearchingRepositoryContent">Searching Repository
+    linkend="JCR.SearchingRepositoryContent">Search Repository
     Content</link>.</para>
   </note>
 
-  <para>Highlighting support must be added to the <filename>test-jcr-config.xml</filename> configuration.
+  <para>Highlighting support must be added to the <filename>test-jcr-config.xml</filename> configuration
   file:</para>
 
   <programlisting language="java">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
@@ -101,7 +101,7 @@
             <itemizedlist>
               <listitem>
                 <para>jcr:content (nt:resource) jcr:data=" <emphasis
-                role="bold">Terms</emphasis> occurs here"</para>
+                role="bold">Terms</emphasis> occur here"</para>
               </listitem>
             </itemizedlist>
           </listitem>
@@ -157,7 +157,7 @@ if(it.hasNext())
     "/baseFile/jcr:content","/target1/jcr:content" and
     "/target3/jcr:content".</para>
 
-    <para>As you see the base node are also in result set.</para>
+    <para>As you see the base node is also in the result set.</para>
 
     <para>You can also get a table:</para>
 

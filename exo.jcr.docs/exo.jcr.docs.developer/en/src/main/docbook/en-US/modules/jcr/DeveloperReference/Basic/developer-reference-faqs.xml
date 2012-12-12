@@ -42,7 +42,7 @@
 
       <answer>
         <para>Until it is applicable for a business logic, it can be. But take
-          in account the paths are human readable and lets you think in
+          into account the paths are human readable and let you think in
           hierarchy. If it is important, a location based approach is
           preferable.
         </para>
@@ -57,15 +57,12 @@
       <answer>
         <para><parameter>Session.getNodeByUUID()</parameter> about 2.5 times faster of
           <parameter>Session.getItem(String)</parameter> and only 25% faster of <parameter>Node.getNode(String)</parameter>.
-          See the daily test results for such comparisons in the following link for an example.
-        </para>
-
-        <para>
-          <ulink
+          See the daily test results for such comparisons in the following link for an example: <ulink
                   url="http://tests.exoplatform.org/jcr.html">
             http://tests.exoplatform.org/jcr.html
           </ulink>
         </para>
+
       </answer>
     </qandaentry>
 
@@ -76,7 +73,7 @@
       <answer>
         <para>JCR Observation is a way to listen on persistence changes of a
           Repository. It provides several options to configure the listener for
-          an interesting only changes. To use properly, it is important to
+          interesting changes only. To use properly, it is important to
           understand concept of events filtering for a registered EventListener
           (8.3.3 Observation Manager). An often confusing part, it is the
           <emphasis role="bold">absPath</emphasis>, it is an associated parent of
@@ -110,14 +107,14 @@
   </qandaentry>
   <qandaentry xml:id="JCR.FAQ.JCR.Core.eXoJCRIndexerUsesContentEncoding">
       <question>
-         <para><emphasis role="bold">How eXo JCR indexer uses content encoding?</emphasis></para>
+         <para><emphasis role="bold">How does eXo JCR indexer use content encoding?</emphasis></para>
       </question>
       <answer>
         <para>1. Indexer uses the <parameter>jcr:encoding</parameter> property of the <parameter>nt:resource</parameter> node (used
           as the <parameter>jcr:content</parameter> child node of <parameter>nt:file</parameter>).
 		</para>
 		<para>2. If no <parameter>jcr:encoding</parameter> property
-          set the Document Service will use the one configured in the service
+          set, the Document Service will use the one configured in the service
           (defaultEncoding).
 		</para>
 		<para>3. If nothing is configured a JVM, the default

@@ -56,12 +56,12 @@
 
     <para>JCR proposes out of the box several implementations, they all
     implement the abstract class
-    <emphasis>org.exoplatform.services.transaction.impl.AbstractTransactionService</emphasis>.
+    <parameter>org.exoplatform.services.transaction.impl.AbstractTransactionService</parameter>.
     This main class implement the biggest part of all the methods proposed by
-    the <emphasis>TransactionService</emphasis>. For each sub-class of
-    <emphasis>AbstractTransactionService</emphasis>, you can set the
+    the <parameter>TransactionService</parameter>. For each sub-class of
+    <parameter>AbstractTransactionService</parameter>, you can set the
     transaction timeout by configuration using the value parameter
-    <emphasis>timeout</emphasis> that is expressed in seconds. </para>
+    <parameter>timeout</parameter> that is expressed in seconds. </para>
     <!-- JOTM in standalone mode -->
     <para id="Kernel.TransactionService.ExistingTransactionServiceImplementations.JOTMInStandaloneMode">
       <citetitle><emphasis role="bold">JOTM in standalone mode</emphasis></citetitle>
@@ -114,8 +114,8 @@
       <citetitle><emphasis role="bold">Specific GenericTransactionService for JBoss Cache and Arjuna</emphasis></citetitle>
     </para>
       <para>If you intend to use JBoss Cache with Arjuna, you can use a more
-      specific GenericTransactionService. It is mostly interesting in case you
-      want to use the real UserTransaction. See the configuration example as below:</para>
+      specific <parameter>GenericTransactionService</parameter>. It is mostly interesting in case you
+      want to use the real <parameter>UserTransaction</parameter>. See the configuration example as below:</para>
 
 <programlisting language="xml">&lt;!-- Configuration of the TransactionManagerLookup --&gt;
 &lt;component&gt;
@@ -158,8 +158,7 @@
     <para id="Kernel.TransactionService.ExistingTransactionServiceImplementations.TransactionsEssentialsInStandaloneMode">
       <citetitle><emphasis role="bold">TransactionsEssentials in standalone mode.</emphasis></citetitle>
     </para>
-      <para>To use TransactionsEssentials as TransactionManager in standalone
-      mode, simply add the following component configuration:</para>
+      <para>To use <parameter>TransactionsEssentials</parameter>, simply add the following component configuration:</para>
 
 <programlisting language="xml">&lt;component&gt;
   &lt;key&gt;org.exoplatform.services.transaction.TransactionService&lt;/key&gt;

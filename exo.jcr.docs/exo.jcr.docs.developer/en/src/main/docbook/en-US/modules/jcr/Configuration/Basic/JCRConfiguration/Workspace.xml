@@ -1,5 +1,5 @@
 <!-- 2.1.1.2 Workspace -->
-<section id="JCR.eXoJCRconfiguration.workspace" role="NotInToc">
+<section id="JCR.eXoJCRconfiguration.workspace">
     <title>Workspace</title>
   <!-- Workspace configuration -->
   <para id="JCR.eXoJCRconfiguration.WorkspaceConfiguration">
@@ -10,7 +10,7 @@
     </citetitle>
   </para>
     <para>
-        The service configuration is located in <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename> in the portal web application.
+        The service configuration is located at <filename>portal/WEB-INF/conf/jcr/repository-configuration.xml</filename> in the portal web application.
     </para>
     <itemizedlist>
       <listitem>
@@ -70,34 +70,38 @@
           <tgroup cols="2">
             <tbody>
               <row>
-                <entry><parameter>trigger_events_for_descendents_on_rename</parameter></entry>
+                <entry>
+                  <parameter>trigger_events_for_descendents_on_rename</parameter>
+                </entry>
 
                 <entry>Indicate if it is needed to trigger events for descendants on
-                rename or not. It allows to increase the performance on rename
-                operation but in the same time, Observation will not be notified has the
-                default value "true".</entry>
+                  rename or not. This increases the performance of the "rename" operation. However, Observation will not
+                  be notified to have the default value as "true".
+                </entry>
               </row>
 
               <row>
-                <entry><parameter>lazy-node-iterator-page-size</parameter></entry>
+                <entry>
+                  <parameter>lazy-node-iterator-page-size</parameter>
+                </entry>
 
-                <entry>The page size for lazy iterator. Indicates how many nodes
-                can be retrieved from storage per request. The default value is
-                "100".</entry>
+                <entry>Indicate the page size for lazy iterator. Particularly, this property defines the number of nodes
+                  which can be retrieved from storage per request. The default value is
+                  "100".
+                </entry>
               </row>
 
               <row>
                 <entry><parameter>acl-bloomfilter-false-positive-probability</parameter></entry>
 
                 <entry>ACL Bloom filters desired false positive probability. Range
-                is between [0..1] and the default value "0.1d" (see the note below).</entry>
+                is between [0..1] and the default value is "0.1d".</entry>
               </row>
 
               <row>
                 <entry><parameter>acl-bloomfilter-elements-number</parameter></entry>
 
-                <entry>Expected number of ACL-elements in the Bloom-filter.
-                Default value 1000000 (see the note below).</entry>
+                <entry>Define the expected number of ACL-elements in the Bloom-filter. Its default value is 1000000.</entry>
               </row>
             </tbody>
           </tgroup>

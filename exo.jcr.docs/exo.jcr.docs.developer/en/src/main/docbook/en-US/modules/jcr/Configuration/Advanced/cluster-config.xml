@@ -10,7 +10,7 @@
     </para>
       <itemizedlist>
         <listitem>
-            Any dedicated RDBMS like MySQL, Postges, Oracle and, etc but just not HSSQL.
+            AAny dedicated RDBMS like MySQL, Postges, Oracle but just not HSSQL.
         </listitem>
         <listitem>
             Shared storage. The simplest thing is to use shared FS like NFS or SMB mounted in operation system, but they are rather slow.
@@ -69,10 +69,15 @@
     </para>
       <para>Configuration of every workspace in repository must contain the following parts:</para>
 
-      <itemizedlist>
-        <listitem id="conf_value_storage">
-          <para><emphasis role="bold">Value Storage configuration:</emphasis></para>
-
+  <itemizedlist>
+    <listitem id="conf_value_storage">
+      <para>
+        <emphasis role="bold">Value Storage configuration:</emphasis>
+      </para>
+      <programlistingco>
+      <areaspec>
+        <area coords="4" id="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.path"/>
+      </areaspec>
 <programlisting language="xml">&lt;value-storages&gt;
    &lt;value-storage id="system" class="org.exoplatform.services.jcr.impl.storage.value.fs.TreeFileValueStorage"&gt;
       &lt;properties&gt;
@@ -83,16 +88,24 @@
       &lt;/filters&gt;
    &lt;/value-storage&gt;
 &lt;/value-storages&gt;</programlisting>
-          <itemizedlist>      
-            <listitem>
-              <para><parameter>Path:</parameter> Path within NFS where ValueStorage will hold its data.</para>
-            </listitem>  
-        </itemizedlist>  
+        <calloutlist>
+          <callout arearefs="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.path">
+           <para><parameter>Path:</parameter> Path within NFS where ValueStorage will hold its data.</para>
+          </callout>
+        </calloutlist>
+      </programlistingco>
       </listitem>
 
         <listitem id="conf_cache">
           <para><emphasis role="bold">Cache configuration:</emphasis></para>
-
+<programlistingco>
+  <areaspec>
+    <area coords="3" id="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jbosscache-configuration"/>
+    <area coords="4" id="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jgroups-configuration"/>
+    <area coords="5" id="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jbosscache-cluster-name"/>
+    <area coords="6" id="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jgroups-multiplexer-stack"/>
+     <area coords="7" id="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jbosscache-shareable"/>
+  </areaspec>
 <programlisting language="xml">&lt;cache enabled="true" class="org.exoplatform.services.jcr.impl.dataflow.persistent.jbosscache.JBossCacheWorkspaceStorageCache"&gt;
    &lt;properties&gt;
       &lt;property name="jbosscache-configuration" value="jar:/conf/portal/test-jbosscache-data.xml" /&gt;     
@@ -102,43 +115,40 @@
       &lt;property name="jbosscache-shareable" value="true" /&gt;
    &lt;/properties&gt;
 &lt;/cache&gt;</programlisting>
-
-
-            <itemizedlist>
-                <listitem>
-                    <para><parameter>jbosscache-configuration</parameter>: Path to the configuration template.</para>
-                </listitem>
-
-                <listitem>
-                    <para><parameter>jgroups-configuration</parameter>: Path to JGroups configuration
-                        that should not be anymore jgroups' stack definitions but a
-                        normal jgroups configuration format with the shared transport
-                        configured by simply setting the jgroups property
-                        singleton_name to a unique name (it must remain unique from
-                        one portal container to another). This file is also
-                        pre-bundled with templates and is recommended for use.
-                    </para>
-                </listitem>
-
-                <listitem>
-                    <para><parameter>jgroups-multiplexer-stack</parameter>: Set to "false" in order to
-                        disable the multiplexer stack as now it is recommended to use
-                        the JGroups' shared transport instead.
-                    </para>
-                </listitem>
-
-                <listitem>
-                    <para><parameter>jbosscache-cluster-name</parameter>: Name of cluster group.
-                        It should be different for each workspace and each workspace
-                        component. For example:  &lt;repository_name&gt;-&lt;ws_name&gt;-&lt;component(cache\|lock\|index)&gt;</para>
-                </listitem>
-
-                <listitem>
-                    <para><parameter>jbosscache-shareable</parameter>: Set to "true" in order to share the
-                        same JBoss Cache instance between several workspaces.
-                    </para>
-                </listitem>
-            </itemizedlist>
+  <calloutlist>
+    <callout arearefs="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jbosscache-configuration">
+      <para><parameter>jbosscache-configuration</parameter>: Path to the configuration template.
+      </para>
+    </callout>
+    <callout arearefs="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jgroups-configuration">
+      <para><parameter>jgroups-configuration</parameter>: Path to JGroups configuration
+        that should not be anymore jgroups' stack definitions but a
+        normal jgroups configuration format with the shared transport
+        configured by simply setting the  <parameter>singleton_name</parameter> jgroups property
+        to a unique name (it must remain unique from
+        one portal container to another). This file is also
+        pre-bundled with templates and is recommended for use.
+      </para>
+    </callout>
+    <callout arearefs="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jbosscache-cluster-name">
+      <para><parameter>jgroups-multiplexer-stack</parameter>: Set to "false" in order to
+        disable the multiplexer stack as now it is recommended to use
+        the JGroups' shared transport instead.
+      </para>
+    </callout>
+    <callout arearefs="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jgroups-multiplexer-stack">
+      <para><parameter>jbosscache-cluster-name</parameter>: Name of cluster group.
+        It should be different for each workspace and each workspace
+        component. For example: <parameter> &lt;repository_name&gt;-&lt;ws_name&gt;-&lt;component(cache\|lock\|index)&gt;</parameter>.
+      </para>
+    </callout>
+    <callout arearefs="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jbosscache-shareable">
+      <para><parameter>jbosscache-shareable</parameter>: Set to "true" in order to share the
+        same JBoss Cache instance between several workspaces.
+      </para>
+    </callout>
+  </calloutlist>
+</programlistingco>
         </listitem>
 
         <listitem id="conf_indexer">
@@ -148,7 +158,14 @@
           </para>
           <programlisting language="xml">&lt;property name="changesfilter-class" value="org.exoplatform.services.jcr.impl.core.query.jbosscache.JBossCacheIndexChangesFilter"/&gt;</programlisting>
           <para>Then, add the JBossCache-oriented configuration. The configuration  should look like: </para>
-
+<programlistingco>
+        <areaspec>
+          <area coords="4" id="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.index-dir"/>
+          <area coords="5" id="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jbosscache-configuration"/>
+          <area coords="6" id="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jgroups-configuration"/>
+          <area coords="7" id="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jbosscache-cluster-name"/>
+          <area coords="8" id="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.max-volatile-time"/>
+          </areaspec>
 <programlisting language="xml">&lt;query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex"&gt;
    &lt;properties&gt;
       &lt;property name="changesfilter-class" value="org.exoplatform.services.jcr.impl.core.query.jbosscache.JBossCacheIndexChangesFilter" /&gt;
@@ -161,36 +178,62 @@
       &lt;property name="max-volatile-time" value="60" /&gt;
    &lt;/properties&gt;
 &lt;/query-handler&gt; </programlisting>
+          <calloutlist>
+            <callout arearefs="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.index-dir">
+             <para><parameter>index-dir</parameter>: Path within NFS where ValueStorage will hold its data.</para>
+            </callout>
+            <callout arearefs="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jbosscache-configuration">
+              <para><parameter>jboss-cache-configuration</parameter>: Path to the JBoss Cache configuration for indexer.</para>
+            </callout>
+            <callout arearefs="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jgroups-configuration">
+              <para><parameter>jgroups-configuration</parameter>: Path to the JGroups configuration.</para>
+            </callout>
+            <callout arearefs="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.jbosscache-cluster-name">
+               <para><parameter>jboss-cache-cluster-name</parameter>: JBoss Cache indexer cluster name.</para>
+            </callout>
+            <callout arearefs="area-JCR.ClusterConfig.Requirements.Configuration_Requirements.max-volatile-time">
+               <para><parameter>max-volatile-time</parameter>: Indicate that the latest changes in
+                  index will be visible for each cluster node not later than in a specific time (for example, the volatile time is set to 60s in this configuration). This property is not mandatory but recommended.
+                  </para>
+            </callout>
+          </calloutlist>
+          </programlistingco>
             <para>These properties have the same meaning and restrictions as in
                 the previous code block except the last one <parameter>max-volatile-time</parameter>.
             </para>
-           <itemizedlist>
-              <listitem>
-                <para><parameter>index-dir</parameter>: Path within NFS where ValueStorage will hold its data.</para>
-              </listitem>  
-              <listitem>
-                <para><parameter>jboss-cache-configuration</parameter>: Path to the JBoss Cache configuration for indexer.</para>
-              </listitem>              
-              <listitem>
-                <para><parameter>jgroups-configuration</parameter>: Path to the JGroups configuration.</para>
-              </listitem>              
-              <listitem>
-                <para><parameter>jboss-cache-cluster-name</parameter>: JBoss Cache indexer cluster name.</para>
-              </listitem>
-              <listitem>
-                  <para><parameter>max-volatile-time</parameter>: Indicate that the latest changes in
-                  index will be visible for each cluster node not later than in a specific time (for example, the volatile time is set to 60s in this configuration). This property is not mandatory but recommended.
-                  </para>
-              </listitem>
-           </itemizedlist> 
         </listitem>
 
-        <listitem id="conf_lock_manager">
-          <para><emphasis role="bold">Lock Manager configuration:</emphasis></para>
-          <para>
-              This may be the hardest element to configure, because you have to define access to the database where locks will be stored.
-              Replace the existing lock-manager with configuration shown below:
-          </para>
+    <listitem id="conf_lock_manager">
+      <para>
+        <emphasis role="bold">Lock Manager configuration:</emphasis>
+      </para>
+      <para>
+        This may be the hardest element to configure, because you have to define access to the database where locks will
+        be stored.
+        Replace the existing lock-manager with configuration shown below:
+      </para>
+      <programlistingco>
+        <areaspec>
+          <area coords="4" id="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-configuration"/>
+          <area coords="5" id="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jgroups-configuration"/>
+          <area coords="6" id="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cluster-name"/>
+          <area coords="7"
+                id="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.table.name"/>
+          <area coords="8"
+                id="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.table.create"/>
+          <area coords="9"
+                id="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.table.drop"/>
+          <area coords="10"
+                id="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.table.primarykey"/>
+          <area coords="11"
+                id="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.fqn.column"/>
+          <area coords="12"
+                id="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.node.column"/>
+          <area coords="13"
+                id="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.parent.column"/>
+          <area coords="14"
+                id="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.datasource"/>
+        </areaspec>
 <programlisting language="xml">&lt;lock-manager class="org.exoplatform.services.jcr.impl.core.lock.jbosscache.CacheableLockManagerImpl"&gt;
    &lt;properties&gt;
       &lt;property name="time-out" value="15m" /&gt;
@@ -209,71 +252,83 @@
       &lt;property name="jbosscache-shareable" value="true" /&gt;
    &lt;/properties&gt;
 &lt;/lock-manager&gt;</programlisting>
-            <para>Few properties are the same as in the previous
-                components, but here you can see some strange
-                "jbosscache-cl-cache.jdbc.*" properties. They define access
-                parameters for the database where the lock is persisted.
-            </para>
-          <itemizedlist>
-              <listitem>
-                  <para><parameter>jboss-cache-configuration</parameter>: Path to the JBoss Cache configuration for lock manager.</para>
-              </listitem>
-              <listitem>
-                  <para><parameter>jgroups-configuration</parameter>: Path to the JGroups configuration.</para>
-              </listitem>
-              <listitem>
-                  <para><parameter>jboss-cache-cluster-name</parameter>: JBoss Cache locks cluster name.</para>
-              </listitem>
-              <listitem>
-                  <para><parameter>jbosscache-cl-cache.jdbc.table.name</parameter>: Name of the DB table where lock's data will be stored.</para>
-              </listitem>
-              <listitem>
-                  <para><parameter>jbosscache-cl-cache.jdbc.table.create</parameter>: Whether to create it or not. Usually set to "true".
-                  </para>
-              </listitem>
+            <calloutlist>
+              <callout arearefs="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-configuration">
+                <para><parameter>jboss-cache-configuration</parameter>: Path to the JBoss Cache configuration for lock
+                  manager.
+                </para>
+              </callout>
+              <callout arearefs="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jgroups-configuration">
+                <para><parameter>jgroups-configuration</parameter>: Path to the JGroups configuration.
+                </para>
+              </callout>
+              <callout arearefs="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cluster-name">
+                <para><parameter>jboss-cache-cluster-name</parameter>: JBoss Cache locks cluster name.
+                </para>
+              </callout>
+              <callout
+                      arearefs="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.table.name">
+                <para><parameter>jbosscache-cl-cache.jdbc.table.name</parameter>: Name of the DB table where lock's data
+                  will be stored.
+                </para>
+              </callout>
+              <callout
+                      arearefs="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.table.create">
+                <para><parameter>jbosscache-cl-cache.jdbc.table.create</parameter>: Whether to create it or not. Usually
+                  set to "true".
+                </para>
+              </callout>
+              <callout
+                      arearefs="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.table.drop">
+                <para><parameter>jbosscache-cl-cache.jdbc.table.drop</parameter>: Whether to drop on a start or not. Use
+                  "false".
+                </para>
+              </callout>
+              <callout
+                      arearefs="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.table.primarykey">
+                <para><parameter>jbosscache-cl-cache.jdbc.table.primarykey</parameter>: Name of column with pk.
+                </para>
+              </callout>
+              <callout
+                      arearefs="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.fqn.column">
+                <para><parameter>jbosscache-cl-cache.jdbc.fqn.column</parameter>: Name of one
+                  more column. If you are not sure how to use, follow the
+                  example above (if much interested, please refer to JBossCache
+                  JDBCCacheLoader documentation).
+                </para>
+              </callout>
+              <callout
+                      arearefs="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.node.column">
+                <para><parameter>jbosscache-cl-cache.jdbc.node.column</parameter>: Name of one
+                  more column. If you are not sure how to use, follow the
+                  example above (if much interested, please refer to JBossCache
+                  JDBCCacheLoader documentation).
+                </para>
+              </callout>
+              <callout
+                      arearefs="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.parent.column">
+                <para><parameter>jbosscache-cl-cache.jdbc.parent.column</parameter>: Name of one
+                  more column. If you are not sure how to use, follow the
+                  example above if you are not sure (if much interested, please
+                  refer to JBossCache JDBCCacheLoader documentation)
+                </para>
+              </callout>
+              <callout
+                      arearefs="area-JCR.ClusterConfig.Requirements.conf_lock_manager.jbosscache-cl-cache.jdbc.datasource">
+                <para><parameter>jbosscache-cl-cache.jdbc.datasource</parameter>: Name of
+                  the datasource configured in Container datasource, where you want to store
+                  locks. The best idea is to use the same as for
+                  workspace.
+                </para>
+              </callout>
+            </calloutlist>
+          </programlistingco>
+          <para>Few properties are the same as in the previous
+            components, but here you can see some strange
+            "jbosscache-cl-cache.jdbc.*" properties. They define access
+            parameters for the database where the lock is persisted.
+          </para>
 
-              <listitem>
-                  <para><parameter>jbosscache-cl-cache.jdbc.table.drop</parameter>: Whether to drop on a start or not. Use "false".
-                  </para>
-              </listitem>
-
-              <listitem>
-                  <para><parameter>jbosscache-cl-cache.jdbc.table.primarykey</parameter>: Name of column with pk.
-                  </para>
-              </listitem>
-
-              <listitem>
-                  <para><parameter>jbosscache-cl-cache.jdbc.fqn.column</parameter>: Name of one
-                      more column. If you are not sure how to use, follow the
-                      example above (if much interested, please refer to JBossCache
-                      JDBCCacheLoader documentation).
-                  </para>
-              </listitem>
-
-              <listitem>
-                  <para><parameter>jbosscache-cl-cache.jdbc.node.column</parameter>: Name of one
-                      more column. If you are not sure how to use, follow the
-                      example above (if much interested, please refer to JBossCache
-                      JDBCCacheLoader documentation).
-                  </para>
-              </listitem>
-
-              <listitem>
-                  <para><parameter>jbosscache-cl-cache.jdbc.parent.column</parameter>: Name of one
-                      more column. If you are not sure how to use, follow the
-                      example above if you are not sure (if much interested, please
-                      refer to JBossCache JDBCCacheLoader documentation)
-                  </para>
-              </listitem>
-
-              <listitem>
-                  <para><parameter>jbosscache-cl-cache.jdbc.datasource</parameter>: Name of
-                      the datasource configured in Container datasource, where you want to store
-                      locks. The best idea is to use the same as for
-                      workspace.
-                  </para>
-              </listitem>
-          </itemizedlist>
         </listitem>
       </itemizedlist>      
 

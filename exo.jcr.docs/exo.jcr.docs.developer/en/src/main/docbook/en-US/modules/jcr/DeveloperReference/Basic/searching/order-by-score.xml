@@ -15,8 +15,8 @@
     </citetitle>
   </para>
 
-    <para>SQL and XPath queries support both score constructions jcr:score and
-    jcr:score()</para>
+    <para>SQL and XPath queries support both score constructions: <parameter>jcr:score</parameter> and
+    <parameter>jcr:score()</parameter>.</para>
 
     <programlisting>SELECT * FROM nt:base ORDER BY jcr:score [ASC|DESC]
 SELECT * FROM nt:base ORDER BY jcr:score()[ASC|DESC]
@@ -24,7 +24,7 @@ SELECT * FROM nt:base ORDER BY jcr:score()[ASC|DESC]
 //element(*,nt:base) order by jcr:score() [descending]
 //element(*,nt:base) order by @jcr:score [descending]</programlisting>
 
-    <para>Do not use "ascending" combined with jcr:score in XPath. The
+    <para>Do not use "ascending" combined with <parameter>jcr:score</parameter> in XPath. The
     following XPath statement may throw an exception:</para>
 
     <programlisting>... order by jcr:score() ascending</programlisting>
@@ -40,7 +40,7 @@ SELECT * FROM nt:base ORDER BY jcr:score()[ASC|DESC]
       </citetitle>
     </para>
 
-    <para>The repository contains mix:title nodes, where the jcr:description
+    <para>The repository contains <parameter>mix:title</parameter> nodes, where the <parameter>jcr:description</parameter>
     has different values.</para>
 
     <itemizedlist>

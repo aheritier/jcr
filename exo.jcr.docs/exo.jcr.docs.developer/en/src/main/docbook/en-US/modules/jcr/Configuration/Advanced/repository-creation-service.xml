@@ -11,7 +11,7 @@
   <para id="JCR.RepositoryCreationService.Dependencies">
     <citetitle><emphasis role="bold">Dependencies</emphasis></citetitle>
   </para>
-    <para>RepositoryConfigurationService depends to next components:</para>
+    <para><parameter>RepositoryConfigurationService</parameter> depends on the next components:</para>
 
     <itemizedlist>
       <listitem>
@@ -23,7 +23,7 @@
       </listitem>
 
       <listitem>
-        <para><link linkend="Kernel.RPCService">RPCService</link> which is used for communication between cluster-nodes.</para>
+        <para><link linkend="Kernel.RPCService">RPCService</link> which is used for communicating between cluster-nodes.</para>
 
         <note>
           <para>RPCService may not be configured. In this case, RepositoryService will work as a standalone service.</para>
@@ -36,45 +36,45 @@
   </para>
     <itemizedlist>
       <listitem>
-        <para>The user executes reserveRepositoryName(String repositoryName) -
-        client-node calls coordinator-node to reserve repositoryName. If this
+        <para>The user executes <parameter>reserveRepositoryName(String repositoryName)</parameter> -
+        client-node calls coordinator-node to reserve <parameter>repositoryName</parameter>. If this
         name is already reserved or repository with this name exists,
-        client-node will fetch RepositoryCreationException. If not, Client will
+        client-node will fetch <parameter>RepositoryCreationException</parameter>. If not, Client will
         get token string.</para>
       </listitem>
 
       <listitem>
-        <para>Instead of executing createRepository(String backupId,
-        RepositoryEntry rEntry, String token), Coordinator-node checks the
+        <para>Instead of executing <parameter>createRepository(String backupId,
+        RepositoryEntry rEntry, String token)</parameter>, Coordinator-node checks the
         token, and creates Repository.</para>
       </listitem>
 
       <listitem>
-        <para>When the repository has been created, the user-node broadcasts message to
-        all clusterNodes with RepositoryEntry, so each cluster node starts new
+        <para>When the repository has been created, the user-node broadcasts a message to
+        all <parameter>clusterNodes</parameter> with <parameter>RepositoryEntry</parameter>, so each cluster node starts new
         Repository.</para>
       </listitem>
     </itemizedlist>
 
-    <para>There are two ways to create a repositry: make it in single step - just
-    call createRepository(String backupId, RepositoryEntry); or reserve
-    repositoryName at first (reserveRepositoryName(String repositoryName)),
-    than create reserved repository (createRepository(String backupId,
-    RepositoryEntry rEntry, String token)).</para>  
+    <para>There are two ways to create a repository: make it in single step - just
+    call <parameter>createRepository(String backupId, RepositoryEntry)</parameter>; or reserve
+   <parameter> repositoryName</parameter> at first (<parameter>reserveRepositoryName(String repositoryName)</parameter>,
+    then create the reserved repository <parameter>(createRepository(String backupId,
+    RepositoryEntry rEntry, String token)</parameter>.</para>
 
     <note>      
       <itemizedlist id="JCR.RepositoryCreationService.ConclusionsAndRestrictions">
       <listitem>
-        <para>Each datasource in RepositoryEntry of new Repository must have
-        unbinded datasources. That means such datasource must have not
-        databases behind them. This restriction exists to avoid corruption of
-        existing repositories data.</para>
+        <para>Each datasource in <parameter>RepositoryEntry</parameter> of a new Repository must have
+        unbinded datasources. This means such a datasource must not have database behind it.
+        This restriction is to avoid corruption with existing
+        repositories data.</para>
       </listitem>
 
       <listitem>
-        <para>RPCService is an optional component, but without it,
-        RepositoryCreatorService cannot communicate with other cluster-nodes
-        and works as standalone.</para>
+        <para><parameter>RPCService</parameter> is an optional component, but
+        <parameter>RepositoryCreatorService</parameter> cannot communicate with other cluster-nodes
+        without it.</para>
       </listitem>
     </itemizedlist>  
     </note>
@@ -83,60 +83,11 @@
     <title>Configuration</title>
 
     <para>The RepositoryCreationService configuration is as follows:</para>
-
+    <programlistingco>
+      <areaspec>
+        <area coords="8" id="JCR.RepositoryCreationService.Configuration.factory-class-name"/>
+      </areaspec>
 <programlisting language="xml">&lt;component&gt;
-   &lt;key&gt;org.exoplatform.services.jcr.ext.backup.BackupManager&lt;/key&gt;
-   &lt;type&gt;org.exoplatform.services.jcr.ext.backup.impl.BackupManagerImpl&lt;/type&gt;
-   &lt;init-params&gt;
-      &lt;properties-param&gt;
-         &lt;name&gt;backup-properties&lt;/name&gt;
-         &lt;property name="backup-dir" value="target/backup" /&gt;
-      &lt;/properties-param&gt;
-   &lt;/init-params&gt;
-&lt;/component&gt;
-
-&lt;component&gt;
-   &lt;key&gt;org.exoplatform.services.database.creator.DBCreator&lt;/key&gt;
-   &lt;type&gt;org.exoplatform.services.database.creator.DBCreator&lt;/type&gt;
-   &lt;init-params&gt;
-      &lt;properties-param&gt;
-         &lt;name&gt;db-connection&lt;/name&gt;
-         &lt;description&gt;database connection properties&lt;/description&gt;
-         &lt;property name="driverClassName" value="org.hsqldb.jdbcDriver" /&gt;
-         &lt;property name="url" value="jdbc:hsqldb:file:target/temp/data/" /&gt;
-         &lt;property name="username" value="sa" /&gt;
-         &lt;property name="password" value="" /&gt;
-      &lt;/properties-param&gt;
-      &lt;properties-param&gt;
-         &lt;name&gt;db-creation&lt;/name&gt;
-         &lt;description&gt;database creation properties&lt;/description&gt;
-         &lt;property name="scriptPath" value="src/test/resources/test.sql" /&gt;
-         &lt;property name="username" value="sa" /&gt;
-         &lt;property name="password" value="" /&gt;
-      &lt;/properties-param&gt;
-   &lt;/init-params&gt;
-&lt;/component&gt;
-
-&lt;component&gt;
-   &lt;key&gt;org.exoplatform.services.rpc.RPCService&lt;/key&gt;
-   &lt;type&gt;org.exoplatform.services.rpc.impl.RPCServiceImpl&lt;/type&gt;
-   &lt;init-params&gt;
-      &lt;value-param&gt;
-         &lt;name&gt;jgroups-configuration&lt;/name&gt;
-         &lt;value&gt;jar:/conf/standalone/udp-mux.xml&lt;/value&gt;
-      &lt;/value-param&gt;
-      &lt;value-param&gt;
-         &lt;name&gt;jgroups-cluster-name&lt;/name&gt;
-         &lt;value&gt;RPCService-Cluster&lt;/value&gt;
-      &lt;/value-param&gt;
-      &lt;value-param&gt;
-         &lt;name&gt;jgroups-default-timeout&lt;/name&gt;
-         &lt;value&gt;0&lt;/value&gt;
-      &lt;/value-param&gt;
-   &lt;/init-params&gt;
-&lt;/component&gt;  
-
-&lt;component&gt;
    &lt;key&gt;org.exoplatform.services.jcr.ext.repository.creation.RepositoryCreationService&lt;/key&gt;
    &lt;type&gt;
       org.exoplatform.services.jcr.ext.repository.creation.RepositoryCreationServiceImpl
@@ -148,13 +99,14 @@
          &lt;/value-param&gt; 
       &lt;/init-params&gt;
 &lt;/component&gt;</programlisting>
-
-    <itemizedlist>
-      <listitem>
-        <para><parameter>factory-class-name</parameter>: Indicate what
-        the factory needs to use for creating DataSource objects. This parameter is not mandatory.</para>
-      </listitem>
-    </itemizedlist>
+  <calloutlist>
+    <callout arearefs="JCR.RepositoryCreationService.Configuration.factory-class-name">
+      <para><parameter>factory-class-name</parameter>: Indicate what
+        the factory needs to use for creating DataSource objects. This parameter is not mandatory.
+      </para>
+    </callout>
+  </calloutlist>
+</programlistingco>
   </section>
   <!-- 2.2.5.2 RepositoryCreationService Interface -->
   <section id="JCR.RepositoryCreationService.RepositoryCreationServiceInterface">

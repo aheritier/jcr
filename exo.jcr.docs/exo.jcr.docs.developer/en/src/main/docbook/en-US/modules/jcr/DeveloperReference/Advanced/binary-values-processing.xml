@@ -15,20 +15,20 @@
     </citetitle>
   </para>
     <para>Binary large object (BLOB) properties can be stored in two ways in
-    the eXo JCR: in the database with items information or in an external
+    eXo JCR: in the database with items information or in an external
     storage on host file system. These options can be configured at workspace
     in the <filename>repository-configuration.xml</filename> repository configuration file. The database storage
     cannot be completely disabled.</para>
 
     <para>The first case is optimal for most of cases which you do not use
     very large values or/and do not have too many BLOBs. The configuration of
-    the BLOBs size and BLOBs quantity in a repository depend on your database
+    the BLOBs size and BLOBs quantity in a repository depends on your database
     features and hardware.</para>
 
     <para>The second case is to use an external values storage. The storage
     can be located on a built-in hard disk or on an attached storage. But in
-    any cases, you should access to the storage as if it was a regular
-    file(s). The external value storage is optional and can be enabled in a
+    any cases, you should access the storage as if it is a regular
+    file. The external value storage is optional and can be enabled in a
     database configuration.</para>
 
     <note>
@@ -37,9 +37,9 @@
 
       <para>Database and workspace persistence storage configuration is
       discussed in <link linkend="JCR.JDBCDataContainerConfig">JDBC Data
-      Container config</link>.</para>
+      Container configuration</link>.</para>
 
-      <para>Configuration details for <link
+      <para>See configuration details for <link
       linkend="JCR.ExternalValueStorages">External Value
       Storages</link>.</para>
     </note>
@@ -50,7 +50,7 @@
 
     <para>In both of the cases, a developer can set/update the binary Property
     via <parameter>Node.setProperty(String, InputStream)</parameter>, <parameter>Property.setValue(InputStream)</parameter>
-    as described in the spec JSR-170. Also, there is the setter with a ready
+    as described in the <ulink url="http://www.jcp.org/en/jsr/detail?id=170">JSR-170</ulink> specification. Also, there is the setter with a ready
     Value object (obtaining from <parameter>ValueFactory.createValue(InputStream)</parameter>).</para>
 
     <para>An example of a specification usage.</para>
@@ -83,16 +83,16 @@ InputStream newStream = updatedBinProp.getStream();</programlisting>
     storage of the property content while writing/reading during
     runtime.</para>
 
-    <para>According to the spec <ulink url="http://www.jcp.org/en/jsr/detail?id=170">JSR-170</ulink>, Value interface
+    <para>According to the <ulink url="http://www.jcp.org/en/jsr/detail?id=170">JSR-170</ulink> specification, Value interface
       provides the state of
       property that cannot be changed (edited). The eXo JCR core provides the
       <parameter>ReadableBinaryValue</parameter> and <parameter>EditableBinaryValue</parameter> interfaces which themselves
-      extend JCR value. The interfaces allow the user to partially read and
+      extend the JCR value. The interfaces allow the user to partially read and
       change a value content.
     </para>
 
     <para>The <parameter>ReadableBinaryValue</parameter> value can be casted from any values, such as String,
-    Binary, Date and more.</para>
+    Binary, Date, and more.</para>
 
     <programlisting language="java">// get the property value of type PropertyType.STRING 
 ReadableBinaryValue extValue = (ReadableBinaryValue) node.getProperty("LargeText").getValue();
@@ -110,14 +110,14 @@ extValue.read(destStream, 200, 1024);</programlisting>
 
     <para>After the value has been edited, the EditableBinaryValue value can
     be applied to the property using the standard setters
-    (Property.setValue(Value), Property.setValues(Value),
-    Node.setProperty(String, Value) etc.). Only after the EditableBinaryValue
+    (for example, <parameter>Property.setValue(Value)</parameter>, <parameter>Property.setValues(Value)</parameter>,
+    <parameter>Node.setProperty(String, Value)</parameter>). Only after the <parameter>EditableBinaryValue</parameter>
     has been set to the property, it can be obtained in this session by
-    getters (Property.getValue(), Node.getProperty(String) etc.).</para>
+    getters (for example, <parameter>Property.getValue()</parameter>, <parameter>Node.getProperty(String)</parameter>).</para>
 
-    <para>The user can obtain an EditableBinaryValue instance and fill it with
+    <para>The user can obtain an <parameter>EditableBinaryValue</parameter> instance and fill it with
     data in an interaction manner (or any other appropriated to the targets)
-    and return (set) the value to the property after the content will be
+    and return (set) the value to the property after the content is
     done.</para>
 
     <programlisting language="java">// get the property value for PropertyType.BINARY Property
@@ -132,7 +132,7 @@ node.setProperty("BinData", extValue);
 // save the Property to persistence
 node.save();</programlisting>
 
-    <para>A practical example of the iterative usage. In this example, the
+    <para>See a practical example of the iterative usage. In this example, the
     value is updated with data from the sequence of streams and after the
     update is done, the value will be applied to the property and be visible
     during the session.</para>
@@ -162,7 +162,7 @@ node.setProperty("BinData", extValue);</programlisting>
 	<itemizedlist>
 		<listitem>
 			<para><parameter>ReadableBinaryValue</parameter> has one method to read Value.</para>
-			<para>Read length bytes is counted from the binary value to the given
+			<para>The value of read length bytes is counted from the binary value to the given
     position into the stream.</para>
 
 <programlisting language="java">long read(OutputStream stream, long length, long position) throws IOException, RepositoryException ;</programlisting>

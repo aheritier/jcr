@@ -1,5 +1,5 @@
 <!-- 2.1.1.3 Value Storage Plugin for Data Container -->
-<section id="JCR.ConfigurationPersister.ValueStoragePlugin" role="NotInToc">
+<section id="JCR.ConfigurationPersister.ValueStoragePlugin">
       <title>Value Storage Plugin for Data Container</title>    
     <note>
       <para>The value-storage element is optional. If you do not include it,

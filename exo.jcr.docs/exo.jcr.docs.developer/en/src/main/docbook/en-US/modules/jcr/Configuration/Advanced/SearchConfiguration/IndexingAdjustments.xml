@@ -254,9 +254,9 @@
         scope. The reason is that the node scope always uses the global
         analyzer.</para>
 
-        <para>Let's suppose that the property "mytext" contains the text :
-        "testing my analyzers" and that you have not configured any analyzers
-        for the property "mytext" (and not changed the default analyzer in
+        <para>Let's suppose that the "mytext" property contains the "testing my analyzers" text
+         and that you have not configured any analyzers
+        for the "mytext" property (and not changed the default analyzer in
         SearchIndex).</para>
 
         <para>For example, if your query is as follows:</para>
@@ -297,14 +297,14 @@
         <para>In conclusion, be aware that when using analyzers for specific
         properties, you might find a hit in a property for some search text,
         and you do not find a hit with the same search text in the node scope
-        of the property!</para>
+        of the property.</para>
 
         <note>
           <para>Both index rules and index aggregates influence how content is
           indexed in JCR. If you change the configuration, the existing
           content is not automatically re-indexed according to the new rules.
           You, therefore, have to manually re-index the content when you
-          change the configuration!</para>
+          change the configuration.</para>
         </note>
       </section>
     <!-- 2.2.1.3.4 Advanced features -->

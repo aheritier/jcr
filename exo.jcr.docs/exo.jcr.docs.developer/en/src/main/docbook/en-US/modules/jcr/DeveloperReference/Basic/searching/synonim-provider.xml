@@ -8,7 +8,7 @@
   word.</para>
 
   <note>
-    <para>See also about synonym provider configuration in <link linkend="JCR.SearchingRepositoryContent">Searching Repository
+    <para>See also about the synonym provider configuration in <link linkend="JCR.SearchingRepositoryContent">Search Repository
     Content</link>.</para>
   </note>
 
@@ -92,7 +92,7 @@ if(it.hasNext())
    Node findedNode = it.nextNode();
 }</programlisting>
 
-    <para>NodeIterator will return expected document1. This is a purpose of
-    synonym providers. Find by specified word, but return by all synonyms
-    to.</para>
+  <para>NodeIterator will return expected document1. This is a purpose of
+    synonym providers. Find by a specified word, but return by all synonyms.
+  </para>
 </section>

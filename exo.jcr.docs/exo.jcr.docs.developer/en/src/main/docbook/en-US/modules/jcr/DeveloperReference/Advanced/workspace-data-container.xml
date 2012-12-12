@@ -16,7 +16,7 @@
       <para>Workspace Data Container (container) serves Repository Workspace
       persistent storage. <parameter>WorkspacePersistentDataManager</parameter> (data manager) uses
       container to perform CRUD operation on the persistent storage. Accessing
-      to the storage in the data manager is implemented via the storage connection
+      the storage in the data manager is implemented via the storage connection
       obtained from the container (<parameter>WorkspaceDataContainer</parameter> interface
       implementation). Each connection represents a transaction on the
       storage. Storage Connection (connection) should be an implementation of
@@ -24,7 +24,7 @@
 
       <itemizedlist>
         <listitem>
-          <para>Container acts as a factory of a new storage connections.
+          <para>Container acts as a factory of a new storage connection.
           Usually, this method is designed to be synchronized to avoid
           possible concurrent issues.</para>
         </listitem>
@@ -54,7 +54,7 @@
       <itemizedlist>
         <listitem>
           <para>Storage connection might also be reused. This means that the reuse of
-          physical resource (e.g. JDBC Connection) is allocated by one connection
+          physical resource (for example, JDBC Connection) is allocated by one connection
           in another. This feature is used in a data manager for saving
           ordinary and system changes on the system Workspace. But the reuse
           is an optional feature and it can work, otherwise a new connection
@@ -67,8 +67,8 @@
 
       <itemizedlist>
         <listitem>
-          <para>When checking Same-Name Siblings (SNS) existence, JCR Core can
-          use new connection or not. This is defined via Workspace Data
+          <para>When you check Same-Name Siblings (SNS) existence, JCR Core can
+          use a new connection or not. This is defined via Workspace Data
           Container configuration and retrieved by using a special
           method.</para>
         </listitem>
@@ -98,7 +98,7 @@
       properties and filters. The filters declares criteria for Value matching
       to the storage. Only matched Property Values will be stored. So, in
       common case, the storage might contains only the part of the Workspace
-      content. Value Storages are very useful for BLOB storing. E.g. storing
+      content. Value Storages are very useful for BLOB storing, for example, storing
       on the File System instead of a database.</para>
 
       <para>Container obtains Values Storages from the <parameter>ValueStoragePluginProvider</parameter>
@@ -114,11 +114,10 @@
     </para>
 
       <para>Container is used for read and write operations by data manager.
-      Read operations (getters) use connection once and close it on the
-      finally. The <emphsis role="bold">write</emphsis> operations perform in the commit method as a sequence of
-      creating/ updating calls and the final commit (or rollback on error). <emphsis role="bold">Write</emphsis>
+      Read operations (getters) use connection once and finally close it. The <emphasis role="bold">write</emphasis> operations perform in the commit method as a sequence of
+      creating/ updating calls and the final commit (or rollback on error). <emphasis role="bold">Write</emphasis>
       uses one connection (or two - another for system workspace) per commit
-      call. One connection guaranties transaction support for the <emphsis role="bold">write</emphsis>
+      call. One connection guaranties transaction support for the <emphasis role="bold">write</emphasis>
       operations. Commit or rollback should free/clean all resources consumed
       by the container (connection).</para>
 

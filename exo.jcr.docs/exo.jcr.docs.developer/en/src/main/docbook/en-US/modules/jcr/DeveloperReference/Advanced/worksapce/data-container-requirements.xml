@@ -60,21 +60,21 @@
         </listitem>
       </itemizedlist>
 
-      <para>This method specially dedicated for non-content modification
-      operations (e.g. Items delete).</para>
+  <para>This method is specially dedicated for non-content modification operations (for example, Items delete).
+  </para>
 
       <programlisting language="java">List&lt;PropertyData&gt; listChildPropertiesData(NodeData parent) throws RepositoryException, IllegalStateException;
 </programlisting>
 
       <itemizedlist>
         <listitem>
-          <para>Read <parameter>List</parameter> of <parameter>PropertyData </parameter> the storage by using the
+          <para>Read <parameter>List</parameter> of <parameter>PropertyData </parameter> from the storage by using the
           parent location of the item.</para>
         </listitem>
       </itemizedlist>
 
       <para>It is the REFERENCE type: Properties referencing Node with the given
-      <parameter>nodeIdentifier</parameter>. See more in <parameter>javax.jcr.Node.getReferences()</parameter></para>
+      <parameter>nodeIdentifier</parameter>. See more in <parameter>javax.jcr.Node.getReferences()</parameter>.</para>
 
       <programlisting language="java">List&lt;PropertyData&gt; getReferencesData(String nodeIdentifier) throws RepositoryException,IllegalStateException,UnsupportedOperationException;
 </programlisting>
@@ -197,7 +197,7 @@
 
       <para>Container has to care about storage consistency (JCR constraints)
       on write operations: (<parameter>InvalidItemStateException</parameter> should be thrown
-      according the spec). At least, the following checks should be
+      according the specification). At least, the following checks should be
       performed:</para>
 
       <itemizedlist>
@@ -206,7 +206,7 @@
 
           <itemizedlist>
             <listitem>
-              <para>Parent not found. Condition: Parent ID (Item with ID is
+              <para>Parent not found. Condition: Parent ID (Item with ID does
               not exists).</para>
             </listitem>
 
@@ -233,7 +233,7 @@
             </listitem>
 
             <listitem>
-              <para>Cannot delete parent till children exists.</para>
+              <para>Cannot delete parent until its children exist.</para>
             </listitem>
           </itemizedlist>
         </listitem>
@@ -250,7 +250,7 @@
 
             <listitem>
               <para>Item already exists with the higher Version. Condition: ID,
-              Version (Some Session had updated Item with ID prior this
+              Version (Some Session had updated Item with ID prior to this
               update).</para>
             </listitem>
           </itemizedlist>
@@ -264,8 +264,8 @@
       </para>
 
       <para>The container (connection) should implement consistency of Commit
-      (Rollback) in <emphasis role="bold">transaction manner</emphasis>. I.e.
-      If a set of operations was performed <emphasis
+      (Rollback) in <emphasis role="bold">transaction manner</emphasis>. For example,
+      if a set of operations was performed <emphasis
       role="bold">before</emphasis> the future <emphasis
       role="bold">Commit</emphasis> and another next operation <emphasis
       role="bold">fails</emphasis>. <emphasis role="bold">It should be

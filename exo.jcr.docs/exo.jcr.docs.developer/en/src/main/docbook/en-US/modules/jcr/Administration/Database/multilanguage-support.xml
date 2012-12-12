@@ -7,7 +7,7 @@
 
     <para>Whenever relational database is used to store multilingual text data
     of eXo Java Content Repository, it is necessary to adapt configuration in order to
-    support UTF-8 encoding. Here is a short HOWTO instruction for several
+    support UTF-8 encoding. Here is a short instruction for several
     supported RDBMS with examples.</para>
 
     <para>Modify the <filename>.../webapps/portal/WEB-INF/conf/jcr/repository-configuration.xml</filename> configuration:</para>
@@ -148,7 +148,7 @@ NLS_NCHAR_CHARACTERSET   AL16UTF16</programlisting>
           <para>Providing a number of different character sets defined in the
           PostgreSQL server, including multiple-byte character sets, to
           support storing text of any languages, and providing character set
-          translation between client and server. We recommend to use UTF-8
+          translation between client and server. It is recommended that you use the UTF-8
           database charset, it will allow any-to-any conversations and make
           this issue transparent for the JCR.</para>
         </listitem>

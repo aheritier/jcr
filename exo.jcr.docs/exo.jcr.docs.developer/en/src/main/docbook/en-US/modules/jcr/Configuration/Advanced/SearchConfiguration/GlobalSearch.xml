@@ -10,7 +10,7 @@
       <para>In fact, when using Lucene, you should always use the same
       analyzer for indexing and for querying, otherwise the results are
       unpredictable. You do not have to worry about this, JCR does this for
-      you automatically. If you do not like the StandardAnalyzer configured by
+      you automatically. If you do not like the <parameter>StandardAnalyzer</parameter> to be configured by
       default, just replace it with your own.</para>
 
       <para>If you do not have a handy QueryHandler, you should learn how
@@ -108,7 +108,7 @@
   <para>You can see the attached SearchIndex.</para>
 
         <note>
-          <para>Since 1.12 version, you can set Analyzer directly in your configuration. So, creating a new SearchIndex only for new Analyzer is
+          <para>You can set Analyzer directly in your configuration. So, creating a new SearchIndex only for new Analyzer is
           redundant.</para>
         </note>
 

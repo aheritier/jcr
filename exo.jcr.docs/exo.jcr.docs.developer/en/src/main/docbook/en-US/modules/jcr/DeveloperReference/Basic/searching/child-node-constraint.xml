@@ -65,8 +65,8 @@
         <emphasis role="bold">SQL</emphasis></para>
 
     <para>The use of "%" in the LIKE statement includes any string, therefore
-    there is a second LIKE statement that excludes that the string contains
-    "/". This way child nodes are included but descendant nodes are
+    there is a second LIKE statement that excludes the string which contains
+    "/". In this way, child nodes are included but descendant nodes are
     excluded.</para>
 
     <programlisting language="java">// make SQL query
