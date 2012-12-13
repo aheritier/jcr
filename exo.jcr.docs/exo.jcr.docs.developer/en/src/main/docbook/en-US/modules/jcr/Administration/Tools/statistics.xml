@@ -9,18 +9,14 @@
   <para xml:id="JCR.Statistics.Statistics_Manager">
     <citetitle><emphasis role="bold">Statistics Manager</emphasis></citetitle>
   </para>
-    <para>The statistics manager will create all the CSV files for each
-    category of statistics that it manages, the format of those files is
-    <emphasis>Statistics${category-name}-${creation-timestamp}.csv</emphasis>.
+    <para>The statistics manager will create all the CSV files for each category of statistics under its management. These files are in the format of
+    <filename>Statistics${category-name}-${creation-timestamp}.csv</filename>.
     Those files will be created into the user directory if it is possible
-    otherwise it will create them into the temporary directory. The format of
-    those files is <envar>CSV</envar> (i.e. Comma-Seperated Values), one new
-    line will be added regularily (every 5 seconds by default) and one last
-    line will be added at JVM exit. Each line, will be composed of the 5
-    figures described below for each method and globaly for all the
-    methods.</para>
+    otherwise it will create them into the temporary directory. The <filename>.csv</filename> files (for example, Comma-Separated Values) includes: one new line which is added regularly (every 5 seconds by default) and one last line which will be added at JVM exit.
+      Each line has 5 figures described below for each method and globally for all methods.
+</para>
 
-    <para><table>
+    <table>
         <title>Metric Alias</title>
 
         <tgroup cols="2">
@@ -61,16 +57,17 @@
             </row>
           </tbody>
         </tgroup>
-      </table>You can disable the persistence of the statistics by setting the
-    JVM parameter called <parameter>JCRStatisticsManager.persistence.enabled</parameter> to
-    <emphasis>false</emphasis>, by default, it is set to
-    <emphasis>true</emphasis>. You can aslo define the period of time between
-    each record (i.e. line of data into the file) by setting the JVM parameter
-    called <parameter>JCRStatisticsManager.persistence.timeout</parameter> to
-    your expected value expressed in miliseconds, by default it is set to
-    <emphasis>5000</emphasis>.</para>
+      </table>
+      <para>
+      By default, the JVM parameter called
+      <parameter>JCRStatisticsManager.persistence.enabled</parameter>
+      is set to "true".
+      Also, the <parameter>JCRStatisticsManager.persistence.timeout</parameter> JVM parameter that shows period between each record (for
+      example, line of data into the file) is set to 5000. You can define another periods by setting its value to your
+      desired one in milliseconds.
+    </para>
 
-    <para>You can also access to the statistics thanks to JMX, the available
+  <para>You can also access the statistics thanks to JMX, the available
     methods are the following:</para>
 
     <para><table>
@@ -83,8 +80,8 @@
 
               <entry>Give the minimum time spent into the method corresponding
               to the given category name and statistics name. The expected
-              arguments are the name of the category of statistics (e.g.
-              JDBCStorageConnection) and the name of the expected method or
+              arguments are the name of the category of statistics (for example,
+              <parameter>JDBCStorageConnection</parameter>) and the name of the expected method or
               global for the global value.</entry>
             </row>
 
@@ -93,8 +90,8 @@
 
               <entry>Give the maximum time spent into the method corresponding
               to the given category name and statistics name. The expected
-              arguments are the name of the category of statistics (e.g.
-              JDBCStorageConnection) and the name of the expected method or
+              arguments are the name of the category of statistics (for example,
+              <parameter>JDBCStorageConnection</parameter>) and the name of the expected method or
               global for the global value.</entry>
             </row>
 
@@ -104,7 +101,7 @@
               <entry>Give the total amount of time spent into the method
               corresponding to the given category name and statistics name.
               The expected arguments are the name of the category of
-              statistics (e.g. JDBCStorageConnection) and the name of the
+              statistics (for example, <parameter>JDBCStorageConnection</parameter>) and the name of the
               expected method or global for the global value.</entry>
             </row>
 
@@ -113,8 +110,8 @@
 
               <entry>Give the average time spent into the method corresponding
               to the given category name and statistics name. The expected
-              arguments are the name of the category of statistics (e.g.
-              JDBCStorageConnection) and the name of the expected method or
+              arguments are the name of the category of statistics (for example,
+              <parameter>JDBCStorageConnection</parameter>) and the name of the expected method or
               global for the global value.</entry>
             </row>
 
@@ -122,9 +119,9 @@
               <entry><parameter>getTimes</parameter></entry>
 
               <entry>Give the total amount of times the method has been called
-              corresponding to the given ,category name and statistics name.
+              corresponding to the given category name and statistics name.
               The expected arguments are the name of the category of
-              statistics (e.g. JDBCStorageConnection) and the name of the
+              statistics (for example, <parameter>JDBCStorageConnection</parameter>) and the name of the
               expected method or global for the global value.</entry>
             </row>
 
@@ -133,7 +130,7 @@
 
               <entry>Reset the statistics for the given category name and
               statistics name. The expected arguments are the name of the
-              category of statistics (e.g. JDBCStorageConnection) and the name
+              category of statistics (for example, <parameter>JDBCStorageConnection</parameter>) and the name
               of the expected method or global for the global value.</entry>
             </row>
 
@@ -142,7 +139,7 @@
 
               <entry>Reset all the statistics for the given category name. The
               expected argument is the name of the category of statistics
-              (e.g. JDBCStorageConnection).</entry>
+              (for example, <parameter>JDBCStorageConnection</parameter>).</entry>
             </row>
           </tbody>
         </tgroup>
@@ -164,10 +161,10 @@
     or
     <parameter>org.exoplatform.services.jcr.impl.storage.jdbc.JDBCWorkspaceDataContainer</parameter>
     as <parameter>WorkspaceDataContainer</parameter>, you can get statistics on the
-    time spent into the database access layer. The database access layer (in
-    eXo JCR) is represented by the methods of the interface
-    <parameter>org.exoplatform.services.jcr.storage.WorkspaceStorageConnection</parameter>,
-    so for all the methods defined in this interface, we can have the
+    time spent on the database access layer. The database access layer (in
+    eXo JCR) is represented by the methods of the
+    <parameter>org.exoplatform.services.jcr.storage.WorkspaceStorageConnection</parameter> interface,
+    so for all the methods defined in this interface, you can have the
     following figures:</para>
 
     <itemizedlist>
@@ -196,14 +193,16 @@
     gives us the global behavior of this layer.</para>
 
     <para>If you want to enable the statistics, you just need to set the JVM
-    parameter called
-    <parameter>JDBCWorkspaceDataContainer.statistics.enabled</parameter> to
-    <emphasis>true</emphasis>. The corresponding CSV file is
-    <parameter>StatisticsJDBCStorageConnection-${creation-timestamp}.csv</parameter>
-    for more details about how the csv files are managed, please refer to the
-    section dedicated to the statistics manager.</para>
-
-    <para>The format of each column header is ${method-alias}-${metric-alias}.
+      parameter called
+      <parameter>JDBCWorkspaceDataContainer.statistics.enabled</parameter>
+      to
+      <emphasis>true</emphasis>. The corresponding CSV file is
+      <filename>StatisticsJDBCStorageConnection-${creation-timestamp}.csv</filename>
+      for more details about how the csv files are managed. See
+      <link linkend="JCR.Statistics.Statistics_Manager">Statistics manager</link>
+      for more details.
+    </para>
+    <para>The format of each column header is <parameter>${method-alias}-${metric-alias}</parameter>.
     The metric alias are described in the statistics manager section.</para>
 
     <para>The name of the category of statistics corresponding to these
@@ -231,9 +230,9 @@
           <row>
             <entry><parameter>getItemDataByNodeDataNQPathEntry</parameter></entry>
 
-            <entry>This is the alias for the method
-            <emphasis>getItemData(NodeData parentData, QPathEntry
-            name).</emphasis></entry>
+            <entry>This is the alias for the
+            <parameter>getItemData(NodeData parentData, QPathEntry
+            name)</parameter> method.</entry>
           </row>
 
           <row>
@@ -382,7 +381,7 @@
     <parameter>org.exoplatform.services.jcr.core.ExtendedNode</parameter>, and
     the JCR API interface <parameter>javax.jcr.Property</parameter>. To add
     and/or remove some interfaces to/from monitor, you have two configuration files
-    to change that are bundled into the <filename>exo.jcr.component.statistics-X.Y.Z.jar</filename>, which are 
+    changed that are bundled into the <filename>exo.jcr.component.statistics-X.Y.Z.jar</filename> which includes
     <filename>conf/configuration.xml</filename> and <filename>META-INF/aop.xml</filename>.</para>
 
     <para>The file content below is the content of
@@ -411,8 +410,7 @@
     <filename>META-INF/aop.xml</filename> that you will need to modify to
     add and/or remove the full qualified name of the interfaces to monitor,
     into the expression filter of the pointcut called
-    <parameter>JCRAPIPointcut</parameter>. As you can see below, by default only
-    JCR API calls from the exoplatform packages are took into account, do not
+    <parameter>JCRAPIPointcut</parameter>. As you can see below, by default only JCR API calls from the exoplatform packages are taken into account, do not
     hesitate to modify this filter to add your own package names.</para>
 
 <programlisting language="xml">&lt;aspectj&gt;
@@ -428,25 +426,21 @@
 &lt;/aspectj&gt;</programlisting>
 
     <para>The corresponding CSV files are of the
-    <parameter>Statistics${interface-name}-${creation-timestamp}.csv</parameter> type 
-    for more details about how the csv files are managed, please refer to the
-    section dedicated to the statistics manager.</para>
+    <parameter>Statistics${interface-name}-${creation-timestamp}.csv</parameter> type.
+    See <link linkend="JCR.Statistics.Statistics_Manager">Statistics manager</link> for more details about how the csv files are managed.</para>
 
     <para>The format of each column header is <parameter>${method-alias}-${metric-alias}</parameter>.
     The method alias will be of the <parameter>${method-name}</parameter> type (a list of parameter types
     separated by semicolon (;) to be compatible with the CSV format).</para>
 
-    <para>The metric alias are described in the statistics manager
-    section.</para>
-
     <para>The name of the category of statistics corresponding to these
-    statistics is the simple name of the monitored interface (e.g.
+    statistics is the simple name of the monitored interface (for example,
     <parameter>ExtendedSession</parameter> for <filename>org.exoplatform.services.jcr.core.ExtendedSession</filename>),
-    this name is mostly needed to access to the statistics through JMX.</para>
+    this name is mostly needed to access the statistics through JMX.</para>
 
     <note>
-		<para>This feature will affect the performances of eXo JCR, so it must be used carefully.
-		</para>
-	</note>
+      <para>This feature will affect the eXo JCR performance, so it is recommended you use this feature carefully.
+      </para>
+    </note>
   </section>
 </section>

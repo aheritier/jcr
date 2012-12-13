@@ -71,7 +71,7 @@
             <tbody>
               <row>
                 <entry>
-                  <parameter>trigger_events_for_descendents_on_rename</parameter>
+                  <parameter>trigger-events-for-descendants-on-rename</parameter>
                 </entry>
 
                 <entry>Indicate if it is needed to trigger events for descendants on

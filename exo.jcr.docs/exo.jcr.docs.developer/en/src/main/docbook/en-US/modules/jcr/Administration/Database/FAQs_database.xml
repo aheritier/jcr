@@ -10,52 +10,54 @@
         <para><emphasis role="bold">Which database server is better for eXo JCR?</emphasis></para>
       </question>
       <answer>
-        <para>If the question is a performance, it is difficult question, as
-          each database can be configured to be more (and more) faster for each
-          special case. MySQL with MyISAM engine will be faster. But MySQL has
-          limitations for indexes for multilingual columns (Item names
-          actually). So, with long Item names (larger ofOracle or PostgreSQL
-          also are good for performance. DB2 and MSSQL are slower in default
-          configurations. Default configuration of Sybase leader of slowness.
-          But in this question, take the database server maintenance into account.
-          MySQL and PostgreSQL are simple in installation and can work even on
-          limited hardware. Oracle, DB2, MSSQL or Sybase need more efforts. The
-          same actual for maintenance during the work. Note for Sybase:
-          "check-sns-new-connection" data container configuration parameter
-          should be set to "true". For testing purpose, embedded database such
-          as HSQLDB is the best choice. Apache Derby and H2 also supported. But
-          H2 surprisingly needs "beta" feature enabled - MVCC=TRUE in JDBC
-          url.
-        </para>
+        <para>If the question is about the performance, it is difficult to
+        answer, because each database can be configured to have
+        better performance in a special case. According to the results of our
+        internal tests, the best choice is <emphasis role="bold">Oracle 11G R2</emphasis> even when we store the
+        binary data in the database. For other databases, it is recommended to store the
+        binary data in the file system unless you have only small file content
+        to store. MySQL and PostgreSQL are also demonstrated in our benchmark
+        results that they could provide good performance. DB2 and MSSQL are
+        slower in default configurations. The default configuration of Sybase
+        leader is slow, but in this question, take the database server
+        maintenance into account. MySQL and PostgreSQL are simple in
+        installation and can work even on limited hardware. Oracle, DB2, MSSQL
+        or Sybase need more efforts. The same actual for maintenance during
+        the work. Note for Sybase: "check-sns-new-connection" data container
+        configuration parameter should be set to "true". For testing purpose,
+        embedded database such as HSQLDB is the best choice. Apache Derby and
+        H2 are also supported. But, H2 surprisingly needs "beta" feature enabled -
+        MVCC=TRUE in JDBC URL.</para>
       </answer>
     </qandaentry>
 	
 	<qandaentry xml:id="JCR.FAQ.JCR.Core.HowToSetUpeXoJCRForMutilingialContentOnMySQL">
         <question>
-		  <para><emphasis role="bold">How to setup eXo JCR for mutilingial content on MySQL?</emphasis></para>
+		  <para><emphasis role="bold">How to setup eXo JCR for multilingual content on MySQL?</emphasis></para>
         </question>
         <answer>
           <para>To allow multiple character sets to be sent from the client, the
-            UTF-8 encoding should be used, either by configuring utf8 as the
+            UTF-8 encoding should be used, either by configuring UTF-8 as the
             default server character set, or by configuring the JDBC driver to use
             UTF-8 through the characterEncoding property. MySQL database should be
-            created in single-byte encoding, e.g. "latin1":
+            created in single-byte encoding, for example "latin1":
           </para>
 
           <programlisting>CREATE DATABASE db1 CHARACTER SET latin1 COLLATE latin1_general_cs;</programlisting>
 
-          <para>eXo JCR application (e.g. GateIn) should use JCR dialect
+          <para>The eXo JCR application (for example, GateIn) should use JCR dialect
             "MySQL-UTF8".
           </para>
 
-          <para>In other words: MySQL database default encoding and JCR dialect
-            cannot be UTF8 both. Use single-byte encoding (e.g. "latin1") for
-            database and "mysql-utf8" dialect for eXo JCR.
+          <para>Or, the MySQL database default encoding and JCR dialect cannot be UTF8. Use single-byte encoding (for
+            example, "latin1") for database and "MySQL-UTF8" dialect for eXo JCR.
           </para>
 
-          <para>Notice: "MySQL-UTF8" dialect cannot be auto-detected, it should
-            be set explicitly in configuration.
-          </para>
+          <note>
+            <para> The "MySQL-UTF8" dialect cannot be auto-detected, it should
+              be set explicitly in the configuration.
+            </para>
+          </note>
         </answer>
     </qandaentry>
 	<qandaentry xml:id="JCR.FAQ.JCR.Core.LimitationMySQLAffectingOneXoJCRFeatures">
@@ -73,8 +75,8 @@
 		  <para><emphasis role="bold">Does use of Sybase database need special options in eXo JCR configuration?</emphasis></para>
         </question>
         <answer>
-          <para>To enable JCR working properly with Sybase, a property
-            'check-sns-new-connection' with 'false' value is required for each
+          <para>To enable JCR to work properly with Sybase, a <parameter>check-sns-new-connection</parameter> property
+            with the '<parameter>false</parameter>' value is required for each
             workspace data container:
           </para>
 <programlisting language="xml">&lt;container class="org.exoplatform.services.jcr.impl.storage.jdbc.optimisation.CQJDBCWorkspaceDataContainer"&gt;
@@ -93,7 +95,7 @@
 
 	<qandaentry xml:id="JCR.FAQ.JCR.Core.UseQueriesToAccessDataByJCRAPI">
       <question>
-		<para><emphasis role="bold">Is it better to use queries that to access the data by the JCR API?</emphasis></para>
+		<para><emphasis role="bold">It is better to use queries which access data by the JCR API?</emphasis></para>
       </question>
       <answer>
         <para>No, direct access to items via JCR API is more efficient. Search
@@ -119,12 +121,12 @@
           </listitem>
 
           <listitem>
-            <para>Order by jcr:path - sort by the exact path of node (JCR do not
+            <para>Order by <parameter>jcr:path</parameter> - sort by the exact path of node (JCR does not
               support it).
             </para>
           </listitem>
         </itemizedlist>
-        <para>Order by jcr:path</para>
+        <para>Order by <parameter>jcr:path</parameter></para>
         <para>If no order specification is supplied in the query statement,
           implementations may support document order on the result nodes (see
           6.6.4.2 Document Order of <ulink url="http://jcp.org/en/jsr/detail?id=170">JSR-170</ulink>), and it is sorted by order number.
@@ -149,9 +151,7 @@
             <para>XPath - jcr:path order construction is ignored (so result is
               not sorted according to the path):</para>
             <programlisting>/testRoot/*
-              <ulink
-                      url="@jcr:primaryType='nt:unstructured'">@jcr:primaryType='nt:unstructured'
-              </ulink>
+              @jcr:primaryType='nt:unstructured'
               order by jcr:path</programlisting>
           </listitem>
         </itemizedlist>

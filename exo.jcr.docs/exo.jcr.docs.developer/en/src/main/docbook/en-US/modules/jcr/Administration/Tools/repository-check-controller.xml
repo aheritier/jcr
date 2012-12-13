@@ -4,21 +4,23 @@
 <section id="JCR.RepositoryCheckController" role="NotInToc">
   <title>Consistency checker</title>
 
-    <para>Production and any other system may have faults some day. They may
+  <para>Production and any other systems may have faults some days. They may
     be caused by hardware problems, human faults, software errors during
     updates and many other circumstances. It is important to check integrity
     and consistency of the system if there is no backup or it is stale, or
     recovery process takes much. JCR implementation offers an innovative
-    JMX-based complex checking tool. Running inspection, tool check every
+    JMX-based complex checking tool. Running inspection, tool checks every
     major JCR component, such as persistent data layer and index. Persistent
     layer includes JDBC Data Container and Value-Storages if they are
-    configured. Database verified using the set of complex specialized
-    domain-specific queries. Value Storage tool checks existence and access to
+    configured. Database is verified using the set of complex specialized domain-specific queries. The Value Storage
+    tool checks existence and access to each file.
+    Value Storage tool checks existence and access to
     each file. Index verification contains two-way pass cycle, existence of
     each node in index checks on persistent layer along with opposite
-    direction, when each node from Data Container validated in index. Access
+    direction, when each node from Data Container is validated in index. Access
     to the check tool is exposed via JMX interface, with the following operation
-    available:</para>
+    available:
+  </para>
 
     <table>
       <title>Check methods</title>
@@ -28,7 +30,7 @@
           <row>
             <entry><parameter>checkAll()</parameter></entry>
 
-            <entry>Inspect full repository data (db, value storage and search
+            <entry>Inspect full repository data (database, value storage and search
             index).</entry>
           </row>
 
@@ -140,22 +142,23 @@
     results of queries that check data consistency. This may be needed for the
     support team in case of deeper restoration process.</para>
 
-    <para>The following is the examples of corruptions and ways to eliminate
+    <para>See the following examples and ways to eliminate
     them:</para>
 	<note>
 		<itemizedlist>
 			<listitem>
-				<para>It is assumed that queries for single and multiple db
-				configurations differs only by the JCR_xITEM table name, otherwise queries
+				<para>It is assumed that queries for single and multiple database
+				configurations differ only by the JCR_xITEM table name, otherwise queries
 				will be explicitly introduced.</para>
 			</listitem>
 			<listitem>
-				<para>In some examples, you will be asked to replace some identificator
-				with a corresponding value. That basically means that you need to insert
-				values, from each row result of query executed during issue detection
-				stage, to corresponding place. Explicit explanation of what to do will
-				be introduced in case replacing is needed to be fulfilled in other
-				way.</para>
+        <para>In some examples, you will be asked to replace some identificators with their corresponding values. This
+          basically means that you need to insert
+          values, from each row result of query executed during the issue detection
+          stage, to the corresponding place. Explicit explanation of what to do will
+          be introduced in case replacing is needed to be fulfilled in other
+          way.
+        </para>
 			</listitem>
 		</itemizedlist>
 	</note>
@@ -172,7 +175,7 @@
 
           <listitem>
             <para>Fix description: Assign root as parent node to be able to delete later if
-            node is not needed anymore</para>
+            node is not needed anymore.</para>
           </listitem>
 			<listitem>
             <para>To fix this problem, do the following:</para>
@@ -356,7 +359,7 @@ delete from JCR_SITEM where PARENT_ID = '${ID}' or ID='${ID}' </programlisting>
 
             <listitem>
               <para>Fix description: Assign root as parent node to be able to delete later if
-              node is not needed to use anymore</para>
+              node is not needed to use anymore.</para>
             </listitem>
 			<listitem>
               <para>To fix this problem, do the following:</para>
@@ -476,7 +479,7 @@ delete from JCR_SITEM where ID = '${ID}'</programlisting>
 
       <listitem>
         <para><emphasis role="bold">A node which is considered to be locked in the
-        lockmanager data is not locked according to the JCRrdata or the
+        lockmanager data is not locked according to the JCR data or the
         opposite situation.</emphasis>
           <itemizedlist>
             <listitem>
@@ -484,7 +487,7 @@ delete from JCR_SITEM where ID = '${ID}'</programlisting>
 
               <para>First, get all locked nodes IDs in repository, mentioned in
                 the
-                <emphasis role="bold">JCR_xITEM</emphasis>
+                <parameter>JCR_xITEM</parameter>
                 table, by executing a query:
               </para>
               <programlisting>select distinct PARENT_ID from JCR_SITEM where I_CLASS=2 and
@@ -504,7 +507,7 @@ delete from JCR_SITEM where ID = '${ID}'</programlisting>
 							  <para>During comparing results, be aware that for single
 							  DB configurations, you need to cut off the ID prefix
 							  representing the workspace name for results obtained from
-							 the <emphasis role="bold">JCR_xITEM</emphasis> table. </para>
+							 the <parameter>JCR_xITEM</parameter> table. </para>
 						   </listitem>
 						   <listitem>
 							  <para>Though a single lock table is usually used for the
@@ -526,7 +529,7 @@ delete from JCR_SITEM where ID = '${ID}'</programlisting>
                     <listitem>
                       <para>Shareable</para>
 
-                      <para>Replace <parameter>${REPOSITORY_NAME}</parameter> with acorresponding
+                      <para>Replace <parameter>${REPOSITORY_NAME}</parameter> with its corresponding
                       value.</para>
 
                       <programlisting>select fqn from ${LOCK_TABLE} where parent like '/${REPOSITORY_NAME}%/$LOCKS/' </programlisting>
@@ -553,9 +556,9 @@ delete from JCR_SITEM where ID = '${ID}'</programlisting>
 
             <listitem>
               <para>Fix description: Remove inconsistent lock entries and properties. Remove
-              entries in <emphasis role="bold">LOCK_TABLE</emphasis> that have no corresponding properties in
-              the <emphasis role="bold">JCR_xITEM</emphasis> table and remove the <parameter>JCR_xITEM</parameter> properties that have no
-              corresponding entries in the <emphasis role="bold">LOCK_TABLE</emphasis> table.</para>
+              entries in <parameter>LOCK_TABLE</parameter> that have no corresponding properties in
+              the <parameter>JCR_xITEM</parameter> table and remove the <parameter>JCR_xITEM</parameter> properties that have no
+              corresponding entries in the <parameter>LOCK_TABLE</parameter> table.</para>
             </listitem>
 
             <listitem>

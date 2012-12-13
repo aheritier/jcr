@@ -3,15 +3,24 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <section id="JCR.SessionLeakDetected" role="NotInToc">
   <title>Session leak detector</title>
-      <para xml:id="JCR.SessionLeakDetected.Introduction">The session leak detector is able to help you debug your application based on JCR when you suspect that you have a bug related to a wrong usage of JCR sessions. It works by creating a queue of weak references to JCR sessions and the queue is periodically cleaned. When a session reference is dequeued and is not cleared it is considered as a leaked session. Obviously what matters here is the time by which a session is stale known as max age. If the max age is too short period it will suspect that many sessions are leaked although they are not. The default max age value is configured at 2 minutes.</para>
+  <para xml:id="JCR.SessionLeakDetected.Introduction">The session leak detector is able to help you debug your
+    application based on JCR when you suspect that you have a bug related to a wrong usage of JCR sessions. It works by
+    creating a queue of weak references to JCR sessions and the queue is periodically cleaned. When a session reference
+    is dequeued and is not cleared it is considered as a leaked session. Obviously what matters here is the time by
+    which a session is stale known as max age. If the max age is too short, it will suspect that many sessions are
+    leaked although they are not. The default max age value is configured at 2 minutes.
+  </para>
     
 	<itemizedlist>
     <listitem>
       <para xml:id="JCR.SessionLeakDetected.Activation"><emphasis role="bold">Activation</emphasis></para>
 
-      <para>Setting the virtual machine system property <emphasis role="bold">exo.jcr.session.tracking.active</emphasis> to true activates the session detector with a default time period of 2 minutes.</para>
+      <para>Setting the <parameter>exo.jcr.session.tracking.active</parameter> virtual machine system property to "true" activates the session detector with a default time period of 2 minutes.</para>
 
-      <para>You can set the max age with the virtual machine system property <emphasis role="bold">exo.jcr.jcr.session.tracking.maxage</emphasis> in seconds. The default value, if you don't override it is 120 (2 minutes).</para>
+      <para>You can set the max age with the
+        <parameter>exo.jcr.jcr.session.tracking.maxage</parameter>
+        virtual machine system property in seconds. The default value is 120 (2 minutes) if you do not override.
+      </para>
 
       <para>For example, you can do this easily in <command>eXo.sh</command>.</para>
 	  <itemizedlist>
