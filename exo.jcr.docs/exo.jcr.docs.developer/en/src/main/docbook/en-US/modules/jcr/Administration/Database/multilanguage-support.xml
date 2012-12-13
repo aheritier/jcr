@@ -52,8 +52,10 @@ NLS_LENGTH_SEMANTICS     BYTE
 NLS_NCHAR_CONV_EXCP      FALSE
 NLS_NCHAR_CHARACTERSET   AL16UTF16</programlisting>
     <warning>
-      <para>JCR does not use NVARCHAR columns, so that the value of the
-      parameter NLS_NCHAR_CHARACTERSET does not matter for JCR.</para>
+      <para>JCR does not use the NVARCHAR columns so that the value of the
+        <parameter>NLS_NCHAR_CHARACTERSET</parameter>
+        parameter does not matter for JCR.
+      </para>
     </warning>
 
     <para>Create database with Unicode encoding and use Oracle dialect for the

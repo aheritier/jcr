@@ -17,13 +17,13 @@
     <para>Tree-based storage is recommended for most of cases. Simple 'flat' storage is good in speed of creation/deletion
     of values, it might be a compromise for a small storage.</para>
 
-    <note>
-      <para id="JCR.ExternalValueStorages.DisablingValueStorage">JCR allows disabling the value storage by adding
-       the property below into the configuration for the internal usage and testing purpose only:
-      <programlisting language="xml">&lt;property name="enabled" value="false" /&gt;</programlisting>
-	  </para>
-      <para>Be careful, all stored values will be unaccessible.</para>
-    </note>
+  <note>
+    <para xml:id="JCR.ExternalValueStorages.DisablingValueStorage">JCR allows disabling the value storage by adding
+      the property below into the configuration for the internal usage and testing purpose only:
+    </para>
+    <programlisting language="xml"><![CDATA[<property name="enabled" value="false"/>]]></programlisting>
+    <para>Be careful, all stored values will be unaccessible.</para>
+  </note>
 
   <!-- 2.2.7.1. Tree File Value Storage -->
   <section id="JCR.ExternalValueStorages.TreeFileValueStorage">

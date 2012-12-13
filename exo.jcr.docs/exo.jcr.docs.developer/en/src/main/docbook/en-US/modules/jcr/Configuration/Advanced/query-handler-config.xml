@@ -157,9 +157,14 @@
             <row>
               <entry><parameter>jgroups-multiplexer-stack</parameter></entry>
 
-              <entry>If set to "true", it will indicate that the file corresponding to the parameter jgroups-configuration is a actually a file defining a set of jgroups multiplexer stacks.
-                  In the XML tag jgroupsConfig within the jboss cache configuration, you will then be able to set the name of the multiplexer stack to use thanks to the attribute multiplexerStack.
-                  Please note that the jgroups multiplexer has been deprecated by the jgroups Team and has been replaced by the shared transport so it is highly recommended to not use it anymore..</entry>
+              <entry>If the parameter value is set to "true", it will indicate that the file corresponding to the
+                <parameter>jgroups-configuration</parameter>
+                parameter is actually a file defining a set of jgroups multiplexer stacks.
+                In the XML tag jgroupsConfig within the jboss cache configuration, you will then be able to set the name
+                of the multiplexer stack to use thanks to <parameter>multiplexerStack</parameter> the attribute.
+                Please note that the jgroups multiplexer has been deprecated by the jgroups Team and has been replaced
+                with the shared transport so it is highly recommended you not use it anymore.
+              </entry>
             </row>
 
             <row>

@@ -11,23 +11,25 @@
       </question>
       <answer>
         <para>If the question is about the performance, it is difficult to
-        answer, because each database can be configured to have
-        better performance in a special case. According to the results of our
-        internal tests, the best choice is <emphasis role="bold">Oracle 11G R2</emphasis> even when we store the
-        binary data in the database. For other databases, it is recommended to store the
-        binary data in the file system unless you have only small file content
-        to store. MySQL and PostgreSQL are also demonstrated in our benchmark
-        results that they could provide good performance. DB2 and MSSQL are
-        slower in default configurations. The default configuration of Sybase
-        leader is slow, but in this question, take the database server
-        maintenance into account. MySQL and PostgreSQL are simple in
-        installation and can work even on limited hardware. Oracle, DB2, MSSQL
-        or Sybase need more efforts. The same actual for maintenance during
-        the work. Note for Sybase: "check-sns-new-connection" data container
-        configuration parameter should be set to "true". For testing purpose,
-        embedded database such as HSQLDB is the best choice. Apache Derby and
-        H2 are also supported. But, H2 surprisingly needs "beta" feature enabled -
-        MVCC=TRUE in JDBC URL.</para>
+          answer, because each database can be configured to have
+          better performance in a special case. According to the results of our
+          internal tests, the best choice is
+          <emphasis role="bold">Oracle 11G R2</emphasis>
+          even when you store the
+          binary data in the database. For other databases, it is recommended to store the
+          binary data in the file system unless you have only small file content
+          to store. MySQL and PostgreSQL are also demonstrated in our benchmark
+          results that they could provide good performance. DB2 and MSSQL are
+          slower in default configurations. The default configuration of Sybase
+          leader is slow, but in this question, take the database server
+          maintenance into account. The installation of MySQL and PostgreSQL is simple and they can work even on any
+          limited hardware. The same actual for maintenance during
+          the work. Note for Sybase: "check-sns-new-connection" data container
+          configuration parameter should be set to "true". For testing purpose,
+          embedded database such as HSQLDB is the best choice. Apache Derby and
+          H2 are also supported. But, H2 surprisingly needs "beta" feature enabled -
+          MVCC=TRUE in JDBC URL.
+        </para>
       </answer>
     </qandaentry>
 	

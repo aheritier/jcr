@@ -4,7 +4,10 @@
     <para>
         In this section you will learn how to configure all basic configuration by configuring the Repository, Workspace, Value storage plugin, Initializer, Cache, Query Handler and Lock Manager of JCR .
     </para>
-    <para>The JCR Configuration is defined in an <filename>.xml</filename> file, see the DTD below:</para>
+  <para>The JCR configurations are defined in an
+    <filename>.xml</filename>
+    file. See the following DTD file to understand the expected format of the JCR configuration.
+  </para>
     <programlisting language="xml">&lt;!ELEMENT repository-service (repositories)&gt;
 &lt;!ATTLIST repository-service default-repository NMTOKEN #REQUIRED&gt;
 &lt;!ELEMENT repositories (repository)&gt;

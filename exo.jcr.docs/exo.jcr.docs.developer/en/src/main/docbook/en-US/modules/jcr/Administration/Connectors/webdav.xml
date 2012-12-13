@@ -168,7 +168,7 @@
 
 	<itemizedlist>
     <listitem>
-      <para xml:id="JCR.WebDAV.Screenshots.MSInternetExplorer"><emphasis role="bold">MS Internet Explorer</emphasis>: Click <menuchoice><guimenu>File</guimenu><guisubmenu>eXo JCR WebDav </guisubmenu></menuchoice>.</para>
+      <para xml:id="JCR.WebDAV.Screenshots.MSInternetExplorer"><emphasis role="bold">MS Internet Explorer</emphasis>: Click <menuchoice><guimenu>File</guimenu><guisubmenu>eXo JCR WebDav</guisubmenu></menuchoice>.</para>
 
       <mediaobject>
         <imageobject>
@@ -304,22 +304,25 @@
           </row>
 
           <row>
-            <entry><command>REPORT</command></entry>
+            <entry>
+              <command>REPORT</command>
+            </entry>
 
-            <entry><command>Node.getVersionHistory(); VersionHistory.getAllVersions();
-            Version.getProperties()</command></entry>
+            <entry>
+              <command>Node.getVersionHistory(); VersionHistory.getAllVersions();
+                Version.getProperties()
+              </command>
+            </entry>
           </row>
 
           <row>
-            <entry><command>RESTORE</command></entry>
+            <entry>
+              <command>UNCHECKOUT</command>
+            </entry>
 
-            <entry><command>Node.restore(...)</command></entry>
-          </row>
-
-          <row>
-            <entry><command>UNCHECKOUT</command></entry>
-
-            <entry><command>Node.restore(...)</command></entry>
+            <entry>
+              <command>Node.restore(...)</command>
+            </entry>
           </row>
 
           <row>

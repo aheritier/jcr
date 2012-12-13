@@ -27,7 +27,7 @@
   &lt;value-param&gt;
 	&lt;name&gt;conf-path&lt;/name&gt;
 	&lt;description&gt;JCR configuration file&lt;/description&gt;
-	&lt;value&gt;/conf/standalone/exo-jcr-config.xml&lt;/value&gt;
+	&lt;value&gt;war:/conf/jcr/repository-configuration.xml&lt;/value&gt;
   &lt;/value-param&gt;
   &lt;properties-param&gt;
 	&lt;name&gt;working-conf&lt;/name&gt;

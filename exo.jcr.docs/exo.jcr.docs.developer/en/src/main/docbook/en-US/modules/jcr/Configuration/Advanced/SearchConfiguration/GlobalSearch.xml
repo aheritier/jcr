@@ -13,8 +13,9 @@
       you automatically. If you do not like the <parameter>StandardAnalyzer</parameter> to be configured by
       default, just replace it with your own.</para>
 
-      <para>If you do not have a handy QueryHandler, you should learn how
-      to create a customized Handler that is described in the next sections.</para>
+  <para>If you do not have a handy QueryHandler, learn about how to create a customized QueryHandler in the <link
+          linkend="JCR.QueryHandlerConfiguration">QueryHandler configuration</link> section.
+  </para>
     <!-- 2.2.1.2.2. Customized Search Indexes and Analyzers -->
     <section id="JCR.SearchConfiguration.Global_Search_Index.Customized_Search_Indexes_Analyzers">
       <title>Customized Search indexes and analyzers</title>

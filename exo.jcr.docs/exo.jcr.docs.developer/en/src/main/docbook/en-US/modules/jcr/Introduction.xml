@@ -32,9 +32,9 @@
     with metadata in another repositories and in a proprietary
     structure. How do you manage updating these data and access rights? 
 	Where and how do u start if your leader asks you to manage different versions of
-    each document? The larger your website is, the more you need a
+    each document? The larger your website is, the more
     <ulink url="http://en.wikipedia.org/wiki/Content_management_system">Content
-    Management Systems</ulink> (CMS) which tackles all these issues.</para> 
+    Management Systems</ulink> (CMSs) you need that allows tackling all these issues.</para>
 
     <para>These CMS solutions are provided by different vendors and each vendor
     provides its own API for interfacing the proprietary content repository.

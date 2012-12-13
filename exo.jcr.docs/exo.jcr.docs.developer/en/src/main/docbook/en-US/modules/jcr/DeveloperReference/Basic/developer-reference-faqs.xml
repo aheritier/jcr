@@ -113,7 +113,7 @@
         <para>1. Indexer uses the <parameter>jcr:encoding</parameter> property of the <parameter>nt:resource</parameter> node (used
           as the <parameter>jcr:content</parameter> child node of <parameter>nt:file</parameter>).
 		</para>
-		<para>2. If no <parameter>jcr:encoding</parameter> property
+		<para>2. If no <parameter>jcr:encoding</parameter> property is
           set, the Document Service will use the one configured in the service
           (defaultEncoding).
 		</para>
